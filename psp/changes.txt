@@ -1,0 +1,103 @@
+Next release(s) :
+- generic combo/macros => button assignment
+- more cheats feature
+- improved netplay experience
+- multiple language support
+- ...
+
+Snes9xTYL 0.4.2 - 2006/05/15
+----------------------------
+[FIX] key combo are now allowed in game when not assigned to a specific feature (L+R, ...).
+[FIX] annoying ingame popups ("3", ...) should be gone.
+[FIX] sound issues after loading a savestate should be gone.
+[FIX] noise issue when starting a game fixed.
+[FIX] now should exit without crashing on psp 2.xx.
+[FIX] uncompressed rom now have loading progress bar too.
+[FIX] improved ips patch handling, still not perfect. Try to IPS patch your game before putting them on PSP.
+[FIX] credits screen fixed.
+[NEW] me version : started to implement a "pseudo sleep mode". psp clock is reduced, screen is turned off and buttons won't respond.
+      however, the backlight cannot be switched off automatically, neither the psp put to real sleep mode.
+      hold the display button for 2s to completely turn off the LCD.
+[NEW] GUI reworked a bit.
+[NEW] beep sounds when selecting stuff in menu & file browser can now be turned off in menu / misc / pad beep.
+[NEW] sound output volume doubled.
+[NEW] added a 300Mhz setting for eLoader 0.97 (333Mhz won't work on this eLoader version, because of wifi : thx fanjita ;-) )
+[NEW] savestate export to snes9x (using snes9x slot 1). Copy the SAVES/<game rom filename>.000 to your PC and load in snes9x.
+[NEW] little intro :-) Press a button to skip it if you don't like it :p
+
+
+Snes9xTYL 0.4.1 - 2006/05/08
+----------------------------
+[FIX] improved speed for std version when sound is emulated.
+
+Snes9xTYL 0.4 - 2006/05/07
+--------------------------
+[NEW] spc playback through openspc++.
+[NEW] sound emulation moved to media engine.
+[NEW] new gui with some sounds (beep). default key combo for GUI access is now L+R
+[NEW] have your own background and spc music played in background when in GUI => put them in logo.zip & music.zip.
+[NEW] adhoc 2 players mode. requires both players to have the same rom file.
+[NEW] Speed limiter in fps (ranging from 10 to 120fps).
+[NEW] Hack to help reading thin fonts in hires mode ("shake" the screen). activate it hack/Debug sub menu.
+[NEW] minimalist txt file viewer (buggy).
+[NEW] usb support : when in file browser or menu use R (right trigger).
+[NEW] sram is now saved if modified when accessing menu.
+[NEW] minimalist 2 players adhoc netplay. thx to Chris Swindle for his netplay code in SMS.
+[NEW] uses great OSK from danzel.
+[FIX] Frame skipping (AUTO & fixed) better handled.
+[FIX] Import savestate from snes9xTYL.
+[FIX] psp accelerated rendering issues (ff6 borders, small lines on left & righrt borders when using render!=1:1...).
+[FIX] sourcecode cleanup (not complete, stilly a bit messy).
+[BAD] still slower than 0.2 version in nosound mode (related to new pspsdk & internal changes in emu core).
+
+Snes9xTYL 0.3 - 2006/02/06
+--------------------------
+[NEW] mode 7 optimizations when no rotation is used (maps in rpg, ...). Does not apply to fzero, mario kart, ...
+[NEW] now 2 versions ! the "me" one is using media engine for sound mixing.
+[NEW] roms can be deleted from file browser (press SELECT).
+[NEW] savestates can deleted from menu.
+[NEW] screen adjustement (pseudo calibration) to get rid of those nasty black borders!
+[NEW] minor GUI adjustements (easily swap analog/pad, easier navigation with triggers)
+[NEW] now accept 8bpp and 24bpp logo.bmp background file.
+[NEW] new logo from pochi.
+[FIX] some rendering & internal emulation core bugs.
+[FIX] stability issues & memory card corruption should be gone (at least on my psp).
+[FIX] debug settings are now correctly saved.
+
+Snes9xTYL 0.2c - 2005/08/23
+--------------------------
+[NEW] autosave modified SRAM is now an option (can cause major slowdowns in some games).
+
+Snes9xTYL 0.2b - 2005/08/23
+--------------------------
+[FIX] do not used ini file if older version.
+[FIX] cpuclock not initialized at startup (no need to access menu).
+[FIX] low battery 10 seconds-long message is cleared after closing.
+[FIX] some timer were wrong (autosaving, ...).
+
+Snes9xTYL 0.2 - 2005/08/23
+--------------------------
+
+[FIX] psp accelerated rendering fixed
+[FIX] fixed crashing bug with mosaic effects & psp accelerated modes
+[FIX] fixed sleep/resume freeze
+[NEW] snes BRR decoding in mips assembly (sample decoding, sounds better in man games)
+[NEW] snes cpu/hdma optimization
+[NEW] ppu optimization (FF6 is eventually playable)
+[NEW] implement snesadvance "speedhacks"
+[NEW] gui cosmetic enhancements & fixes (correct time, ...)
+[NEW] new ppu hacks mode to speed up emulation
+[NEW] autosave sram shortly after being modified (usually 1second)
+[NEW] auto savestate every n minutes
+[NEW] import savestate from uoSnes9x or Zsnes
+[NEW] help, press Triangle on a menu option
+[NEW] started internationalizing (english, french, japanese) (only for menu help, not complete)
+[NEW] disable savings features when battery too low (avoid memstick corruption)
+[NEW] mode 7 hack to speed up a bit the rendering
+[NEW] option to render PAL games as NTSC games (get ride of black border at bottom)
+[NEW] per game settings
+[NEW] configurable inputs
+
+Snes9xTYL 0.1 - 2005/08/02
+--------------------------
+- first public release

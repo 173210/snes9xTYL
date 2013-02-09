@@ -1,0 +1,8 @@
+BUILDING the 3.xx ME version
+============================
+
+To build the 3.xx me version, make sure to first build the two prx's in the psp/mediaengineprx and psp/homehookprx folders.
+Simply do a make in each folder. This will copy the necessary files to the correct places (.S and .prx).
+
+Now type make -f makefile_me3xx
+

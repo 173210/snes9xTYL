@@ -1,0 +1,57 @@
+This Snes Emulator "snes9xTYL" is maintained by :
+yoyofr
+laxer3a
+
+
+PLEASE SCROLL WITH THE CURSOR UNTIL THE BOTTOM
+OF THIS DOCUMENT.
+
+
+Proper Credits must be given to :
+=================================
+The various authors of Snes9x (original code).
+bifuteki for the first snes9x port on PSP.
+Various people of the ps2dev community for bringing
+tools and discover API stuff that would not have
+made this version possible.
+Pochi for the nice icon.
+Danzel for OSK.
+Chris Swindle for netplay code with his great 
+SMS emulator.
+Personnal thanks to : smiths, chp, bifuteki.
+Thanks to all donators, we eventually had a first
+very nice meeting in a restaurant in Paris. 
+
+The official homepage and more informations about
+this project can be found at :
+http://yoyofr92.free.fr/
+
+The thing you have in front of you is the result
+of LOTS (nights and weekends for MANY WEEKS !)
+of time spent (especially yoyofr).
+It is not the result of a sudden "cool" god coming from
+the sky and saying : "Hey I will give you a cool source,
+compile and distribute it !".
+This is a FREEWARE, you do NOT HAVE TO PAY for it.
+
+STILL, if you really want to SUPPORT US,
+please send a DONATION
+Something like 5 euro or 10$ is not a big amount
+of money but it can pay for our PSP expenses
+and/or the restaurant when the team members meet
+each other.
+Having a tasty free diner with all the team members
+is good memories and this is the kind of thing that
+will keep our motivation up.
+We known that most likely 1 people out of 20000 or
+30000 will do a donation.
+Don't hesitate, we hope that you will not be the
+29999 others ;-).
+PAYPAL Account is : ymagnien@hotmail.com
+(If you don't have a paypal account and still want
+to give us something, contact us by e-mail at this 
+same adress)
+
+DO YOU AGREE ?
+Yes : press X or O.
+No : press any other buttons.

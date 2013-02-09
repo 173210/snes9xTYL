@@ -1,0 +1,90 @@
+[FIX] psp accelerated rendering fixed
+[FIX] fixed crashing bug with mosaic effects & psp accelerated modes
+[FIX] fixed sleep/resume freeze
+[NEW] snes BRR decoding in mips assembly (sample decoding, sounds better in man games)
+[NEW] snes cpu/hdma optimization
+[NEW] ppu optimization (FF6 is eventually playable)
+[NEW] implement snesadvance "speedhacks"
+[NEW] gui cosmetic enhancements & fixes (correct time, ...)
+[NEW] new ppu hacks mode to speed up emulation
+[NEW] autosave sram shortly after being modified (usually 1second)
+[NEW] auto savestate every n minutes
+[NEW] import savestate from uoSnes9x or Zsnes
+[NEW] help, press Triangle on a menu option
+[NEW] started internationalizing (english, french, japanese) (only for menu help, not complete)
+[NEW] disable savings features when battery too low (avoid memstick corruption)
+[NEW] mode 7 hack to speed up a bit the rendering
+[NEW] option to render PAL games as NTSC games (get ride of black border at bottom)
+[NEW] per game settings
+[NEW] configurable inputs
+
+...
+
+--------->
+logger les chgts de fixed col et refaire la main le bg!
+=> possible pour clipping win ?
+
+---------------------
+for all version (gp32, ljp,...)
+----------------------
+sram & srtc => extend snes sram area
+
+MAX_DIR 1 => 10
+MAX_EXT => 10
+optim 'FF6' dans ppu.cpp, sur le set 2132 pour fixedcolour & co
+int *echo; ==> malloc(24000*sizeof(int)); pareil pour les autres buffers
+
+error dans decodage asm son, method2 => method2loop dans jump
+------------------------
+
+
+
+
+current features:
+-----------------
+*5 rendering modes : software (approx., accurate), hardware, mixed (soft. + hard.)
+*multiple zoom modes
+*zipped roms
+*audio
+*compressed savestates
+*ips patch file
+*sdd1 encrypted roms
+*sa1, superfx, C4, dsp1 special chipsets
+*
+
+next features:
+--------------
+
+*spc player
+*network support (adhoc & infastructure)
+*animated savestate
+*better gui
+*autofire
+*configurable input
+*speed hacks
+*faster hardware rendering (1pass mode, logging every ppu event)
+*per game settings
+*
+
+
+
+
+----------------------
+regarder quels bgs/objs sont concernés par l'appel a screenupdate
+si un bg ne change pas (scroll identique, pas de chgt de prop add/sub, ...)
+ne pas le mettre a jour de suite.
+
+ne faire les maj que pour les bgs concernes
+
+=> logger les causes d'appel a screenupdate et effectuer le boulot plus tard
+
+
+--------------------
+recopie du subscreen dans le mainscreen quand colour window mainscreen uniquement
+quand les colour window de sub&main sont != ???
+
+--------------------
+trouver cause de clignotement de certains sprites
+verifier la logique dans colour window dans mainscreen 
+ajouter le scroll au depart avec le msg d'avertissement
+

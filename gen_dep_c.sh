@@ -1,0 +1,1 @@
+find . -name "*.c" -exec awk -f depend.awk -F \" {} \;
