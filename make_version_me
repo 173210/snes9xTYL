@@ -1,5 +1,4 @@
 #!/bin/sh
 
-VERSION=`grep EMUNAME_VERSION psp/psp.h|cut -d'"' -f2`
-#mksfo "$VERSION"me PARAM.SFO
-mksfo Snes9xTYL0.4.2mecm PARAM.SFO
+VERSION=`grep EMUNAME_VERSION.*me psp/psp.h|cut -d'"' -f2`
+mksfo "$VERSION" PARAM.SFO
