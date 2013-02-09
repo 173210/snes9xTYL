@@ -34,7 +34,7 @@ PSP_EBOOT_ICON = data/icon0.png
  
 # Object files
 PSP_OBJECTS=c4.o c4emu.o cheats.o cheats2.o clip.o cpu.o cpuexec_opti.o cpuops.o data.o\
-dma.o dsp1.o fxdbg.o fxemu.o fxinst.o gfx_mode7.o gfx.o gfx_org.o gfx_psp.o globals.o loadzip.o memmap.o\
+dma.o dsp1.o fxdbg.o fxemu.o fxinst.o gfx_mode7.o gfx.o gfx_org.o gfx_psp.o gfx_psp_fix.o globals.o loadzip.o memmap.o\
 ppu.o sa1.o sa1cpu.o sdd1.o sdd1emu.o snapshot.o snes9x.o  srtc.o \
 tile.o tile_org.o tile_sw.o tile_psp.o unzip.o cheats.o cheats2.o apu.o spc700.o soundux.o\
 #sound_mips.o snaporig.o 
