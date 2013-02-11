@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include "unzip.h"
+#include "ini_manage.h"
 
 int snd_beep1_handle[6];
 int snd_beep1_current;
@@ -191,55 +193,59 @@ void show_background(int mul,int add){
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
 int save_rom_settings(int game_crc32,char *name){
-	FILE *f;
 	char tmp_str[256];
-	int l;	
-	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
-	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
-	f = fopen(tmp_str,"wb");			
-	if (!f){
+	init_content();			
+	if (get_last_error() != NULL){
 		ErrorMsg("cannot save settings");
 		return -1;
 	}
-	l=(VERSION_MAJOR<<16)|VERSION_MINOR;
-	fwrite(&l,1,4,f);	
-	fwrite(&os9x_apuenabled,1,4,f);
-	fwrite(&os9x_sndfreq,1,4,f);
-	fwrite(&os9x_softrendering,1,4,f);
-	fwrite(&os9x_fskipvalue,1,4,f);
-	fwrite(&os9x_speedlimit,1,4,f);
-	fwrite(&os9x_vsync,1,4,f);
-	fwrite(&os9x_showfps,1,4,f);
-	fwrite(&os9x_cpuclock,1,4,f);
-	fwrite(&os9x_render,1,4,f);
-	fwrite(&os9x_smoothing,1,4,f);	
-	fwrite(&os9x_OBJ,1,4,f);
-	fwrite(&os9x_BG0,1,4,f);
-	fwrite(&os9x_BG1,1,4,f);
-	fwrite(&os9x_BG2,1,4,f);
-	fwrite(&os9x_BG3,1,4,f);
-	fwrite(&os9x_easy,1,4,f);
-	fwrite(&os9x_fastsprite,1,4,f);
-	fwrite(&os9x_gammavalue,1,4,f);
-	fwrite(&os9x_hack,1,4,f);
-	fwrite(&os9x_forcepal_ntsc,1,4,f);
-	fwrite(&os9x_autosavetimer,1,4,f);
-	fwrite(&os9x_inputs[0],1,32*4,f);		
+
+#define SAVE_INT_SETTING(section, key, value) \
+	sprintf(tmp_str, "%d", value); \
+	_append(section, key, tmp_str, "");
+
+	add_section("CONFIG", "");
+	SAVE_INT_SETTING("CONFIG", "VERSION", (VERSION_MAJOR<<16)|VERSION_MINOR)
+	add_section("OS9X", "");
+	SAVE_INT_SETTING("OS9X", "APUENABLED", &os9x_apuenabled)
+	SAVE_INT_SETTING("OS9X", "SNDFREQ", &os9x_sndfreq)
+	SAVE_INT_SETTING("OS9X", "SOFTRENDERING", &os9x_softrendering)
+	SAVE_INT_SETTING("OS9X", "FSKIPVALUE", &os9x_fskipvalue)
+	SAVE_INT_SETTING("OS9X", "SPEEDLIMIT", &os9x_speedlimit)
+	SAVE_INT_SETTING("OS9X", "VSYNC", &os9x_vsync)
+	SAVE_INT_SETTING("OS9X", "SHOWFPS", &os9x_showfps)
+	SAVE_INT_SETTING("OS9X", "CPUCLOCK", &os9x_cpuclock)
+	SAVE_INT_SETTING("OS9X", "RENDER", &os9x_render)
+	SAVE_INT_SETTING("OS9X", "SMOOTHING", &os9x_smoothing)
+	SAVE_INT_SETTING("OS9X", "OBJ", &os9x_OBJ)
+	SAVE_INT_SETTING("OS9X", "BG0", &os9x_BG0)
+	SAVE_INT_SETTING("OS9X", "BG1", &os9x_BG1)
+	SAVE_INT_SETTING("OS9X", "BG2", &os9x_BG2)
+	SAVE_INT_SETTING("OS9X", "BG3", &os9x_BG3)
+	SAVE_INT_SETTING("OS9X", "EASY", &os9x_easy)
+	SAVE_INT_SETTING("OS9X", "FASTSPRITE", &os9x_fastsprite)
+	SAVE_INT_SETTING("OS9X", "GAMMAVALUE", &os9x_gammavalue)
+	SAVE_INT_SETTING("OS9X", "HACK", &os9x_hack)
+	SAVE_INT_SETTING("OS9X", "FORCEPAL_NTSC", &os9x_forcepal_ntsc)
+	SAVE_INT_SETTING("OS9X", "AUTOSAVETIMER", &os9x_autosavetimer)
+	SAVE_INT_SETTING("OS9X", "INPUTS", &os9x_inputs[0])
 	strncpy(tmp_str,name,63);
 	tmp_str[63]=0;
-	fwrite(tmp_str,1,64,f);
-	fwrite(&os9x_autosavesram,1,4,f);
-	fwrite(&os9x_screenTop,1,4,f);
-	fwrite(&os9x_screenLeft,1,4,f);
-	fwrite(&os9x_screenWidth,1,4,f);
-	fwrite(&os9x_screenHeight,1,4,f);
-	fwrite(&os9x_apu_ratio,1,4,f);
-	fwrite(&os9x_padindex,1,4,f);
-	fwrite(&os9x_inputs_analog,1,4,f);
-	fwrite(&os9x_fpslimit,1,4,f);
-	fwrite(&os9x_SA1_exec,1,4,f);
-	
-	fclose(f);
+	_append("CONFIG", "NAME", tmp_str, "");
+	SAVE_INT_SETTING("OS9X", "AUTOSAVESRAM", &os9x_autosavesram)
+	SAVE_INT_SETTING("OS9X", "SCREENTOP", &os9x_screenTop)
+	SAVE_INT_SETTING("OS9X", "SCREENLEFT", &os9x_screenLeft)
+	SAVE_INT_SETTING("OS9X", "SCREENWIDTH", &os9x_screenWidth)
+	SAVE_INT_SETTING("OS9X", "SCREENHEIGHT", &os9x_screenHeight)
+	SAVE_INT_SETTING("OS9X", "APU_RATIO", &os9x_apu_ratio)
+	SAVE_INT_SETTING("OS9X", "PADINDEX", &os9x_padindex)
+	SAVE_INT_SETTING("OS9X", "INPUTS_ANALOG", &os9x_inputs_analog)
+	SAVE_INT_SETTING("OS9X", "FPSLIMIT", &os9x_fpslimit)
+	SAVE_INT_SETTING("OS9X", "SA1_EXEC", &os9x_SA1_exec)
+
+	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
+	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
+	save_as("s9xTYL.ini");
 	return 0;
 }
 
@@ -248,76 +254,72 @@ int save_rom_settings(int game_crc32,char *name){
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
 int load_rom_settings(int game_crc32){
-	FILE *f;
-	char tmp_str[256],rom_name[64];	
-	int l,i;
+	char tmp_str[256],rom_name[64];
+	int l;
+
+#define READ_INT_SETTING(sec, key, value) \
+	value = atoi(get_value(sec, key));
+
+	READ_INT_SETTING("CONFIG", "VERSION", l)
+
 	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
 	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
-	f = fopen(tmp_str,"rb");			
-	if (!f){
+	ini_start(tmp_str);
+	if (get_last_error() != NULL){
 		//debug_log("cannot load settings");
 		return -1;
 	}
-	fread(&l,1,4,f);
-	if (l<((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
+	if (l < ((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
 		msgBoxLines("ini file from a previous incompatible version, ignored!",20);
-		fclose(f);
+		ini_end();
 		return -2;
 	}
-		
-#define READ_SETTING(a) \
-if (fread(&l,1,4,f)==4) a=l; \
-else {fclose(f);check_settings();return -3;}
-	//{char st[16];sprintf(st,"%s : %d",#a,a);msgBoxLines(st,60);}
 
-//not bigger than tmp_str size, 256
-#define READ_SETTING_SIZE(buff,sz) \
-if (fread(tmp_str,1,sz,f)==sz) memcpy(buff,tmp_str,sz); \
-else {fclose(f);check_settings();return -3;}
-	
-	READ_SETTING(os9x_apuenabled)
-	READ_SETTING(os9x_sndfreq)
-	READ_SETTING(os9x_softrendering)
-	READ_SETTING(os9x_fskipvalue)
-	READ_SETTING(os9x_speedlimit)
-	READ_SETTING(os9x_vsync)
-	READ_SETTING(os9x_showfps)
-	READ_SETTING(os9x_cpuclock)
-	READ_SETTING(os9x_render)
-	READ_SETTING(os9x_smoothing)	
-	READ_SETTING(os9x_OBJ)
-	READ_SETTING(os9x_BG0)
-	READ_SETTING(os9x_BG1)
-	READ_SETTING(os9x_BG2)
-	READ_SETTING(os9x_BG3)
-	READ_SETTING(os9x_easy)
-	READ_SETTING(os9x_fastsprite)
-	READ_SETTING(os9x_gammavalue)		
-	READ_SETTING(os9x_hack)
-	READ_SETTING(os9x_forcepal_ntsc)
-	READ_SETTING(os9x_autosavetimer)
-	READ_SETTING_SIZE(&os9x_inputs[0],32*4)
-	READ_SETTING_SIZE(rom_name,64)
-	READ_SETTING(os9x_autosavesram)
-	READ_SETTING(os9x_screenTop)
-	READ_SETTING(os9x_screenLeft)
-	READ_SETTING(os9x_screenWidth)
-	READ_SETTING(os9x_screenHeight)
-	READ_SETTING(os9x_apu_ratio)
-	READ_SETTING(os9x_padindex)
-	READ_SETTING(os9x_inputs_analog)
-	READ_SETTING(os9x_fpslimit)
-	if (fread(&l,1,4,f)==4) os9x_SA1_exec=l; 
-	fclose(f);
-	
+	READ_INT_SETTING("OS9X", "APUENABLED", os9x_apuenabled)
+	READ_INT_SETTING("OS9X", "SNDFREQ", os9x_sndfreq)
+	READ_INT_SETTING("OS9X", "SOFTRENDERING", os9x_softrendering)
+	READ_INT_SETTING("OS9X", "FSKIPVALUE", os9x_fskipvalue)
+	READ_INT_SETTING("OS9X", "SPEEDLIMIT", os9x_speedlimit)
+	READ_INT_SETTING("OS9X", "VSYNC", os9x_vsync)
+	READ_INT_SETTING("OS9X", "SHOWFPS", os9x_showfps)
+	READ_INT_SETTING("OS9X", "CPUCLOCK", os9x_cpuclock)
+	READ_INT_SETTING("OS9X", "RENDER", os9x_render)
+	READ_INT_SETTING("OS9X", "SMOOTHING", os9x_smoothing)
+	READ_INT_SETTING("OS9X", "OBJ", os9x_OBJ)
+	READ_INT_SETTING("OS9X", "BG0", os9x_BG0)
+	READ_INT_SETTING("OS9X", "BG1", os9x_BG1)
+	READ_INT_SETTING("OS9X", "BG2", os9x_BG2)
+	READ_INT_SETTING("OS9X", "BG3", os9x_BG3)
+	READ_INT_SETTING("OS9X", "EASY", os9x_easy)
+	READ_INT_SETTING("OS9X", "FASTSPRITE", os9x_fastsprite)
+	READ_INT_SETTING("OS9X", "GAMMAVALUE", os9x_gammavalue)
+	READ_INT_SETTING("OS9X", "HACK", os9x_hack)
+	READ_INT_SETTING("OS9X", "FORCEPAL_NTSC", os9x_forcepal_ntsc)
+	READ_INT_SETTING("OS9X", "AUTOSAVETIMER", os9x_autosavetimer)
+	READ_INT_SETTING("OS9X", "INPUTS", os9x_inputs[0])
+	strcpy(rom_name, get_value("CONFIG", "NAME"));
+	READ_INT_SETTING("OS9X", "AUTOSAVESRAM", os9x_autosavesram)
+	READ_INT_SETTING("OS9X", "SCREENTOP", os9x_screenTop)
+	READ_INT_SETTING("OS9X", "SCREENLEFT", os9x_screenLeft)
+	READ_INT_SETTING("OS9X", "SCREENWIDTH", os9x_screenWidth)
+	READ_INT_SETTING("OS9X", "SCREENHEIGHT", os9x_screenHeight)
+	READ_INT_SETTING("OS9X", "APU_RATIO", os9x_apu_ratio)
+	READ_INT_SETTING("OS9X", "PADINDEX", os9x_padindex)
+	READ_INT_SETTING("OS9X", "INPUTS_ANALOG", os9x_inputs_analog)
+	READ_INT_SETTING("OS9X", "FPSLIMIT", os9x_fpslimit)
+	READ_INT_SETTING("OS9X", "SA1_EXEC", os9x_SA1_exec)
+
+	if (l == 4) os9x_SA1_exec = l;
+	ini_end();
+
 	check_settings();
-	
+
 	rom_name[63]=0;	
-	sprintf(tmp_str,"Settings found!\n\n""%s""",rom_name);
-	msgBoxLines(tmp_str,30);
-	
-	
-		
+	sprintf(tmp_str, "Settings found!\n\n""%s""", rom_name);
+	msgBoxLines(tmp_str, 30);
+
+
+
 	return 0;
 }
 
@@ -441,25 +443,24 @@ int load_buffer_settings(char *buffer){
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 int save_settings(void){
-	FILE *f;
 	char tmp_str[256];
-	int l;	
-	sprintf(tmp_str,"%ss9xTYL.ini",LaunchDir);
-	f = fopen(tmp_str,"wb");			
-	if (!f){
-		ErrorMsg("cannot save settings");
-		return -1;
-	}
-	l=(VERSION_MAJOR<<16)|VERSION_MINOR;
-	fwrite(&l,1,4,f);	
-	fwrite(romPath,1,256,f);
-	fwrite(lastRom,1,256,f);
-	fwrite(&os9x_menumusic,1,4,f);
-	fwrite(&os9x_menufx,1,4,f);
-	fwrite(&os9x_usballowed,1,4,f);	
-	fwrite(&bg_img_num,1,4,f);
-	fwrite(&os9x_menupadbeep,1,4,f);
-	fclose(f);
+
+#define SAVE_INT_SETTING(sec, key, value) \
+	sprintf(tmp_str, "%d", value); \
+	_append(sec, key, tmp_str, "");
+	
+	init_content();
+	add_section("CONFIG", "");
+	SAVE_INT_SETTING("CONFIG", "BG_IMG_NUM", bg_img_num);
+	add_section("ROM", "");
+	_append("ROM", "PATH", romPath, "");
+	_append("ROM", "LASTROM", lastRom, "");
+	add_section("OS9X", "");
+	SAVE_INT_SETTING("OS9X", "MENUMUSIC", os9x_menumusic);
+	SAVE_INT_SETTING("OS9X", "MENUFX", os9x_menufx);
+	SAVE_INT_SETTING("OS9X", "USBALLOWED", os9x_usballowed);
+	SAVE_INT_SETTING("OS9X", "MENUPADBEEP", os9x_menupadbeep);
+	save_as("s9xTYL.ini");
 	return 0;
 }
 
@@ -467,40 +468,16 @@ int save_settings(void){
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 int load_settings(void){
-	FILE *f;
-	char tmp_str[256];
-	int l;
-	sprintf(tmp_str,"%ss9xTYL.ini",LaunchDir);
-	f = fopen(tmp_str,"rb");			
-	if (!f){
-		//debug_log("cannot load settings");
-		return -1;
-	}
-	fread(&l,1,4,f);
-	if (l<((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
-		msgBoxLines("ini file from previous version, ignored!",20);
-		fclose(f);
-		return -2;
-	}
-		
-#define READ_SETTING(a) \
-if (fread(&l,1,4,f)==4) a=l; \
-else {fclose(f);return -3;}
-
-//not bigger than tmp_str size, 256
-#define READ_SETTING_SIZE(buff,sz) \
-if (fread(tmp_str,1,sz,f)==sz) memcpy(buff,tmp_str,sz); \
-else {fclose(f);return -3;}
-	
-	READ_SETTING_SIZE(romPath,256)	
-	READ_SETTING_SIZE(lastRom,256)	
-	READ_SETTING(os9x_menumusic)
-	READ_SETTING(os9x_menufx)
-	READ_SETTING(os9x_usballowed)
-	READ_SETTING(bg_img_num)
-	READ_SETTING(os9x_menupadbeep)
-	
-	fclose(f);
+	ini_start("s9xTYL.ini");
+	if (get_last_error() != NULL) return 0;
+	bg_img_num = atoi(get_value("CONFIG", "BG_IMG_NUM"));
+	strcpy(romPath, get_value("ROM", "PATH"));
+	strcpy(lastRom, get_value("ROM", "LASTROM"));
+	os9x_menumusic = atoi(get_value("OS9X", "MENUMUSIC"));
+	os9x_menufx = atoi(get_value("OS9X", "MENUFX"));
+	os9x_usballowed = atoi(get_value("OS9X", "USBALLOWED"));
+	os9x_menupadbeep = atoi(get_value("OS9X", "MENUPADBEEP"));
+	ini_end();
 	return 0;
 }
 
