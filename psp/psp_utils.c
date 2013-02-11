@@ -194,7 +194,7 @@ void show_background(int mul,int add){
 //crc = 0 for default
 int save_rom_settings(int game_crc32,char *name){
 	char tmp_str[256];
-	init_content();			
+	init_content();
 	if (get_last_error() != NULL){
 		ErrorMsg("cannot save settings");
 		return -1;
@@ -243,9 +243,9 @@ int save_rom_settings(int game_crc32,char *name){
 	SAVE_INT_SETTING("OS9X", "FPSLIMIT", &os9x_fpslimit)
 	SAVE_INT_SETTING("OS9X", "SA1_EXEC", &os9x_SA1_exec)
 
-	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
-	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
-	save_as("s9xTYL.ini");
+	if (game_crc32)	sprintf(tmp_str,"PROFILES/s9xTYL_%08X.ini", game_crc32);
+	else strcpy(tmp_str, "PROFILES/s9xTYL_default.ini");
+	save_as(tmp_str);
 	return 0;
 }
 
@@ -260,15 +260,16 @@ int load_rom_settings(int game_crc32){
 #define READ_INT_SETTING(sec, key, value) \
 	value = atoi(get_value(sec, key));
 
-	READ_INT_SETTING("CONFIG", "VERSION", l)
-
 	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
 	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
-	ini_start(tmp_str);
-	if (get_last_error() != NULL){
+
+	if (!ini_start(tmp_str)){
 		//debug_log("cannot load settings");
 		return -1;
 	}
+
+	READ_INT_SETTING("CONFIG", "VERSION", l)
+
 	if (l < ((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
 		msgBoxLines("ini file from a previous incompatible version, ignored!",20);
 		ini_end();
@@ -468,8 +469,7 @@ int save_settings(void){
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 int load_settings(void){
-	ini_start("s9xTYL.ini");
-	if (get_last_error() != NULL) return 0;
+	if (!ini_start("s9xTYL.ini")) return 0;
 	bg_img_num = atoi(get_value("CONFIG", "BG_IMG_NUM"));
 	strcpy(romPath, get_value("ROM", "PATH"));
 	strcpy(lastRom, get_value("ROM", "LASTROM"));

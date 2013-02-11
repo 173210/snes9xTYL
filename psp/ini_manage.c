@@ -58,7 +58,6 @@ void ini_end()
 //  [10/18/2005]
 bool load(const char *filename)
 {
-	char filepath[256];
 	FILE *in_stream;
 	char buffer[255];
 	char comments[1024];
@@ -72,9 +71,12 @@ bool load(const char *filename)
 	strcpy(current_section,"");
 	error_msg = NULL;
 
-	if(strchr(filename, ":") == NULL) sprintf(filepath,"%s%s", LaunchDir, filename);
-	else strcpy(filepath, filename);
-	if( (in_stream = fopen( filepath, "r" )) != NULL )
+	if(strchr(filename, ":") == NULL) {
+	char filepath[256];
+	sprintf(filepath,"%s%s", LaunchDir, filename);
+	in_stream = fopen( filepath, "r" );
+	} else in_stream = fopen( filename, "r" );
+	if(in_stream != NULL )
 	{
 		while(fgets(buffer,sizeof(buffer),in_stream) != NULL)
 		{
@@ -152,7 +154,7 @@ bool _save(const char *filename)
 	error_msg = NULL;
 	
 	if(strchr(filename, ":") == NULL) sprintf(filepath,"%s%s", LaunchDir, filename);
-	else strcpy(filepath, filename);
+	else strncpy(filepath, filename, 256);
 	if( (stream = fopen(filepath, "w" )) == NULL )
 	{
 		error_msg = "open file error";
@@ -263,6 +265,7 @@ char *get_last_error()
 //  [10/18/2005]
 void init_content()
 {
+	error_msg = NULL;
 	ini_content = (content *)malloc(sizeof(content));
 	
 	if(ini_content == NULL)
