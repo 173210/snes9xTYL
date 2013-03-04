@@ -41,7 +41,7 @@ tile.o tile_org.o tile_sw.o tile_psp.o unzip.o cheats.o cheats2.o apu.o spc700.o
 
 PLATFORMOBJ   = psp/psp.o psp/psp_ui.o psp/config.o psp/psplib.o psp/pg.o psp/psp_msg.o \
 	psp/filer.o psp/menu.o psp/imageio.o psp/blitter.o psp/decrypt.o psp/img_jpeg.o psp/ram.o  \
-	psp/menu_fx.o psp/ini_manage.o
+	psp/menu_fx.o
 	
 MEOBJ =	psp/me/mestub.o psp/me/me.o psp/me/mem64.o
 
