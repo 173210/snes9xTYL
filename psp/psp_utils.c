@@ -571,7 +571,7 @@ void getsysparam(){
 	
 	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE,&iVal)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
 		//get language		
-		/*switch(iVal) {
+		switch(iVal) {
 				case(PSP_SYSTEMPARAM_LANGUAGE_JAPANESE):
 					os9x_language=LANGUAGE_JAPANESE;
 					break;				
@@ -582,7 +582,7 @@ void getsysparam(){
 				default:
 					os9x_language=LANGUAGE_ENGLISH;
 					break;				
-		}*/
+		}
 	}			   
 }
 

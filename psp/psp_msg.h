@@ -184,7 +184,4 @@
 int psp_msg(int num,int len);
 char *psp_msg_string(int num);
 
-void save_msg_list(char *fname);
-void load_msg_list(char *fname);
-
 #endif
