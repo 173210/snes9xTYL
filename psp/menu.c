@@ -3003,31 +3003,31 @@ int menu_credits(char *mode) {
 		if (!g_bLoop) {retval=1;break;} 
 		
 		mh_printLimit(menu_panel_pos+5,15,479,272,"Code : YoyoFR & Laxer3a",CODE_COL);
-		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,30,479-40,30,CODE2_COL);
-		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,31,479-40,31,CODE3_COL);
+		mh_printLimit(menu_panel_pos+5,25,479,272,"Mod : 173210, Ruka & 33(76)",CODE_COL);
+		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,40,479-40,40,CODE2_COL);
+		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,41,479-40,41,CODE3_COL);
 		
-		mh_printLimit(menu_panel_pos+5,40,479,272,"Splines based on PSPSDK samples",GFX_COL);
-		mh_printLimit(menu_panel_pos+5,50,479,272,"Logo, some bgs : Pochi",GFX_COL);
-		mh_printLimit(menu_panel_pos+5,60,479,272,"Other bgs from internet",GFX_COL);
-		mh_printLimit(menu_panel_pos+5,70,479,272,"(various artists)",GFX_COL);
-		mh_printLimit(menu_panel_pos+5,80,479,272,"Icons : David Vignoni",GFX_COL);
-		mh_printLimit(menu_panel_pos+5,90,479,272,"        (KDE nuvola theme)",GFX_COL);
-		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,105,479-40,105,GFX2_COL);
-		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,106,479-40,106,GFX3_COL);
+		mh_printLimit(menu_panel_pos+5,50,479,272,"Splines based on PSPSDK samples",GFX_COL);
+		mh_printLimit(menu_panel_pos+5,60,479,272,"Logo, some bgs : Pochi",GFX_COL);
+		mh_printLimit(menu_panel_pos+5,70,479,272,"Other bgs from internet",GFX_COL);
+		mh_printLimit(menu_panel_pos+5,80,479,272,"(various artists)",GFX_COL);
+		mh_printLimit(menu_panel_pos+5,90,479,272,"Icons : David Vignoni",GFX_COL);
+		mh_printLimit(menu_panel_pos+5,100,479,272,"        (KDE nuvola theme)",GFX_COL);
+		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,115,479-40,115,GFX2_COL);
+		if (menu_panel_pos+5+40<479-40) pgDrawFrame(menu_panel_pos+5+40,116,479-40,116,GFX3_COL);
 
-		mh_printLimit(menu_panel_pos+5,113,479,272,"Greetings to (no order) : ",GREETINGS0_COL);
-		mh_printLimit(menu_panel_pos+5,125,479,272,"snes9x authors",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,135,479,272,"bifuteki (first snes9x port on PSP)",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,145,479,272,"zelurker",GREETINGS_COL);		
-		mh_printLimit(menu_panel_pos+5,155,479,272,"tinnus",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,165,479,272,"thunderz",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,175,479,272,"smith",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,185,479,272,"Y",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,195,479,272,"radius",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,205,479,272,"Chris Swindle",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,215,479,272,"Danzel",GREETINGS_COL);		
-		mh_printLimit(menu_panel_pos+5,225,479,272,"ps2dev community",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,235,479,272,"psp homebrew coders",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,123,479,272,"Greetings to (no order) : ",GREETINGS0_COL);
+		mh_printLimit(menu_panel_pos+5,135,479,272,"snes9x authors",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,145,479,272,"bifuteki (first snes9x port on PSP)",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,155,479,272,"zelurker",GREETINGS_COL);		
+		mh_printLimit(menu_panel_pos+5,165,479,272,"tinnus",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,175,479,272,"thunderz",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,185,479,272,"smith",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,195,479,272,"Y",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,205,479,272,"radius",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,215,479,272,"Chris Swindle",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,225,479,272,"Danzel",GREETINGS_COL);		
+		mh_printLimit(menu_panel_pos+5,235,479,272,"ps2dev community, psp homebrew coders",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,245,479,272,"donators & supporters ^=^",GREETINGS_COL);
 		
     
