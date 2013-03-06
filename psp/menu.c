@@ -1412,7 +1412,7 @@ int menu_clockspeed(char *mode) {
 	int to_exit=0;
 	int new_value=os9x_cpuclock;
 	
-	if (mode) {sprintf(mode,"%dMhz",os9x_cpuclock);return 0;}
+	if (mode) {sprintf(mode,"%dMHz",os9x_cpuclock);return 0;}
 	
 	menu_panel_pos=479;
 	menu_cnt2=0;
@@ -1420,7 +1420,7 @@ int menu_clockspeed(char *mode) {
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
 		
-    sprintf(str_tmp,"%dMhz",new_value);
+    sprintf(str_tmp,"%dMHz",new_value);
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    
@@ -2047,7 +2047,7 @@ int menu_loadstate(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 	
 	menu_cnt2=0;	
-	msgBoxLines(psp_msg_string(MENU_STATE_SCANNING),0);	
+	psp_msg(MENU_STATE_SCANNING,MSG_DEFAULT);	
 	for (i=0;i<10;i++) {
 		if (i==10) strcpy(ext,".zat");
   	else {
@@ -2227,7 +2227,7 @@ int menu_savestate(char *mode) {
 	
 	menu_cnt2=0;
 	
-	msgBoxLines(psp_msg_string(MENU_STATE_SCANNING),0);
+	psp_msg(MENU_STATE_SCANNING,MSG_DEFAULT);
 	
 	for (i=0;i<10;i++) {
 		if (i==10) strcpy(ext,".zat");
@@ -2405,7 +2405,7 @@ int menu_deletestate(char *mode) {
 	
 	menu_cnt2=0;
 	
-	msgBoxLines(psp_msg_string(MENU_STATE_SCANNING),0);
+	psp_msg(MENU_STATE_SCANNING,MSG_DEFAULT);
 	
 	for (i=0;i<10;i++) {
 		if (i==10) strcpy(ext,".zat");
@@ -2589,7 +2589,7 @@ int menu_addRAWcode(char *mode) {
     uint8 byte = (uint8) data;
 		cheats_modified=1;
 		if (S9xAddCheat(1,1,address,byte)) {
-			msgBoxLines(psp_msg_string(ERR_ADD_CODE),60);
+			psp_msg(ERR_ADD_CODE,MSG_DEFAULT);
 		} else {
 			sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 			menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -2624,7 +2624,7 @@ int menu_addGGcode(char *mode) {
 			//add code to list
 			cheats_modified=1;
 			if (S9xAddCheat(1,1,address,byte)) {
-				msgBoxLines(psp_msg_string(ERR_ADD_CODE),60);
+				psp_msg(ERR_ADD_CODE,MSG_DEFAULT);
 			} else {
 				sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 				menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -2657,7 +2657,7 @@ int menu_addPARcode(char *mode) {
 			//add code to list
 			cheats_modified=1;
 			if (S9xAddCheat(1,1,address,byte)) {
-				msgBoxLines(psp_msg_string(ERR_ADD_CODE),60);
+				psp_msg(ERR_ADD_CODE,MSG_DEFAULT);
 			} else {
 				sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 				menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -2691,7 +2691,7 @@ int menu_addGFcode(char *mode) {
 			cheats_modified=1;
 			for (c = 0; c < num_bytes; c++) {
 			  if (S9xAddCheat (1, 1, address + c, bytes [c])) {
-			  	msgBoxLines(psp_msg_string(ERR_ADD_CODE),60); break;
+			  	psp_msg(ERR_ADD_CODE,MSG_DEFAULT); break;
 				} else {
 					sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 					menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -3057,7 +3057,7 @@ int menu_versioninfos(char *mode) {
 		mh_printLimit(menu_panel_pos+5,104+15,479,272,str_tmp,GFX_COL);
 		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_GCCVER),__VERSION__);
 		mh_printLimit(menu_panel_pos+5,104+30,479,272,str_tmp,GREETINGS0_COL);
-		sprintf(str_tmp,"CRC32 %x",g_ROMCRC32);
+		sprintf(str_tmp,"CRC32 : %#X",g_ROMCRC32);
 		mh_printLimit(menu_panel_pos+5,104+45,479,272,str_tmp,GREETINGS0_COL);
             
     if (to_exit) {
@@ -3330,7 +3330,7 @@ void menu_drawFrame(int selected) {
 		if (os9x_menumusic) menu_stopmusic();
 		sceGuDisplay(0);
 //20080420
-//		scePowerSetClockFrequency(111,111,55); //set to 66Mhz
+//		scePowerSetClockFrequency(111,111,55); //set to 66MHz
 #endif			
 		while(g_bSleep) pgWaitVn(10);			//wait 16*10 ms
 #ifdef ME_SOUND						
@@ -3565,7 +3565,7 @@ void menu_inputName(char *name) {
 	
 //	danzeff_load16(LaunchDir);
 	if (!danzeff_isinitialized()) {
-		msgBoxLines(psp_msg_string(ERR_INIT_OSK),20);
+		psp_msg(ERR_INIT_OSK,MSG_DEFAULT);
 	} else {
 		danzeff_moveTo(20,20);
 		exit_osk=0;
@@ -3777,11 +3777,11 @@ int root_menu(void) {
 #ifndef FW3X
 					os9x_usballowed=!os9x_usballowed;
         	if (os9x_usballowed) {
-        		msgBoxLines(psp_msg_string(INFO_USB_ON),30);
+        		psp_msg(INFO_USB_ON,MSG_DEFAULT);
         		initUSBdrivers();
         	}
         	else {
-        		msgBoxLines(psp_msg_string(INFO_USB_OFF),30);
+        		psp_msg(INFO_USB_OFF,MSG_DEFAULT);
         		endUSBdrivers();
         	}
 #endif

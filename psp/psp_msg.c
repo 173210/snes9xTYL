@@ -89,8 +89,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
   	{MENU_STATE_SCANNING,"Scanning used slots...",0},
 
 
-  	{ERR_INIT_OSK,"cannot init OSK",0},
-  	{ERR_ADD_CODE,"Cannot add cheat code, too many already enterred!",0},
+  	{ERR_INIT_OSK,"cannot init OSK",20},
+  	{ERR_ADD_CODE,"Cannot add cheat code, too many already enterred!",60},
   	
   	{MENU_CHEATS_ENTERGF,"Enter a GoldFinger code",0},
   	{MENU_CHEATS_ENTERPAR,"Enter a Pro Action Replay code",0},
@@ -359,8 +359,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
   	{MENU_STATE_SCANNING,"使用済みスロットを調べています...",0},
   	
   	  	
-  	{ERR_INIT_OSK,"OSKを初期化できません",0},
-  	{ERR_ADD_CODE,"チートコードを追加できません。既に入力されているコードが多すぎます。",0},
+  	{ERR_INIT_OSK,"OSKを初期化できません",20},
+  	{ERR_ADD_CODE,"チートコードを追加できません。既に入力されているコードが多すぎます。",60},
   	
   	{MENU_CHEATS_ENTERGF,"GoldFingerコードを入力してください",0},
   	{MENU_CHEATS_ENTERPAR,"プロアクションリプレイコードを入力してください",0},
