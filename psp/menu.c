@@ -197,25 +197,25 @@ int menu_screencalibrate(char *mode){
 				guClear(272*4/3,272);
 				guDrawBuffer(snes_image,256,os9x_snesheight,256,272*4/3,272);
 				break;
-			case 3:	
+			case 3:
 				guClear(320*272/os9x_snesheight,272);
 				guDrawBuffer(snes_image,256,os9x_snesheight,256,320*272/os9x_snesheight,272);
 				break;
-			case 4:	
+			case 4:
 				guClear(480,272);
 				guDrawBuffer(snes_image,256,os9x_snesheight,256,480,272);
 				break;
-			case 5:	
+			case 5:
 				guClear(480,272);
 				guDrawBuffer(snes_image,256,os9x_snesheight-16,256,480,272);
 				break;
 		}
-		sprintf(st,"PAD : SCREEN POSITION  " SJIS_STAR "  ANALOG STICK : SCREEN SIZE  " SJIS_STAR "  " SJIS_TRIANGLE " default  " SJIS_STAR "  " SJIS_CROSS " Exit");
+		sprintf(st,psp_msg_string(MENU_STATUS_VIDEO_SCRCALIB));
 		mh_print(8-1,262-1,st,(8<<10)|(8<<5)|(16<<0));
 		mh_print(8,262,st,(29<<10)|(29<<5)|(31<<0));
-		
+
 		//wait for a press
-								
+
 			oldpaddata.Buttons=paddata.Buttons;
 			oldpaddata.Lx=paddata.Lx;
 			oldpaddata.Ly=paddata.Ly;
@@ -286,8 +286,8 @@ int loadstate(){
   char ext[10];
   
   if (slot_occupied) {
-  	if (!inputBox(psp_msg_string(MENU_STATE_CONFIRMLOAD))) return 0;  
-  	msgBoxLines(psp_msg_string(MENU_STATE_ISLOADING),10);
+  	if (!psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) return 0;
+  	psp_msg(MENU_STATE_ISLOADING,MSG_DEFAULT);
   	if (state_slot==10) strcpy(ext,".zat");
   	else {
   		strcpy(ext,".za0");
@@ -296,7 +296,7 @@ int loadstate(){
   	os9x_load(ext);
   	return 1;
   }
-  msgBoxLines(psp_msg_string(MENU_STATE_NOSTATE),10);
+  psp_msg(MENU_STATE_NOSTATE,MSG_DEFAULT);
   return 0;
 }
 
@@ -304,17 +304,17 @@ int deletestate(){
   char ext[10];
   
   if (slot_occupied) {
-  	if (!inputBox(psp_msg_string(MENU_STATE_CONFIRMDELETE))) return 0;  
-  	msgBoxLines("Deleting...",10);
+  	if (!psp_msg(MENU_STATE_CONFIRMDELETE,MSG_DEFAULT)) return 0;
+  	psp_msg(MENU_STATE_ISDELETING,MSG_DEFAULT);
   	if (state_slot==10) strcpy(ext,".zat");
   	else {
   		strcpy(ext,".za0");
   		ext[3]=state_slot+48;
   	}
-  	os9x_remove(ext);  	
+  	os9x_remove(ext);
   	return 1;
   }
-  msgBoxLines(psp_msg_string(MENU_STATE_NOSTATE),10);
+  psp_msg(MENU_STATE_NOSTATE,MSG_DEFAULT);
   return 0;
 }
 
@@ -322,9 +322,9 @@ int savestate(){
   char ext[10];
   if (os9x_lowbat) return;
   if (slot_occupied) {
-  	if (!inputBox(psp_msg_string(MENU_STATE_CONFIRMSAVE))) return 0;
+  	if (!psp_msg(MENU_STATE_CONFIRMSAVE,MSG_DEFAULT)) return 0;
   }
-  msgBoxLines(psp_msg_string(MENU_STATE_ISSAVING),10);
+  psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
   if (state_slot==10) strcpy(ext,".zat");
   else {
   	strcpy(ext,".za0");
@@ -336,7 +336,7 @@ int savestate(){
 
 int menu_reset(char *mode){	
 	if (mode) {mode[0]=0;return 0;}
-	if (!inputBox(psp_msg_string(MENU_GAME_CONFIRMRESET))) return 0;
+	if (!psp_msg(MENU_GAME_CONFIRMRESET,MSG_DEFAULT)) return 0;
 	if (!os9x_lowbat) os9x_savesram();
   S9xReset();
   return 1;
@@ -350,31 +350,31 @@ int menu_browser(char *mode){
 
 int menu_snapshot(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
-	msgBoxLines(psp_msg_string(MENU_MISC_SAVINGJPEG),10);
-	if (!os9x_lowbat) os9x_savesnap();	
+	psp_msg(MENU_MISC_SAVINGJPEG,MSG_DEFAULT);
+	if (!os9x_lowbat) os9x_savesnap();
 	return 0;
 }
 
-int menu_importstate(char *mode) {	
-	char statefilename[256];	
+int menu_importstate(char *mode) {
+	char statefilename[256];
 	if (mode) {mode[0]=0;return 0;}
-		
+
 	if (getNoExtFilePath(statefilename,1)==1) {
 		debug_log(statefilename);
-		if (!inputBox(psp_msg_string(MENU_STATE_CONFIRMLOAD))) return 0;
-		msgBoxLines(psp_msg_string(MENU_STATE_ISIMPORTING),10);
-		return os9x_loadfname(statefilename);		
+		if (!psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) return 0;
+		psp_msg(MENU_STATE_ISIMPORTING,MSG_DEFAULT);
+		return os9x_loadfname(statefilename);
 	}
 	return 0;
 }
 
-int menu_exportS9Xstate(char *mode) {		
+int menu_exportS9Xstate(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
-			
-  if (os9x_lowbat) return;  
-  msgBoxLines(psp_msg_string(MENU_STATE_ISEXPORTINGS9X),10);  
-  os9x_S9Xsave(".000");    
-  return 0;				
+
+  if (os9x_lowbat) return;
+  psp_msg(MENU_STATE_ISEXPORTINGS9X,MSG_DEFAULT);
+  os9x_S9Xsave(".000");
+  return 0;
 }
 
 
@@ -530,14 +530,14 @@ int menu_viewfile(char *mode) {
 				p=strrchr(filename,'/');
 				if (!p) p=filename;
 				else p=p+1;
-					
-					
+
+
 				viewfile_pos=scroll_message(msg_lines,lines,viewfile_pos,0,p);
-				
-				
-				//free 'linified' message				
+
+
+				//free 'linified' message			
 				free(txtdata);
-				free(msg_lines);	
+				free(msg_lines);
 				fx_init();
 			}
 		}
@@ -548,8 +548,8 @@ int menu_viewfile(char *mode) {
 
 int menu_savedefaultsetting(char *mode){
 	if (mode) {mode[0]=0;return 0;}
-		
-	msgBoxLines(psp_msg_string(MENU_GAME_SAVINGDEFAULTSETTINGS),30);
+
+	psp_msg(MENU_GAME_SAVINGDEFAULTSETTINGS,MSG_DEFAULT);
 	if (!os9x_lowbat) save_rom_settings(0,"default");
 	return 0;
 }
@@ -690,33 +690,29 @@ int show_debugmenu(char *mode) {
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Main menu \5,\7 to select ,\6,\b to change value");
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
-    mh_print(8,0,"[" EMUNAME_VERSION "] - Menu",TITLE_COL);
+    mh_print(8,0,psp_msg_string(MENU_TITLE_MISC_HACKDEBUG),TITLE_COL);
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Return game \5,\7 to select ,\6,\b to change value");
     {
     	char status_bar[100];
-    	if (os9xpsp_debugmenu[sel].menu_func) strcpy(status_bar,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " Main Menu   ");
-    	else strcpy(status_bar,SJIS_CROSS " Main Menu   ");
+    	if (os9xpsp_debugmenu[sel].menu_func) strcpy(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_FUNC));
+    	else strcpy(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG));
     	if (os9xpsp_debugmenu[sel].help_index>=0) {
     		switch ((cpt>>3)&7) {
+			case 0:
     			case 7:
-    				strcat(status_bar,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_0));break;
+			case 1:
     			case 6:
-    				strcat(status_bar,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 5:
-    				strcat(status_bar,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 4:
-    				strcat(status_bar,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 3:
-    				strcat(status_bar,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_1));break;
     			case 2:
-    				strcat(status_bar,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 1:
-    				strcat(status_bar,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 0:
-    				strcat(status_bar,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
+			case 5:
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_2));break;
+    			case 3:
+			case 4:
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_3));break;
     		}
     	}
-    	else strcat(status_bar,SJIS_STAR "    " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");
+    	else strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG));
     	mh_print(8,262,  status_bar,INFOBAR_COL);
 		}
 
@@ -893,7 +889,7 @@ int show_inputsmenu(char *mode) {
 			// wait for no button pressed
 			while (get_pad()) pgWaitV();
 			//message asking a button press
-			sprintf(st,"Press a button for %s",os9xpsp_inputsmenu[sel].label);
+			sprintf(st,psp_msg_string(MENU_CONTROLS_INPUT_PRESS),os9xpsp_inputsmenu[sel].label);
 			msgBoxLines(st,0);
 			//wait for a press
 			while (1) {
@@ -952,7 +948,7 @@ int show_inputsmenu(char *mode) {
 #else
       //check menu access button
     	if (inputs_MENU==PSP_BUTTONS_TOTAL) {
-    		msgBoxLines("No button defined for MENU Access!\nPlease choose one",30);
+    		psp_msg(MENU_CONTROLS_INPUT_NOFORMENU,MSG_DEFAULT);
     	}
       else {
         retval= 0;
@@ -984,7 +980,7 @@ int show_inputsmenu(char *mode) {
     		if (os9xpsp_inputsmenu[sel].value_index<os9xpsp_inputsmenu[sel].values_list_size-1) os9xpsp_inputsmenu[sel].value_index++;
     		*(os9xpsp_inputsmenu[sel].value_int)=os9xpsp_inputsmenu[sel].values_list[os9xpsp_inputsmenu[sel].value_index];    		
     		
-    		if (sel==0) {    			
+    		if (sel==0) {
     			if (!os9x_inputs_analog) {
     				rebuild_entries=1;
     				os9x_inputs[PSP_AUP]=os9x_inputs[PSP_ADOWN]=os9x_inputs[PSP_ALEFT]=os9x_inputs[PSP_ARIGHT]=0;
@@ -995,22 +991,9 @@ int show_inputsmenu(char *mode) {
     else if(new_pad & PSP_CTRL_SELECT) { //default profile
     	char st[256];
     	SceCtrlData paddata;
-#ifdef HOME_HOOK
-    	sprintf(st,"Choose a default profile : \n\n"\
-       SJIS_CROSS " - Default, SNES pad mapped to PSP pad.\n\n"\
-    	 SJIS_CIRCLE " - Default, SNES pad mapped to PSP stick.\n\n"\
-    	 SJIS_SQUARE " - Default, SNES pad mapped to PSP pad&stick.\n\n"\
-       SJIS_TRIANGLE " Cancel\n");
-#else
-      sprintf(st,"Choose a default profile : \n\n"\
-    	 SJIS_CROSS " - Default, SNES pad mapped to PSP pad. GUI on stick left.\n\n"\
-    	 SJIS_CIRCLE " - Default, SNES pad mapped to PSP stick. GUI on pad left.\n\n"\
-    	 SJIS_SQUARE " - Default, SNES pad mapped to PSP pad&stick. GUI on LTrg.+RTrg.\n\n"\
-       SJIS_TRIANGLE " Cancel\n");
-#endif
-    	msgBoxLines(st,0);
+    	psp_msg(MENU_CONTROLS_INPUT_DEFAULT,MSG_DEFAULT);
     	// wait for no button pressed
-			while (get_pad()) pgWaitV();			
+			while (get_pad()) pgWaitV();
 			//wait for a press
 			while (1) {
 				sceCtrlPeekBufferPositive(&paddata, 1);
@@ -1020,7 +1003,7 @@ int show_inputsmenu(char *mode) {
 			//wait for release
 			while (get_pad()) pgWaitV();
 			//now analyse press
-			if (paddata.Buttons & PSP_CTRL_CROSS) { //default pad				
+			if (paddata.Buttons & PSP_CTRL_CROSS) { //default pad
 				rebuild_entries=1;
 				memset(os9x_inputs,0,sizeof(os9x_inputs));
 				os9x_inputs[PSP_UP]=SNES_UP_MASK;
@@ -1103,35 +1086,31 @@ int show_inputsmenu(char *mode) {
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Main menu \5,\7 to select ,\6,\b to change value");
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
-    mh_print(8,0,"[" EMUNAME_VERSION "] - Inputs Config",TITLE_COL);
+    mh_print(8,0,psp_msg_string(MENU_TITLE_CONTROLS_INPUT),TITLE_COL);
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Return game \5,\7 to select ,\6,\b to change value");
     //mh_print(8,262,SJIS_CIRCLE " OK " SJIS_CROSS " Back to Game       " SJIS_STAR "       " SJIS_TRIANGLE " Help        " SJIS_STAR "       " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",INFOBAR_COL);
     {
     	char status_bar[100];
     	/*if (os9xpsp_debugmenu[sel].menu_func) strcpy(status_bar,SJIS_CIRCLE " OK ");
     	else strcpy(status_bar,"");*/
-    	strcpy(status_bar,SJIS_CIRCLE " Detect mode   " SJIS_STAR "  " SJIS_CROSS " Menu  ");
+    	strcpy(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT));
     	if (os9xpsp_inputsmenu[sel].help_index>=0) {
     		switch ((cpt>>3)&7) {
+			case 0:
     			case 7:
-    				strcat(status_bar,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 6:
-    				strcat(status_bar,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 5:
-    				strcat(status_bar,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 4:
-    				strcat(status_bar,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 3:
-    				strcat(status_bar,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 2:
-    				strcat(status_bar,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_0));break;
     			case 1:
-    				strcat(status_bar,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
-    			case 0:
-    				strcat(status_bar,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value");break;
+			case 6:
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_1));break;
+    			case 2:
+			case 5:
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_2));break;
+    			case 3:
+			case 4:
+    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_3));break;
     		}
     	}
-    	else strcat(status_bar,SJIS_STAR "  " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value  " SJIS_STAR "  SELECT default profiles");
+    	else strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_0));
     	mh_print(8,262,  status_bar,INFOBAR_COL);
 		}
 
@@ -1211,32 +1190,32 @@ int show_inputsmenu(char *mode) {
 void show_batteryinfo(void){
 	static int update_infos=0;
 	static char bat_info[128];
-	
+
 	if ( !((update_infos>>3)&1) ) {
 		struct tm *tsys;
-	  time_t cur_time;	  
+	  time_t cur_time;
 	  //get current time
-		sceKernelLibcTime(&cur_time);						
+		sceKernelLibcTime(&cur_time);
 		cur_time+=os9x_timezone*60+os9x_daylsavings*3600;
-		tsys=localtime(&cur_time);				    	
+		tsys=localtime(&cur_time);
 		if (scePowerIsBatteryExist()) {
 			//if exists battery, gather infos
-			char bat_time[16];	
+			char bat_time[16];
 	  	int batteryLifeTime = scePowerGetBatteryLifeTime();
-	  	if (batteryLifeTime>=0) sprintf(bat_time,"(%02dh%02dm)",batteryLifeTime/60, batteryLifeTime-(batteryLifeTime/60*60));
+	  	if (batteryLifeTime>=0) sprintf(bat_time,psp_msg_string(MENU_TITLE_GENERIC_BAT_TIME),batteryLifeTime/60, batteryLifeTime-(batteryLifeTime/60*60));
 		  else bat_time[0]=0;
-	   	sprintf(bat_info,"%02d%c%02d Bat.:%s%s%s%02d%%%s Tmp.%dC",    		
+	   	sprintf(bat_info,psp_msg_string(MENU_TITLE_GENERIC_BAT),
 		   		tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min,
-	   			(scePowerIsPowerOnline()?"Plg.":""),
-	   			(scePowerIsBatteryCharging()?"Chrg.":""),
-		   		(scePowerIsLowBattery()?"Low!":""),
+	   			(scePowerIsPowerOnline()?psp_msg_string(MENU_TITLE_GENERIC_BAT_PLG):""),
+	   			(scePowerIsBatteryCharging()?psp_msg_string(MENU_TITLE_GENERIC_BAT_CHRG):""),
+		   		(scePowerIsLowBattery()?psp_msg_string(MENU_TITLE_GENERIC_BAT_LOW):""),
 		   		scePowerGetBatteryLifePercent(),
 		   		bat_time,
-		  		scePowerGetBatteryTemp());	    		    			
+		  		scePowerGetBatteryTemp());
 		} else {
 			sprintf(bat_info,"%02d%c%02d",tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min);
 		}
-		
+
 		menu_free_ram=ramAvailable()/1024;
   }
   update_infos++;
@@ -1353,33 +1332,33 @@ void menu_basic(int selected) {
 		old_pad=new_pad;   	
   }
   else pad_cnt--;
-  	
+
   //add the 'X to return' message at bottom
-	mh_printCenter(262,"Press " SJIS_CROSS " to return",INFOBAR_COL);
-	
-	{		
-		sprintf(str_tmp,"Free RAM : %dKo",menu_free_ram);	
+	mh_printCenter(262,psp_msg_string(MENU_STATUS_GENERIC_MSG1),INFOBAR_COL);
+
+	{
+		sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_FREERAM),menu_free_ram);
 		mh_print(480-mh_length(str_tmp),262,str_tmp,INFOBAR_COL);
 	}
-	if (menu_music) {		
-		sprintf(str_tmp,"SELECT to change music");
+	if (menu_music) {
+		sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_CHANGEMUSIC));
 		mh_print(13,262,str_tmp,INFOBAR_COL);
 	}
-  	
+
   //right panel
-  if (selected==2) { //in  			
+  if (selected==2) { //in
 		if (menu_panel_pos>280) {
 			menu_panel_pos=479-round( (479-280 + 10)*sin(3.14159*menu_cnt2/12)*sin(3.14159*menu_cnt2/12)*sin(3.14159*menu_cnt2/12) );
 			if (menu_panel_pos<280) menu_panel_pos=280;
 		}
-    pgFillBoxHalfer(menu_panel_pos,14,479,272-15);        
+    pgFillBoxHalfer(menu_panel_pos,14,479,272-15);
 	  pgDrawFrame(menu_panel_pos-1,14,menu_panel_pos-1,272-15,12|(12<<5)|(12<<10));
 	  pgDrawFrame(menu_panel_pos-2,14,menu_panel_pos-2,272-15,24|(24<<5)|(24<<10));
 	  pgDrawFrame(menu_panel_pos-3,14,menu_panel_pos-3,272-15,31|(31<<5)|(31<<10));
   }
   if (selected==3) { //out
   	//add the 'X to return' message at bottom
-		
+
 		if (menu_panel_pos<479) {
 			menu_panel_pos=479-round( (479-280)*cos(3.14159*menu_cnt2/12)*cos(3.14159*menu_cnt2/12)*cos(3.14159*menu_cnt2/12) );
 			if (menu_panel_pos>479) menu_panel_pos=479;
@@ -1413,12 +1392,12 @@ void menu_basic(int selected) {
 	    pgDrawFrame(menu_music_panel_pos+2,271-33,menu_music_panel_pos+2,271,24|(24<<5)|(24<<10));
 	    pgDrawFrame(menu_music_panel_pos+3,271-34,menu_music_panel_pos+3,271,31|(31<<5)|(31<<10));	    
 	    
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-30,"Playing : ",PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length("Playing : "),271-30,menu_music_gametitle,PANEL_BUTTONCMD_COL);    
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-20,"Title : ",PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length("Title : "),271-20,menu_music_songname,PANEL_BUTTONCMD_COL);    	    
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-10,"Author : ",PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length("Author : "),271-10,menu_music_author,PANEL_BUTTONCMD_COL);    
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-30,psp_msg_string(MENU_MISC_BGMUSIC_GAMETITLE),PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_GAMETITLE)),271-30,menu_music_gametitle,PANEL_BUTTONCMD_COL);    
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-20,psp_msg_string(MENU_MISC_BGMUSIC_TITLE),PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_TITLE)),271-20,menu_music_songname,PANEL_BUTTONCMD_COL);    	    
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-10,psp_msg_string(MENU_MISC_BGMUSIC_AUTHOR),PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_AUTHOR)),271-10,menu_music_author,PANEL_BUTTONCMD_COL);    
 	  }
 	  //check music
 	  if (OSPC_IsFinished()) {
@@ -1443,10 +1422,10 @@ int menu_clockspeed(char *mode) {
 		
     sprintf(str_tmp,"%dMhz",new_value);
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,140,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
     
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1492,19 +1471,19 @@ int menu_clockspeed(char *mode) {
 	int retval=0;\
 	int to_exit=0;\
 	int new_value=label;\
-	if (mode) {sprintf(mode,"%s",(label?"yes":"no"));return 0;}\
+	if (mode) {sprintf(mode,"%s",(label?psp_msg_string(MENU_YES):psp_msg_string(MENU_NO)));return 0;}\
 	menu_panel_pos=479;\
 	menu_cnt2=0;\
 	for (;;) {		\
 		menu_basic(2+to_exit);\
 		if (!g_bLoop) {retval=1;break;} \
 		\
-    sprintf(str_tmp,"%s",(new_value?"yes":"no"));\
+    sprintf(str_tmp,"%s",(new_value?psp_msg_string(MENU_YES):psp_msg_string(MENU_NO)));\
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));\
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);\
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);\
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    \
-    mh_printLimit(menu_panel_pos+5,140,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);\
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    \
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);\
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    \
         \
     if (to_exit) {\
     	if (menu_panel_pos>=479) return 0;\
@@ -1566,12 +1545,12 @@ int menu_videomode(char *mode) {
 	int new_value=os9x_render;
 	if (mode) {
 			switch (os9x_render) {
-			case 0:sprintf(mode,"1:1");break;
-			case 1:sprintf(mode,"zoom fit");break;
-			case 2:sprintf(mode,"zoom 4/3");break;
-			case 3:sprintf(mode,"zoom wide");break;
-			case 4:sprintf(mode,"fullscreen");break;
-			case 5:sprintf(mode,"fullscreen clipped");break;
+			case 0:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_1_1));break;
+			case 1:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_ZOOM_FIT));break;
+			case 2:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_ZOOM_4_3RD));break;
+			case 3:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_ZOOM_WIDE));break;
+			case 4:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN));break;
+			case 5:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN_CLIPPED));break;
 		}
 		return 0;
 	}
@@ -1583,19 +1562,19 @@ int menu_videomode(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 		
 		switch (new_value) {
-			case 0:sprintf(str_tmp,"1:1");break;
-			case 1:sprintf(str_tmp,"zoom fit");break;
-			case 2:sprintf(str_tmp,"zoom 4/3");break;
-			case 3:sprintf(str_tmp,"zoom wide");break;
-			case 4:sprintf(str_tmp,"fullscreen");break;
-			case 5:sprintf(str_tmp,"fullscreen clipped");break;
+			case 0:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_1_1));break;
+			case 1:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_ZOOM_FIT));break;
+			case 2:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_ZOOM_4_3RD));break;
+			case 3:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_ZOOM_WIDE));break;
+			case 4:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN));break;
+			case 5:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN_CLIPPED));break;
 		}
     
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,140,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1632,11 +1611,11 @@ int menu_engine(char *mode) {
 	int new_value=os9x_softrendering;
 	if (mode) {		
 		switch (os9x_softrendering) {
-			case 0:sprintf(mode,"approx. software");break;
-			case 1:sprintf(mode,"accur. software");break;
-			case 2:sprintf(mode,"PSP accelerated");break;
-			case 3:sprintf(mode,"PSP accel. + accur. soft.");break;
-			case 4:sprintf(mode,"PSP accel. + approx. soft.");break;			
+			case 0:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_APPROX));break;
+			case 1:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCUR));break;
+			case 2:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL));break;
+			case 3:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_ACCUR));break;
+			case 4:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_APPROX));break;
 		}		
 		return 0;
 	}
@@ -1648,18 +1627,18 @@ int menu_engine(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 		
 		switch (new_value) {
-			case 0:sprintf(str_tmp,"approx. software");break;
-			case 1:sprintf(str_tmp,"accur. software");break;
-			case 2:sprintf(str_tmp,"PSP accelerated");break;
-			case 3:sprintf(str_tmp,"PSP accel. + accur. soft.");break;
-			case 4:sprintf(str_tmp,"PSP accel. + approx. soft.");break;			
+			case 0:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_APPROX));break;
+			case 1:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCUR));break;
+			case 2:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL));break;
+			case 3:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_ACCUR));break;
+			case 4:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_APPROX));break;
 		}
     
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,140,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1724,10 +1703,10 @@ int menu_soundmode(char *mode) {
 		}
 				    
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,140,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1776,10 +1755,10 @@ int menu_soundfreq(char *mode){
 		
 		sprintf(str_tmp,"%dHz",new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,140,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1837,12 +1816,12 @@ int menu_gamma(char *mode){
 		
 		sprintf(str_tmp,"%d",new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,"   default value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1881,7 +1860,7 @@ int menu_fskip(char *mode){
 	int new_value=os9x_fskipvalue;
 	if (mode) {				
 		if (os9x_fskipvalue<10) sprintf(mode,"%d",os9x_fskipvalue);
-		else sprintf(mode,"AUTO");
+		else sprintf(mode,psp_msg_string(MENU_VIDEO_FSKIP_AUTO));
 		return 0;
 	}
 	
@@ -1892,14 +1871,14 @@ int menu_fskip(char *mode){
 		if (!g_bLoop) {retval=1;break;} 
 		
 		if (new_value<10) sprintf(str_tmp,"%d",new_value);
-		else sprintf(str_tmp,"AUTO");
+		else sprintf(str_tmp,psp_msg_string(MENU_VIDEO_FSKIP_AUTO));
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,"   default value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1938,7 +1917,7 @@ int menu_emulinput(char *mode){
 	int new_value=os9x_padindex;
 	
 	if (mode) {				
-		sprintf(mode,"Joypad #%d",new_value);
+		sprintf(mode,psp_msg_string(MENU_CONTROLS_INPUT),new_value);
 		return 0;
 	}
 	
@@ -1948,12 +1927,12 @@ int menu_emulinput(char *mode){
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;} 
 		
-		sprintf(str_tmp,"Joypad #%d",new_value);
+		sprintf(str_tmp,psp_msg_string(MENU_CONTROLS_INPUT),new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2006,8 +1985,8 @@ int menu_autosavetimer(char *mode){
 	int to_exit=0;
 	int new_value=os9x_autosavetimer;
 	if (mode) {				
-		if (os9x_autosavetimer) sprintf(mode,"every %dmin.",os9x_autosavetimer);
-		else sprintf(mode,"off");
+		if (os9x_autosavetimer) sprintf(mode,psp_msg_string(MENU_STATE_AUTOSAVETIMER),os9x_autosavetimer);
+		else sprintf(mode,psp_msg_string(MENU_STATE_AUTOSAVETIMER_OFF));
 		return 0;
 	}
 	
@@ -2017,15 +1996,15 @@ int menu_autosavetimer(char *mode){
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;} 
 		
-		if (new_value) sprintf(str_tmp,"every %dmin.",new_value);
-		else sprintf(str_tmp,"off");
+		if (new_value) sprintf(str_tmp,psp_msg_string(MENU_STATE_AUTOSAVETIMER),new_value);
+		else sprintf(str_tmp,psp_msg_string(MENU_STATE_AUTOSAVETIMER_OFF));
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,"   default value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,"  ,   cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2905,7 +2884,7 @@ int menu_removeallcodes(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 		
 	if (!(Cheat.num_cheats)) return 0;
-	if (!inputBox("Remove all codes ?")) return 0;
+	if (!psp_msg(MENU_CHEATS_CONFIRMREMALL,MSG_DEFAULT)) return 0;
 	cheats_modified=1;
 	S9xDeleteCheats();
 	return 0;
@@ -2961,14 +2940,14 @@ void menu_startmusic(){
 		if (strlen(OSPC_GameTitle())) strcpy(menu_music_gametitle,OSPC_GameTitle());
 		else strncpy(menu_music_gametitle,str_tmp,33);
 		if (strlen(OSPC_SongName())) strcpy(menu_music_songname,OSPC_SongName());
-		else strcpy(menu_music_songname,"unknown");
+		else strcpy(menu_music_songname,psp_msg_string(MENU_MISC_BGMUSIC_UNKNOWN));
 		if (strlen(OSPC_Author())) strcpy(menu_music_author,OSPC_Author());
-		else strcpy(menu_music_author,"unknown");
+		else strcpy(menu_music_author,psp_msg_string(MENU_MISC_BGMUSIC_UNKNOWN));
 		
-		menu_music_panel_size=mh_length(menu_music_gametitle)+mh_length("Playing : ")+10;
-		l=mh_length(menu_music_songname)+mh_length("Title : ")+10;
+		menu_music_panel_size=mh_length(menu_music_gametitle)+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_GAMETITLE))+10;
+		l=mh_length(menu_music_songname)+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_TITLE))+10;
 		if (l>menu_music_panel_size) menu_music_panel_size=l;			
-		l=mh_length(menu_music_author)+mh_length("Author : ")+10;
+		l=mh_length(menu_music_author)+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_AUTHOR))+10;
 		if (l>menu_music_panel_size) menu_music_panel_size=l;
 		
 		menu_music_panel_pos=-menu_music_panel_size;
@@ -3074,9 +3053,9 @@ int menu_versioninfos(char *mode) {
 #else
 		mh_printLimit(menu_panel_pos+5,104,479,272,EMUNAME_VERSION,CODE_COL);
 #endif		
-		sprintf(str_tmp,"Build on %s",__TIMESTAMP__);
+		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_TIMESTAMP),__TIMESTAMP__);
 		mh_printLimit(menu_panel_pos+5,104+15,479,272,str_tmp,GFX_COL);
-		sprintf(str_tmp,"With GCC %s",__VERSION__);
+		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_GCCVER),__VERSION__);
 		mh_printLimit(menu_panel_pos+5,104+30,479,272,str_tmp,GREETINGS0_COL);
 		sprintf(str_tmp,"CRC32 %x",g_ROMCRC32);
 		mh_printLimit(menu_panel_pos+5,104+45,479,272,str_tmp,GREETINGS0_COL);
@@ -3103,7 +3082,7 @@ int menu_fpslimit(char *mode) {
 	int new_value=os9x_fpslimit;
 	if (mode) {				
 		if (os9x_fpslimit) sprintf(mode,"%dfps",os9x_fpslimit);
-		else sprintf(mode,"AUTO (detect PAL/NTSC)");
+		else sprintf(mode,psp_msg_string(MENU_VIDEO_SLIMITVALUE_AUTO));
 		return 0;
 	}
 	
@@ -3114,14 +3093,14 @@ int menu_fpslimit(char *mode) {
 		if (!g_bLoop) {retval=1;break;} 
 		
 		if (new_value) sprintf(str_tmp,"%dfps",new_value);
-		else sprintf(str_tmp,"AUTO (detect PAL/NTSC)");
+		else sprintf(str_tmp,psp_msg_string(MENU_VIDEO_SLIMITVALUE_AUTO));
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value -  ,  fast",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,140,479,272,"   default value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,150,479,272,"   ,    cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT "   " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT "   " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3181,12 +3160,12 @@ int menu_apuratio(char *mode) {
 		sprintf(str_tmp,"%.2f%%",(float)new_value*100.0f/256.0f);
 		
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,"  ,   change value -  ,  fast",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,140,479,272,"   default value",PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);    
-    mh_printLimit(menu_panel_pos+5,150,479,272,"   ,    cancel -    validate",PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT "   " SJIS_CROSS "          " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
+    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT "   " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    
         
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3890,7 +3869,7 @@ int root_menu(void) {
 					}
 					else {
 						retval=0;
-						msgBoxLines("Not yet implemented.\n\n",0);
+						psp_msg(MENU_NOT_IMPLEMENTED,MSG_DEFAULT);
 						for (;;) {
 							new_pad=get_pad();
 							if (new_pad&PSP_CTRL_CROSS) break;
