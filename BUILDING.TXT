@@ -1,12 +1,14 @@
 BUILDING
 ============================
 
-To build the me version, type "make me"
-To build with homehook, add "home"
-To build with adhoc, add "adhoc"
+To build the user version
+--------------------------
+To build without homehook and adhoc, type "make user"
+To build with homehook, type "make home"
+To build with adhoc, type "make adhoc"
 
-(eg.)
-"make home" - make with homehook(non-me -> user version)
-"make mehome" - make the me version with homehook
-
-To build the user version without homehook and adhoc, type "make user"
+To build the me version
+--------------------------
+To build without homehook and adhoc, type "make me"
+To build with homehook, type "make home"
+To build with homehook and adhoc, type "make mehomeadhoc"
