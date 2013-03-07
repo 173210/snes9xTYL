@@ -290,7 +290,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 //japanese
 		//error
 		{ERR_OUT_OF_MEM,"メモリ外です。",60},
-		{ERR_READ_MEMSTICK,"メモリースティックの読み込みでエラーが発生しました。\nメモリースティックを確認してください。\n(PCのカードリーダーを使ってください)\nメモリースティックが破損している可能性があります。",60},
+		{ERR_READ_MEMSTICK,"メモリースティックの読み込みでエラーが発生しました。\nメモリースティックを確認してください。\n(PCのカードリーダーを使ってください)\nメモリースティックが破損している可能\性があります。",60},
 		//confirm
   	{ASK_EXIT,"Snes9XTYLを終了しますか?",-2},
   	{ASK_DELETE,"ファイルを削除しますか?",-2},
@@ -376,7 +376,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_STATE_ISDELETING,"削除しています...",10},
 	{MENU_STATE_ISIMPORTING,"ステートセーブをインポートしています...",10},
 	{MENU_STATE_ISEXPORTINGS9X,"SNES9Xステートセーブをエクスポートしています...",10},
-	{MENU_STATE_NOSTATE,"使用可能なステートセーブがありません",10},
+	{MENU_STATE_NOSTATE,"使用可能\なステートセーブがありません",10},
 	{MENU_STATE_AUTOSAVETIMER,"%d分毎",0},
 	{MENU_STATE_AUTOSAVETIMER_OFF,"オフ",0},
 	{MENU_GAME_SAVINGDEFAULTSETTINGS,"現在の設定を標準設定として保存しています",30},
@@ -411,7 +411,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 
 	{MENU_ICONS_LOADSAVE_AUTOSAVETIMER,"オートステートセーブタイマー",0},
 	{MENU_ICONS_LOADSAVE_AUTOSAVETIMER_HELP,"定期的にオートステートセーブを\nさせます。",0},
-	{MENU_ICONS_LOADSAVE_AUTOSRAM,"SRAMが更新されたときにオートセーブする",0},
+	{MENU_ICONS_LOADSAVE_AUTOSRAM,"SRAM更新時にオートセーブする",0},
 	{MENU_ICONS_LOADSAVE_AUTOSRAM_HELP,"変更が行われるたびにSRAMが\n保存されるようにします。",0},
 	// CONTROLS
 	{MENU_ICONS_CONTROLS,"コントローラ",0},
