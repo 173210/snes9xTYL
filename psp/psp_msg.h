@@ -250,6 +250,14 @@
 #define MENU_NO 0x42F5
 #define MENU_NOT_IMPLEMENTED 0x42F6
 
+//Adhoc
+#define ADHOC_CONNECTING 0x5000
+#define ADHOC_SELECTORRETURN 0x5001
+#define ADHOC_WAITING 0x5002
+#define ADHOC_REQUESTED 0x5003
+#define ADHOC_CONNECTED 0x5004
+#define ADHOC_STATE 0x5005
+
 int psp_msg(int num,int len);
 char *psp_msg_string(int num);
 

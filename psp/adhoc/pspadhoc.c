@@ -173,22 +173,22 @@ int adhocInit(char *MatchingData)
         // wait a little before polling again
         sceKernelDelayThread(50*1000); // 50ms
     }
-    printf2("Connected!\n");
-    
-    
+    psp_msg(ADHOC_CONNECTING, MSG_DEFAULT);
+
+
 	sceWlanGetEtherAddr(mac);
-	
-	
+
+
     printf2("sceNetAdhocPdpCreate\n");
-    
-    
+
+
 	pdpId = sceNetAdhocPdpCreate(mac,
 		     0x309,		// 0x309 in lumines
 		     0x400, 	// 0x400 in lumines
 		     0);		// 0 in lumines
 	if(pdpId <= 0)
 	{
-		
+
 		pspDebugScreenInit();
 		printf("pdpId = %x\n", pdpId);
 		return -1;
@@ -307,7 +307,7 @@ int adhocSelect(void)
 				//pspDebugScreenInit();
 				//pspDebugScreenPrintf("Select a server to connect to, or triangle to return\n\n\n");
 				pgFillAllvram(0);pgScreenFrame(2,0);
-				mh_print(0,0,"Select a server to connect to, or triangle to return",0xFFFF);
+				mh_print(0,0,psp_msg_string(ADHOC_SELECTORRETURN),0xFFFF);
 				
 				DisplayPspList();
 				
@@ -357,7 +357,7 @@ int adhocSelect(void)
 				
 				sceNetEtherNtostr(mac, tempStr);
 				//printf("Waiting for %s to accept the connection\nTo cancel press O\n", tempStr);
-				sprintf(str,"Waiting for %s to accept the connection\nTo cancel press O\n", tempStr);
+				sprintf(str,psp_msg_string(ADHOC_WAITING), tempStr);
 				mh_print(0,0,str,0xFFFF);
 				pgScreenFlipV();
 
@@ -395,7 +395,7 @@ int adhocSelect(void)
 				pgFillAllvram(0);pgScreenFrame(2,0);
 				
 				sceNetEtherNtostr(mac, tempStr);
-				sprintf(str,"%s has requested a connection\nTo accept the connection press X, to cancel press O\n", tempStr);
+				sprintf(str,psp_msg_string(ADHOC_REQUESTED), tempStr);
 				mh_print(0,0,str,0xFFFF);
 				pgScreenFlipV();
 
@@ -467,7 +467,7 @@ int adhocSelect(void)
 	//pspDebugScreenInit();
 	//pspDebugScreenPrintf("Connected\n");
 	pgFillAllvram(0);pgScreenFrame(2,0);
-	mh_print(0,0,"Connected",0xFFFF);
+	mh_print(0,0,psp_msg_string(ADHOC_CONNECTED),0xFFFF);
 	pgScreenFlipV();
 
 	return 0;
@@ -552,7 +552,7 @@ int adhocReconnect(char *ssid)
         }
         if (state > stateLast)
         {
-        	sprintf(temp,"  connection state %d of 1\n", state);
+        	sprintf(temp,psp_msg_string(ADHOC_STATE), state);
             printf2(temp);
             stateLast = state;
         }
@@ -577,7 +577,7 @@ int adhocReconnect(char *ssid)
 	g_NetAdhocctlConnect = true;
 	
     stateLast = -1;
-    printf2("Connecting...\n");
+    psp_msg(ADHOC_CONNECTING, MSG_DEFAULT);
     while (1)
     {
         int state;
@@ -591,7 +591,7 @@ int adhocReconnect(char *ssid)
         }
         if (state > stateLast)
         {
-        	sprintf(temp,"  connection state %d of 1\n", state);
+        	sprintf(temp,psp_msg_string(ADHOC_STATE), state);
             printf2(temp);
             stateLast = state;
         }

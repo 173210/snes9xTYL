@@ -11,36 +11,36 @@ typedef struct {
 	int msg_id;
 	char *msg;
 	int len;  // MSG_DEFAULT : to use default
-						// >=0 : wait for len frames, 
-					  //  -1 : wait for a confirmation before closing dialog
-					  //  -2 : yes/no dialog
+		  // >=0 : wait for len frames, 
+		  //  -1 : wait for a confirmation before closing dialog
+		  //  -2 : yes/no dialog
 } t_err_entry;
 
 t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 //english
-		//error
-		{ERR_OUT_OF_MEM,"Out of memory",60},
-		{ERR_READ_MEMSTICK,"Error reading memstick.\nPlease verify it (using a PC card reader), it may be corrupted.",60},
-		//confirm
-  	{ASK_EXIT,"Exit Snes9XTYL ?",-2},
-  	{ASK_DELETE,"Delete file ?",-2},
-  	//info
-  	{INFO_USB_ON,"USB activated",30},
-  	{INFO_USB_OFF,"USB disabled",30},
-  	{INFO_DELETING,"Deleting...",0},
-  	{INFO_EXITING,"Exiting, please wait...",0},
-  	//filer
-  	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  " SJIS_STAR "  " SJIS_CROSS " TO GAME  "  SJIS_STAR "  " SJIS_TRIANGLE " Par. dir.  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse",0},
-  	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " Parent dir.          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
-  	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " RUN " SJIS_CROSS "BACK TO GAME " SJIS_TRIANGLE " Parent dir.  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
-  	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " RUN " SJIS_TRIANGLE " Parent dir.                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
-  	
-  	{FILER_HELP_WINDOW1,"Press START to switch between",0},
-  	{FILER_HELP_WINDOW2,"NORMAL and NETPLAY mode.",0},
+	//error
+	{ERR_OUT_OF_MEM,"Out of memory",60},
+	{ERR_READ_MEMSTICK,"Error reading memstick.\nPlease verify it (using a PC card reader), it may be corrupted.",60},
+	//confirm
+	{ASK_EXIT,"Exit Snes9XTYL ?",-2},
+	{ASK_DELETE,"Delete file ?",-2},
+	//info
+	{INFO_USB_ON,"USB activated",30},
+	{INFO_USB_OFF,"USB disabled",30},
+	{INFO_DELETING,"Deleting...",0},
+	{INFO_EXITING,"Exiting, please wait...",0},
+	//filer
+	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  " SJIS_STAR "  " SJIS_CROSS " TO GAME  "  SJIS_STAR "  " SJIS_TRIANGLE " Par. dir.  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse",0},
+	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " Parent dir.          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " RUN " SJIS_CROSS "BACK TO GAME " SJIS_TRIANGLE " Parent dir.  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " RUN " SJIS_TRIANGLE " Parent dir.                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	
+	{FILER_HELP_WINDOW1,"Press START to switch between",0},
+	{FILER_HELP_WINDOW2,"NORMAL and NETPLAY mode.",0},
 #ifdef FW3X
-  	{FILER_HELP_WINDOW3," ",0},
+	{FILER_HELP_WINDOW3," ",0},
 #ifdef HOME_HOOK
-  	{FILER_HELP_WINDOW4,"Press HOME to exit.",0},
+	{FILER_HELP_WINDOW4,"Press HOME to exit.",0},
 #else
     {FILER_HELP_WINDOW4,"Press L+R to exit.",0},
 #endif
@@ -50,17 +50,17 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 #else
     {FILER_HELP_WINDOW3,"Press L+R to exit.",0},
 #endif
-  	{FILER_HELP_WINDOW4,"Press R to switch USB on/off.",0},
+	{FILER_HELP_WINDOW4,"Press R to switch USB on/off.",0},
 #endif
 
 
-  	{FILER_HELP_WINDOW5,"Press SELECT to delete file.",0},
-  	
-  	{FILE_IPS_PATCHSUCCESS,"IPS Patch applied successfully",0},
-  	
-  	{MENU_STATUS_GENERIC_MSG1,"Press " SJIS_CROSS " to return",0},
-  	{MENU_STATUS_GENERIC_NEEDRELOAD,"Changes may require a RELOAD to take effect",0},
-  	{MENU_STATUS_GENERIC_NEEDRESET,"Changes may require a RESET to take effect",0},
+	{FILER_HELP_WINDOW5,"Press SELECT to delete file.",0},
+	
+	{FILE_IPS_PATCHSUCCESS,"IPS Patch applied successfully",0},
+	
+	{MENU_STATUS_GENERIC_MSG1,"Press " SJIS_CROSS " to return",0},
+	{MENU_STATUS_GENERIC_NEEDRELOAD,"Changes may require a RELOAD to take effect",0},
+	{MENU_STATUS_GENERIC_NEEDRESET,"Changes may require a RESET to take effect",0},
 	{MENU_STATUS_GENERIC_FREERAM,"Free RAM : %dKo",0},
 	{MENU_STATUS_GENERIC_CHANGEMUSIC,"SELECT to change music",0},
 
@@ -78,27 +78,27 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_NO,"no",0},
 	{MENU_NOT_IMPLEMENTED,"Not yet implemented.\n\n",0},
 
-  	{MENU_SOUND_MODE_NOTEMUL,"not emulated",0},
+	{MENU_SOUND_MODE_NOTEMUL,"not emulated",0},
 	{MENU_SOUND_MODE_EMULOFF,"emulated, no output",0},
-  	{MENU_SOUND_MODE_EMULON,"emulated, output",0},
+	{MENU_SOUND_MODE_EMULON,"emulated, output",0},
 
-  	{MENU_STATE_CHOOSEDEL,"Choose a slot to DELETE",0},
-  	{MENU_STATE_CHOOSELOAD,"Choose a slot to LOAD",0},
-  	{MENU_STATE_CHOOSESAVE,"Choose a slot to SAVE",0},
-  	{MENU_STATE_FREESLOT,"FREE",0},
-  	{MENU_STATE_SCANNING,"Scanning used slots...",0},
+	{MENU_STATE_CHOOSEDEL,"Choose a slot to DELETE",0},
+	{MENU_STATE_CHOOSELOAD,"Choose a slot to LOAD",0},
+	{MENU_STATE_CHOOSESAVE,"Choose a slot to SAVE",0},
+	{MENU_STATE_FREESLOT,"FREE",0},
+	{MENU_STATE_SCANNING,"Scanning used slots...",0},
 
 
-  	{ERR_INIT_OSK,"cannot init OSK",20},
-  	{ERR_ADD_CODE,"Cannot add cheat code, too many already enterred!",60},
-  	
-  	{MENU_CHEATS_ENTERGF,"Enter a GoldFinger code",0},
-  	{MENU_CHEATS_ENTERPAR,"Enter a Pro Action Replay code",0},
-  	{MENU_CHEATS_ENTERGG,"Enter a Game Genie code",0},
-  	{MENU_CHEATS_ENTERRAW,"Enter a RAW code\nFormat is ADDRESS - NEW VALUE",0},
+	{ERR_INIT_OSK,"cannot init OSK",20},
+	{ERR_ADD_CODE,"Cannot add cheat code, too many already enterred!",60},
+	
+	{MENU_CHEATS_ENTERGF,"Enter a GoldFinger code",0},
+	{MENU_CHEATS_ENTERPAR,"Enter a Pro Action Replay code",0},
+	{MENU_CHEATS_ENTERGG,"Enter a Game Genie code",0},
+	{MENU_CHEATS_ENTERRAW,"Enter a RAW code\nFormat is ADDRESS - NEW VALUE",0},
 	{MENU_CHEATS_CONFIRMREMALL,"Remove all codes ?",-2},
 
-  	{MENU_STATE_CONFIRMLOAD,"Current game progress will be lost.\nContinue ?",-2},
+	{MENU_STATE_CONFIRMLOAD,"Current game progress will be lost.\nContinue ?",-2},
 	{MENU_STATE_CONFIRMDELETE,"Delete current state ?",-2},
 	{MENU_STATE_CONFIRMSAVE,"Overwrite current savestate ?",-2},
 	{MENU_STATE_ISLOADING,"Loading state...",10},
@@ -118,219 +118,228 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_MISC_BGMUSIC_AUTHOR,"Author : ",0},
 
 
-  	// GAME
-  	{MENU_ICONS_GAME,"GAME",0},
-  	{MENU_ICONS_GAME_RESET,"Reset SNES",0},
-  	{MENU_ICONS_GAME_NEW,"Load new game",0},
-		{MENU_ICONS_GAME_DEFAULTSETTINGS,"Make Settings DEFAULT",0},
-		{MENU_ICONS_GAME_DEFAULTSETTINGS_HELP,"Make current settings the default\nfor all roms when no specific\none exists",0},		
-		{MENU_ICONS_GAME_EXIT,"Exit Snes9xTYL",0},
-		// LOAD/SAVE
-		{MENU_ICONS_LOADSAVE,"LOAD/SAVE",0},
-		{MENU_ICONS_LOADSAVE_LOADSTATE,"Load state",0},
-		{MENU_ICONS_LOADSAVE_LOADSTATE_HELP,"Load a previously saved state.\nSavestate is like a snapshot\nof the snes state, everything\nis saved.",0},		
-		{MENU_ICONS_LOADSAVE_SAVESTATE,"Save state",0},
-		{MENU_ICONS_LOADSAVE_SAVESTATE_HELP,"Save state",0},
-		{MENU_ICONS_LOADSAVE_DELETESTATE,"Delete state",0},
-		{MENU_ICONS_LOADSAVE_DELETESTATE_HELP,"Delete state",0},
-		{MENU_ICONS_LOADSAVE_IMPORTSTATE,"Import state",0},
-		{MENU_ICONS_LOADSAVE_IMPORTSTATE_HELP,"Import a state from a previous\nversion or from uosnes9x.",0},		
-		
-		{MENU_ICONS_LOADSAVE_EXPORTS9XSTATE,"Export SNES9X state",0},
-		{MENU_ICONS_LOADSAVE_EXPORTS9XSTATE_HELP,"Export a state using SNES9X format.",0},		
-		
-		{MENU_ICONS_LOADSAVE_AUTOSAVETIMER,"Autosavestate timer",0},
-		{MENU_ICONS_LOADSAVE_AUTOSAVETIMER_HELP,"Allows to have an auto\nsavestate performed regularly.",0},		
-		{MENU_ICONS_LOADSAVE_AUTOSRAM,"Autosave updated SRAM",0},
-		{MENU_ICONS_LOADSAVE_AUTOSRAM_HELP,"Allows to have SRAM saved\nafter each change.",0},		
-		// CONTROLS	
-		{MENU_ICONS_CONTROLS,"CONTROLS",0},
-		{MENU_ICONS_CONTROLS_REDEFINE,"Redefine",0},
-		{MENU_ICONS_CONTROLS_REDEFINE_HELP,"Redefine buttons mapping.",0},
-		{MENU_ICONS_CONTROLS_INPUT,"Emulated input",0},	
-		{MENU_ICONS_CONTROLS_INPUT_HELP,"Choose current active\nsnes controller.",0},
+	// GAME
+	{MENU_ICONS_GAME,"GAME",0},
+	{MENU_ICONS_GAME_RESET,"Reset SNES",0},
+	{MENU_ICONS_GAME_NEW,"Load new game",0},
+	{MENU_ICONS_GAME_DEFAULTSETTINGS,"Make Settings DEFAULT",0},
+	{MENU_ICONS_GAME_DEFAULTSETTINGS_HELP,"Make current settings the default\nfor all roms when no specific\none exists",0},		
+	{MENU_ICONS_GAME_EXIT,"Exit Snes9xTYL",0},
+	// LOAD/SAVE
+	{MENU_ICONS_LOADSAVE,"LOAD/SAVE",0},
+	{MENU_ICONS_LOADSAVE_LOADSTATE,"Load state",0},
+	{MENU_ICONS_LOADSAVE_LOADSTATE_HELP,"Load a previously saved state.\nSavestate is like a snapshot\nof the snes state, everything\nis saved.",0},		
+	{MENU_ICONS_LOADSAVE_SAVESTATE,"Save state",0},
+	{MENU_ICONS_LOADSAVE_SAVESTATE_HELP,"Save state",0},
+	{MENU_ICONS_LOADSAVE_DELETESTATE,"Delete state",0},
+	{MENU_ICONS_LOADSAVE_DELETESTATE_HELP,"Delete state",0},
+	{MENU_ICONS_LOADSAVE_IMPORTSTATE,"Import state",0},
+	{MENU_ICONS_LOADSAVE_IMPORTSTATE_HELP,"Import a state from a previous\nversion or from uosnes9x.",0},
 
-		{MENU_CONTROLS_INPUT,"Joypad #%d",0},
-		{MENU_CONTROLS_INPUT_PRESS,"Press a button for %s",0},
-		{MENU_CONTROLS_INPUT_NOFORMENU,"No button defined for MENU Access!\nPlease choose one",30},
+	{MENU_ICONS_LOADSAVE_EXPORTS9XSTATE,"Export SNES9X state",0},
+	{MENU_ICONS_LOADSAVE_EXPORTS9XSTATE_HELP,"Export a state using SNES9X format.",0},
+
+	{MENU_ICONS_LOADSAVE_AUTOSAVETIMER,"Autosavestate timer",0},
+	{MENU_ICONS_LOADSAVE_AUTOSAVETIMER_HELP,"Allows to have an auto\nsavestate performed regularly.",0},
+	{MENU_ICONS_LOADSAVE_AUTOSRAM,"Autosave updated SRAM",0},
+	{MENU_ICONS_LOADSAVE_AUTOSRAM_HELP,"Allows to have SRAM saved\nafter each change.",0},
+	// CONTROLS
+	{MENU_ICONS_CONTROLS,"CONTROLS",0},
+	{MENU_ICONS_CONTROLS_REDEFINE,"Redefine",0},
+	{MENU_ICONS_CONTROLS_REDEFINE_HELP,"Redefine buttons mapping.",0},
+	{MENU_ICONS_CONTROLS_INPUT,"Emulated input",0},
+	{MENU_ICONS_CONTROLS_INPUT_HELP,"Choose current active\nsnes controller.",0},
+
+	{MENU_CONTROLS_INPUT,"Joypad #%d",0},
+	{MENU_CONTROLS_INPUT_PRESS,"Press a button for %s",0},
+	{MENU_CONTROLS_INPUT_NOFORMENU,"No button defined for MENU Access!\nPlease choose one",30},
 #ifdef HOME_HOOK
-		{MENU_CONTROLS_INPUT_DEFAULT,"Choose a default profile : \n\n"\
-					SJIS_CROSS " - Default, SNES pad mapped to PSP pad.\n\n"\
-					SJIS_CIRCLE " - Default, SNES pad mapped to PSP stick.\n\n"\
-					SJIS_SQUARE " - Default, SNES pad mapped to PSP pad&stick.\n\n"\
-					SJIS_TRIANGLE " Cancel\n",0},
+	{MENU_CONTROLS_INPUT_DEFAULT,"Choose a default profile : \n\n"\
+				SJIS_CROSS " - Default, SNES pad mapped to PSP pad.\n\n"\
+				SJIS_CIRCLE " - Default, SNES pad mapped to PSP stick.\n\n"\
+				SJIS_SQUARE " - Default, SNES pad mapped to PSP pad&stick.\n\n"\
+				SJIS_TRIANGLE " Cancel\n",0},
 #else
-		{MENU_CONTROLS_INPUT_DEFAULT,"Choose a default profile : \n\n"\
-					SJIS_CROSS " - Default, SNES pad mapped to PSP pad. GUI on stick left.\n\n"\
-					SJIS_CIRCLE " - Default, SNES pad mapped to PSP stick. GUI on pad left.\n\n"\
-					SJIS_SQUARE " - Default, SNES pad mapped to PSP pad&stick. GUI on LTrg.+RTrg.\n\n"\
-					SJIS_TRIANGLE " Cancel\n",0},
+	{MENU_CONTROLS_INPUT_DEFAULT,"Choose a default profile : \n\n"\
+				SJIS_CROSS " - Default, SNES pad mapped to PSP pad. GUI on stick left.\n\n"\
+				SJIS_CIRCLE " - Default, SNES pad mapped to PSP stick. GUI on pad left.\n\n"\
+				SJIS_SQUARE " - Default, SNES pad mapped to PSP pad&stick. GUI on LTrg.+RTrg.\n\n"\
+				SJIS_TRIANGLE " Cancel\n",0},
 #endif
 
-		{MENU_STATUS_CONTROLS_INPUT,SJIS_CIRCLE " Detect mode   " SJIS_STAR "  " SJIS_CROSS " Menu  ",0},
-		{MENU_STATUS_CONTROLS_INPUT_0,SJIS_STAR "  " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value  " SJIS_STAR "  SELECT default profiles",0},
-		{MENU_STATUS_CONTROLS_INPUT_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
-		{MENU_STATUS_CONTROLS_INPUT_HELP_1,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
-		{MENU_STATUS_CONTROLS_INPUT_HELP_2,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
-		{MENU_STATUS_CONTROLS_INPUT_HELP_3,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
+	{MENU_STATUS_CONTROLS_INPUT,SJIS_CIRCLE " Detect mode   " SJIS_STAR "  " SJIS_CROSS " Menu  ",0},
+	{MENU_STATUS_CONTROLS_INPUT_0,SJIS_STAR "  " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value  " SJIS_STAR "  SELECT default profiles",0},
+	{MENU_STATUS_CONTROLS_INPUT_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
+	{MENU_STATUS_CONTROLS_INPUT_HELP_1,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
+	{MENU_STATUS_CONTROLS_INPUT_HELP_2,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
+	{MENU_STATUS_CONTROLS_INPUT_HELP_3,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
 
-		{MENU_TITLE_CONTROLS_INPUT,"[" EMUNAME_VERSION "] - Inputs Config",0},
+	{MENU_TITLE_CONTROLS_INPUT,"[" EMUNAME_VERSION "] - Inputs Config",0},
 
-		// VIDEO OPTIONS
-		{MENU_ICONS_VIDEO,"VIDEO",0},
-		{MENU_ICONS_VIDEO_MODE,"Video mode",0},
-		{MENU_ICONS_VIDEO_MODE_HELP,"Change the aspect ratio\n4:3 is adviced",0},		
-		{MENU_ICONS_VIDEO_ENGINE,"Engine",0},	
-		{MENU_ICONS_VIDEO_ENGINE_HELP,"Hardware accelerated mode\nis not always the fastest",0},			
-		{MENU_ICONS_VIDEO_SLIMITONOFF,"Speed limit switch",0},
-		{MENU_ICONS_VIDEO_SLIMITONOFF_HELP,"Turn on to limit the speed\nof the game.",0},		
-		{MENU_ICONS_VIDEO_SLIMITVALUE,"Speed limit fps",0},
-		{MENU_ICONS_VIDEO_SLIMITVALUE_HELP,"Only used if speed limit\nhas been turned on.",0},		
-		{MENU_ICONS_VIDEO_FSKIP,"Frameskip",0},
-		{MENU_ICONS_VIDEO_FSKIP_HELP,"Choose a fixed value if you\nhave some sprites\ndisappearing.",0},		
-		{MENU_ICONS_VIDEO_SMOOTHING,"Smoothing",0},		
-		{MENU_ICONS_VIDEO_SMOOTHING_HELP,"Should be on since it costs\nnothing.",0},				
-		{MENU_ICONS_VIDEO_VSYNC,"VSync",0},
-		{MENU_ICONS_VIDEO_VSYNC_HELP,"This costs lots of fps\nand should be turned off.",0},		
-		{MENU_ICONS_VIDEO_PALASNTSC,"Render PAL as NTSC",0},
-		{MENU_ICONS_VIDEO_PALASNTSC_HELP,"Force PAL games to be emulated\nlike NTSC ones : 224 lines\ninstead of 240.",0},		
-		{MENU_ICONS_VIDEO_GAMMA,"Gamma correction",0},
-		{MENU_ICONS_VIDEO_GAMMA_HELP,"Allows brighter rendering",0},		
-		{MENU_ICONS_VIDEO_SCRCALIB,"Screen calibration",0},	
-		{MENU_ICONS_VIDEO_SCRCALIB_HELP,"Help to get rid of the nasty\nblack borders.",0},			
-		{MENU_ICONS_VIDEO_SHOWFPS,"Show FPS",0},
-		{MENU_ICONS_VIDEO_SHOWFPS_HELP,"First line is emulated frames\nSecond one is real fps.",0},
+	// VIDEO OPTIONS
+	{MENU_ICONS_VIDEO,"VIDEO",0},
+	{MENU_ICONS_VIDEO_MODE,"Video mode",0},
+	{MENU_ICONS_VIDEO_MODE_HELP,"Change the aspect ratio\n4:3 is adviced",0},
+	{MENU_ICONS_VIDEO_ENGINE,"Engine",0},
+	{MENU_ICONS_VIDEO_ENGINE_HELP,"Hardware accelerated mode\nis not always the fastest",0},
+	{MENU_ICONS_VIDEO_SLIMITONOFF,"Speed limit switch",0},
+	{MENU_ICONS_VIDEO_SLIMITONOFF_HELP,"Turn on to limit the speed\nof the game.",0},
+	{MENU_ICONS_VIDEO_SLIMITVALUE,"Speed limit fps",0},
+	{MENU_ICONS_VIDEO_SLIMITVALUE_HELP,"Only used if speed limit\nhas been turned on.",0},
+	{MENU_ICONS_VIDEO_FSKIP,"Frameskip",0},
+	{MENU_ICONS_VIDEO_FSKIP_HELP,"Choose a fixed value if you\nhave some sprites\ndisappearing.",0},
+	{MENU_ICONS_VIDEO_SMOOTHING,"Smoothing",0},
+	{MENU_ICONS_VIDEO_SMOOTHING_HELP,"Should be on since it costs\nnothing.",0},
+	{MENU_ICONS_VIDEO_VSYNC,"VSync",0},
+	{MENU_ICONS_VIDEO_VSYNC_HELP,"This costs lots of fps\nand should be turned off.",0},
+	{MENU_ICONS_VIDEO_PALASNTSC,"Render PAL as NTSC",0},
+	{MENU_ICONS_VIDEO_PALASNTSC_HELP,"Force PAL games to be emulated\nlike NTSC ones : 224 lines\ninstead of 240.",0},
+	{MENU_ICONS_VIDEO_GAMMA,"Gamma correction",0},
+	{MENU_ICONS_VIDEO_GAMMA_HELP,"Allows brighter rendering",0},
+	{MENU_ICONS_VIDEO_SCRCALIB,"Screen calibration",0},	
+	{MENU_ICONS_VIDEO_SCRCALIB_HELP,"Help to get rid of the nasty\nblack borders.",0},
+	{MENU_ICONS_VIDEO_SHOWFPS,"Show FPS",0},
+	{MENU_ICONS_VIDEO_SHOWFPS_HELP,"First line is emulated frames\nSecond one is real fps.",0},
 
-		{MENU_VIDEO_MODE_1_1,"1:1",0},
-		{MENU_VIDEO_MODE_ZOOM_FIT,"zoom fit",0},
-		{MENU_VIDEO_MODE_ZOOM_4_3RD,"zoom 4/3",0},
-		{MENU_VIDEO_MODE_ZOOM_WIDE,"zoom wide",0},
-		{MENU_VIDEO_MODE_FULLSCREEN,"fullscreen",0},
-		{MENU_VIDEO_MODE_FULLSCREEN_CLIPPED,"fullscreen clipped",0},
-		{MENU_VIDEO_ENGINE_APPROX,"approx. software",0},
-		{MENU_VIDEO_ENGINE_ACCUR,"accur. software",0},
-		{MENU_VIDEO_ENGINE_ACCEL,"PSP accelerated",0},
-		{MENU_VIDEO_ENGINE_ACCEL_ACCUR,"PSP accel. + accur. soft.",0},
-		{MENU_VIDEO_ENGINE_ACCEL_APPROX,"PSP accel. + approx. soft.",0},
-		{MENU_VIDEO_SLIMITVALUE_AUTO,"AUTO (detect PAL/NTSC)",0},
-		{MENU_VIDEO_FSKIP_AUTO,"AUTO",0},
+	{MENU_VIDEO_MODE_1_1,"1:1",0},
+	{MENU_VIDEO_MODE_ZOOM_FIT,"zoom fit",0},
+	{MENU_VIDEO_MODE_ZOOM_4_3RD,"zoom 4/3",0},
+	{MENU_VIDEO_MODE_ZOOM_WIDE,"zoom wide",0},
+	{MENU_VIDEO_MODE_FULLSCREEN,"fullscreen",0},
+	{MENU_VIDEO_MODE_FULLSCREEN_CLIPPED,"fullscreen clipped",0},
+	{MENU_VIDEO_ENGINE_APPROX,"approx. software",0},
+	{MENU_VIDEO_ENGINE_ACCUR,"accur. software",0},
+	{MENU_VIDEO_ENGINE_ACCEL,"PSP accelerated",0},
+	{MENU_VIDEO_ENGINE_ACCEL_ACCUR,"PSP accel. + accur. soft.",0},
+	{MENU_VIDEO_ENGINE_ACCEL_APPROX,"PSP accel. + approx. soft.",0},
+	{MENU_VIDEO_SLIMITVALUE_AUTO,"AUTO (detect PAL/NTSC)",0},
+	{MENU_VIDEO_FSKIP_AUTO,"AUTO",0},
 
-		{MENU_STATUS_VIDEO_SCRCALIB,"PAD : SCREEN POSITION  " SJIS_STAR "  ANALOG STICK : SCREEN SIZE  " SJIS_STAR "  " SJIS_TRIANGLE " default  " SJIS_STAR "  " SJIS_CROSS " Exit",0},
+	{MENU_STATUS_VIDEO_SCRCALIB,"PAD : SCREEN POSITION  " SJIS_STAR "  ANALOG STICK : SCREEN SIZE  " SJIS_STAR "  " SJIS_TRIANGLE " default  " SJIS_STAR "  " SJIS_CROSS " Exit",0},
 
-		// SOUND OPTIONS
-		{MENU_ICONS_SOUND,"SOUND",0},
-		{MENU_ICONS_SOUND_MODE,"Sound mode",0},
-		{MENU_ICONS_SOUND_MODE_HELP,"not emulated is the fastest\nbut some games won't run.",0},		
-		{MENU_ICONS_SOUND_FREQ,"Output frequency",0},
-		{MENU_ICONS_SOUND_FREQ_HELP,"The lower the faster\nThe higher the best sound quality",0},		
-		{MENU_ICONS_SOUND_APURATIO,"APU Cycles ratio",0},	
-		{MENU_ICONS_SOUND_APURATIO_HELP,"For advanced users knowing\nwhat they do.",0},			
-		// MISC OPTIONS
-		{MENU_ICONS_MISC,"MISC",0},	
-		{MENU_ICONS_MISC_FILEVIEWER,"View file",0},	
-		{MENU_ICONS_MISC_FILEVIEWER_HELP,"Minimalist file viewer",0},			
-		{MENU_ICONS_MISC_PSPCLOCK,"PSP Clockspeed",0},	
-		{MENU_ICONS_MISC_PSPCLOCK_HELP,"value>222Mhz is NOT overclocking\nit's safe but battery runs out\nfaster",0},			
-		{MENU_ICONS_MISC_HACKDEBUG,"Hack/debug menu",0},
-		{MENU_ICONS_MISC_HACKDEBUG_HELP,"For advanced users.\nHelp to tune the rendering and\ngain some speed.",0},		
-		{MENU_ICONS_MISC_SNAPSHOT,"Snapshot",0},
-		{MENU_ICONS_MISC_SNAPSHOT_HELP,"Take a snapshot of the current\ngame screen.\nUsed in file browser.",0},		
-		{MENU_ICONS_MISC_RANDBG,"Randomize BG",0},
-		{MENU_ICONS_MISC_RANDBG_HELP,"Randomize BG from the DATA/logo.zip\nfile.",0},		
-		{MENU_ICONS_MISC_BGMUSIC,"Menu background music",0},
-		{MENU_ICONS_MISC_BGMUSIC_HELP,"Menu background music requires\nmake PSP running at 300Mhz\nMusic are from DATA/music.zip file.\nSPC format only.",0},		
-		{MENU_ICONS_MISC_BGFX,"Menu background fx",0},	
-		{MENU_ICONS_MISC_BGFX_HELP,"Nice FX from PS2DEV spline sample.",0},			
-		{MENU_ICONS_MISC_PADBEEP,"Pad beep",0},	
-		{MENU_ICONS_MISC_PADBEEP_HELP,"The beep sounds when browsing\nmenu and files.",0},
+	// SOUND OPTIONS
+	{MENU_ICONS_SOUND,"SOUND",0},
+	{MENU_ICONS_SOUND_MODE,"Sound mode",0},
+	{MENU_ICONS_SOUND_MODE_HELP,"not emulated is the fastest\nbut some games won't run.",0},
+	{MENU_ICONS_SOUND_FREQ,"Output frequency",0},
+	{MENU_ICONS_SOUND_FREQ_HELP,"The lower the faster\nThe higher the best sound quality",0},
+	{MENU_ICONS_SOUND_APURATIO,"APU Cycles ratio",0},
+	{MENU_ICONS_SOUND_APURATIO_HELP,"For advanced users knowing\nwhat they do.",0},
+	// MISC OPTIONS
+	{MENU_ICONS_MISC,"MISC",0},
+	{MENU_ICONS_MISC_FILEVIEWER,"View file",0},
+	{MENU_ICONS_MISC_FILEVIEWER_HELP,"Minimalist file viewer",0},
+	{MENU_ICONS_MISC_PSPCLOCK,"PSP Clockspeed",0},
+	{MENU_ICONS_MISC_PSPCLOCK_HELP,"value>222Mhz is NOT overclocking\nit's safe but battery runs out\nfaster",0},
+	{MENU_ICONS_MISC_HACKDEBUG,"Hack/debug menu",0},
+	{MENU_ICONS_MISC_HACKDEBUG_HELP,"For advanced users.\nHelp to tune the rendering and\ngain some speed.",0},
+	{MENU_ICONS_MISC_SNAPSHOT,"Snapshot",0},
+	{MENU_ICONS_MISC_SNAPSHOT_HELP,"Take a snapshot of the current\ngame screen.\nUsed in file browser.",0},
+	{MENU_ICONS_MISC_RANDBG,"Randomize BG",0},
+	{MENU_ICONS_MISC_RANDBG_HELP,"Randomize BG from the DATA/logo.zip\nfile.",0},
+	{MENU_ICONS_MISC_BGMUSIC,"Menu background music",0},
+	{MENU_ICONS_MISC_BGMUSIC_HELP,"Menu background music requires\nmake PSP running at 300Mhz\nMusic are from DATA/music.zip file.\nSPC format only.",0},		
+	{MENU_ICONS_MISC_BGFX,"Menu background fx",0},
+	{MENU_ICONS_MISC_BGFX_HELP,"Nice FX from PS2DEV spline sample.",0},
+	{MENU_ICONS_MISC_PADBEEP,"Pad beep",0},
+	{MENU_ICONS_MISC_PADBEEP_HELP,"The beep sounds when browsing\nmenu and files.",0},
 
-		{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " Main Menu   ",0},
-		{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " Main Menu   ",0},
-		{MENU_STATUS_MISC_HACKDEBUG_0,SJIS_STAR "    " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
+	{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " Main Menu   ",0},
+	{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " Main Menu   ",0},
+	{MENU_STATUS_MISC_HACKDEBUG_0,SJIS_STAR "    " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
 
-		{MENU_STATUS_MISC_HACKDEBUG_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
-		{MENU_STATUS_MISC_HACKDEBUG_HELP_1,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
-		{MENU_STATUS_MISC_HACKDEBUG_HELP_2,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
-		{MENU_STATUS_MISC_HACKDEBUG_HELP_3,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
+	{MENU_STATUS_MISC_HACKDEBUG_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
+	{MENU_STATUS_MISC_HACKDEBUG_HELP_1,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
+	{MENU_STATUS_MISC_HACKDEBUG_HELP_2,SJIS_STAR "    " SJIS_TRIANGLE "     Help     " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
+	{MENU_STATUS_MISC_HACKDEBUG_HELP_3,SJIS_STAR "   " SJIS_TRIANGLE "       Help    " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
 
-		{MENU_TITLE_MISC_HACKDEBUG,"[" EMUNAME_VERSION "] - Menu",0},
+	{MENU_TITLE_MISC_HACKDEBUG,"[" EMUNAME_VERSION "] - Menu",0},
 
-		// CHEATS
-		{MENU_ICONS_CHEATS,"CHEATS",0},
-		{MENU_ICONS_CHEATS_ADDRAW,"Add a RAW code",0},
-		{MENU_ICONS_CHEATS_ADDRAW_HELP,"Add a RAW code",0},		
-		{MENU_ICONS_CHEATS_ADDGG,"Add a Game Genie code",0},
-		{MENU_ICONS_CHEATS_ADDGG_HELP,"Add a Game Genie code",0},		
-		{MENU_ICONS_CHEATS_ADDPAR,"Add a Pro Action Replay code",0},
-		{MENU_ICONS_CHEATS_ADDPAR_HELP,"Add a Pro Action Replay code",0},		
-		{MENU_ICONS_CHEATS_ADDGF,"Add a GoldFinger code",0},
-		{MENU_ICONS_CHEATS_ADDGF_HELP,"Add a GoldFinger code",0},		
-		{MENU_ICONS_CHEATS_DISABLE,"Disable code",0},
-		{MENU_ICONS_CHEATS_DISABLE_HELP,"Disable code",0},		
-		{MENU_ICONS_CHEATS_DISABLEALL,"Disable all codes",0},
-		{MENU_ICONS_CHEATS_DISABLEALL_HELP,"Disable all codes",0},		
-		{MENU_ICONS_CHEATS_ENABLE,"Enable code",0},
-		{MENU_ICONS_CHEATS_ENABLE_HELP,"Enable code",0},		
-		{MENU_ICONS_CHEATS_ENABLEALL,"Enable all codes",0},
-		{MENU_ICONS_CHEATS_ENABLEALL_HELP,"Enable all codes",0},		
-		{MENU_ICONS_CHEATS_REMOVE,"Remove code",0},
-		{MENU_ICONS_CHEATS_REMOVE_HELP,"Remove code",0},		
-		{MENU_ICONS_CHEATS_REMOVEALL,"Remove all codes",0},
-		{MENU_ICONS_CHEATS_REMOVEALL_HELP,"Remove all codes",0},		
-		// ABOUT
-		{MENU_ICONS_ABOUT,"ABOUT",0},
-		{MENU_ICONS_ABOUT_CREDITS,"Credits",0},
-		{MENU_ICONS_ABOUT_VERSION,"Version infos",0},
+	// CHEATS
+	{MENU_ICONS_CHEATS,"CHEATS",0},
+	{MENU_ICONS_CHEATS_ADDRAW,"Add a RAW code",0},
+	{MENU_ICONS_CHEATS_ADDRAW_HELP,"Add a RAW code",0},
+	{MENU_ICONS_CHEATS_ADDGG,"Add a Game Genie code",0},
+	{MENU_ICONS_CHEATS_ADDGG_HELP,"Add a Game Genie code",0},
+	{MENU_ICONS_CHEATS_ADDPAR,"Add a Pro Action Replay code",0},
+	{MENU_ICONS_CHEATS_ADDPAR_HELP,"Add a Pro Action Replay code",0},
+	{MENU_ICONS_CHEATS_ADDGF,"Add a GoldFinger code",0},
+	{MENU_ICONS_CHEATS_ADDGF_HELP,"Add a GoldFinger code",0},
+	{MENU_ICONS_CHEATS_DISABLE,"Disable code",0},
+	{MENU_ICONS_CHEATS_DISABLE_HELP,"Disable code",0},
+	{MENU_ICONS_CHEATS_DISABLEALL,"Disable all codes",0},
+	{MENU_ICONS_CHEATS_DISABLEALL_HELP,"Disable all codes",0},
+	{MENU_ICONS_CHEATS_ENABLE,"Enable code",0},
+	{MENU_ICONS_CHEATS_ENABLE_HELP,"Enable code",0},
+	{MENU_ICONS_CHEATS_ENABLEALL,"Enable all codes",0},
+	{MENU_ICONS_CHEATS_ENABLEALL_HELP,"Enable all codes",0},
+	{MENU_ICONS_CHEATS_REMOVE,"Remove code",0},
+	{MENU_ICONS_CHEATS_REMOVE_HELP,"Remove code",0},
+	{MENU_ICONS_CHEATS_REMOVEALL,"Remove all codes",0},
+	{MENU_ICONS_CHEATS_REMOVEALL_HELP,"Remove all codes",0},
+	// ABOUT
+	{MENU_ICONS_ABOUT,"ABOUT",0},
+	{MENU_ICONS_ABOUT_CREDITS,"Credits",0},
+	{MENU_ICONS_ABOUT_VERSION,"Version infos",0},
 
-		{MENU_ABOUT_VERSION_TIMESTAMP,"Build on %s",0},
-		{MENU_ABOUT_VERSION_GCCVER,"With GCC %s",0}
+	{MENU_ABOUT_VERSION_TIMESTAMP,"Build on %s",0},
+	{MENU_ABOUT_VERSION_GCCVER,"With GCC %s",0},
+
+
+	//Adhoc
+	{ADHOC_CONNECTING,"Connecting...\n",0},
+	{ADHOC_SELECTORRETURN,"Select a server to connect to, or triangle to return",0},
+	{ADHOC_WAITING,"Waiting for %s to accept the connection\nTo cancel press O\n",0},
+	{ADHOC_REQUESTED,"%s has requested a connection\nTo accept the connection press X, to cancel press O\n",0},
+	{ADHOC_CONNECTED,"Connected",0},
+	{ADHOC_STATE,"  connection state %d of 1\n",0}
 };
 
 t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 //japanese
-		//error
-		{ERR_OUT_OF_MEM,"メモリ外です。",60},
-		{ERR_READ_MEMSTICK,"メモリースティックの読み込みでエラーが発生しました。\nメモリースティックを確認してください。\n(PCのカードリーダーを使ってください)\nメモリースティックが破損している可能\性があります。",60},
-		//confirm
-  	{ASK_EXIT,"Snes9XTYLを終了しますか?",-2},
-  	{ASK_DELETE,"ファイルを削除しますか?",-2},
-  	//info
-  	{INFO_USB_ON,"USBが有効化されました",30},
-  	{INFO_USB_OFF,"USBが無効化されました",30},
-  	{INFO_DELETING,"削除しています...",0},
-  	{INFO_EXITING,"終了しています。しばらくお待ちください...",0},
-  	//filer
-  	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  " SJIS_CROSS " ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " 上へ  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " 移動",0},
-  	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " 上へ          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
-  	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " 実行 " SJIS_CROSS "ゲームに戻る " SJIS_TRIANGLE " 上へ  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
-  	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " 実行 " SJIS_TRIANGLE " 上へ                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
-  	
-  	{FILER_HELP_WINDOW1,"標準と通信対戦モードを切り替える",0},
-  	{FILER_HELP_WINDOW2,"にはSTARTを押してください",0},
+	//error
+	{ERR_OUT_OF_MEM,"メモリ外です。",60},
+	{ERR_READ_MEMSTICK,"メモリースティックの読み込みでエラーが発生しました。\nメモリースティックを確認してください。\n(PCのカードリーダーを使ってください)\nメモリースティックが破損している可能\性があります。",60},
+	//confirm
+	{ASK_EXIT,"Snes9XTYLを終了しますか?",-2},
+	{ASK_DELETE,"ファイルを削除しますか?",-2},
+	//info
+	{INFO_USB_ON,"USBが有効化されました",30},
+	{INFO_USB_OFF,"USBが無効化されました",30},
+	{INFO_DELETING,"削除しています...",0},
+	{INFO_EXITING,"終了しています。しばらくお待ちください...",0},
+	//filer
+	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  " SJIS_CROSS " ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " 上へ  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " 移動",0},
+	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " 上へ          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " 実行 " SJIS_CROSS "ゲームに戻る " SJIS_TRIANGLE " 上へ  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " 実行 " SJIS_TRIANGLE " 上へ                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	
+	{FILER_HELP_WINDOW1,"標準と通信対戦モードを切り替える",0},
+	{FILER_HELP_WINDOW2,"にはSTARTを押してください",0},
 #ifdef FW3X
-  	{FILER_HELP_WINDOW3," ",0},
+	{FILER_HELP_WINDOW3," ",0},
 #ifdef HOME_HOOK
-  	{FILER_HELP_WINDOW4,"終了するにはHOMEを押してください",0},
+	{FILER_HELP_WINDOW4,"終了するにはHOMEを押してください",0},
 #else
-    {FILER_HELP_WINDOW4,"終了するにはL+Rを押してください",0},
+	{FILER_HELP_WINDOW4,"終了するにはL+Rを押してください",0},
 #endif
 #else
 #ifdef HOME_HOOK
-    {FILER_HELP_WINDOW3,"終了するにはHOMEを押してください",0},
+	{FILER_HELP_WINDOW3,"終了するにはHOMEを押してください",0},
 #else
-    {FILER_HELP_WINDOW3,"終了するにはL+Rを押してください",0},
+	{FILER_HELP_WINDOW3,"終了するにはL+Rを押してください",0},
 #endif
-  	{FILER_HELP_WINDOW4,"USBｵﾝｵﾌ切り替えにRを押してください",0},
+	{FILER_HELP_WINDOW4,"USBｵﾝｵﾌ切り替えにRを押してください",0},
 #endif
 
 
-  	{FILER_HELP_WINDOW5,"削除するにはSELECTを押してください",0},
-  	
-  	{FILE_IPS_PATCHSUCCESS,"IPSパッチの適用に成功しました",0},
-  	
-  	{MENU_STATUS_GENERIC_MSG1,"戻るには" SJIS_CROSS "を押してください",0},
-  	{MENU_STATUS_GENERIC_NEEDRELOAD,"変更を適用するには再読み込みが必要かもしれません",0},
-  	{MENU_STATUS_GENERIC_NEEDRESET,"変更を適用するにはリセットが必要かもしれません",0},
+	{FILER_HELP_WINDOW5,"削除するにはSELECTを押してください",0},
+
+	{FILE_IPS_PATCHSUCCESS,"IPSパッチの適用に成功しました",0},
+
+	{MENU_STATUS_GENERIC_MSG1,"戻るには" SJIS_CROSS "を押してください",0},
+	{MENU_STATUS_GENERIC_NEEDRELOAD,"変更を適用するには再読み込みが必要かもしれません",0},
+	{MENU_STATUS_GENERIC_NEEDRESET,"変更を適用するにはリセットが必要かもしれません",0},
 	{MENU_STATUS_GENERIC_FREERAM,"空きメモリ : %dKo",0},
 	{MENU_STATUS_GENERIC_CHANGEMUSIC,"音楽を変えるにはSELECTボタンを押してください",0},
 
@@ -347,28 +356,28 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_YES,"はい",0},
 	{MENU_NO,"いいえ",0},
 	{MENU_NOT_IMPLEMENTED,"まだ実装されていません。\n\n",0},
-  	
-  	{MENU_SOUND_MODE_NOTEMUL,"エミュレートしない",0},
+
+	{MENU_SOUND_MODE_NOTEMUL,"エミュレートしない",0},
 	{MENU_SOUND_MODE_EMULOFF,"エミュレートするが出力しない",0},
-  	{MENU_SOUND_MODE_EMULON,"エミュレートし、出力する",0},
-  	
-  	{MENU_STATE_CHOOSEDEL,"削除するスロットを選んでください",0},
-  	{MENU_STATE_CHOOSELOAD,"読み込むスロットを選んでください",0},
-  	{MENU_STATE_CHOOSESAVE,"保存するスロットを選んでください",0},
-  	{MENU_STATE_FREESLOT,"空き",0},
-  	{MENU_STATE_SCANNING,"使用済みスロットを調べています...",0},
-  	
-  	  	
-  	{ERR_INIT_OSK,"OSKを初期化できません",20},
-  	{ERR_ADD_CODE,"チートコードを追加できません。既に入力されているコードが多すぎます。",60},
-  	
-  	{MENU_CHEATS_ENTERGF,"GoldFingerコードを入力してください",0},
-  	{MENU_CHEATS_ENTERPAR,"プロアクションリプレイコードを入力してください",0},
-  	{MENU_CHEATS_ENTERGG,"Game Genieコードを入力してください",0},
-  	{MENU_CHEATS_ENTERRAW,"RAWコードを入力してください\n書式 : アドレス - 新しい値",0},
+	{MENU_SOUND_MODE_EMULON,"エミュレートし、出力する",0},
+	
+	{MENU_STATE_CHOOSEDEL,"削除するスロットを選んでください",0},
+	{MENU_STATE_CHOOSELOAD,"読み込むスロットを選んでください",0},
+	{MENU_STATE_CHOOSESAVE,"保存するスロットを選んでください",0},
+	{MENU_STATE_FREESLOT,"空き",0},
+	{MENU_STATE_SCANNING,"使用済みスロットを調べています...",0},
+
+
+	{ERR_INIT_OSK,"OSKを初期化できません",20},
+	{ERR_ADD_CODE,"チートコードを追加できません。既に入力されているコードが多すぎます。",60},
+
+	{MENU_CHEATS_ENTERGF,"GoldFingerコードを入力してください",0},
+	{MENU_CHEATS_ENTERPAR,"プロアクションリプレイコードを入力してください",0},
+	{MENU_CHEATS_ENTERGG,"Game Genieコードを入力してください",0},
+	{MENU_CHEATS_ENTERRAW,"RAWコードを入力してください\n書式 : アドレス - 新しい値",0},
 	{MENU_CHEATS_CONFIRMREMALL,"すべてのコードを削除しますか?",-2},
 
-  	{MENU_STATE_CONFIRMLOAD,"現在のゲーム進行が失われます。\n続行しますか?",-2},
+	{MENU_STATE_CONFIRMLOAD,"現在のゲーム進行が失われます。\n続行しますか?",-2},
 	{MENU_STATE_CONFIRMDELETE,"このステートセーブを削除しますか?",-2},
 	{MENU_STATE_CONFIRMSAVE,"このステートセーブに上書きしますか?",-2},
 	{MENU_STATE_ISSAVING,"ステートセーブしています...",10},
@@ -388,10 +397,10 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_MISC_BGMUSIC_AUTHOR,"作者 : ",0},
 
 
-  	// GAME
-  	{MENU_ICONS_GAME,"ゲーム",0},
-  	{MENU_ICONS_GAME_RESET,"SNESをリセットする",0},
-  	{MENU_ICONS_GAME_NEW,"新しいゲームを読み込む",0},
+	// GAME
+	{MENU_ICONS_GAME,"ゲーム",0},
+	{MENU_ICONS_GAME_RESET,"SNESをリセットする",0},
+	{MENU_ICONS_GAME_NEW,"新しいゲームを読み込む",0},
 	{MENU_ICONS_GAME_DEFAULTSETTINGS,"標準設定を作成する",0},
 	{MENU_ICONS_GAME_DEFAULTSETTINGS_HELP,"現在の設定を特別に設定ファイルがない\n全てのROMに使われる標準設定として\n保存します。",0},
 	{MENU_ICONS_GAME_EXIT,"Snes9xTYLを終了する",0},
@@ -552,7 +561,16 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_ABOUT_VERSION,"バージョン情報",0},
 
 	{MENU_ABOUT_VERSION_TIMESTAMP,"ビルド日時 : %s",0},
-	{MENU_ABOUT_VERSION_GCCVER,"使用したGCC : %s",0}
+	{MENU_ABOUT_VERSION_GCCVER,"使用したGCC : %s",0},
+
+
+	//Adhoc
+	{ADHOC_CONNECTING,"接続しています...\n",0},
+	{ADHOC_SELECTORRETURN,"接続するサーバーを選ぶか," SJIS_TRIANGLE "ボタンで戻ってください。",0},
+	{ADHOC_WAITING,"%sが接続を承認するのを待っています。\nキャンセルするには" SJIS_CIRCLE "ボタンを押してください。\n",0},
+	{ADHOC_REQUESTED,"%sが接続を要求しています。\n接続を承認するには" SJIS_CROSS "ボタンを,キャンセルするには" SJIS_CIRCLE "ボタンを押してください。\n",0},
+	{ADHOC_CONNECTED,"接続しました",0},
+	{ADHOC_STATE,"  接続状況 %d/1\n",0}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
