@@ -99,5 +99,5 @@ endif
 tile_psp.o: tile_psp.h
 gfx_psp.o: tile_psp.h
 clean_snes:
-	-rm $(MEOBJ) $(PSP_OBJECTS) $(PLATFORMOBJ) $(ZLIBOBJ) $(SPCOBJ) $(NETOBJ) $(DANZOBJ) $(HOMEHOOKOBJ) EBOOT.PBP PARAM.SFO snes9xTYL.elf
+	rm -f $(MEOBJ) $(PSP_OBJECTS) $(PLATFORMOBJ) $(ZLIBOBJ) $(SPCOBJ) $(NETOBJ) $(DANZOBJ) $(HOMEHOOKOBJ) EBOOT.PBP PARAM.SFO snes9xTYL.elf
 
