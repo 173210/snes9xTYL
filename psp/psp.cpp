@@ -615,7 +615,7 @@ void update_pad(){
 							break;
 						default: //unknown command, probably something went wrong in network link
 							{char st[64];
-								sprintf(st,"Unknown command %02X !",pkt_recv[0]);
+								sprintf(st,psp_msg_string(ADHOC_UNKNOWNCOMMAND),pkt_recv[0]);
 								msgBoxLines(st,60);
 								//os9x_netplay=0;
 								//os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
@@ -625,7 +625,7 @@ void update_pad(){
 				//handle here special stuff : reset, resync, ....
 				if (os9x_netplay) {//if connection still available
 					if (os9x_netsynclost>=NET_SYNCLOST_TS) {
-						msgBoxLines("SERVER Lost sync : resync!!!",20);
+						psp_msg(ADHOC_SYNCLOST_SERVER, MSG_DEFAULT);
 						net_flush_net(1);
 						before_pause();
 						set_cpu_clock();
@@ -712,7 +712,7 @@ void update_pad(){
 							break;
 						default: //unknown command, probably something went wrong in network link
 							{char st[64];
-								sprintf(st,"Unknown command %02X !",pkt_recv[0]);
+								sprintf(st,psp_msg_string(ADHOC_UNKNOWNCOMMAND),pkt_recv[0]);
 								msgBoxLines(st,60);
 								//os9x_netplay=0;
 								//os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
@@ -722,7 +722,7 @@ void update_pad(){
 				//handle here special stuff : reset, resync, ....
 				if (os9x_netplay) {//if connection still available
 					if (os9x_netsynclost>=NET_SYNCLOST_TS) {
-						msgBoxLines("CLIENT Lost sync : resync!!!",20);
+						psp_msg(ADHOC_SYNCLOST_CLIENT, MSG_DEFAULT);
 						pkt_send[0]=3;
 						adhocSend(pkt_send,NET_PKT_LEN);
 					}
@@ -2271,7 +2271,7 @@ void S9xProcessEvents( bool8 block ) {
 			}
 		}
 		if ((in_emu==1)&&os9x_netplay&&os9x_getnewfile) {
-			msgBoxLines("closing connection",60);
+			psp_msg(ADHOC_CLOSING, MSG_DEFAULT);
 #ifdef USE_ADHOC
 			os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 #else
@@ -2296,11 +2296,11 @@ void S9xProcessEvents( bool8 block ) {
   	tile_askforreset(-1);
   	//
 		switch (os9x_softrendering) {
-			case 4:msgBoxLines("Mixed modes : PSP accelerated + approx. software",30);break;
-			case 3:msgBoxLines("Mixed modes : PSP accelerated + accurate software",30);break;
-			case 2:msgBoxLines("Simple mode : PSP accelerated",30);break;
-			case 1:msgBoxLines("Simple mode : accurate software",30);break;
-			case 0:msgBoxLines("Simple mode : approx. software",30);break;
+			case 0:psp_msg(VIDEO_ENGINE_APPROX, MSG_DEFAULT); break;
+			case 1:psp_msg(VIDEO_ENGINE_ACCUR, MSG_DEFAULT); break;
+			case 2:psp_msg(VIDEO_ENGINE_ACCEL, MSG_DEFAULT); break;
+			case 3:psp_msg(VIDEO_ENGINE_ACCEL_ACCUR, MSG_DEFAULT); break;
+			case 4:psp_msg(VIDEO_ENGINE_ACCEL_APPROX, MSG_DEFAULT); break;
 		}
 		//reset timer for synchro stuff
 		next1.tv_sec = next1.tv_usec = 0;
@@ -2314,10 +2314,10 @@ void S9xProcessEvents( bool8 block ) {
 			Settings.SkipFrames=AUTO_FRAMERATE;
 			os9x_autofskip_SkipFrames=0;
 			os9x_speedlimit=1;
-			sprintf(st,"Frameskip : AUTO");
+			strcpy(st,psp_msg_string(VIDEO_FSKIP_AUTO));
 		} else {
 			Settings.SkipFrames=os9x_fskipvalue;
-			sprintf(st,"Frameskip : %d",os9x_fskipvalue);
+			sprintf(st,psp_msg_string(VIDEO_FSKIP_MANUAL),os9x_fskipvalue);
 		}
 		msgBoxLines(st,10);
 		//reset timer for synchro stuff
@@ -2331,10 +2331,10 @@ void S9xProcessEvents( bool8 block ) {
 			Settings.SkipFrames=AUTO_FRAMERATE;
 			os9x_speedlimit=1;
 			os9x_autofskip_SkipFrames=0;
-			sprintf(st,"Frameskip : AUTO");
+			strcpy(st,psp_msg_string(VIDEO_FSKIP_AUTO));
 		} else {
 			Settings.SkipFrames=os9x_fskipvalue;
-			sprintf(st,"Frameskip : %d",os9x_fskipvalue);
+			sprintf(st,psp_msg_string(VIDEO_FSKIP_MANUAL),os9x_fskipvalue);
 		}
 		msgBoxLines(st,10);
 		//reset timer for synchro stuff
@@ -2357,7 +2357,7 @@ void S9xProcessEvents( bool8 block ) {
 		if ( diff>=60*os9x_autosavetimer ) {
 			os9x_autosavetimer_tv=now;
 			if (!os9x_lowbat) {
-				msgBoxLines("Autosaving...",0);
+				psp_msg(LOADSAVE_AUTOSAVETIMER, MSG_DEFAULT);
 				os9x_save(".zat");
 				//reset timer for synchro stuff
 				next1.tv_sec = next1.tv_usec = 0;
@@ -2399,7 +2399,7 @@ bool8 S9xOpenSnapshotFile (const char *fname, bool8 read_only, STREAM *file) {
 	if (ext&&(strlen(ext)==4)) {
 		if ((ext[1]=='z')&&(ext[2]=='a')) {
 			if (os9x_externstate_mode) {
-				msgBoxLines("Found a snes9xTYL file");
+				psp_msg(LOADSAVE_EXPORTS9XSTATE, MSG_DEFAULT);
 				os9x_externstate_mode=0;
 			}
 		}
@@ -2676,7 +2676,7 @@ int main(int argc,char **argv) {
 		//printf("Net driver load error\n");
 		//pgWaitVn(60*2);
     //return 0;
-    msgBoxLines("Net driver load error",60*2);
+    psp_msg(ADHOC_DRIVERLOADERR, MSG_DEFAULT);
   }
 #endif
 #ifdef ME_SOUND
@@ -2921,7 +2921,7 @@ int scroll_message_input(char *name,int limit) {
 
 //	danzeff_load16(LaunchDir);
 	if (!danzeff_isinitialized()) {
-		msgBoxLines("cannot init OSK",20);
+		psp_msg(ERR_INIT_OSK, MSG_DEFAULT);
 		return 0;
 	} else {
 		danzeff_moveTo(20,20);
@@ -3034,15 +3034,15 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 
 
 		mh_print(0,0,title,31|(31<<5)|(31<<10));
-		sprintf(str_tmp,"   ,   to move -  ,  for fast mode");
+		strcpy(str_tmp,psp_msg_string(SCROLL_TITLE));
 		mh_print(479-mh_length((unsigned char*)str_tmp),0,(char*)str_tmp,31|(31<<5)|(31<<10));
 		sprintf(str_tmp,"  " SJIS_UP "  " SJIS_DOWN "           L R              ");
 		mh_print(479-mh_length((unsigned char*)str_tmp),0,(char*)str_tmp,20|(31<<5)|(18<<10));
 
 		if (!intro_message) {
-			sprintf(str_tmp,"   exit,        help");
+			strcpy(str_tmp,psp_msg_string(SCROLL_STATUS_1));
 			mh_print(479-mh_length((unsigned char*)str_tmp),262,(char*)str_tmp,31|(31<<5)|(31<<10));
-			sprintf(str_tmp,SJIS_CROSS "       SELECT     ");
+			sprintf(str_tmp,SJIS_CROSS "       SELECT       ");
 			mh_print(479-mh_length((unsigned char*)str_tmp),262,(char*)str_tmp,20|(31<<5)|(18<<10));
 		}
 
@@ -3190,7 +3190,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 
 
   		//memset(pgGetVramAddr(0,272-10),0,512*10*2);
-		  sprintf(str_tmp,"Line %d/%d  -  Page %d/%d",pos/10+26,lines,(pos/10+26)/27,lines/27);
+		  sprintf(str_tmp,psp_msg_string(SCROLL_STATUS_0),pos/10+26,lines,(pos/10+26)/27,lines/27);
 		  mh_print(0,272-10,str_tmp,((31)|(28<<5)|(31<<10)));
 
   		sceDisplayWaitVblankStart();
@@ -3281,9 +3281,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 						exit_message=1;
 						break;
 					}	else if (pad_val&PSP_CTRL_SELECT) { //minihelp
-						msgBoxLines("Snes9xTYL - fileviewer\n\n" SJIS_TRIANGLE " Find, then " SJIS_CIRCLE " Find next, " SJIS_SQUARE " Find previous\n" \
-						SJIS_UP "," SJIS_DOWN " scroll text, L,R scroll faster\n" SJIS_CROSS " exit\n\nLast position is keeped if same file is reopened.\nHowever it will be reset if another file is opened.\n\n" \
-						"Press " SJIS_CROSS,0);
+						psp_msg(SCROLL_HELP, MSG_DEFAULT);
 						while (!(get_pad()&PSP_CTRL_CROSS));
 						while (get_pad());
 						break;
@@ -3291,7 +3289,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 						if (scroll_message_input(tofind,31)) {
 							found=0;
 							if (tofind[0]) {
-								msgBoxLines("Searching...",0);
+								psp_msg(SCROLL_SEARCHING, MSG_DEFAULT);
 								strcpy(tofind,strupr(tofind));
 								j=pos/10-1;
 								if (j<0) j=0;
@@ -3300,11 +3298,11 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 										if (strstr(strupr(msg_lines[i]),tofind)) {found=i;pos=(i-2)*10;if (pos<0) pos=0;break;}
 									}
 							}
-							if (!found) msgBoxLines("String not found!",30);
+							if (!found) psp_msg(SCROLL_STRNOTFOUND, MSG_DEFAULT);
 						}
 						break;
 					}	else if ((pad_val&PSP_CTRL_CIRCLE)&&found) { //search again from position & loop if needed
-						msgBoxLines("Searching...",0);
+						psp_msg(SCROLL_SEARCHING, MSG_DEFAULT);
 						i=pos/10+2;
 						if (i>=lines) i=0;
 						j=i; //just to be safe, should not be needed
@@ -3318,7 +3316,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 						}
 						break;
 					}	else if ((pad_val&PSP_CTRL_SQUARE)&&found) { //search again from position & loop if needed
-						msgBoxLines("Searching...",0);
+						psp_msg(SCROLL_SEARCHING, MSG_DEFAULT);
 						i=pos/10+2;
 						if (i>=lines) i=0;
 						j=i; //just to be safe, should not be needed
@@ -3392,7 +3390,7 @@ void show_message() {
 		//free decrypted raw message
 		free(decrypted_message);
 
-		scroll_message(msg_lines,lines,0,1,"Disclaimer");
+		scroll_message(msg_lines,lines,0,1,psp_msg_string(SCROLL_DISCLAIMER));
 
 		//free 'linified' message
 		for (i=0;i<lines;i++) if (msg_lines[i]) free(msg_lines[i]);
@@ -3561,7 +3559,7 @@ int init_snes_rom() {
   ///////////////////
   ///////////////////
   if (  !Memory.Init() ) {
-  	msgBoxLines("Cannot init snes, memory issue",2*60);
+  	psp_msg(INIT_ERR, MSG_DEFAULT);
 		return -1;
 	}
 	S9xInitSound( Settings.SoundPlaybackRate, Settings.Stereo, Settings.SoundBufferSize );
@@ -3580,17 +3578,17 @@ int init_snes_rom() {
 		if (!bypass_rom_settings) {
 			if (int ret=load_rom_settings(Memory.ROMCRC32)) {
 				if (ret==-3) {
-					msgBoxLines("!!Settings file not complete!!\n\nProbably coming from a previous version.\n\nNew settings will be set with default values",60*3);
+					psp_msg(INIT_ERR_SETTINGS_NOTCOMPLETE, MSG_DEFAULT);
 				}
 				else {
-					msgBoxLines("No settings found, using default",10);
+					psp_msg(INIT_ERR_SETTINGS_NOTFOUND, MSG_DEFAULT);
 					if (load_rom_settings(0)) {
 						if (!os9x_lowbat) save_rom_settings(0,"default");
 					}
 				}
 			}
 		} else {
-			msgBoxLines("Forcing default settings",10);
+			psp_msg(INIT_FORCING_DEFAULT, MSG_DEFAULT);
 			if (load_rom_settings(0)) {
 					if (!os9x_lowbat) save_rom_settings(0,"default");
 			}
@@ -3605,7 +3603,7 @@ int init_snes_rom() {
 					os9x_adhoc_active=0;
 				}
 				if (psp_initadhocgame()) { //try to initiate a adhoc game
-					msgBoxLines("Issue with init adhoc game\n",60);
+					psp_msg(ADHOC_INIT_ERR, MSG_DEFAULT);
 					adhocTerm();  //unavailable, no netplay
 					os9x_adhoc_active=0;
 					os9x_netplay=0;
@@ -3627,7 +3625,7 @@ int init_snes_rom() {
 		}
 
 		if ((os9x_applyhacks)&&(os9x_findhacks(Memory.ROMCRC32))) {
-			msgBox("Found speedhacks, applying...",30);
+			msgBox(psp_msg_string(INIT_SPEEDHACK));
 		}
 	}
 
@@ -3797,10 +3795,6 @@ int user_main(SceSize args, void* argp) {
 
 	initvar_withdefault();
 	load_settings();
-
-	/*special anim stuff*/
-	intro_anim();
-	/**/
 
 	load_background();
 

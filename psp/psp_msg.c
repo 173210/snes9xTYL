@@ -285,14 +285,47 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_ABOUT_VERSION_TIMESTAMP,"Build on %s",0},
 	{MENU_ABOUT_VERSION_GCCVER,"With GCC %s",0},
 
-
-	//Adhoc
+	//Others
+	// Adhoc
 	{ADHOC_CONNECTING,"Connecting...\n",0},
 	{ADHOC_SELECTORRETURN,"Select a server to connect to, or triangle to return",0},
 	{ADHOC_WAITING,"Waiting for %s to accept the connection\nTo cancel press O\n",0},
 	{ADHOC_REQUESTED,"%s has requested a connection\nTo accept the connection press X, to cancel press O\n",0},
 	{ADHOC_CONNECTED,"Connected",0},
-	{ADHOC_STATE,"  connection state %d of 1\n",0}
+	{ADHOC_STATE,"  connection state %d of 1\n",0},
+	{ADHOC_UNKNOWNCOMMAND,"Unknown command %02X !",0},
+	{ADHOC_SYNCLOST_SERVER,"SERVER Lost sync : resync!!!",20},
+	{ADHOC_SYNCLOST_CLIENT,"CLIENT Lost sync : resync!!!",20},
+	{ADHOC_CLOSING,"closing connection",60},
+	{ADHOC_DRIVERLOAD_ERR,"Net driver load error",60*2},
+	{ADHOC_INIT_ERR,"Issue with init adhoc game\n",60},
+	// LOAD/SAVE
+	{LOADSAVE_AUTOSAVETIMER,"Autosaving...",0},
+	{LOADSAVE_EXPORTS9XSTATE,"Found a snes9xTYL file",0},
+	// VIDEO
+	{VIDEO_ENGINE_APPROX,"Simple mode : accurate software",30},
+	{VIDEO_ENGINE_ACCUR,"Simple mode : approx. software",30},
+	{VIDEO_ENGINE_ACCEL,"Simple mode : PSP accelerated",30},
+	{VIDEO_ENGINE_ACCEL_ACCUR,"Mixed modes : PSP accelerated + accurate software",30},
+	{VIDEO_ENGINE_ACCEL_APPROX,"Mixed modes : PSP accelerated + approx. software",30},
+	{VIDEO_FSKIP_AUTO,"Frameskip : AUTO",0},
+	{VIDEO_FSKIP_MANUAL,"Frameskip : %d",0},
+	// Scroll Message
+	{SCROLL_TITLE,"   ,   to move -  ,  for fast mode",0},
+	{SCROLL_STATUS_0,"Line %d/%d  -  Page %d/%d",0},
+	{SCROLL_STATUS_1,"   exit,        help  ",0},
+	{SCROLL_HELP,"Snes9xTYL - fileviewer\n\n" SJIS_TRIANGLE " Find, then " SJIS_CIRCLE " Find next, " SJIS_SQUARE " Find previous\n" \
+						SJIS_UP "," SJIS_DOWN " scroll text, L,R scroll faster\n" SJIS_CROSS " exit\n\nLast position is keeped if same file is reopened.\nHowever it will be reset if another file is opened.\n\n" \
+						"Press " SJIS_CROSS,0},
+	{SCROLL_SEARCHING,"Searching...",0},
+	{SCROLL_STRNOTFOUND,"String not found!",30},
+	{SCROLL_DISCLAIMER,"Disclaimer",0},
+	//Init Snes
+	{INIT_ERR,"Cannot init snes, memory issue",2*60},
+	{INIT_ERR_SETTINGS_NOTCOMPLETE,"!!Settings file not complete!!\n\nProbably coming from a previous version.\n\nNew settings will be set with default values",60*3},
+	{INIT_ERR_SETTINGS_NOTFOUND,"No settings found, using default",10},
+	{INIT_FORCING_DEFAULT,"Forcing default settings",10},
+	{INIT_SPEEDHACK,"Found speedhacks, applying...",30},
 };
 
 t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
@@ -389,7 +422,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_STATE_AUTOSAVETIMER,"%d分毎",0},
 	{MENU_STATE_AUTOSAVETIMER_OFF,"オフ",0},
 	{MENU_GAME_SAVINGDEFAULTSETTINGS,"現在の設定を標準設定として保存しています",30},
-	{MENU_GAME_CONFIRMRESET,"Snesをリセットしますか?",-2},
+	{MENU_GAME_CONFIRMRESET,"SFCをリセットしますか?",-2},
 	{MENU_MISC_SAVINGJPEG,"JPEGスナップショットを保存しています...",10},
 	{MENU_MISC_BGMUSIC_UNKNOWN,"不明",0},
 	{MENU_MISC_BGMUSIC_GAMETITLE,"ゲーム : ",0},
@@ -399,7 +432,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 
 	// GAME
 	{MENU_ICONS_GAME,"ゲーム",0},
-	{MENU_ICONS_GAME_RESET,"SNESをリセットする",0},
+	{MENU_ICONS_GAME_RESET,"SFCをリセットする",0},
 	{MENU_ICONS_GAME_NEW,"新しいゲームを読み込む",0},
 	{MENU_ICONS_GAME_DEFAULTSETTINGS,"標準設定を作成する",0},
 	{MENU_ICONS_GAME_DEFAULTSETTINGS_HELP,"現在の設定を特別に設定ファイルがない\n全てのROMに使われる標準設定として\n保存します。",0},
@@ -407,7 +440,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	// LOAD/SAVE
 	{MENU_ICONS_LOADSAVE,"ロード/セーブ",0},
 	{MENU_ICONS_LOADSAVE_LOADSTATE,"ステートロード",0},
-	{MENU_ICONS_LOADSAVE_LOADSTATE_HELP,"以前保存したステートセーブを\n読み込みます。ステートセーブはSnes\nの状態のスナップショットのような\nもので、すべて保存されます。",0},
+	{MENU_ICONS_LOADSAVE_LOADSTATE_HELP,"以前保存したステートセーブを\n読み込みます。ステートセーブはSFC\nの状態のスナップショットのような\nもので、すべて保存されます。",0},
 	{MENU_ICONS_LOADSAVE_SAVESTATE,"ステートセーブ",0},
 	{MENU_ICONS_LOADSAVE_SAVESTATE_HELP,"ステートセーブします。",0},
 	{MENU_ICONS_LOADSAVE_DELETESTATE,"ステートセーブを削除",0},
@@ -427,22 +460,22 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_CONTROLS_REDEFINE,"再設定",0},
 	{MENU_ICONS_CONTROLS_REDEFINE_HELP,"ボタン割り当てを再設定します。",0},
 	{MENU_ICONS_CONTROLS_INPUT,"エミュレートされるコントローラ",0},
-	{MENU_ICONS_CONTROLS_INPUT_HELP,"現在有効にするSnesコントローラを\n選んでください。",0},
+	{MENU_ICONS_CONTROLS_INPUT_HELP,"現在有効にするSFCコントローラを\n選んでください。",0},
 
 	{MENU_CONTROLS_INPUT,"コントローラ %d",0},
 	{MENU_CONTROLS_INPUT_PRESS,"%sに割り当てるボタンを押してください",0},
 	{MENU_CONTROLS_INPUT_NOFORMENU,"メニューにアクセスするために設定されたボタンありません。\nボタンを選んでください。",30},
 #ifdef HOME_HOOK
 	{MENU_CONTROLS_INPUT_DEFAULT,"標準プロファイルを選択してください\n\n"\
-				SJIS_CROSS " - 標準, SNESの十\字ボタンがPSPの十\字ボタンに割り当てられます。\n\n"\
-				SJIS_CIRCLE " - 標準, SNESの十\字ボタンがPSPのアナログスティックに割り当てられます。\n\n"\
-				SJIS_SQUARE " - 標準, SNESの十\字ボタンがPSPの十\字ボタンとアナログスティックに割り当てられます。\n\n"\
+				SJIS_CROSS " - 標準, SFCの十\字ボタンがPSPの十\字ボタンに割り当てられます。\n\n"\
+				SJIS_CIRCLE " - 標準, SFCの十\字ボタンがPSPのアナログスティックに割り当てられます。\n\n"\
+				SJIS_SQUARE " - 標準, SFCの十\字ボタンがPSPの十\字ボタンとアナログスティックに割り当てられます。\n\n"\
 				SJIS_TRIANGLE " キャンセル\n",0},
 #else
 	{MENU_CONTROLS_INPUT_DEFAULT,"標準プロファイルを選択してください\n\n"\
-				SJIS_CROSS " - 標準, SNESの十\字ボタンがPSPの十\字ボタンに割り当てられます。\nメニューはアナログスティック左に割り当てます。\n\n"\
-				SJIS_CIRCLE " - 標準, SNESの十\字ボタンがPSPのアナログスティックに割り当てられます。\nメニューは十\字ボタン左に割り当てます。\n\n"\
-				SJIS_SQUARE " - Default, SNESの十\字ボタンがPSPの十\字ボタンとアナログスティックに割り当てられます。\nメニューはL+Rトリガーに割り当てます。"\
+				SJIS_CROSS " - 標準, SFCの十\字ボタンがPSPの十\字ボタンに割り当てられます。\nメニューはアナログスティック左に割り当てます。\n\n"\
+				SJIS_CIRCLE " - 標準, SFCの十\字ボタンがPSPのアナログスティックに割り当てられます。\nメニューは十\字ボタン左に割り当てます。\n\n"\
+				SJIS_SQUARE " - Default, SFCの十\字ボタンがPSPの十\字ボタンとアナログスティックに割り当てられます。\nメニューはL+Rトリガーに割り当てます。"\
 				SJIS_TRIANGLE " キャンセル\n",0},
 #endif
 
@@ -563,14 +596,47 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ABOUT_VERSION_TIMESTAMP,"ビルド日時 : %s",0},
 	{MENU_ABOUT_VERSION_GCCVER,"使用したGCC : %s",0},
 
-
-	//Adhoc
+	//Others
+	// Adhoc
 	{ADHOC_CONNECTING,"接続しています...\n",0},
 	{ADHOC_SELECTORRETURN,"接続するサーバーを選ぶか," SJIS_TRIANGLE "ボタンで戻ってください。",0},
 	{ADHOC_WAITING,"%sが接続を承認するのを待っています。\nキャンセルするには" SJIS_CIRCLE "ボタンを押してください。\n",0},
 	{ADHOC_REQUESTED,"%sが接続を要求しています。\n接続を承認するには" SJIS_CROSS "ボタンを,キャンセルするには" SJIS_CIRCLE "ボタンを押してください。\n",0},
 	{ADHOC_CONNECTED,"接続しました",0},
-	{ADHOC_STATE,"  接続状況 %d/1\n",0}
+	{ADHOC_STATE,"  接続状況 %d/1\n",0},
+	{ADHOC_UNKNOWNCOMMAND,"不明なコマンド %02X です。",0},
+	{ADHOC_SYNCLOST_SERVER,"サーバー同期失敗 : 再同期します",20},
+	{ADHOC_SYNCLOST_CLIENT,"クライアント同期失敗 : 再同期します",20},
+	{ADHOC_CLOSING,"接続を閉じています",60},
+	{ADHOC_DRIVERLOAD_ERR,"ネットドライバ読み込みエラー",60*2},
+	{ADHOC_INIT_ERR,"アドホックゲームの初期化に問題が発生しました\n",60},
+	// LOAD/SAVE
+	{LOADSAVE_AUTOSAVETIMER,"自動セーブしています...",0},
+	{LOADSAVE_EXPORTS9XSTATE,"snes9xTYLファイルが見つかりました",0},
+	// VIDEO
+	{VIDEO_ENGINE_APPROX,"単一モード : ほぼ正確なソ\フトウェア描画",30},
+	{VIDEO_ENGINE_ACCUR,"単一モード : 正確なソ\フトウェア描画",30},
+	{VIDEO_ENGINE_ACCEL,"単一モード : PSPアクセラレータ",30},
+	{VIDEO_ENGINE_ACCEL_ACCUR,"複合モード : PSPアクセラレータ + 正確なソ\フトウェア描画",30},
+	{VIDEO_ENGINE_ACCEL_APPROX,"複合モード : PSPアクセラレータ + ほぼ正確なソ\フトウェア描画",30},
+	{VIDEO_FSKIP_AUTO,"フレームスキップ : 自動",0},
+	{VIDEO_FSKIP_MANUAL,"フレームスキップ : %d",0},
+	// Scroll Message
+	{SCROLL_TITLE,"   ,    移動   -  ,  高速         ",0},
+	{SCROLL_STATUS_0,"%d/%d行目  -  %d/%dページ",0},
+	{SCROLL_STATUS_1,"   終了,        ヘルプ",0},
+	{SCROLL_HELP,"Snes9xTYL - ファイルビューワー\n\n" SJIS_TRIANGLE "ボタンで検索し,その後" SJIS_CIRCLE "ボタンで次を検索," SJIS_SQUARE "ボタンで前を検索します。\n" \
+			SJIS_UP "," SJIS_DOWN "ボタンで文章をスクロールし, L,Rボタンでより早くスクロールします。\n" SJIS_CROSS "で終了します。\n\n最後の位置は同じファイルが開かれれば維持されます。\nしかしほかのファイルを開くと元に戻ります。\n\n" \
+			SJIS_CROSS "ボタンを押してください",0},
+	{SCROLL_SEARCHING,"検索しています...",0},
+	{SCROLL_STRNOTFOUND,"文字列は見つかりませんでした",30},
+	{SCROLL_DISCLAIMER,"免責事項",0},
+	//Init Snes
+	{INIT_ERR,"メモリの問題でSFCを初期化できません",2*60},
+	{INIT_ERR_SETTINGS_NOTCOMPLETE,"※設定ファイルが完全ではありません※\n\n以前のバージョンのものの可能性があります。\n\n新しい設定が標準値で設定されます。",60*3},
+	{INIT_ERR_SETTINGS_NOTFOUND,"設定が見つかりません。標準設定を使います。",10},
+	{INIT_FORCING_DEFAULT,"強制的に標準設定を使用しています",10},
+	{INIT_SPEEDHACK,"スピードハックが見つかりました。適用しています...",30},
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
