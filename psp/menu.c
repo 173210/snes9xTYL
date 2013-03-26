@@ -256,7 +256,7 @@ int menu_screencalibrate(char *mode){
 				menu_modified=1;
 			}
 			else if (paddata.Buttons & PSP_CTRL_CROSS) exit_calib=1;
-				
+
 			if (os9x_screenWidth<-128) {os9x_screenWidth=-128;}
 			if (os9x_screenWidth>128) {os9x_screenWidth=128;}
 			if (os9x_screenHeight<-128) {os9x_screenHeight=-128;}
@@ -712,7 +712,7 @@ int show_debugmenu(char *mode) {
     				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_3));break;
     		}
     	}
-    	else strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG));
+    	else strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_0));
     	mh_print(8,262,  status_bar,INFOBAR_COL);
 		}
 
