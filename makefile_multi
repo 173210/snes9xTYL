@@ -54,10 +54,9 @@ SPCOBJ = psp/openspc++/dsp.o psp/openspc++/spc.o psp/openspc++/ospcmain.o psp/op
 
 NETOBJ = psp/psp_net.o psp/adhoc/pspadhoc.o psp/adhoc/selectorMenu.o
 
-ZLIBOBJ = zlib/adler32.o zlib/compress.o zlib/crc32.o\
-		zlib/uncompr.o zlib/deflate.o zlib/trees.o zlib/zutil.o\
-		zlib/inflate.o zlib/inftrees.o zlib/inffast.o\
-		zlib/gzclose.o zlib/gzlib.o zlib/gzwrite.o zlib/gzread.o
+ZLIBOBJ = zlib/adler32.o zlib/compress.o zlib/crc32.o zlib/gzio.o \
+	zlib/uncompr.o zlib/deflate.o zlib/trees.o zlib/zutil.o zlib/inflate.o \
+	zlib/infback.o zlib/inftrees.o zlib/inffast.o
 
 DANZOBJ = danzeff/danzeff.o
 
