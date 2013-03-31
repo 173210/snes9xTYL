@@ -3008,9 +3008,9 @@ int menu_credits(char *mode) {
 		mh_printLimit(menu_panel_pos+5,225,479,272,"Danzel",GREETINGS_COL);		
 		mh_printLimit(menu_panel_pos+5,235,479,272,"ps2dev community, psp homebrew coders",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,245,479,272,"donators & supporters ^=^",GREETINGS_COL);
-		
-    
-        
+
+
+
     if (to_exit) {
     	if (menu_panel_pos>=479) break;
     } else {
@@ -3019,64 +3019,60 @@ int menu_credits(char *mode) {
     		to_exit=1;
     		menu_cnt2=0;
     	}
-    	
-    	if (new_pad & PSP_CTRL_SELECT) {				
+
+    	if (new_pad & PSP_CTRL_SELECT) {
 					menu_stopmusic();
 					menu_startmusic();
 			} SNAPSHOT_CODE()
     }
     //swap screen
-		pgScreenFlipV2();		
-	}		
-		
-	if (!oldmenu_music) menu_stopmusic();		
+		pgScreenFlipV2();
+	}
+
+	if (!oldmenu_music) menu_stopmusic();
 	return retval;
 }
 
-int menu_versioninfos(char *mode) {		
-	int to_exit=0;	
+int menu_versioninfos(char *mode) {
+	int to_exit=0;
 	int oldmode;
 	int retval=0;
-	
+
 	if (mode) {mode[0]=0;return 0;}
-	
+
 	menu_panel_pos=479;
 	menu_cnt2=0;
-	
+
 	oldmode=os9x_apuenabled;
-	for (;;) {		
-		menu_basic(2+to_exit);		
-		if (!g_bLoop) {retval=1;break;} 
-		
-#ifdef ME_SOUND								
-		mh_printLimit(menu_panel_pos+5,104,479,272,EMUNAME_VERSION "me",CODE_COL);
-#else
+	for (;;) {
+		menu_basic(2+to_exit);
+		if (!g_bLoop) {retval=1;break;}
+
 		mh_printLimit(menu_panel_pos+5,104,479,272,EMUNAME_VERSION,CODE_COL);
-#endif		
 		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_TIMESTAMP),__TIMESTAMP__);
 		mh_printLimit(menu_panel_pos+5,104+15,479,272,str_tmp,GFX_COL);
 		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_GCCVER),__VERSION__);
 		mh_printLimit(menu_panel_pos+5,104+30,479,272,str_tmp,GREETINGS0_COL);
 		sprintf(str_tmp,"CRC32 : %#X",g_ROMCRC32);
 		mh_printLimit(menu_panel_pos+5,104+45,479,272,str_tmp,GREETINGS0_COL);
-            
-    if (to_exit) {
-    	if (menu_panel_pos>=479) return 0;
-    } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
-    		os9x_beep1();
-    		to_exit=1;
-    		menu_cnt2=0;
-    	} SNAPSHOT_CODE()
-    }
-    //swap screen
-		pgScreenFlipV2();		
+
+		if (to_exit) {
+			if (menu_panel_pos>=479) return 0;
+		} else {
+			if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+				os9x_beep1();
+				to_exit=1;
+				menu_cnt2=0;
+			} SNAPSHOT_CODE()
+		}
+		//swap screen
+		pgScreenFlipV2();
 	}
-	
+
 	return retval;
 }
 
-int menu_fpslimit(char *mode) {		
+int menu_fpslimit(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_fpslimit;
@@ -3207,28 +3203,25 @@ int menu_apuratio(char *mode) {
 int menu_buildbg() {
 	u16 *src,*dst;
 	int i;
-	
+
 	dst=menu_bg;
-	show_background(bg_img_mul,(os9x_lowbat?0x600000:0));			
+	show_background(bg_img_mul,(os9x_lowbat?0x600000:0));
 	pgDrawFrame(0,10,479,10,(4<<10)|(8<<5)|8);
 	pgDrawFrame(0,11,479,12,(30<<10)|(30<<5)|30);
 	pgDrawFrame(0,13,479,13,(4<<10)|(8<<5)|8);
 	pgDrawFrame(0,272-14,479,272-14,(4<<10)|(2<<5)|4);
 	pgDrawFrame(0,272-13,479,272-12,(30<<10)|(30<<5)|30);
 	pgDrawFrame(0,272-11,479,272-11,(4<<10)|(2<<5)|4);
-	
+
 	pgFillBoxHalfer(0,0,479,9);
-	pgFillBoxHalfer(0,272-10,479,271);			
+	pgFillBoxHalfer(0,272-10,479,271);
 	sprintf(str_tmp,"%s",os9x_nickname);
-	mh_print(0,0,str_tmp,(31<<0)|(24<<5)|(16<<10));
-	i=mh_length(str_tmp);
-	sprintf(str_tmp," - ");
 	mh_print(i,0,str_tmp,(24<<0)|(24<<5)|(24<<10));
 	sprintf(str_tmp,"%s",EMUNAME_VERSION);
 	mh_print(i+15,0,str_tmp,(31<<0)|(30<<5)|(20<<10));
-	
+
 	for (i=0;i<272;i++) {
-		src = (u16*)pgGetVramAddr(0,i);						
+		src = (u16*)pgGetVramAddr(0,i);
 		memcpy(dst,src,480*2);
 		dst+=480;
 	}
@@ -3237,11 +3230,11 @@ int menu_buildbg() {
 
 int menu_swapbg(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
-	
-	if (bg_img) {		
+
+	if (bg_img) {
 		free(bg_img->pixels);
 		free(bg_img);
-		bg_img=NULL;		
+		bg_img=NULL;
 		bg_img_num=-1;
 		load_background();
 		menu_buildbg();
@@ -3251,7 +3244,7 @@ int menu_swapbg(char *mode) {
 
 #define MENU_XMB_ENTRIES_NB (4+7+2+11+3+8+10+2)
 menu_xmb_entry_t menu_xmb_entries[MENU_XMB_ENTRIES_NB]={
-	// GAME		
+	// GAME
 	{0,0,menu_browser,MENU_ICONS_GAME_NEW,0},
 	{0,1,menu_reset,MENU_ICONS_GAME_RESET,0},
 	{0,2,menu_savedefaultsetting,MENU_ICONS_GAME_DEFAULTSETTINGS,MENU_ICONS_GAME_DEFAULTSETTINGS_HELP},
