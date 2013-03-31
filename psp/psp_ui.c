@@ -28,12 +28,12 @@ void msgBox(const char *msg,int delay_vblank) {
 		len=49;
 	}
 	len*=8;
-	
+
 	pgFillBox(240-len/2-20-1,136-10-1,240+len/2+20+1,136+18+1,BOX_COLOR);
 	pgDrawFrame(240-len/2-20,136-10,240+len/2+20,136+18,FRAME_COLOR);
-	
-	pgPrintCenter(17,TEXT_COLOR,str);	
-	
+
+	pgPrintCenter(17,TEXT_COLOR,str);
+
 	pgScreenFlipV();
 	if (delay_vblank<=0) delay_vblank=1;
 	pgWaitVn(delay_vblank);
@@ -42,24 +42,23 @@ void msgBox(const char *msg,int delay_vblank) {
 ////////////////////////////////////////////////////////////////////////////////////////
 // Input box : in fact confirm box...
 ////////////////////////////////////////////////////////////////////////////////////////
-int inputBox(char *msg) {		
+int inputBox(char *msg) {
 	int pad,y;
 	char *str;
 	int l=strlen(msg);
 	str=(char*)malloc(l+32);
-	strcpy(str,msg);
-	strcat(str,"\n\n" SJIS_CIRCLE " OK, " SJIS_CROSS " CANCEL");
+	sprintf(str,"%s\n\n" SJIS_CIRCLE " OK, " SJIS_CROSS " %s", msg, psp_msg_string(CANCEL));
 	y=msgBoxLinesRaw(str,-1);
 	sprintf(str,SJIS_CIRCLE " OK           ");
 	mh_printCenter(y,str,TEXT_COLOR_OK);
-	sprintf(str,"       " SJIS_CROSS " CANCEL");
+	sprintf(str,"       " SJIS_CROSS " %s", psp_msg_string(CANCEL));
 	mh_printCenter(y,str,TEXT_COLOR_CANCEL);
 	pgScreenFlipV();
 	while (get_pad()) pgWaitV();
 	while (1){
 		pad=get_pad();
 		if (pad) while (get_pad()) pgWaitV();
-		if (pad&PSP_CTRL_CIRCLE) return 1;			
+		if (pad&PSP_CTRL_CIRCLE) return 1;
 		if (pad&PSP_CTRL_CROSS) return 0;
 	}
 	free(str);	
@@ -75,7 +74,7 @@ int inputBoxOK(char *msg) {
 	int y;
 	str=(char*)malloc(l+32);
 	strcpy(str,msg);
-	strcat(str,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " Close");
+	strcat(str,psp_msg_string(INPUTBOX_OK));
 	y=msgBoxLinesRaw(str,-1);
 	sprintf(str,SJIS_CIRCLE "," SJIS_CROSS "      ");
 	mh_printCenter(y,str,TEXT_COLOR_OK);
@@ -84,7 +83,7 @@ int inputBoxOK(char *msg) {
 	while (1){
 		pad=get_pad();
 		if (pad) while (get_pad()) pgWaitV();
-		if (pad&PSP_CTRL_CIRCLE) return 1;			
+		if (pad&PSP_CTRL_CIRCLE) return 1;
 		if (pad&PSP_CTRL_CROSS) return 0;
 	}
 	free(str);
@@ -141,13 +140,13 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 			str[j++]=msg[len++];
 		}
 		if (msg[len]=='\n') len++;
-		str[j]=0;				
+		str[j]=0;
 		mh_printCenter(y,str,TEXT_COLOR);
 		ret=y;
 		y+=10;
 	}
-			
-	
+
+
 	pgScreenFlipV();
 	if (delay_vblank>0) pgWaitVn(delay_vblank);
 	return ret;
@@ -158,13 +157,13 @@ int msgBoxLinesRaw(const char *msg,int rev_line) {
 	unsigned char c;
 	char str[256];
 	int i,j,x,y,lines,ret;
-	
+
 	if (!msg) return;
   if (!(msg[0])) return;
-	
+
 	pgCopyScreen();
-	
-	lines=1;	
+
+	lines=1;
 	j=0;
 	len=0;
 	width=0;
@@ -179,16 +178,16 @@ int msgBoxLinesRaw(const char *msg,int rev_line) {
 			}
 		}
 		len++;
-	}	
+	}
 	if (width<(len-j)) width=len-j;
 	if (!width) width=strlen(msg);
-	
+
 	y=(272-lines*10)/2;
 	x=(480-width*5)/2;
-	
+
 	pgFillBox(x-10-1,y-5-1,x+width*5+10+1,y+lines*10+5,BOX_COLOR);
 	pgDrawFrame(x-10,y-5,x+width*5+10,y+lines*10+5-1,FRAME_COLOR);
-	
+
 	len=0;
 	for (i=0;i<lines;i++){
 		j=0;
@@ -212,8 +211,8 @@ int msgBoxLinesRaw(const char *msg,int rev_line) {
 		else mh_printCenter(y,str,TEXT_COLOR);
 		ret=y;
 		y+=10;
-	}	
-	return ret;				
+	}
+	return ret;
 }
 
 void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
@@ -226,8 +225,8 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 	
 	if (!msg) return;
   if (!(msg[0])) return;
-	
-	lines=1;	
+
+	lines=1;
 	j=0;
 	len=0;
 	width=0;
@@ -242,17 +241,17 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 			}
 		}
 		len++;
-	}	
+	}
 	if (width<(len-j)) width=len-j;
 	if (!width) width=strlen(msg);
-	
+
 	pgFillBoxHalfer(x,y,x+w,y+h);
 	//now draw frame
 	//...
 	pgDrawFrame(x-1,y-1,x+w,y+h+1,12|(12<<5)|(12<<10));
 	pgDrawFrame(x-2,y-2,x+w,y+h+2,24|(24<<5)|(24<<10));
 	pgDrawFrame(x-3,y-3,x+w,y+h+3,31|(31<<5)|(31<<10));
-			
+
 	len=0;
 	for (i=0;i<lines;i++){
 		j=0;
@@ -265,7 +264,7 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 			str[j++]=msg[len++];
 		}
 		if (msg[len]=='\n') len++;
-		str[j]=0;		
+		str[j]=0;
 		mh_printLimit(x+5,y+5,x0+w-10,y0+h-10,str,TEXT_COLOR);
 		y+=10;
 	}
@@ -275,22 +274,22 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 void changeCodeVal(u32 idx,int dir,unsigned char *fmt,unsigned char *code) {
 	if ((!fmt)||(!code)) return;
 	if (strlen(fmt)!=strlen(code)) return;
-	if (idx>=strlen(fmt)) return;	
+	if (idx>=strlen(fmt)) return;
 	code[idx]+=dir;
-	if (dir<0) {		
+	if (dir<0) {
 		switch (fmt[idx]) {
 			case 'X': //hexa
 				if (code[idx]<'0') code[idx]='F';
 				if ((code[idx]<'A')&&(code[idx]>'9')) code[idx]='9';
 				break;
 			case '9': //digit
-				if (code[idx]<'0') code[idx]='9';				
+				if (code[idx]<'0') code[idx]='9';
 				break;
 			case 'a': //alpha lowercase
-				if (code[idx]<'a') code[idx]='z';				
+				if (code[idx]<'a') code[idx]='z';
 				break;
 			case 'A': //alpha uppercase
-				if (code[idx]<'A') code[idx]='Z';				
+				if (code[idx]<'A') code[idx]='Z';
 				break;
 		}
 	} else {
@@ -348,39 +347,39 @@ int InputCodeBox(char *msg,char *fmt,char *code) {
 		i++;
 	}
 	//exit if code length is null or if code is shorter than needed
-	
+
 	if ((!selmax)||(strlen(code)!=selmax)) return -2;
-	
+
 	//init the local code value
 	strcpy(newCode,code);
-	
+
 	pad_cnt=old_pad=new_pad=0;
 	//main loop
 	for (;;) {
 		cpt++;
-		//input scan		
+		//input scan
 		new_pad=0;
 	  if (!pad_cnt) {
-	   	new_pad=get_pad();    	
+	   	new_pad=get_pad();
 	   	if (new_pad) {
 				if (old_pad==new_pad) pad_cnt=2;
 				else pad_cnt=4;
 			} 
-			old_pad=new_pad;   	
+			old_pad=new_pad;
 	  }
 	  else pad_cnt--;
 	  pgWaitV();
-		
-		//build the message to display		
-		
-		
+
+		//build the message to display
+
+
 		sprintf(msgCodeBox,"%s\n\n",msg);
-		
+
 		//put in l the line where the code will be input
 		l=0;i=0; while (msgCodeBox[i]) {if (msgCodeBox[i]=='\n') l++; i++;}
-		
-		
-		
+
+
+
 		//this is NOT optimized :p
 		tmpstr[0]=0;
 		i=0;c=0;j=0;
@@ -405,47 +404,47 @@ int InputCodeBox(char *msg,char *fmt,char *code) {
 			}
 			i++;
 		}
-		sprintf(msgCodeBox,"%s\n%s\n" SJIS_CIRCLE " ok    " SJIS_CROSS " cancel",msgCodeBox,tmpstr);
-				
+		sprintf(msgCodeBox,psp_msg_string(INPUTBOX_CODE),msgCodeBox,tmpstr);
+
 		//display it
 		msgBoxLinesRaw(msgCodeBox,l);
-		
+
 		pgScreenFlipV();
-		
+
 		//wait for user input & handle it
-		
-		if (new_pad&PSP_CTRL_CIRCLE) {				
+
+		if (new_pad&PSP_CTRL_CIRCLE) {
 			strcpy(code,newCode);
-			return 0;			
+			return 0;
 		}
 		//code cancelled
 		if (new_pad&PSP_CTRL_CROSS) return 1;
 		//move right
 		if (new_pad&PSP_CTRL_RIGHT) {
-			if (sel<selmax-1) {sel++;os9x_beep1();}			
+			if (sel<selmax-1) {sel++;os9x_beep1();}
 		}
 		if (new_pad&PSP_CTRL_LEFT) {
-			if (sel>0) {sel--;os9x_beep1();}			
+			if (sel>0) {sel--;os9x_beep1();}
 		}
 		if (new_pad&PSP_CTRL_UP) {
 			changeCodeVal(sel,1,newFmt,newCode);
-			os9x_beep2();			
+			os9x_beep2();
 		}
 		if (new_pad&PSP_CTRL_DOWN) {
 			changeCodeVal(sel,-1,newFmt,newCode);
-			os9x_beep2();			
+			os9x_beep2();
 		}
 	}
 }
 
 
 void psp_showProgressBar(int pos,int len) {
-	int i,x,y;	
+	int i,x,y;
 	i=240-100+(len-pos)*230/len;
 	if (i>240+100) i=240+100;
-	//pgCopyScreen();		
+	//pgCopyScreen();
 	pgFillBox(240-100,186-7,i,186+7,ZIPBOX_COLOR);
-	if (i<240+100) pgFillBox(i+1,186-7,240+100,186+7,0);		
-	pgDrawFrame(240-100-1,186-7-1,240+100+1,186+7+1,ZIPFRAME_COLOR);		
+	if (i<240+100) pgFillBox(i+1,186-7,240+100,186+7,0);
+	pgDrawFrame(240-100-1,186-7-1,240+100+1,186+7+1,ZIPFRAME_COLOR);
 	pgScreenFlip();
 }

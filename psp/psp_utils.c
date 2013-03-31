@@ -224,7 +224,7 @@ int save_rom_settings(int game_crc32,char *name){
 	fwrite(&os9x_hack,1,4,f);
 	fwrite(&os9x_forcepal_ntsc,1,4,f);
 	fwrite(&os9x_autosavetimer,1,4,f);
-	fwrite(&os9x_inputs[0],1,32*4,f);		
+	fwrite(&os9x_inputs[0],1,32*4,f);
 	strncpy(tmp_str,name,63);
 	tmp_str[63]=0;
 	fwrite(tmp_str,1,64,f);
@@ -238,7 +238,7 @@ int save_rom_settings(int game_crc32,char *name){
 	fwrite(&os9x_inputs_analog,1,4,f);
 	fwrite(&os9x_fpslimit,1,4,f);
 	fwrite(&os9x_SA1_exec,1,4,f);
-	
+
 	fclose(f);
 	return 0;
 }
@@ -253,18 +253,18 @@ int load_rom_settings(int game_crc32){
 	int l,i;
 	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
 	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
-	f = fopen(tmp_str,"rb");			
+	f = fopen(tmp_str,"rb");
 	if (!f){
 		//debug_log("cannot load settings");
 		return -1;
 	}
 	fread(&l,1,4,f);
 	if (l<((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
-		msgBoxLines("ini file from a previous incompatible version, ignored!",20);
+		psp_msg(SETTINGS_IGNORED, MSG_DEFAULT);
 		fclose(f);
 		return -2;
 	}
-		
+
 #define READ_SETTING(a) \
 if (fread(&l,1,4,f)==4) a=l; \
 else {fclose(f);check_settings();return -3;}
@@ -313,7 +313,7 @@ else {fclose(f);check_settings();return -3;}
 	check_settings();
 	
 	rom_name[63]=0;	
-	sprintf(tmp_str,"Settings found!\n\n""%s""",rom_name);
+	sprintf(tmp_str,psp_msg_string(SETTINGS_FOUND),rom_name);
 	msgBoxLines(tmp_str,30);
 	
 	
@@ -382,7 +382,7 @@ int load_buffer_settings(char *buffer){
 	memcpy(&l,buffer,4);
 	buffer_ofs+=4;
 	if (l!=((VERSION_MAJOR<<16)|VERSION_MINOR)){
-		msgBoxLines("ini file from a different version.",20);
+		psp_msg(SETTINGS_DIFF, MSG_DEFAULT);
 		return -2;
 	}
 		
@@ -425,15 +425,15 @@ int load_buffer_settings(char *buffer){
 	//READ_SETTING(os9x_screenHeight)
 	READ_SETTING(os9x_apu_ratio)
 	READ_SETTING(os9x_fpslimit)
-		
+
 	check_settings();
-	
+
 	rom_name[63]=0;
-	
+
 	//sprintf(tmp_str,"Settings received!\n\n""%s""",rom_name);
-	//msgBoxLines(tmp_str,30);	
-	
-	
+	//msgBoxLines(tmp_str,30);
+
+
 	return 0;
 }
 
@@ -443,20 +443,20 @@ int load_buffer_settings(char *buffer){
 int save_settings(void){
 	FILE *f;
 	char tmp_str[256];
-	int l;	
+	int l;
 	sprintf(tmp_str,"%ss9xTYL.ini",LaunchDir);
-	f = fopen(tmp_str,"wb");			
+	f = fopen(tmp_str,"wb");
 	if (!f){
 		ErrorMsg("cannot save settings");
 		return -1;
 	}
 	l=(VERSION_MAJOR<<16)|VERSION_MINOR;
-	fwrite(&l,1,4,f);	
+	fwrite(&l,1,4,f);
 	fwrite(romPath,1,256,f);
 	fwrite(lastRom,1,256,f);
 	fwrite(&os9x_menumusic,1,4,f);
 	fwrite(&os9x_menufx,1,4,f);
-	fwrite(&os9x_usballowed,1,4,f);	
+	fwrite(&os9x_usballowed,1,4,f);
 	fwrite(&bg_img_num,1,4,f);
 	fwrite(&os9x_menupadbeep,1,4,f);
 	fclose(f);
@@ -471,18 +471,18 @@ int load_settings(void){
 	char tmp_str[256];
 	int l;
 	sprintf(tmp_str,"%ss9xTYL.ini",LaunchDir);
-	f = fopen(tmp_str,"rb");			
+	f = fopen(tmp_str,"rb");
 	if (!f){
 		//debug_log("cannot load settings");
 		return -1;
 	}
 	fread(&l,1,4,f);
 	if (l<((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
-		msgBoxLines("ini file from previous version, ignored!",20);
+		psp_msg(SETTINGS_IGNORED, MSG_DEFAULT);
 		fclose(f);
 		return -2;
 	}
-		
+
 #define READ_SETTING(a) \
 if (fread(&l,1,4,f)==4) a=l; \
 else {fclose(f);return -3;}
@@ -491,15 +491,15 @@ else {fclose(f);return -3;}
 #define READ_SETTING_SIZE(buff,sz) \
 if (fread(tmp_str,1,sz,f)==sz) memcpy(buff,tmp_str,sz); \
 else {fclose(f);return -3;}
-	
-	READ_SETTING_SIZE(romPath,256)	
-	READ_SETTING_SIZE(lastRom,256)	
+
+	READ_SETTING_SIZE(romPath,256)
+	READ_SETTING_SIZE(lastRom,256)
 	READ_SETTING(os9x_menumusic)
 	READ_SETTING(os9x_menufx)
 	READ_SETTING(os9x_usballowed)
 	READ_SETTING(bg_img_num)
 	READ_SETTING(os9x_menupadbeep)
-	
+
 	fclose(f);
 	return 0;
 }
@@ -515,13 +515,13 @@ void checkdirs() {
 	char path[256];
 	sprintf(path,"%sSAVES",LaunchDir);
 	fd = sceIoDopen(path);
-	if (fd<0) {			
+	if (fd<0) {
 		sceIoMkdir(path, 0777);
 	} else {sceIoDclose(fd);}
-	
+
 	sprintf(path,"%sPROFILES",LaunchDir);
 	fd = sceIoDopen(path);
-	if (fd<0) {			
+	if (fd<0) {
 		sceIoMkdir(path, 0777);
 	} else {sceIoDclose(fd);}
 }
@@ -534,14 +534,14 @@ void checkdirs() {
 void getsysparam(){
 	char sVal[256];
 	int iVal;
-	
+
 	os9x_timezone=0;
 	os9x_daylsavings=0;
 	os9x_language=LANGUAGE_ENGLISH;
 	os9x_nickname[0]='\0';
-	
+
 	if (sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME,sVal,256)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
-		//get nick name		
+		//get nick name
 		//now convert to sjis
 		int i=0,j=0;
 		unsigned int utf8;
@@ -549,7 +549,7 @@ void getsysparam(){
 			utf8=(uint8)sVal[i++];
 			utf8=(utf8<<8)|(uint8)sVal[i++];
 			utf8=(utf8<<8)|(uint8)sVal[i++];
-			
+
 			for (int k=0;k<sjis_xlate_entries;k++) {
 				if (utf8==sjis_xlate[k].utf8) {
 					os9x_nickname[j++]=sjis_xlate[k].sjis>>8;
@@ -558,32 +558,32 @@ void getsysparam(){
 				}
 			}
 		}
-		os9x_nickname[j]=0;				
+		os9x_nickname[j]=0;
 	}
 	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_TIMEZONE,&iVal)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
-		//get timezone		
+		//get timezone
 		os9x_timezone=iVal;
 	}
 	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_DAYLIGHTSAVINGS,&iVal)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
-		//get timezone		
+		//get timezone
 		os9x_daylsavings=iVal;
 	}
-	
+
 	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE,&iVal)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
-		//get language		
+		//get language
 		switch(iVal) {
 				case(PSP_SYSTEMPARAM_LANGUAGE_JAPANESE):
 					os9x_language=LANGUAGE_JAPANESE;
-					break;				
+					break;
 				case(PSP_SYSTEMPARAM_LANGUAGE_FRENCH):
 					os9x_language=LANGUAGE_FRENCH;
 					break;
 				case(PSP_SYSTEMPARAM_LANGUAGE_ENGLISH):
 				default:
 					os9x_language=LANGUAGE_ENGLISH;
-					break;				
+					break;
 		}
-	}			   
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -593,7 +593,7 @@ int os9x_savesnap() {
 	u16 *snes_image;
 	if (os9x_softrendering<2)	snes_image=(u16*)(0x44000000+512*272*2*2);
 	else snes_image=(u16*)(0x44000000+2*512*272*2+256*240*2+2*256*256*2);
-		
+
 	write_JPEG_file ((char*)S9xGetSaveFilename(".jpg"),75,snes_image,256,os9x_snesheight,256); 
 	return 0;
 }
@@ -609,18 +609,18 @@ int os9x_loadsnap(char *fname,u16 *snes_image,int *height) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int os9x_remove(const char *ext) {	
+int os9x_remove(const char *ext) {
 	FILE *savefile;
 	const char *save_filename;
 	os9x_externstate_mode=0;
-	
+
 	save_filename=S9xGetSaveFilename (ext);	
 	savefile=fopen(save_filename,"rb");
 	if (savefile) {
   	fclose(savefile);
 		remove(save_filename);
 		return 1;
-	} 
+	}
 	return 0;
 }
 
@@ -631,7 +631,7 @@ int os9x_remove(const char *ext) {
 char *os9x_shortfilename(char *filename){
 	static char fname [256];
 	char drive [_MAX_DRIVE + 1];
-	char dir [_MAX_DIR + 1];	
+	char dir [_MAX_DIR + 1];
 	char ext [_MAX_EXT + 1];
 	_splitpath (filename, drive, dir, fname, ext);
 	strcat(fname,".");
@@ -642,9 +642,9 @@ char *os9x_shortfilename(char *filename){
 char *os9x_filename_ext(char *filename){
 	char fname [256];
 	char drive [_MAX_DRIVE + 1];
-	char dir [_MAX_DIR + 1];	
+	char dir [_MAX_DIR + 1];
 	static char ext [_MAX_EXT + 1];
-	_splitpath (filename, drive, dir, fname, ext);	
+	_splitpath (filename, drive, dir, fname, ext);
 	return ext;
 }
 
@@ -657,13 +657,13 @@ char *os9x_filename_ext(char *filename){
 
 int os9x_findhacks(int game_crc32){
 	int i=0,j;
-	int _crc32;	
+	int _crc32;
 	char c;
 	char str[256];
 	unsigned int size_snesadvance;
 	unsigned char *snesadvance;
 	FILE *f;
-	
+
 	sprintf(str,"%sDATA/snesadvance.dat",LaunchDir);
 	f=fopen(str,"rb");
 	if (!f) return 0;
@@ -673,7 +673,7 @@ int os9x_findhacks(int game_crc32){
 	snesadvance=(unsigned char*)malloc(size_snesadvance);
 	fread(snesadvance,1,size_snesadvance,f);
 	fclose(f);
-	
+
 	for (;;) {
 		//get crc32
 		j=i;
@@ -686,14 +686,14 @@ int os9x_findhacks(int game_crc32){
 			c=snesadvance[j];
 			if ((c>='0')&&(c<='9'))	_crc32=(_crc32<<4)|(c-'0');
 			else if ((c>='A')&&(c<='F'))	_crc32=(_crc32<<4)|(c-'A'+10);
-			else if ((c>='a')&&(c<='f'))	_crc32=(_crc32<<4)|(c-'a'+10);				
+			else if ((c>='a')&&(c<='f'))	_crc32=(_crc32<<4)|(c-'a'+10);
 			j++;
 		}
 		if (game_crc32==_crc32) {
 			//int p=0;
 			for (;;) {
 				int adr,val;
-							
+
 				i++;
 				j=i;
 				while ((i<size_snesadvance)&&(snesadvance[i]!=0x0D)&&(snesadvance[i]!=',')) {
@@ -702,21 +702,21 @@ int os9x_findhacks(int game_crc32){
 				}
 				if (i==size_snesadvance) {free(snesadvance);return 0;}
 				memcpy(str,&snesadvance[j],i-j);
-				str[i-j]=0;								
+				str[i-j]=0;
 				sscanf(str,"%X=%X",&adr,&val);
 				//sprintf(str,"read : %X=%X",adr,val);
 				//pgPrintAllBG(32,31-p++,0xFFFF,str);
 				
-				if ((val==0x42)||((val&0xFF00)==0x4200)) {					
+				if ((val==0x42)||((val&0xFF00)==0x4200)) {
 					if (val&0xFF00) {
 						ROM[adr]=(val>>8)&0xFF;
 						ROM[adr+1]=val&0xFF;
 					} else ROM[adr]=val;
 				}
-				
-				if (snesadvance[i]==0x0D) {free(snesadvance);return 1;				}
+
+				if (snesadvance[i]==0x0D) {free(snesadvance);return 1;}
 			}
-				
+
 		}
 		while ((i<size_snesadvance)&&(snesadvance[i]!=0x0A)) i++;
 		if (i==size_snesadvance) {free(snesadvance);return 0;}
@@ -794,7 +794,7 @@ const uint32 crc32Table[256] = {
 };
 
 //CRC32 for char arrays
-uint32 caCRC32(uint8 *array, uint32 size, register uint32 crc32) {	
+uint32 caCRC32(uint8 *array, uint32 size, register uint32 crc32) {
   for (register uint32 i = 0; i < size; i++) {
     crc32 = ((crc32 >> 8) & 0x00FFFFFF) ^ crc32Table[(crc32 ^ array[i]) & 0xFF];
   }
@@ -806,12 +806,12 @@ void net_send_state() {
 	char *filename;
 	uint8 c;
 	unsigned int length;
-							
+
 	os9x_save(".znt");
 	filename=(char*)S9xGetSaveFilename (".znt");
 	//send file
 	if (psp_net_send_file(filename)) {
-		msgBoxLines("network error 1",60*1);
+		psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
 		os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 	}
 	//reset netplay related
@@ -822,7 +822,7 @@ void net_send_state() {
 	os9x_updatepadcpt=0;os9x_padfirstcall=1;
 	//load received state
 	if (!os9x_load(".znt")) {
-		msgBoxLines("cannot find save state!",60);
+		psp_msg(ADHOC_CANNOTFIND, MSG_DEFAULT);
 	}
 	remove(filename);
 	//send a sync packet
@@ -836,7 +836,7 @@ void net_flush_net(int to_send) {
 	unsigned int length;
 	pkt_send[0]=to_send;
 	adhocSend(pkt_send, NET_PKT_LEN);
-	msgBoxLines("flushing network, please wait a few seconds",10);
+	psp_msg(ADHOC_FLUSHING, MSG_DEFAULT);
 	do {
 		length=NET_PKT_LEN;
 	} while (adhocRecvBlocked(pkt_recv, &length,RECV_MAX_RETRY)>0);
@@ -848,10 +848,10 @@ int net_waitpause_state(int show_menu){
 	unsigned int crc32,rlen;
 	int ret;
 	char *filename;
-	uint8 c;							
-	FILE *f;		
-		
-	before_pause();		
+	uint8 c;
+	FILE *f;
+
+	before_pause();
 	if (show_menu) {
 		if (!os9x_lowbat) {
 			if (CPUPack.CPU.SRAMModified) {
@@ -864,55 +864,55 @@ int net_waitpause_state(int show_menu){
 #ifndef FW3X
 		endUSBdrivers();
 #endif
-		os9x_specialaction=0;		
-		if (!os9x_lowbat) {			
+		os9x_specialaction=0;
+		if (!os9x_lowbat) {
 			if (menu_modified) {
 				save_rom_settings(Memory.ROMCRC32,Memory.ROMName);
 				save_settings();
 			}
-		}		
+		}
 		if ((in_emu==1)&&os9x_netplay&&os9x_getnewfile) {
-			msgBoxLines("closing connection",60);
+			psp_msg(ADHOC_CLOSING, MSG_DEFAULT);
 #ifdef USE_ADHOC
-			os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;				
+			os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 #else
-			os9x_netplay=0;os9x_adhoc_active=0;				
+			os9x_netplay=0;os9x_adhoc_active=0;
 #endif
 		}
 	}
-	
-	if (os9x_netplay) {
+
 #ifdef USE_ADHOC
-		msgBoxLines("Waiting for other play\n\nPress " SJIS_TRIANGLE " to close connection and quit netplay\n",10);
-							
+	if (os9x_netplay) {
+		psp_msg(ADHOC_WAITING_OTHER, MSG_DEFAULT);
+
 		//filename																																			
 		filename=(char*)S9xGetSaveFilename (".znt");
 		if ((ret=psp_net_recv_file(filename))<0) {
-			msgBoxLines("network error 1",60*1);
+			psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
 			os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 			after_pause();
 			return ret;
 		}
-		
+
 		//reset netplay related
 		os9x_updatepadFrame = 0;os9x_oldframe=0;
 		os9x_snespad=0;memset(os9x_netsnespad,0,sizeof(os9x_netsnespad));memset(os9x_netcrc32,0,sizeof(os9x_netcrc32));
 		os9x_netsynclost=0;
 		os9x_oldsnespad=0;
 		os9x_updatepadcpt=0;os9x_padfirstcall=1;
-	
+
 		//load received state
 		if (!os9x_load(".znt")) {
-			msgBoxLines("cannot find save state!",60);
+			psp_msg(ADHOC_CANNOTFIND, MSG_DEFAULT);
 		}
 		remove(filename);
-	
+
 		//sync stuff
 		c=0;
 		adhocSendRecvAck(&c,1);
-#endif
 	}
-	after_pause();		
+#endif
+	after_pause();
 	return 0;
 }
 
@@ -920,73 +920,73 @@ void net_send_settings() {
 #ifdef USE_ADHOC
 	unsigned int length;
 	FILE *f;
-						char filename[256];
-						uint8 c;
-						char buffer[256];
-																			
-						
-						
-						sprintf(filename,"%stmp.ini",LaunchDir);							
-						memset(buffer,0,256);							
-						save_buffer_settings(buffer);
-						f=fopen(filename,"wb");
-						fwrite(buffer,1,256,f);
-						fclose(f);
-							
-						if (psp_net_send_file(filename)) {
-							msgBoxLines("network error 1",60*1);
-							os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
-						} else {
-							//reset netplay related
-							os9x_updatepadFrame = 0;os9x_oldframe=0;
-							os9x_snespad=0;memset(os9x_netsnespad,0,sizeof(os9x_netsnespad));memset(os9x_netcrc32,0,sizeof(os9x_netcrc32));
-							os9x_netsynclost=0;
-							os9x_oldsnespad=0;
-							os9x_updatepadcpt=0;os9x_padfirstcall=1;							
-							//send a sync packet
-							length=1;
-							adhocRecvSendAck(&c,&length);
-						}
-						remove(filename);
+	char filename[256];
+	uint8 c;
+	char buffer[256];
+
+
+
+	sprintf(filename,"%stmp.ini",LaunchDir);
+	memset(buffer,0,256);
+	save_buffer_settings(buffer);
+	f = fopen(filename,"wb");
+	fwrite(buffer,1,256,f);
+	fclose(f);
+
+	if (psp_net_send_file(filename)) {
+		psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
+		os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
+	} else {
+		//reset netplay related
+		os9x_updatepadFrame = 0;os9x_oldframe=0;
+		os9x_snespad=0;memset(os9x_netsnespad,0,sizeof(os9x_netsnespad));memset(os9x_netcrc32,0,sizeof(os9x_netcrc32));
+		os9x_netsynclost=0;
+		os9x_oldsnespad=0;
+		os9x_updatepadcpt=0;os9x_padfirstcall=1;
+		//send a sync packet
+		length=1;
+		adhocRecvSendAck(&c,&length);
+	}
+	remove(filename);
 #endif
 }
 void net_receive_settings() {
 #ifdef USE_ADHOC
 	unsigned int file_size,length;
-						unsigned int crc32,rlen;
-						int ret;
-						char filename[256];		
-						uint8 c;
-						char buffer[256];
-						FILE *f;
-							
-						sprintf(filename,"%stmp.ini",LaunchDir);							
-						
-						msgBoxLines("Waiting for other player\n\nPress " SJIS_TRIANGLE " to close connection and quit netplay\n",10);
-							
-						//filename																																									
-						if ((ret=psp_net_recv_file(filename))<0) {
-							msgBoxLines("network error 1",60*1);
-							os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;							
-						} else {							
-							//reset netplay related
-							os9x_updatepadFrame = 0;os9x_oldframe=0;
-							os9x_snespad=0;memset(os9x_netsnespad,0,sizeof(os9x_netsnespad));memset(os9x_netcrc32,0,sizeof(os9x_netcrc32));
-							os9x_netsynclost=0;
-							os9x_oldsnespad=0;
-							os9x_updatepadcpt=0;os9x_padfirstcall=1;
-							
-							//load received state
-							memset(buffer,0,256);							
-							f=fopen(filename,"rb");
-							fread(buffer,1,256,f);
-							fclose(f);
-							load_buffer_settings(buffer);													
-							//sync stuff
-							c=0;
-							adhocSendRecvAck(&c,1);
-						}	
-						remove(filename);
+	unsigned int crc32,rlen;
+	int ret;
+	char filename[256];
+	uint8 c;
+	char buffer[256];
+	FILE *f;
+
+	sprintf(filename,"%stmp.ini",LaunchDir);
+
+	psp_msg(ADHOC_WAITING_OTHER, MSG_DEFAULT);
+
+	//filename																																									
+	if ((ret=psp_net_recv_file(filename))<0) {
+		psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
+		os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
+	} else {
+		//reset netplay related
+		os9x_updatepadFrame = 0;os9x_oldframe=0;
+		os9x_snespad=0;memset(os9x_netsnespad,0,sizeof(os9x_netsnespad));memset(os9x_netcrc32,0,sizeof(os9x_netcrc32));
+		os9x_netsynclost=0;
+		os9x_oldsnespad=0;
+		os9x_updatepadcpt=0;os9x_padfirstcall=1;
+
+		//load received state
+		memset(buffer,0,256);
+		f=fopen(filename,"rb");
+		fread(buffer,1,256,f);
+		fclose(f);
+		load_buffer_settings(buffer);													
+		//sync stuff
+		c=0;
+		adhocSendRecvAck(&c,1);
+	}
+	remove(filename);
 #endif
 }
 
@@ -995,20 +995,16 @@ void net_receive_settings() {
 ////////////////////////////////////////////////////////////////////////////////////////
 void check_battery() {
 	if (scePowerIsBatteryExist()) {
-			int oldvalue=os9x_lowbat;
-			os9x_lowbat=scePowerIsLowBattery();
-			if ((os9x_lowbat)&&(!oldvalue)) {
-#ifdef ME_SOUND				
-			msgBoxLines("Battery is low, saving is now disabled (SRAM,states and settings).\n\nThis window will close in 3 seconds.",60*3);
-#else
-			msgBoxLines("Battery is low, saving is now disabled (SRAM,states and settings).\n\nYou can still put your PSP in sleep mode and charge battery later.\n\nThis window will close in 3 seconds.",60*3);
-#endif				
-				pgFillAllvram(0);
-				//reset timer for synchro stuff
-			} else if ((!os9x_lowbat)&&(oldvalue)) {
-					pgPrintAllBG(0,33,0xffff,"                               ");
-			}
+		int oldvalue=os9x_lowbat;
+		os9x_lowbat=scePowerIsLowBattery();
+		if ((os9x_lowbat)&&(!oldvalue)) {
+			psp_msg(BAT_ISLOW, MSG_DEFAULT);
+			pgFillAllvram(0);
+			//reset timer for synchro stuff
+		} else if ((!os9x_lowbat)&&(oldvalue)) {
+			pgPrintAllBG(0,33,0xffff,"                               ");
 		}
+	}
 }
 
 void os9x_savecheats() {
@@ -1018,60 +1014,59 @@ void os9x_savecheats() {
 //helper function to make things easier
 int LoadStartModule(char *path) {
 	u32 loadResult;
-  u32 startResult;
-  int status;
-  loadResult = sceKernelLoadModule(path, 0, NULL);
-  if (loadResult & 0x80000000) return -1;
-  else startResult = sceKernelStartModule(loadResult, 0, NULL, &status, NULL);
-  if (loadResult != startResult) return -2;
-  return 0;
+	u32 startResult;
+	int status;
+	loadResult = sceKernelLoadModule(path, 0, NULL);
+	if (loadResult & 0x80000000) return -1;
+	else startResult = sceKernelStartModule(loadResult, 0, NULL, &status, NULL);
+	if (loadResult != startResult) return -2;
+	return 0;
 }
 
 #ifndef FW3X
-void loadUSBdrivers(void) {	
-  //start necessary drivers
-  LoadStartModule("flash0:/kd/semawm.prx");
-  LoadStartModule("flash0:/kd/usbstor.prx");
-  LoadStartModule("flash0:/kd/usbstormgr.prx");
-  LoadStartModule("flash0:/kd/usbstorms.prx");
-  LoadStartModule("flash0:/kd/usbstorboot.prx");
-} 
+void loadUSBdrivers(void) {
+	//start necessary drivers
+	LoadStartModule("flash0:/kd/semawm.prx");
+	LoadStartModule("flash0:/kd/usbstor.prx");
+	LoadStartModule("flash0:/kd/usbstormgr.prx");
+	LoadStartModule("flash0:/kd/usbstorms.prx");
+	LoadStartModule("flash0:/kd/usbstorboot.prx");
+}
 
 int initUSBdrivers(void) {
-  //connect USB 
-  uint32 state = sceUsbGetState();
-  if (state & PSP_USB_ACTIVATED) return 0;
-  int retVal = sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
-  if (retVal != 0) {
-  		sprintf(str_tmp,"Error starting USB Bus driver (0x%08X)\n", retVal);
-			msgBoxLines(str_tmp,60);			
+	//connect USB
+	uint32 state = sceUsbGetState();
+	if (state & PSP_USB_ACTIVATED) return 0;
+	int retVal = sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
+	if (retVal != 0) {
+		sprintf(str_tmp,psp_msg_string(ERR_USB_STARTING_USBBUS), retVal);
+			msgBoxLines(str_tmp,60);
 			return -1;
-  }
-  retVal = sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
-  if (retVal != 0) {		
-	  sprintf(str_tmp,"Error starting USB Mass Storage driver (0x%08X)\n",retVal);
+	}
+	retVal = sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
+	if (retVal != 0) {
+		sprintf(str_tmp,psp_msg_string(ERR_USB_STARTING_USBMASS),retVal);
 		msgBoxLines(str_tmp,60);
 		return -2;
 	}
-  retVal = sceUsbstorBootSetCapacity(0x800000);
-  if (retVal != 0) {
-		sprintf(str_tmp,"Error setting capacity with USB Mass Storage driver (0x%08X)\n",retVal);
+	retVal = sceUsbstorBootSetCapacity(0x800000);
+	if (retVal != 0) {
+		sprintf(str_tmp,psp_msg_string(ERR_USB_SETTING_CAPACITY),retVal);
 		msgBoxLines(str_tmp,60);
 		return -3;
-  }
-  retVal = sceUsbActivate(0x1c8);
-  if (retVal) return -4;
-  	
+	}
+	retVal = sceUsbActivate(0x1C8);
+	if (retVal) return -4;
+
   return 0;
 }
 
 int endUSBdrivers(void) {
 	uint32 state = sceUsbGetState();
 	if (state & PSP_USB_ACTIVATED) {
-   sceUsbDeactivate(0x1c8);
-	// FIXME: last arg should be NULL (wrong prototype in pspsdk?)
-   sceUsbStop(PSP_USBSTOR_DRIVERNAME,0,0);
-   sceUsbStop(PSP_USBBUS_DRIVERNAME,0,0);
-  }
+		sceUsbDeactivate(0x1C8);
+		sceUsbStop(PSP_USBSTOR_DRIVERNAME,0,NULL);
+		sceUsbStop(PSP_USBBUS_DRIVERNAME,0,NULL);
+	}
 }
 #endif //FW3X

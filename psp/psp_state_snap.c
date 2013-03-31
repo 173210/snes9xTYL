@@ -69,10 +69,10 @@ int os9x_loadfname(const char *fname) {
 	FILE *savefile;
 	char *ext;
 	ext=strrchr(fname,'.');
-	if (strlen(ext)==4) {				
+	if (strlen(ext)==4) {
 		if (!strcasecmp(ext,".srm")) {
-			msgBoxLines("Found an SRAM file",60);
-			Memory.LoadSRAM( (char*)fname );	
+			psp_msg(FOUND_SRAM, MSG_DEFAULT);
+			Memory.LoadSRAM( (char*)fname );
 			return 1;
 		}
 	}
@@ -85,7 +85,7 @@ int os9x_loadfname(const char *fname) {
 //		S9xInitUpdate();
 		S9xReschedule ();
 		return 1;
-	} 
+	}
 	return 0;
 }
 

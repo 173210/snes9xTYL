@@ -21,6 +21,13 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	//error
 	{ERR_OUT_OF_MEM,"Out of memory",60},
 	{ERR_READ_MEMSTICK,"Error reading memstick.\nPlease verify it (using a PC card reader), it may be corrupted.",60},
+
+	{ERR_INIT_SNES,"Cannot init snes, memory issue",2*60},
+	{ERR_INIT_ROM,"Cannot initialize ROM",60*2},
+
+	{ERR_USB_STARTING_USBBUS,"Error starting USB Bus driver (0x%08X)\n",0},
+	{ERR_USB_STARTING_USBMASS,"Error starting USB Mass Storage driver (0x%08X)\n",0},
+	{ERR_USB_SETTING_CAPACITY,"Error setting capacity with USB Mass Storage driver (0x%08X)\n",0},
 	//confirm
 	{ASK_EXIT,"Exit Snes9XTYL ?",-2},
 	{ASK_DELETE,"Delete file ?",-2},
@@ -34,6 +41,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " Parent dir.          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
 	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " RUN " SJIS_CROSS "BACK TO GAME " SJIS_TRIANGLE " Parent dir.  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
 	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " RUN " SJIS_TRIANGLE " Parent dir.                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+
+	{FILER_TITLE, "[" EMUNAME_VERSION "] - Choose a file", 0},
 	
 	{FILER_HELP_WINDOW1,"Press START to switch between",0},
 	{FILER_HELP_WINDOW2,"NORMAL and NETPLAY mode.",0},
@@ -91,7 +100,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 
 	{ERR_INIT_OSK,"cannot init OSK",20},
 	{ERR_ADD_CODE,"Cannot add cheat code, too many already enterred!",60},
-	
+
 	{MENU_CHEATS_ENTERGF,"Enter a GoldFinger code",0},
 	{MENU_CHEATS_ENTERPAR,"Enter a Pro Action Replay code",0},
 	{MENU_CHEATS_ENTERGG,"Enter a Game Genie code",0},
@@ -299,6 +308,16 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{ADHOC_CLOSING,"closing connection",60},
 	{ADHOC_DRIVERLOAD_ERR,"Net driver load error",60*2},
 	{ADHOC_INIT_ERR,"Issue with init adhoc game\n",60},
+	{ADHOC_LOST_CONNECTION,"Lost connection!",60},
+	{ADHOC_CORRUPTED_PKT,"corrupted pkt",0},
+	{ADHOC_STATE_SIZE,"state size : %d",0},
+	{ADHOC_FILE_ERR_RECEIVING,"file error while receiving state!",60*1},
+	{ADHOC_FILE_ERR_SENDING,"file error while sending state!",60*1},
+	{ADHOC_STILL,"still : %d",0},
+	{ADHOC_WAITING_OTHER,"Waiting for other player\n\nPress " SJIS_TRIANGLE " to close connection and quit netplay\n",10},
+	{ADHOC_NETWORKERR_1,"network error 1",60*1},
+	{ADHOC_CANNOTFIND,"cannot find save state!",60},
+	{ADHOC_FLUSHING,"flushing network, please wait a few seconds",10},
 	// LOAD/SAVE
 	{LOADSAVE_AUTOSAVETIMER,"Autosaving...",0},
 	{LOADSAVE_EXPORTS9XSTATE,"Found a snes9xTYL file",0},
@@ -320,12 +339,26 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{SCROLL_SEARCHING,"Searching...",0},
 	{SCROLL_STRNOTFOUND,"String not found!",30},
 	{SCROLL_DISCLAIMER,"Disclaimer",0},
-	//Init Snes
-	{INIT_ERR,"Cannot init snes, memory issue",2*60},
-	{INIT_ERR_SETTINGS_NOTCOMPLETE,"!!Settings file not complete!!\n\nProbably coming from a previous version.\n\nNew settings will be set with default values",60*3},
-	{INIT_ERR_SETTINGS_NOTFOUND,"No settings found, using default",10},
-	{INIT_FORCING_DEFAULT,"Forcing default settings",10},
+	//Settings
+	{SETTINGS_NOTCOMPLETE,"!!Settings file not complete!!\n\nProbably coming from a previous version.\n\nNew settings will be set with default values",60*3},
+	{SETTINGS_NOTFOUND,"No settings found, using default",10},
+	{SETTINGS_FORCING_DEFAULT,"Forcing default settings",10},
+	{SETTINGS_IGNORED,"ini file from a previous incompatible version, ignored!",20},
+	{SETTINGS_FOUND,"Settings found!\n\n""%s""",0},
+	{SETTINGS_DIFF,"ini file from a different version.",20},
+	//Others
+	{APU_DEBUGGING,"APU DEBUGGING",10},
+	{BGMUSIC_PLAYING,"Playing spc file...",0},
+	{FOUND_SRAM,"Found an SRAM file",60},
+	{CANCEL,"CANCEL",0},
+	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " Close",0},
+	{INPUTBOX_CODE,"%s\n%s\n" SJIS_CIRCLE " ok    " SJIS_CROSS " cancel",0},
 	{INIT_SPEEDHACK,"Found speedhacks, applying...",30},
+#ifdef ME_SOUND
+	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nThis window will close in 3 seconds.",60*3}
+#else
+	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nYou can still put your PSP in sleep mode and charge battery later.\n\nThis window will close in 3 seconds.",60*3}
+#endif
 };
 
 t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
@@ -333,6 +366,13 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	//error
 	{ERR_OUT_OF_MEM,"メモリ外です。",60},
 	{ERR_READ_MEMSTICK,"メモリースティックの読み込みでエラーが発生しました。\nメモリースティックを確認してください。\n(PCのカードリーダーを使ってください)\nメモリースティックが破損している可能\性があります。",60},
+
+	{ERR_INIT_SNES,"メモリの問題でSFCを初期化できません",2*60},
+	{ERR_INIT_ROM,"ROMを初期化できません",60*2},
+
+	{ERR_USB_STARTING_USBBUS,"USBバスドライバ開始エラー (0x%08X)\n",0},
+	{ERR_USB_STARTING_USBMASS,"USB大容量記憶装置ドライバ開始エラー (0x%08X)\n",0},
+	{ERR_USB_SETTING_CAPACITY,"USB大容量記憶装置ドライバ容量設定エラー (0x%08X)\n",0},
 	//confirm
 	{ASK_EXIT,"Snes9XTYLを終了しますか?",-2},
 	{ASK_DELETE,"ファイルを削除しますか?",-2},
@@ -346,6 +386,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " 上へ          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
 	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " 実行 " SJIS_CROSS "ゲームに戻る " SJIS_TRIANGLE " 上へ  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
 	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " 実行 " SJIS_TRIANGLE " 上へ                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+
+	{FILER_TITLE, "[" EMUNAME_VERSION "] - ファイルを選んでください", 0},
 	
 	{FILER_HELP_WINDOW1,"標準と通信対戦モードを切り替える",0},
 	{FILER_HELP_WINDOW2,"にはSTARTを押してください",0},
@@ -610,6 +652,16 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{ADHOC_CLOSING,"接続を閉じています",60},
 	{ADHOC_DRIVERLOAD_ERR,"ネットドライバ読み込みエラー",60*2},
 	{ADHOC_INIT_ERR,"アドホックゲームの初期化に問題が発生しました\n",60},
+	{ADHOC_LOST_CONNECTION,"接続を失いました",60},
+	{ADHOC_CORRUPTED_PKT,"破損したパケット",0},
+	{ADHOC_STATE_SIZE,"ステートデータサイズ : %d",0},
+	{ADHOC_FILE_ERR_RECEIVING,"ステートファイル受信エラー",60*1},
+	{ADHOC_FILE_ERR_SENDING,"ステートファイル送信エラー",60*1},
+	{ADHOC_STILL,"残り : %d",0},
+	{ADHOC_WAITING_OTHER,"他のプレイヤーを待っています\n\n接続を閉じ通信対戦をやめるには" SJIS_TRIANGLE "ボタンを押してください\n",10},
+	{ADHOC_NETWORKERR_1,"ネットワークエラー1",60*1},
+	{ADHOC_CANNOTFIND,"ステートセーブが見つかりません",60},
+	{ADHOC_FLUSHING,"ネットワークを消去しています。しばらくお待ちください。",10},
 	// LOAD/SAVE
 	{LOADSAVE_AUTOSAVETIMER,"自動セーブしています...",0},
 	{LOADSAVE_EXPORTS9XSTATE,"snes9xTYLファイルが見つかりました",0},
@@ -631,12 +683,26 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{SCROLL_SEARCHING,"検索しています...",0},
 	{SCROLL_STRNOTFOUND,"文字列は見つかりませんでした",30},
 	{SCROLL_DISCLAIMER,"免責事項",0},
-	//Init Snes
-	{INIT_ERR,"メモリの問題でSFCを初期化できません",2*60},
-	{INIT_ERR_SETTINGS_NOTCOMPLETE,"※設定ファイルが完全ではありません※\n\n以前のバージョンのものの可能性があります。\n\n新しい設定が標準値で設定されます。",60*3},
-	{INIT_ERR_SETTINGS_NOTFOUND,"設定が見つかりません。標準設定を使います。",10},
-	{INIT_FORCING_DEFAULT,"強制的に標準設定を使用しています",10},
+	//Settings
+	{SETTINGS_NOTCOMPLETE,"※設定ファイルが完全ではありません※\n\n以前のバージョンのものの可能性があります。\n\n新しい設定が標準値で設定されます。",60*3},
+	{SETTINGS_NOTFOUND,"設定が見つかりません。標準設定を使います。",10},
+	{SETTINGS_FORCING_DEFAULT,"強制的に標準設定を使用しています",10},
+	{SETTINGS_IGNORED,"以前の互換性のないバージョンのINIファイルです。ファイルは無視されました。",20},
+	{SETTINGS_FOUND,"設定が見つかりました\n\n""%s""",0},
+	{SETTINGS_DIFF,"異なるバージョンのINIファイルです。",20},
+	//Others
 	{INIT_SPEEDHACK,"スピードハックが見つかりました。適用しています...",30},
+	{APU_DEBUGGING,"APUデバッグ",10},
+	{BGMUSIC_PLAYING,"SPCファイルを再生しています...",0},
+	{FOUND_SRAM,"SRAMファイルが見つかりました",60},
+	{CANCEL,"キャンセル",0},
+	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " 閉じる",0},
+	{INPUTBOX_CODE,"%s\n%s\n" SJIS_CIRCLE " OK    " SJIS_CROSS " キャンセル",0},
+#ifdef ME_SOUND
+	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nこの画面は3秒で閉じます。",60*3}
+#else
+	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nPSPをスリープモードにしてあとで充電することができます。\n\nこの画面は3秒で閉じます。",60*3}
+#endif
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////

@@ -97,14 +97,14 @@ int os9x_loadfname(const char *fname) {
 	FILE *savefile;
 	char *ext;
 	ext=strrchr(fname,'.');
-	if (strlen(ext)==4) {				
+	if (strlen(ext)==4) {
 		if (!strcasecmp(ext,".srm")) {
-			msgBoxLines("Found an SRAM file",60);
-			Memory.LoadSRAM( (char*)fname );	
+			psp_msg(FOUND_SRAM, MSG_DEFAULT);
+			Memory.LoadSRAM( (char*)fname );
 			return 1;
 		}
 	}
-	
+
 	os9x_externstate_mode=1;
 	savefile=fopen(fname,"rb");
   if (savefile) {
@@ -113,22 +113,22 @@ int os9x_loadfname(const char *fname) {
 //		S9xInitUpdate();
 		S9xReschedule ();
 		return 1;
-	} 
+	}
 	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int os9x_loadzsnes(char *ext) {	
+int os9x_loadzsnes(char *ext) {
 	FILE *savefile;
 	const char *save_filename;
 	
 	os9x_externstate_mode=1;
-	save_filename=S9xGetSaveFilename (ext);	
+	save_filename=S9xGetSaveFilename (ext);
 	savefile=fopen(save_filename,"rb");
   if (savefile) {
- 		fclose(savefile);		
+ 		fclose(savefile);
 		S9xUnfreezeGame(save_filename);
 //		S9xInitUpdate();
 		S9xReschedule ();

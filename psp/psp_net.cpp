@@ -98,43 +98,43 @@ int psp_net_recv_file(char *filename) {
 	length=NET_PKT_LEN;
 	if (adhocRecvSendAck(net_pkt_recv,&length)<0) {
 		//pb while receiving data
-		msgBoxLines("Lost connection!",60);
+		psp_msg(ADHOC_LOST_CONNECTION, MSG_DEFAULT);
 		return -1;
 	}
 	length=NET_PKT_LEN;
 	if (adhocRecvSendAck(net_pkt_recv,&length)<0) {
 		//pb while receiving data
-		msgBoxLines("Lost connection!",60);
+		psp_msg(ADHOC_LOST_CONNECTION, MSG_DEFAULT);
 		return -1;
 	}
 	if ((net_pkt_recv[5]!=NET_MAGIC1)||(net_pkt_recv[6]!=NET_MAGIC2)||(net_pkt_recv[7]!=NET_MAGIC3)) {
 		//pb while receiving data
-		char str[64];sprintf(str,"corrupted plt : %02X%02X%02X%02X%02X%02X%02X%02X",net_pkt_recv[0],
+		char str[64];sprintf(str,"%s : %02X%02X%02X%02X%02X%02X%02X%02X",psp_msg_string(ADHOC_CORRUPTED_PKT),net_pkt_recv[0],
 									net_pkt_recv[1],net_pkt_recv[2],net_pkt_recv[3],net_pkt_recv[4],net_pkt_recv[5],net_pkt_recv[6],net_pkt_recv[7]);
 		msgBoxLines(str,60*2);
 		return -2;
 	}
 	file_size=(((int)net_pkt_recv[1])<<24)|(((int)net_pkt_recv[2])<<16)|(((int)net_pkt_recv[3])<<8)|(((int)net_pkt_recv[4])<<0);
 
-	{char str[32];sprintf(str,"state size : %d",file_size);msgBoxLines(str,10);}
+	{char str[32];sprintf(str,psp_msg_string(ADHOC_STATE_SIZE),file_size);msgBoxLines(str,10);}
 
 	//recv  file
 	f=fopen(filename,"wb");
 	if (!f) {
-		msgBoxLines("file error while receiving state!",60*1);
+		psp_msg(ADHOC_FILE_ERR_RECEIVING, MSG_DEFAULT);
 		return -3;
 	}
 	//buffer=(uint8*)malloc(0x1004);
 	//if (!buffer) {msgBoxLines("malloc error while sending state!",60*1);sceKernelExitGame();}
 
 	do {
-		char str[64];sprintf(str,"still : %d",file_size);msgBoxLines(str,0);
+		char str[64];sprintf(str,psp_msg_string(ADHOC_STILL),file_size);msgBoxLines(str,0);
 		if (file_size>0x1000) rlen=0x1000;
 		else rlen=file_size;
 		for (;;) {
 			length=rlen+4;
 			if (adhocRecvSendAck(net_buffer,&length)<0) {
-				msgBoxLines("file error while receiving state!",60*1);
+				psp_msg(ADHOC_FILE_ERR_RECEIVING, MSG_DEFAULT);
 				return -4;
 			}
 			crc32=caCRC32(net_buffer+4,rlen);
@@ -168,7 +168,7 @@ int psp_net_send_file(char *filename) {
 	sceKernelDelayThread(100000);
 	f=fopen(filename,"rb");
 	if (!f) {
-		msgBoxLines("file error while sending state!",60*1);
+		psp_msg(ADHOC_FILE_ERR_SENDING, MSG_DEFAULT);
 		return -1;
 	}
 	//buffer=(uint8*)malloc(0x1004);
@@ -181,9 +181,9 @@ int psp_net_send_file(char *filename) {
 	length=ftell(f);
 	fseek(f,0,SEEK_SET);
 
-	{char str[32];sprintf(str,"state size : %d",length);msgBoxLines(str,10);}
+	{char str[32];sprintf(str,psp_msg_string(ADHOC_STATE_SIZE),length);msgBoxLines(str,10);}
 
-	msgBoxLines("Waiting for other player\n\nPress " SJIS_TRIANGLE " to close connection and quit netplay\n",10);
+	psp_msg(ADHOC_WAITING_OTHER, MSG_DEFAULT);
 
 	net_pkt_send[0]=3;
 	net_pkt_send[1]=(length>>24)&0xFF;
@@ -197,7 +197,7 @@ int psp_net_send_file(char *filename) {
 	adhocSendRecvAck(net_pkt_send, NET_PKT_LEN);  //first packet seems to be corrupted...
 
 	do {
-		char str[64];sprintf(str,"still : %d",length);msgBoxLines(str,0);
+		char str[64];sprintf(str,psp_msg_string(ADHOC_STILL),length);msgBoxLines(str,0);
 		if (length>0x1000) rlen=0x1000;
 		else rlen=length;
 

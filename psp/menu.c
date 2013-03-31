@@ -1202,7 +1202,7 @@ void show_batteryinfo(void){
 			//if exists battery, gather infos
 			char bat_time[16];
 	  	int batteryLifeTime = scePowerGetBatteryLifeTime();
-	  	if (batteryLifeTime>=0) sprintf(bat_time,psp_msg_string(MENU_TITLE_GENERIC_BAT_TIME),batteryLifeTime/60, batteryLifeTime-(batteryLifeTime/60*60));
+	  	if (batteryLifeTime > 0) sprintf(bat_time,psp_msg_string(MENU_TITLE_GENERIC_BAT_TIME),batteryLifeTime/60, batteryLifeTime-(batteryLifeTime/60*60));
 		  else bat_time[0]=0;
 	   	sprintf(bat_info,psp_msg_string(MENU_TITLE_GENERIC_BAT),
 		   		tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min,

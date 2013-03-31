@@ -3559,7 +3559,7 @@ int init_snes_rom() {
   ///////////////////
   ///////////////////
   if (  !Memory.Init() ) {
-  	psp_msg(INIT_ERR, MSG_DEFAULT);
+  	psp_msg(ERR_INIT_SNES, MSG_DEFAULT);
 		return -1;
 	}
 	S9xInitSound( Settings.SoundPlaybackRate, Settings.Stereo, Settings.SoundBufferSize );
@@ -3578,17 +3578,17 @@ int init_snes_rom() {
 		if (!bypass_rom_settings) {
 			if (int ret=load_rom_settings(Memory.ROMCRC32)) {
 				if (ret==-3) {
-					psp_msg(INIT_ERR_SETTINGS_NOTCOMPLETE, MSG_DEFAULT);
+					psp_msg(SETTINGS_NOTCOMPLETE, MSG_DEFAULT);
 				}
 				else {
-					psp_msg(INIT_ERR_SETTINGS_NOTFOUND, MSG_DEFAULT);
+					psp_msg(SETTINGS_NOTFOUND, MSG_DEFAULT);
 					if (load_rom_settings(0)) {
 						if (!os9x_lowbat) save_rom_settings(0,"default");
 					}
 				}
 			}
 		} else {
-			psp_msg(INIT_FORCING_DEFAULT, MSG_DEFAULT);
+			psp_msg(SETTINGS_FORCING_DEFAULT, MSG_DEFAULT);
 			if (load_rom_settings(0)) {
 					if (!os9x_lowbat) save_rom_settings(0,"default");
 			}
@@ -3745,7 +3745,7 @@ void me_apu_debug(int flag)
 		StopSoundThread();
 //		Settings.Paused = TRUE;
 
-			msgBoxLines("APU DEBUGGING",10);
+			psp_msg(APU_DEBUGGING, MSG_DEFAULT);
 
 //		pgFillAllvram(0);
 //		Settings.Paused = false;
@@ -3802,7 +3802,7 @@ int user_main(SceSize args, void* argp) {
 
 	welcome_message();
 
-	filer_init("[" EMUNAME_VERSION "] - Choose a file",romPath);
+	filer_init(psp_msg_string(FILER_TITLE), romPath);
 
 	sprintf(os9x_viewfile_path,"%sFAQS/",LaunchDir);
 
@@ -3843,7 +3843,7 @@ int user_main(SceSize args, void* argp) {
 						in_emu=0;
 					}
 					if (init_snes_rom()) {
-						msgBoxLines("Cannot initialize ROM",60*2);
+						psp_msg(ERR_INIT_ROM, MSG_DEFAULT);
 						close_snes_rom();
 					} else {
 						os9x_getnewfile=0;
@@ -3860,7 +3860,7 @@ int user_main(SceSize args, void* argp) {
 
 					in_emu=2;
 					//play spc, blocking
-					msgBoxLines("Playing spc file...",0);
+					psp_msg(BGMUSIC_PLAYING, MSG_DEFAULT);
 					OSPC_Play(rom_filename,0,MAXVOLUME);
 					blit_reinit();
 					set_cpu_clock();
