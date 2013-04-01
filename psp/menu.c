@@ -3214,8 +3214,7 @@ int menu_buildbg() {
 
 	pgFillBoxHalfer(0,0,479,9);
 	pgFillBoxHalfer(0,272-10,479,271);
-	strcpy(str_tmp,EMUNAME_VERSION);
-	mh_print(i+15,0,str_tmp,(31<<0)|(30<<5)|(20<<10));
+	mh_print(0,0,EMUNAME_VERSION,(31<<0)|(30<<5)|(20<<10));
 
 	for (i=0;i<272;i++) {
 		src = (u16*)pgGetVramAddr(0,i);
