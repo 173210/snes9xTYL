@@ -87,7 +87,6 @@ extern char romPath[256];
 extern char lastRom[256];
 extern char LastPath[256];
 extern char str_tmp[256];
-extern char os9x_nickname[256];
 extern int os9x_inputs[32],os9x_inputs_analog,os9x_fpslimit,os9x_apu_ratio;
 int exit_menu,menu_modified,cheats_modified;
 int menu_music;
@@ -3215,9 +3214,7 @@ int menu_buildbg() {
 
 	pgFillBoxHalfer(0,0,479,9);
 	pgFillBoxHalfer(0,272-10,479,271);
-	sprintf(str_tmp,"%s",os9x_nickname);
-	mh_print(i,0,str_tmp,(24<<0)|(24<<5)|(24<<10));
-	sprintf(str_tmp,"%s",EMUNAME_VERSION);
+	strcpy(str_tmp,EMUNAME_VERSION);
 	mh_print(i+15,0,str_tmp,(31<<0)|(30<<5)|(20<<10));
 
 	for (i=0;i<272;i++) {
