@@ -497,14 +497,14 @@ int getFilePath(char *out,int can_exit) {
         if( readHomeButton() > 0 )
         {
         		if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {
-        			ExitCallback(0,0,NULL);
+        			S9xExit();
         		}
         }
 #else
         else if(new_pad & PSP_CTRL_LTRIGGER) {
         	if (new_pad & PSP_CTRL_RTRIGGER) {
         		if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {
-        			ExitCallback(0,0,NULL);
+        			S9xExit();
         		}
         	}
         }
@@ -764,7 +764,7 @@ int getNoExtFilePath(char *out,int can_exit) {
         else if(new_pad & PSP_CTRL_LTRIGGER) {
         	if (new_pad & PSP_CTRL_RTRIGGER) {
         		if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {
-        			ExitCallback(0,0,NULL);
+        			S9xExit();
         		}
         	}
         }

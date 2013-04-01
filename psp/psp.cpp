@@ -734,44 +734,6 @@ void update_pad(){
 
 	os9x_oldframe=os9x_updatepadFrame;
 }
-
-////////////////////////////////////////////////////////////////////////////////////////
-// Exit callback
-////////////////////////////////////////////////////////////////////////////////////////
-int ExitCallback(int arg1, int arg2, void *common){
-	g_bLoop=0;
-#if 0
-	// Cleanup the games resources etc (if required)
-	//debug_log("Exit Callback");
-
-	//Settings.Paused = TRUE;
-
-	//*os9x_paused_ptr=1;
-	//StopSoundThread();
-	//scePowerSetClockFrequency(222,222,111);
-	sceKernelDelayThread(1000000); //a try to fix hang on 2.5
-	if (g_sndthread>=0) sceKernelTerminateThread(g_sndthread);
-	if (g_updatethread>=0) sceKernelTerminateThread(g_updatethread);
-	//if (g_mainthread>=0) sceKernelTerminateThread(g_mainthread);
-
-	if (!os9x_lowbat) {
-		save_settings();
-		if (in_emu==1) {
-			Memory.SaveSRAM( (char*)S9xGetSaveFilename(".SRM") );
-			//S9xSaveCheatFile( (char*)S9xGetSaveFilename( ".cht" ) );
-			save_rom_settings(Memory.ROMCRC32,Memory.ROMName);
-		}
-		//pgWaitVn(60*1);//give some times to save files
-	}
-
-	// S9xCloseSoundDevice();
-	//g_bLoop = false;
-	// Exit game
-
-	sceKernelExitGame();
-#endif
-	return 0;
-}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -827,11 +789,7 @@ int PowerCallback(int unknown, int pwrflags,void *common){
 // Thread to create the callbacks and then begin polling
 ////////////////////////////////////////////////////////////////////////////////////////
 int CallbackThread(SceSize args, void *argp){
-	int cbid;
-	cbid = sceKernelCreateCallback( "Exit Callback",  ExitCallback,NULL );
-	sceKernelRegisterExitCallback( cbid );
-	cbid = sceKernelCreateCallback( "Power Callback",  PowerCallback,NULL );
-	scePowerRegisterCallback( 0, cbid );
+	scePowerRegisterCallback( 0, sceKernelCreateCallback( "Power Callback",  PowerCallback,NULL ) );
 	sceKernelSleepThreadCB();
 	return 0;
 }
@@ -2371,7 +2329,38 @@ void S9xProcessEvents( bool8 block ) {
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 void S9xExit (){
-	ExitCallback(0,0,NULL);
+	g_bLoop=0;
+#if 0
+	// Cleanup the games resources etc (if required)
+	//debug_log("Exit Callback");
+
+	//Settings.Paused = TRUE;
+
+	//*os9x_paused_ptr=1;
+	//StopSoundThread();
+	//scePowerSetClockFrequency(222,222,111);
+	sceKernelDelayThread(1000000); //a try to fix hang on 2.5
+	if (g_sndthread>=0) sceKernelTerminateThread(g_sndthread);
+	if (g_updatethread>=0) sceKernelTerminateThread(g_updatethread);
+	//if (g_mainthread>=0) sceKernelTerminateThread(g_mainthread);
+
+	if (!os9x_lowbat) {
+		save_settings();
+		if (in_emu==1) {
+			Memory.SaveSRAM( (char*)S9xGetSaveFilename(".SRM") );
+			//S9xSaveCheatFile( (char*)S9xGetSaveFilename( ".cht" ) );
+			save_rom_settings(Memory.ROMCRC32,Memory.ROMName);
+		}
+		//pgWaitVn(60*1);//give some times to save files
+	}
+
+	// S9xCloseSoundDevice();
+	//g_bLoop = false;
+	// Exit game
+
+	sceKernelExitGame();
+#endif
+	return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -3272,7 +3261,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 					if (pos>=end_pos) { //reached the end of message
 						if (pad_val&(PSP_CTRL_CIRCLE|PSP_CTRL_CROSS)) {exit_message=1;break;}
 						if (pad_val&(PSP_CTRL_TRIANGLE|PSP_CTRL_SQUARE|PSP_CTRL_SQUARE/*|PSP_CTRL_LTRIGGER|PSP_CTRL_RTRIGGER*/)) {
-							ExitCallback(0,0,NULL);
+							S9xExit();
 							exit_message=1;break;
 						}
 					}

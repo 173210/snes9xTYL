@@ -96,7 +96,7 @@ int menu_musicidx=-1;
 
 extern char os9x_viewfile_path[256];
 
-extern int ExitCallback(int arg1, int arg2, void *common);
+extern void S9xExit();
 extern void os9x_savecheats();
 extern int scroll_message(char **msg_lines,int lines,int start_pos,int exit_only_at_end,char *title);
 extern struct SCheatData Cheat;
@@ -277,7 +277,7 @@ int menu_exitemu(char *mode){
 					
 	if (!(psp_msg(ASK_EXIT,MSG_DEFAULT))) return 0;
 	StopSoundThread();	
-	ExitCallback(0,0,NULL);
+	S9xExit();
 	return 1;
 }
 
@@ -3730,7 +3730,7 @@ int root_menu(void) {
 #ifdef HOME_HOOK
         if( readHomeButton() > 0 )
         {
-			if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {StopSoundThread();ExitCallback(0,0,NULL);;}
+			if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {StopSoundThread();S9xExit();;}
         }
 #endif				
 				//process input									
