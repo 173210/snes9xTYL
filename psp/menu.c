@@ -3313,7 +3313,7 @@ void show_bg(u16 *src){
 
 void menu_drawFrame(int selected) {
 	static int batusb_infos;
-	int i,sel,x,y,j,yold,col;
+	int i,sel,x,y,/*j,*/yold,col;
 	
 	if (g_bSleep) {
 #ifdef ME_SOUND			
@@ -3392,23 +3392,24 @@ void menu_drawFrame(int selected) {
 	if (menu_scrolling) return;
 	
 	//draw menu entries
-	y=-12;
+//	y=-12;
+	y=0;
 	if (selected) x=30+menu_scrolling;
 	else x=80+menu_scrolling;
-	j=menu_current_xmb_index_entry[menu_current_xmb_index];
+/*	j=menu_current_xmb_index_entry[menu_current_xmb_index];
 	
 	col=abs(round(27*cos(menu_cnt2*3.14159/64)));
 	if (j>=2) {//top is hidden		
 		col=((col+4)<<5)+((col)<<10)|((col)<<0);
 		mh_print(x-15,88,SJIS_UP " ",col);
 	}
-	j=0; //used to detect bottom clipping
+	j=0; //used to detect bottom clipping*/
 	for (i=0;i<MENU_XMB_ENTRIES_NB;i++) {
 		if (menu_xmb_entries[i].menu_family_id==menu_current_xmb_index) {
-			if (menu_xmb_entries[i].menu_id<menu_current_xmb_index_entry[menu_current_xmb_index]-1) continue;
+			//if (menu_xmb_entries[i].menu_id<menu_current_xmb_index_entry[menu_current_xmb_index]-1) continue;
 			if (menu_xmb_entries[i].menu_id==menu_current_xmb_index_entry[menu_current_xmb_index]) {
-				if (y>=130) {j=1;break;}
-				if (y<0) y+=12;
+				//if (y>=130) {j=1;break;}
+				//if (y<0) y+=12;
 								
 				if (menu_xmb_entries[i].menu_func) { //menu func available ?
 					//check func type : submenu or value
@@ -3430,7 +3431,7 @@ void menu_drawFrame(int selected) {
 				yold=y;
 				y+=20;
 			}else{
-				if (y>=130) {j=1;break;}
+				//if (y>=130) {j=1;break;}
 								
 				if (menu_xmb_entries[i].menu_func) { //menu func available ?
 					//check func type : submenu or value
@@ -3449,10 +3450,10 @@ void menu_drawFrame(int selected) {
 		}
 	}
 	
-	if (j) {//bottom is hidden
+	/*if (j) {//bottom is hidden
 		col=(col<<5)+(10<<10)|(10<<0);
 		mh_print(x-20,100+yold,SJIS_DOWN " ",col);
-	}
+	}*/
 }
 
 
