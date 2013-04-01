@@ -47,11 +47,11 @@ int inputBox(char *msg) {
 	char *str;
 	int l=strlen(msg);
 	str=(char*)malloc(l+32);
-	sprintf(str,"%s\n\n" SJIS_CIRCLE " OK, " SJIS_CROSS " %s", msg, psp_msg_string(CANCEL));
+	sprintf(str,"%s\n\n", msg);
 	y=msgBoxLinesRaw(str,-1);
-	sprintf(str,SJIS_CIRCLE " OK           ");
+	strcpy(str,SJIS_CIRCLE " OK             ");
 	mh_printCenter(y,str,TEXT_COLOR_OK);
-	sprintf(str,"       " SJIS_CROSS " %s", psp_msg_string(CANCEL));
+	sprintf(str,"         " SJIS_CROSS " %s", psp_msg_string(CANCEL));
 	mh_printCenter(y,str,TEXT_COLOR_CANCEL);
 	pgScreenFlipV();
 	while (get_pad()) pgWaitV();
@@ -61,13 +61,13 @@ int inputBox(char *msg) {
 		if (pad&PSP_CTRL_CIRCLE) return 1;
 		if (pad&PSP_CTRL_CROSS) return 0;
 	}
-	free(str);	
+	free(str);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // input box OK : in fact confirm OK box...
 ////////////////////////////////////////////////////////////////////////////////////////
-int inputBoxOK(char *msg) {		
+int inputBoxOK(char *msg) {
 	int pad;
 	char *str;
 	int l=strlen(msg);
