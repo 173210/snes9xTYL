@@ -387,7 +387,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " 実行 " SJIS_CROSS "ゲームに戻る " SJIS_TRIANGLE " 上へ  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
 	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " 実行 " SJIS_TRIANGLE " 上へ                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
 
-	{FILER_TITLE, "[" EMUNAME_VERSION "] - ファイルを選んでください", 0},
+	{FILER_TITLE, "[" EMUNAME_VERSION "] - ファイル選択", 0},
 	
 	{FILER_HELP_WINDOW1,"標準と通信対戦モードを切り替える",0},
 	{FILER_HELP_WINDOW2,"にはSTARTを押してください",0},
