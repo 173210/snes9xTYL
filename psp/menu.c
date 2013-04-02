@@ -318,19 +318,19 @@ int deletestate(){
 }
 
 int savestate(){
-  char ext[10];
-  if (os9x_lowbat) return;
-  if (slot_occupied) {
-  	if (!psp_msg(MENU_STATE_CONFIRMSAVE,MSG_DEFAULT)) return 0;
-  }
-  psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
-  if (state_slot==10) strcpy(ext,".zat");
-  else {
-  	strcpy(ext,".za0");
-  	ext[3]=state_slot+48;
-  	os9x_save(ext);
-  }
-  return 1;
+	char ext[10];
+	if (os9x_lowbat)
+		if(!psp_msg(MENU_STATE_WARNING_LOWBAT, MSG_DEFAULT)) return 0;
+	if (slot_occupied)
+  		if (!psp_msg(MENU_STATE_CONFIRMSAVE,MSG_DEFAULT)) return 0;
+	psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
+	if (state_slot==10) strcpy(ext,".zat");
+	else {
+  		strcpy(ext,".za0");
+  		ext[3]=state_slot+48;
+  		os9x_save(ext);
+	}
+	return 1;
 }
 
 int menu_reset(char *mode){	

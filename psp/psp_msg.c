@@ -118,6 +118,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_STATE_NOSTATE,"No state available...",10},
 	{MENU_STATE_AUTOSAVETIMER,"every %dmin.",0},
 	{MENU_STATE_AUTOSAVETIMER_OFF,"off",0},
+	{MENU_STATE_WARNING_LOWBAT,"Battery is low.\nIf PSP turns off while saving, Memory Stick may be broken.\nContinue?",-2},
 	{MENU_GAME_SAVINGDEFAULTSETTINGS,"Saving current settings as default profile",30},
 	{MENU_GAME_CONFIRMRESET,"Reset Snes ?",-2},
 	{MENU_MISC_SAVINGJPEG,"Saving JPEG snapshot...",10},
@@ -463,6 +464,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_STATE_NOSTATE,"使用可能\なステートセーブがありません",10},
 	{MENU_STATE_AUTOSAVETIMER,"%d分毎",0},
 	{MENU_STATE_AUTOSAVETIMER_OFF,"オフ",0},
+	{MENU_STATE_WARNING_LOWBAT,"電池残量が低下しています。\nセーブ中に電源が切れるとメモリースティックが破損する可能\性があります。\n続行しますか?",-2},
 	{MENU_GAME_SAVINGDEFAULTSETTINGS,"現在の設定を標準設定として保存しています",30},
 	{MENU_GAME_CONFIRMRESET,"SFCをリセットしますか?",-2},
 	{MENU_MISC_SAVINGJPEG,"JPEGスナップショットを保存しています...",10},
@@ -517,7 +519,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_CONTROLS_INPUT_DEFAULT,"標準プロファイルを選択してください\n\n"\
 				SJIS_CROSS " - 標準, SFCの十\字ボタンがPSPの十\字ボタンに割り当てられます。\nメニューはアナログスティック左に割り当てます。\n\n"\
 				SJIS_CIRCLE " - 標準, SFCの十\字ボタンがPSPのアナログスティックに割り当てられます。\nメニューは十\字ボタン左に割り当てます。\n\n"\
-				SJIS_SQUARE " - Default, SFCの十\字ボタンがPSPの十\字ボタンとアナログスティックに割り当てられます。\nメニューはL+Rトリガーに割り当てます。"\
+				SJIS_SQUARE " - Default, SFCの十\字ボタンがPSPの十\字ボタンとアナログスティックに割り当てられます。\nメニューはL+Rトリガーに割り当てます。\n\n"\
 				SJIS_TRIANGLE " キャンセル\n",0},
 #endif
 
@@ -547,7 +549,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_VIDEO_VSYNC,"垂直同期",0},
 	{MENU_ICONS_VIDEO_VSYNC_HELP,"これは多くのFPSを犠牲にするので\nオフにすべきです。",0},
 	{MENU_ICONS_VIDEO_PALASNTSC,"PALをNTSCとして描画する",0},
-	{MENU_ICONS_VIDEO_PALASNTSC_HELP,"PALのゲームを240本の垂直解像度の\n代わりに224本にしてNTSCのものように\nエミュレートするよう強制します。",0},		
+	{MENU_ICONS_VIDEO_PALASNTSC_HELP,"PALのゲームを240本の垂直解像度の\n代わりに224本にしてNTSCのもののように\nエミュレートするよう強制します。",0},		
 	{MENU_ICONS_VIDEO_GAMMA,"ガンマ補正",0},
 	{MENU_ICONS_VIDEO_GAMMA_HELP,"より明るめな描画をさせます。",0},
 	{MENU_ICONS_VIDEO_SCRCALIB,"画面位置補正",0},
