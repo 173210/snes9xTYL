@@ -3052,7 +3052,7 @@ int menu_versioninfos(char *mode) {
 		mh_printLimit(menu_panel_pos+5,104+15,479,272,str_tmp,GFX_COL);
 		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_GCCVER),__VERSION__);
 		mh_printLimit(menu_panel_pos+5,104+30,479,272,str_tmp,GREETINGS0_COL);
-		sprintf(str_tmp,"CRC32 : %#X",g_ROMCRC32);
+		sprintf(str_tmp,"CRC32 : 0x%X",g_ROMCRC32);
 		mh_printLimit(menu_panel_pos+5,104+45,479,272,str_tmp,GREETINGS0_COL);
 
 		if (to_exit) {
