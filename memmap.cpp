@@ -1703,11 +1703,8 @@ void CMemory::InitROM (bool8 Interleaved)
     Settings.Shutdown = Settings.ShutdownMaster;
 
     ApplyROMFixes ();
-    sprintf (ROMName, "%s", ROMName);
-    sprintf (ROMId, "%s", ROMId);
-    sprintf (CompanyId, "%s", CompanyId);
 
-    sprintf (String, "\"%s\" [%s] %s, %s\nType: %s, Mode: %s, TV: %s, S-RAM: %s\nROMId: %sCompany: %2.2s",
+    sprintf (String, "\"%s\" [%s] %s, %s\nType: %s, Mode: %s, TV: %s, S-RAM: %s",
 	     ROMName,
 	     (ROMChecksum + ROMComplementChecksum != 0xffff ||
 	      ROMChecksum != sum1) ? "bad checksum" : "checksum ok",
@@ -1716,11 +1713,13 @@ void CMemory::InitROM (bool8 Interleaved)
 	     KartContents (),
 	     MapMode (),
 	     TVStandard (),
-	     StaticRAMSize (),
-	     ROMId,
-	     CompanyId);
+	     StaticRAMSize ());
 
-	InitNewMap();
+    for (i =0; i < 4; i++)
+    	if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ROMName[i]) == NULL) break;
+    if (i == 4) sprintf (String, "%s\nROMId: %sCompany: %2.2s", String, ROMId, CompanyId);
+
+    InitNewMap();
     S9xMessage (0/*S9X_INFO*/, S9X_ROM_INFO, String);
 }
 
