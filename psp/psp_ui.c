@@ -47,7 +47,7 @@ int inputBox(char *msg) {
 	char *str;
 	int l=strlen(msg);
 	str=(char*)malloc(l+32);
-	sprintf(str,"%s\n\n", msg);
+	sprintf(str,"%s\n\n                    ", msg);
 	y=msgBoxLinesRaw(str,-1);
 	strcpy(str,SJIS_CIRCLE " OK             ");
 	mh_printCenter(y,str,TEXT_COLOR_OK);
