@@ -82,6 +82,7 @@ extern int os9x_BG0,os9x_BG1,os9x_BG2,os9x_BG3,os9x_OBJ,os9x_easy,os9x_fastsprit
 extern int os9x_smoothing,os9x_softrendering,os9x_apuenabled,os9x_cpuclock,os9x_fskipvalue,os9x_render,os9x_speedlimit,os9x_sndfreq;
 extern int os9x_showfps,os9x_showpass,os9x_getnewfile,os9x_gammavalue,os9x_snesheight,os9x_forcepal_ntsc;
 extern int os9x_lowbat,os9x_autosavetimer,os9x_menumusic,os9x_menufx,os9x_menupadbeep;
+extern int os9x_autostart;
 extern char LaunchDir[256];
 extern char romPath[256];
 extern char lastRom[256];
@@ -1269,7 +1270,7 @@ menu_xmb_icon_t menu_xmb_icons[MENU_XMB_ICONS_NB]={
 	{2,0,0,2,MENU_ICONS_CONTROLS},
 	{3,0,0,11,MENU_ICONS_VIDEO},
 	{4,0,0,3,MENU_ICONS_SOUND},
-	{5,0,0,8,MENU_ICONS_MISC},
+	{5,0,0,9,MENU_ICONS_MISC},
 	{6,0,0,10,MENU_ICONS_CHEATS},	
 	{7,0,0,2,MENU_ICONS_ABOUT},	
 };
@@ -1976,6 +1977,10 @@ int menu_menufx(char *mode) {
 
 int menu_menupadbeep(char *mode) {
 	MENU_ONOFF(os9x_menupadbeep)	
+}
+
+int menu_autostart(char *mode) {
+	MENU_ONOFF(os9x_autostart)	
 }
 
 
@@ -3238,7 +3243,7 @@ int menu_swapbg(char *mode) {
 	return 0;
 }
 
-#define MENU_XMB_ENTRIES_NB (4+7+2+11+3+8+10+2)
+#define MENU_XMB_ENTRIES_NB (4+7+2+11+3+9+10+2)
 menu_xmb_entry_t menu_xmb_entries[MENU_XMB_ENTRIES_NB]={
 	// GAME
 	{0,0,menu_browser,MENU_ICONS_GAME_NEW,0},
@@ -3281,7 +3286,8 @@ menu_xmb_entry_t menu_xmb_entries[MENU_XMB_ENTRIES_NB]={
 	{5,4,menu_swapbg,MENU_ICONS_MISC_RANDBG,MENU_ICONS_MISC_RANDBG_HELP},
 	{5,5,menu_menumusic,MENU_ICONS_MISC_BGMUSIC,MENU_ICONS_MISC_BGMUSIC_HELP},
 	{5,6,menu_menufx,MENU_ICONS_MISC_BGFX,MENU_ICONS_MISC_BGFX_HELP},	
-	{5,7,menu_menupadbeep,MENU_ICONS_MISC_PADBEEP,MENU_ICONS_MISC_PADBEEP_HELP},	
+	{5,7,menu_menupadbeep,MENU_ICONS_MISC_PADBEEP,MENU_ICONS_MISC_PADBEEP_HELP},
+	{5,8,menu_autostart,MENU_ICONS_MISC_AUTOSTART,MENU_ICONS_MISC_AUTOSTART_HELP},
 	// CHEATS
 	{6,0,menu_addRAWcode,MENU_ICONS_CHEATS_ADDRAW,MENU_ICONS_CHEATS_ADDRAW_HELP},
 	{6,1,menu_addGGcode,MENU_ICONS_CHEATS_ADDGG,MENU_ICONS_CHEATS_ADDGG_HELP},

@@ -236,6 +236,7 @@ char os9x_nickname[256];
 int os9x_timezone,os9x_daylsavings;
 int os9x_language=LANGUAGE_ENGLISH; //need to be initialized for early error messages! (before calling getsysparam
 int os9x_menumusic,os9x_menufx,os9x_menupadbeep;
+int os9x_autostart;
 
 IMAGE* bg_img;
 int bg_img_mul;
@@ -2443,6 +2444,7 @@ void initvar_withdefault() {
 	os9x_menumusic=0; //no music
 	os9x_menufx=0; //menu background FX disabled
 	os9x_menupadbeep=1; //beep when selecting something
+	os9x_autostart = 0; //do not auto-boot
 	os9x_usballowed=0; //no usb
 
 	os9x_apu_ratio=256; //100%
@@ -3434,7 +3436,7 @@ int os9x_getfile() {
 	bypass_rom_settings=getFilePath(rom_filename,os9x_notfirstlaunch)-1;
 	if (bypass_rom_settings<0) return 0;
 
-	strcpy(lastRom,os9x_shortfilename(rom_filename));
+	strcpy(lastRom,rom_filename);
 	strcpy(romPath,LastPath);
 #endif
 	char *file_ext=strrchr((const char *)rom_filename,'/');
@@ -3773,6 +3775,21 @@ void me_apu_debug(int flag)
 	}
 }
 #endif
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////////////
+void open_snes_rom() {
+	if (init_snes_rom()) {
+		psp_msg(ERR_INIT_ROM, MSG_DEFAULT);
+		close_snes_rom();
+	} else {
+		os9x_getnewfile=0;
+		os9x_notfirstlaunch=1;
+		pgFillAllvram(0);pgScreenFrame(2,0);
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -3799,6 +3816,11 @@ int user_main(SceSize args, void* argp) {
 	for (int i=0;i<6;i++) {
 		snd_beep1_handle[i]=sceAudioChReserve( -1, ((size_snd_beep2-44)/8)&(~63), 0 );
 		//snd_beep2_handle[i]=sceAudioChReserve( -1, ((size_snd_beep2-44)/4)&(~63), 0 );
+	}
+
+	if(os9x_autostart) {
+	strcpy(rom_filename, lastRom);
+	open_snes_rom();
 	}
 
 	while ( g_bLoop ) {
@@ -3831,14 +3853,7 @@ int user_main(SceSize args, void* argp) {
 						close_snes_rom();
 						in_emu=0;
 					}
-					if (init_snes_rom()) {
-						psp_msg(ERR_INIT_ROM, MSG_DEFAULT);
-						close_snes_rom();
-					} else {
-						os9x_getnewfile=0;
-						os9x_notfirstlaunch=1;
-						pgFillAllvram(0);pgScreenFrame(2,0);
-					}
+					open_snes_rom();
 				break;
 				case 2:
 					if (in_emu==1) { //a snes rom was being emulated, close stuff

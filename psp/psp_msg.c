@@ -6,7 +6,7 @@ char *s9xTYL_lang[LANGUAGE_NUMBER]={
 	"english"
 };
 
-#define MSG_TOTAL_ENTRIES 256
+#define MSG_TOTAL_ENTRIES 264
 typedef struct {
 	int msg_id;
 	char *msg;
@@ -253,6 +253,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_BGFX_HELP,"Nice FX from PS2DEV spline sample.",0},
 	{MENU_ICONS_MISC_PADBEEP,"Pad beep",0},
 	{MENU_ICONS_MISC_PADBEEP_HELP,"The beep sounds when browsing\nmenu and files.",0},
+	{MENU_ICONS_MISC_AUTOSTART,"Last ROM Auto-Start",0},
+	{MENU_ICONS_MISC_AUTOSTART_HELP,"If you set to [yes],the ROM\nwhich was loaded at last\n will start automatically\nwhen the emulator started.",0},
 
 	{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " Main Menu   ",0},
 	{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " Main Menu   ",0},
@@ -353,7 +355,6 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{FOUND_SRAM,"Found an SRAM file",60},
 	{CANCEL,"CANCEL",0},
 	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " Close",0},
-	{INPUTBOX_CODE,"%s\n%s\n" SJIS_CIRCLE " ok    " SJIS_CROSS " cancel",0},
 	{INIT_SPEEDHACK,"Found speedhacks, applying...",30},
 #ifdef ME_SOUND
 	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nThis window will close in 3 seconds.",60*3}
@@ -599,6 +600,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_BGFX_HELP,"PS2DEV spline sampleの素敵なCGです。",0},
 	{MENU_ICONS_MISC_PADBEEP,"パッドビープ",0},
 	{MENU_ICONS_MISC_PADBEEP_HELP,"ビープ音がメニューやファイル一覧を\n移動しているときに鳴ります。",0},
+	{MENU_ICONS_MISC_AUTOSTART,"最後に起動したROMを自動起動する",0},
+	{MENU_ICONS_MISC_AUTOSTART_HELP,"「はい」にすると、エミュレーターを\n起動したときに自動的に\n最後に起動したROMが起動します。",0},
 
 	{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " メインメニュー   ",0},
 	{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " メインメニュー   ",0},
@@ -699,7 +702,6 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{FOUND_SRAM,"SRAMファイルが見つかりました",60},
 	{CANCEL,"キャンセル",0},
 	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " 閉じる",0},
-	{INPUTBOX_CODE,"%s\n%s\n" SJIS_CIRCLE " OK    " SJIS_CROSS " キャンセル",0},
 #ifdef ME_SOUND
 	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nこの画面は3秒で閉じます。",60*3}
 #else
