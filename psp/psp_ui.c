@@ -49,8 +49,7 @@ int inputBox(char *msg) {
 	str=(char*)malloc(l+32);
 	sprintf(str,"%s\n\n                    ", msg);
 	y=msgBoxLinesRaw(str,-1);
-	strcpy(str,SJIS_CIRCLE " OK             ");
-	mh_printCenter(y,str,TEXT_COLOR_OK);
+	mh_printCenter(y,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
 	sprintf(str,"         " SJIS_CROSS " %s", psp_msg_string(CANCEL));
 	mh_printCenter(y,str,TEXT_COLOR_CANCEL);
 	pgScreenFlipV();
@@ -404,10 +403,13 @@ int InputCodeBox(char *msg,char *fmt,char *code) {
 			}
 			i++;
 		}
-		sprintf(msgCodeBox,psp_msg_string(INPUTBOX_CODE),msgCodeBox,tmpstr);
 
 		//display it
-		msgBoxLinesRaw(msgCodeBox,l);
+		i = msgBoxLinesRaw(msgCodeBox,l);
+
+		mh_printCenter(i,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
+		sprintf(msgCodeBox,"         " SJIS_CROSS " %s", psp_msg_string(CANCEL));
+		mh_printCenter(i,msgCodeBox,TEXT_COLOR_CANCEL);
 
 		pgScreenFlipV();
 
