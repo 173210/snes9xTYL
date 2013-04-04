@@ -9,12 +9,14 @@
 #define ERR_INIT_SNES 0x2
 #define ERR_INIT_ROM 0x3
 
-#define ERR_USB_STARTING_USBBUS 0x4
-#define ERR_USB_STARTING_USBMASS 0x5
-#define ERR_USB_SETTING_CAPACITY 0x6
+#define ERR_CANNOT_ALLOC_MEM 0x4
 
-#define ERR_INIT_OSK 0x7
-#define ERR_ADD_CODE 0x8
+#define ERR_USB_STARTING_USBBUS 0x5
+#define ERR_USB_STARTING_USBMASS 0x6
+#define ERR_USB_SETTING_CAPACITY 0x7
+
+#define ERR_INIT_OSK 0x8
+#define ERR_ADD_CODE 0x9
 
 #define ASK_EXIT 0x1000
 #define ASK_DELETE 0x1001
@@ -37,7 +39,8 @@
 #define FILER_HELP_WINDOW4 0x3008
 #define FILER_HELP_WINDOW5 0x3009
 
-#define FILE_IPS_PATCHSUCCESS 0x300A
+#define FILE_IPS_APPLYING 0x300A
+#define FILE_IPS_PATCHSUCCESS 0x300B
 
 
 // GAME
@@ -320,6 +323,20 @@
 #define INPUTBOX_OK 0x5504
 #define INIT_SPEEDHACK 0x5506
 #define BAT_ISLOW 0x5507
+#define CONV_DONE 0x5508
+#define ROM_LIED 0x5509
+#define LOADING_ROM 0x550A
+#define TYPE 0x550B
+#define MODE 0x550C
+#define COMPANY 0x550D
+#ifdef _BSX_151_
+#define SRAM_NOTFOUND 0x550E
+#define SRAM_BSX_NOTFOUND 0x550F
+#endif
+#define CORRUPT 0x5510
+#define ROM_ONLY 0x5511
+#define EXTENDING 0x5512
+#define EXTENDING_TARGET 0x5513
 
 int psp_msg(int num,int len);
 char *psp_msg_string(int num);

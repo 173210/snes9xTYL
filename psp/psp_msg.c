@@ -25,6 +25,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{ERR_INIT_SNES,"Cannot init snes, memory issue",2*60},
 	{ERR_INIT_ROM,"Cannot initialize ROM",60*2},
 
+	{ERR_CANNOT_ALLOC_MEM,"Cannot allocate memory",30},
+
 	{ERR_USB_STARTING_USBBUS,"Error starting USB Bus driver (0x%08X)\n",0},
 	{ERR_USB_STARTING_USBMASS,"Error starting USB Mass Storage driver (0x%08X)\n",0},
 	{ERR_USB_SETTING_CAPACITY,"Error setting capacity with USB Mass Storage driver (0x%08X)\n",0},
@@ -64,7 +66,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 
 
 	{FILER_HELP_WINDOW5,"Press SELECT to delete file.",0},
-	
+
+	{FILE_IPS_APPLYING,"Found IPS patch : %s\nSize is : %dKo\nApplying ....",0},
 	{FILE_IPS_PATCHSUCCESS,"IPS Patch applied successfully",0},
 	
 	{MENU_STATUS_GENERIC_MSG1,"Press " SJIS_CROSS " to return",0},
@@ -357,10 +360,24 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " Close",0},
 	{INIT_SPEEDHACK,"Found speedhacks, applying...",30},
 #ifdef ME_SOUND
-	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nThis window will close in 3 seconds.",60*3}
+	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nThis window will close in 3 seconds.",60*3},
 #else
-	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nYou can still put your PSP in sleep mode and charge battery later.\n\nThis window will close in 3 seconds.",60*3}
+	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nYou can still put your PSP in sleep mode and charge battery later.\n\nThis window will close in 3 seconds.",60*3},
 #endif
+	{CONV_DONE,"conversion done",30},
+	{ROM_LIED,"ROM lied about its type! Trying again.",30},
+	{LOADING_ROM,"Loading %dKo...",0},
+	{TYPE,"Type",0},
+	{MODE,"Mode",0},
+	{COMPANY,"Company",0},
+#ifdef _BSX_151_
+	{SRAM_NOTFOUND,"The SRAM file wasn't found: BS-X.srm was read instead.",30},
+	{SRAM_BSX_NOTFOUND,"The SRAM file wasn't found, BS-X.srm wasn't found either.",30},
+#endif
+	{CORRUPT,"Corrupt",0},
+	{ROM_ONLY,"ROM only",0},
+	{EXTENDING,"Extending",30},
+	{EXTENDING_TARGET,"Extending target from %d to %d\n",0}
 };
 
 t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
@@ -371,6 +388,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 
 	{ERR_INIT_SNES,"メモリの問題でSFCを初期化できません",2*60},
 	{ERR_INIT_ROM,"ROMを初期化できません",60*2},
+
+	{ERR_CANNOT_ALLOC_MEM,"メモリを割り当てられません",30},
 
 	{ERR_USB_STARTING_USBBUS,"USBバスドライバ開始エラー (0x%08X)\n",0},
 	{ERR_USB_STARTING_USBMASS,"USB大容量記憶装置ドライバ開始エラー (0x%08X)\n",0},
@@ -412,6 +431,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 
 	{FILER_HELP_WINDOW5,"削除するにはSELECTを押してください",0},
 
+	{FILE_IPS_APPLYING,"IPSパッチが見つかりました : %s\nサイズ : %dKo\n適用しています....",0},
 	{FILE_IPS_PATCHSUCCESS,"IPSパッチの適用に成功しました",0},
 
 	{MENU_STATUS_GENERIC_MSG1,"戻るには" SJIS_CROSS "を押してください",0},
@@ -703,10 +723,24 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{CANCEL,"キャンセル",0},
 	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " 閉じる",0},
 #ifdef ME_SOUND
-	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nこの画面は3秒で閉じます。",60*3}
+	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nこの画面は3秒で閉じます。",60*3},
 #else
-	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nPSPをスリープモードにしてあとで充電することができます。\n\nこの画面は3秒で閉じます。",60*3}
+	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nPSPをスリープモードにしてあとで充電することができます。\n\nこの画面は3秒で閉じます。",60*3},
 #endif
+	{CONV_DONE,"変換完了",30},
+	{ROM_LIED,"ROMから間違ったタイプの情報を取得しました。再試行します。",30},
+	{LOADING_ROM,"%dKo読み込んでいます...",0},
+	{TYPE,"タイプ",0},
+	{MODE,"モード",0},
+	{COMPANY,"制作会社",0},
+#ifdef _BSX_151_
+	{SRAM_NOTFOUND,"SRAMファイルが見つかりませんでした。BS-X.srmが代わりに読み込まれます。",30},
+	{SRAM_BSX_NOTFOUND,"SRAMファイルが見つからず、BS-X.srmも見つかりませんでした。",30},
+#endif
+	{CORRUPT,"不明",0},
+	{ROM_ONLY,"ROMのみ",0},
+	{EXTENDING,"適用範囲を拡大しています",30},
+	{EXTENDING_TARGET,"適用範囲を%dから%dに拡大しています\n",0}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////

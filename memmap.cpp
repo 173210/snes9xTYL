@@ -271,7 +271,12 @@ bool8 CMemory::Init ()
 	!IPPU.TileCache [TILE_8BIT] || !IPPU.TileCached [TILE_2BIT] ||
 	!IPPU.TileCached [TILE_4BIT] ||	!IPPU.TileCached [TILE_8BIT])
     {
+#ifdef __PSP__
+	psp_msg(ERR_CANNOT_ALLOC_MEM, MSG_DEFAULT);
+	pgwaitPress();
+#else
     	S9xMessage(-1,0,"Cannot allocate memory");
+#endif
 	Deinit ();
 	return (FALSE);
     }
@@ -599,9 +604,13 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 		S9xMessage(0,0,"interleaved ROM");
 
     	DeInterleavedRom(Tales);
-		
+
+#ifdef __PSP__
+		psp_msg(CONV_DONE, MSG_DEFAULT);
+#else
 		S9xMessage(0,0,"conversion done");
-   
+#endif
+
 		hi_score = ScoreHiROM (FALSE);
 		lo_score = ScoreLoROM (FALSE);
 
@@ -612,8 +621,12 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 		{
 		    if (retry_count == 0)
 		    {
+#ifdef __PSP__
+				psp_msg(ROM_LIED, MSG_DEFAULT);
+#else
 				S9xMessage(0,0,"ROM lied about its type! Trying again.");
-				
+#endif
+
 				Settings.ForceNotInterleaved = TRUE;
 				Settings.ForceInterleaved = FALSE;
 				retry_count++;
@@ -796,9 +809,13 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 		S9xMessage(0,0,"interleaved ROM");
 
     	DeInterleavedRom(Tales);
-		
+
+#ifdef __PSP__
+		psp_msg(CONV_DONE, MSG_DEFAULT);
+#else
 		S9xMessage(0,0,"conversion done");
-   
+#endif
+
 		hi_score = ScoreHiROM (FALSE);
 		lo_score = ScoreLoROM (FALSE);
 
@@ -809,8 +826,12 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 		{
 		    if (retry_count == 0)
 		    {
+#ifdef __PSP__
+				psp_msg(ROM_LIED, MSG_DEFAULT);
+#else
 				S9xMessage(0,0,"ROM lied about its type! Trying again.");
-				
+#endif
+
 				Settings.ForceNotInterleaved = TRUE;
 				Settings.ForceInterleaved = FALSE;
 				retry_count++;
@@ -944,7 +965,7 @@ again:
 //         sprintf(tmp,"size : %d",FileSize);
 //	     S9xMessage(1,0,tmp);
 
-		 {char str[64];sprintf(str,"Loading %dKo...",FileSize>>10);msgBoxLines(str,0);msgBoxLines(str,0); }
+		 {char str[64];sprintf(str,psp_msg_string(LOADING_ROM),FileSize>>10);msgBoxLines(str,0);msgBoxLines(str,0); }
 		 
 		 		unzReadCurrentFile(zip_file,(void*)(ptr), FileSize, psp_showProgressBar);
 
@@ -991,7 +1012,7 @@ again:
 	    fseek(ROMFile,0,SEEK_SET);
 			current_pos=FileSize;
 			
-			{char str[64];sprintf(str,"Loading %dKo...",FileSize>>10);msgBoxLines(str,0);msgBoxLines(str,0); }
+			{char str[64];sprintf(str,psp_msg_string(LOADING_ROM),FileSize>>10);msgBoxLines(str,0);msgBoxLines(str,0); }
 			
 			while (current_pos>0) {    	    
 	    	psp_showProgressBar(current_pos,FileSize);
@@ -1704,6 +1725,20 @@ void CMemory::InitROM (bool8 Interleaved)
 
     ApplyROMFixes ();
 
+#ifdef __PSP__
+    sprintf (String, "\"%s\" [%s] %s, %s\n%s: %s, %s: %s, TV: %s, S-RAM: %s",
+	     ROMName,
+	     (ROMChecksum + ROMComplementChecksum != 0xffff ||
+	      ROMChecksum != sum1) ? "bad checksum" : "checksum ok",
+	     MapType (),
+	     Size (),
+	     psp_msg_string(TYPE),
+	     KartContents (),
+	     psp_msg_string(MODE),
+	     MapMode (),
+	     TVStandard (),
+	     StaticRAMSize ());
+#else
     sprintf (String, "\"%s\" [%s] %s, %s\nType: %s, Mode: %s, TV: %s, S-RAM: %s",
 	     ROMName,
 	     (ROMChecksum + ROMComplementChecksum != 0xffff ||
@@ -1714,10 +1749,12 @@ void CMemory::InitROM (bool8 Interleaved)
 	     MapMode (),
 	     TVStandard (),
 	     StaticRAMSize ());
+#endif
 
     for (i =0; i < 4; i++)
     	if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ROMName[i]) == NULL) break;
-    if (i == 4) sprintf (String, "%s\nROMId: %sCompany: %2.2s", String, ROMId, CompanyId);
+    if (i == 4) sprintf (String, "%s\nROMId: %s  %s: %2.2s",
+			String, ROMId, psp_msg_string(COMPANY), CompanyId);
 
     InitNewMap();
     S9xMessage (0/*S9X_INFO*/, S9X_ROM_INFO, String);
@@ -1792,13 +1829,21 @@ bool8 CMemory::LoadSRAM (char *filename)
 				if (len - size == 512)
 					memmove(SRAM, SRAM + 512, size);
 
+#ifdef __PSP__
+				psp_msg_string(SRAM_NOTFOUND, MSG_DEFAULT);
+#else
 				S9xMessage(S9X_INFO, S9X_ROM_INFO, "The SRAM file wasn't found: BS-X.srm was read instead.");
+#endif
 				S9xHardResetSRTC();
 				return (TRUE);
 			}
 			else
 			{
+#ifdef __PSP__
+				psp_msg_string(SRAM_BSX_NOTFOUND, MSG_DEFAULT);
+#else
 				S9xMessage(S9X_INFO, S9X_ROM_INFO, "The SRAM file wasn't found, BS-X.srm wasn't found either.");
+#endif
 				S9xHardResetSRTC();
 				return (FALSE);
 			}
@@ -2796,7 +2841,11 @@ const char *CMemory::StaticRAMSize ()
     static char tmp [20];
 
     if (Memory.SRAMSize > 16)
+#ifdef __PSP__
+	return psp_msg_string(CORRUPT);
+#else
 	return ("Corrupt");
+#endif
     sprintf (tmp, "%dKb", (SRAMMask + 1) / 1024);
     return (tmp);
 }
@@ -2806,7 +2855,11 @@ const char *CMemory::Size ()
     static char tmp [20];
 
     if (ROMSize < 7 || ROMSize - 7 > 23)
+#ifdef __PSP__
+	return psp_msg_string(CORRUPT);
+#else
 	return ("Corrupt");
+#endif
     sprintf (tmp, "%dMbits", 1 << (ROMSize - 7));
     return (tmp);
 }
@@ -2823,7 +2876,11 @@ const char *CMemory::KartContents ()
 	"ROM", "ROM+RAM", "ROM+RAM+BAT"
     };
     if (ROMType == 0)
+#ifdef __PSP__
+	return psp_msg_string(ROM_ONLY);
+#else
 	return ("ROM only");
+#endif
 
     sprintf (tmp, "%s", Contents [(ROMType & 0xf) % 3]);
 
@@ -3445,8 +3502,8 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,int32 &ro
 		free(ips_data);
 		return;
   }
-
-	sprintf(str,"Found IPS patch : %s\nSize is : %dKo\nApplying ....",ips_ext+1,ips_size>>10);    
+	sprintf(str,psp_msg_string(FILE_IPS_APPLYING),ips_ext+1,ips_size>>10);
+	sprintf(str,"Found IPS patch : %s\nSize is : %dKo\nApplying ....",ips_ext+1,ips_size>>10);
 	msgBoxLines(str,0);
 	msgBoxLines(str,0);
 			
@@ -3496,14 +3553,14 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,int32 &ro
 				if (rom_size<Address) {
 		    	rom_size=Address;
 		      //		       printf("Extending\n");
-		      msgBoxLines("Extending",30);
+		      psp_msg(EXTENDING, MSG_DEFAULT);
 		  	}
 		  	//		  printf("RLE patcht %04X %d %d\n",Address,rlen,Byte);
 		  	memset(ROM+ofs,bufferIPS[0],rlen);
 		  	ofs+=rlen;
 		  }
 		}	else {	     
-	     sprintf(str,"Extending target from %d to %d\n",rom_size,Address);
+	     sprintf(str,psp_msg_string(EXTENDING_TARGET),rom_size,Address);
 	     msgBoxLines(str,30);
 	     
 	     memset(ROM+rom_size,0,Address-rom_size);
