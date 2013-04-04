@@ -2309,6 +2309,21 @@ void S9xProcessEvents( bool8 block ) {
 		}
 		os9x_TurboMode^=1;
 	}
+	if ((os9x_specialaction&OS9X_SAVE_STATE)&& (!(os9x_specialaction_old&OS9X_SAVE_STATE))) {
+		SceIoStat stat;
+		if (os9x_lowbat)
+			if(!psp_msg(MENU_STATE_WARNING_LOWBAT, MSG_DEFAULT)) return;
+		psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
+		os9x_save(".zat");
+	}
+	if ((os9x_specialaction&OS9X_LOAD_STATE)&& (!(os9x_specialaction_old&OS9X_LOAD_STATE))) {
+		SceIoStat stat;
+		if (sceIoGetstat(S9xGetSaveFilename(".zat"),&stat)>=0) {
+			if (!psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) return;
+			psp_msg(MENU_STATE_ISLOADING,MSG_DEFAULT);
+			os9x_load(".zat");
+		} else psp_msg(MENU_STATE_NOSTATE,MSG_DEFAULT);
+	}
 	if (os9x_autosavetimer) {
 		struct timeval now;
 		u32 diff;

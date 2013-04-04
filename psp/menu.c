@@ -775,10 +775,11 @@ int show_debugmenu(char *mode) {
 }
 
 
-#define INPUTSMENU_ITEMS 18
+#define INPUTSMENU_ITEMS 20
 int inputs_up,inputs_down,inputs_left,inputs_right,inputs_A,inputs_B,inputs_X,inputs_Y;
 int inputs_TL,inputs_TR,inputs_START,inputs_SELECT,inputs_MENU,inputs_TURBO;
 int inputs_FSKIPINC,inputs_FSKIPDEC,inputs_GFXENGINE;
+int inputs_SAVE_STATE,inputs_LOAD_STATE;
 menu_time_t os9xpsp_inputsmenu[INPUTSMENU_ITEMS]={	
 	{"Analog stick mapped to pad : ",-1,NULL,&os9x_inputs_analog,2,{0,1},0,{"Yes","No"}},
 	{"UP : ",-1,NULL,&inputs_up,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}},
@@ -797,7 +798,9 @@ menu_time_t os9xpsp_inputsmenu[INPUTSMENU_ITEMS]={
 	{"TURBO : ",-1,NULL,&inputs_TURBO,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}},
 	{"FRAMESKIP + : ",-1,NULL,&inputs_FSKIPINC,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}},
 	{"FRAMESKIP - : ",-1,NULL,&inputs_FSKIPDEC,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}},
-	{"CHANGE GPUPack.GFX ENGINE : ",-1,NULL,&inputs_GFXENGINE,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}}
+	{"CHANGE GPUPack.GFX ENGINE : ",-1,NULL,&inputs_GFXENGINE,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}},
+	{"SAVE STATE : ",-1,NULL,&inputs_SAVE_STATE,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}},
+	{"LOAD STATE : ",-1,NULL,&inputs_LOAD_STATE,23,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22},0,{"UP(pad)","DOWN(pad)","LEFT(pad)","RIGHT(pad)","TRIANGLE","CIRCLE","CROSS","SQUARE","START","SELECT","LTrg","RTrg","UP(analog)","DOWN(analog)","LEFT(analog)","RIGHT(analog)","LTrg+RTrg","LTrg+START","RTrg+START","LTrg+SELECT","RTrg+SELECT","START+SELECT","None"}}
 };
 
 
@@ -831,7 +834,7 @@ int show_inputsmenu(char *mode) {
     	inputs_up=inputs_down=inputs_left=inputs_right=inputs_A=inputs_B=inputs_X=inputs_Y=PSP_BUTTONS_TOTAL;
 			inputs_TL=inputs_TR=inputs_START=inputs_SELECT=inputs_MENU=inputs_TURBO=PSP_BUTTONS_TOTAL;
 			inputs_FSKIPINC=inputs_FSKIPDEC=inputs_GFXENGINE=PSP_BUTTONS_TOTAL;
-			
+			inputs_SAVE_STATE=inputs_LOAD_STATE=PSP_BUTTONS_TOTAL;
 			for (i=0;i<32;i++){
 				if (os9x_inputs[i]&SNES_UP_MASK) inputs_up=i;
 				if (os9x_inputs[i]&SNES_DOWN_MASK) inputs_down=i;
@@ -850,6 +853,8 @@ int show_inputsmenu(char *mode) {
 				if (os9x_inputs[i]&OS9X_FRAMESKIP_DOWN) inputs_FSKIPDEC=i;
 				if (os9x_inputs[i]&OS9X_FRAMESKIP_UP) inputs_FSKIPINC=i;		
 				if (os9x_inputs[i]&OS9X_GFXENGINE) inputs_GFXENGINE=i;		
+				if (os9x_inputs[i]&OS9X_SAVE_STATE) inputs_SAVE_STATE=i;
+				if (os9x_inputs[i]&OS9X_LOAD_STATE) inputs_LOAD_STATE=i;
 			}
 				
 			//init menu indexes
@@ -1180,6 +1185,8 @@ int show_inputsmenu(char *mode) {
 		if (inputs_FSKIPDEC==i) os9x_inputs[i]|=OS9X_FRAMESKIP_DOWN;
 		if (inputs_FSKIPINC==i) os9x_inputs[i]|=OS9X_FRAMESKIP_UP;
 		if (inputs_GFXENGINE==i) os9x_inputs[i]|=OS9X_GFXENGINE;		
+		if (inputs_SAVE_STATE==i) os9x_inputs[i]|=OS9X_SAVE_STATE;
+		if (inputs_LOAD_STATE==i) os9x_inputs[i]|=OS9X_LOAD_STATE;
 	}
 	
 	
