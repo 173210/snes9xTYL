@@ -87,7 +87,7 @@
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
 
-#include "psp.h"
+#include "port.h"
 
 #include "snes9x.h"
 #include "spc700.h"

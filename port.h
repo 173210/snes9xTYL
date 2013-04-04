@@ -160,14 +160,17 @@ extern int g_debuginfo;
 #ifndef snes9x_types_defined
 #define snes9x_types_defined
 
-typedef unsigned char /*unsigned int*/ bool8;
+#define bool8 u8
 
 
-typedef signed char int8;
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-typedef unsigned long long uint64;
+#define int8 s8
+#define uint8 u8
+#define int16 s16
+#define uint16 u16
+#define int32 s32
+#define uint32 u32
+#define int64 s64
+#define uint64 u64
 
 
 #include "pixform.h"

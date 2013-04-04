@@ -2,6 +2,8 @@
 #ifndef PSP_ADHOC_H
 #define PSP_ADHOC_H
 
+#include "port.h"
+
 int sceNetAdhocInit( void );
 int sceNetAdhocTerm( void );
 
