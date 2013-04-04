@@ -490,8 +490,6 @@ uint8 S9xGetSA1 (uint32 address)
 	return ((uint8) (SA1Pack_SA1.sum >> 24));
     case 0x230a:
 	return ((uint8) (SA1Pack_SA1.sum >> 32));
-    case 0x230c:
-	return (FillRAM [0x230c]);
     case 0x230d:
     {
 	uint8 byte = FillRAM [0x230d];
@@ -540,9 +538,6 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 #ifdef DEBUGGER
 		printf ("###SA1 NMI\n");
 #endif
-	    if (FillRAM [0x220a] & 0x10)
-	    {
-	    }
 	}
 	break;
 

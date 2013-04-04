@@ -793,7 +793,6 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 		    missing.fixed_colour_add = 1;
 	    }
 #endif
-	    FillRAM[0x2131] = Byte;
 	}
 	break;
     case 0x2132:
