@@ -349,8 +349,10 @@ char *S9xParseArgs (char **argv, int argc)
 	    else if (strcasecmp (argv [i], "-ni") == 0 ||
 		     strcasecmp (argv [i], "-nointerleave") == 0)
 		Settings.ForceNotInterleaved = TRUE;
+#ifdef DEBUGGER
 	    else if (strcasecmp (argv [i], "-noirq") == 0)
 		Settings.DisableIRQ = TRUE;
+#endif
 	    else if (strcasecmp (argv [i], "-nw") == 0 ||
 		     strcasecmp (argv [i], "-nowindows") == 0)
 	    {

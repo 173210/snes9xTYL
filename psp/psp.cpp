@@ -312,7 +312,9 @@ int os9x_CyclesPercentage;
 int os9x_apuenabled;
 int* os9x_apuenabled_ptr;
 int os9x_DisableHDMA;
+#ifdef DEBUGGER
 int os9x_DisableIRQ;
+#endif
 int os9x_speedlimit;
 
 int os9x_sndfreq;
@@ -2494,7 +2496,9 @@ void initvar_withdefault() {
 	os9x_ShowSub=0;
 	os9x_CyclesPercentage=100;
 	os9x_DisableHDMA=0;
+#ifdef DEBUGGER
 	os9x_DisableIRQ=0;
+#endif
 
 	// special hack
 	os9x_hack=0;
@@ -3504,7 +3508,9 @@ int init_snes_rom() {
   Settings.Shutdown = true;
   Settings.ShutdownMaster = true;
   Settings.NextAPUEnabled = Settings.APUEnabled = (os9x_apuenabled==1)||(os9x_apuenabled==2);
+#ifdef DEBUGGER
   Settings.DisableIRQ = os9x_DisableIRQ;
+#endif
   Settings.Paused = false;
   Settings.H_Max = SNES_CYCLES_PER_SCANLINE;
   Settings.HBlankStart = (256 * Settings.H_Max) / SNES_HCOUNTER_MAX;

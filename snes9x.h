@@ -240,7 +240,9 @@ struct SSettings{
     bool8  APUEnabled;
     bool8  Shutdown;
     uint8  SoundSkipMethod;
+#ifdef DEBUGGER
 	bool8  DisableIRQ;
+#endif
     
     long   H_Max;
     long   HBlankStart;

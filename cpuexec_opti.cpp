@@ -76,6 +76,12 @@ extern char str_tmp[256];
 		    	} else CPUPack.CPU.Flags &= ~IRQ_PENDING_FLAG;\
 				} else CPUPack.CPU.IRQCycleCount--;
 #define FLAGS_SCAN_KEYS_FLAG() return
+
+#ifdef DEBUGGER
+#define IRQ_ACTIVE	CPUPack.CPU.IRQActive && !Settings.DisableIRQ
+#else
+#define IRQ_ACTIVE	CPUPack.CPU.IRQActive
+#endif
 			
 void (*S9x_Current_HBlank_Event)();
 
@@ -101,7 +107,7 @@ void S9xMainLoop_SA1_APU (void) {
 		      	CPUPack.CPU.WaitingForInterrupt = FALSE;
 		      	CPUPack.CPU.PC++;
 		    	}
-		  		if (CPUPack.CPU.IRQActive && !Settings.DisableIRQ) {
+		  		if (IRQ_ACTIVE) {
 		      	if (!CheckFlag (IRQ)) S9xOpcode_IRQ ();
 		    	} else CPUPack.CPU.Flags &= ~IRQ_PENDING_FLAG;
 				} else CPUPack.CPU.IRQCycleCount--;
@@ -150,7 +156,7 @@ void S9xMainLoop_NoSA1_APU (void) {
 		      	CPUPack.CPU.WaitingForInterrupt = FALSE;
 		      	CPUPack.CPU.PC++;
 		    	}
-		  		if (CPUPack.CPU.IRQActive && !Settings.DisableIRQ) {
+		  		if (IRQ_ACTIVE) {
 		      	if (!CheckFlag (IRQ)) S9xOpcode_IRQ ();
 		    	} else CPUPack.CPU.Flags &= ~IRQ_PENDING_FLAG;
 				} else CPUPack.CPU.IRQCycleCount--;
@@ -190,7 +196,7 @@ void S9xMainLoop_SA1_NoAPU (void) {
 		      	CPUPack.CPU.WaitingForInterrupt = FALSE;
 		      	CPUPack.CPU.PC++;
 		    	}
-		  		if (CPUPack.CPU.IRQActive && !Settings.DisableIRQ) {
+		  		if (IRQ_ACTIVE) {
 		      	if (!CheckFlag (IRQ)) S9xOpcode_IRQ ();
 		    	} else CPUPack.CPU.Flags &= ~IRQ_PENDING_FLAG;
 				} else CPUPack.CPU.IRQCycleCount--;
@@ -231,7 +237,7 @@ void S9xMainLoop_NoSA1_NoAPU (void) {
 		      	CPUPack.CPU.WaitingForInterrupt = FALSE;
 		      	CPUPack.CPU.PC++;
 		    	}
-		  		if (CPUPack.CPU.IRQActive && !Settings.DisableIRQ) {
+		  		if (IRQ_ACTIVE) {
 		      	if (!CheckFlag (IRQ)) S9xOpcode_IRQ ();
 		    	} else CPUPack.CPU.Flags &= ~IRQ_PENDING_FLAG;
 				} else CPUPack.CPU.IRQCycleCount--;
