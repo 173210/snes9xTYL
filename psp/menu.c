@@ -1278,8 +1278,8 @@ menu_xmb_icon_t menu_xmb_icons[MENU_XMB_ICONS_NB]={
 
 #include "psp/imageio.h"
 START_EXTERN_C
-extern IMAGE *icons[7];
-extern int icons_col[7];
+extern IMAGE *icons[8];
+extern int icons_col[8];
 END_EXTERN_C
 int menu_current_xmb_index=0;
 int menu_current_xmb_index_entry[MENU_XMB_ICONS_NB]={

@@ -157,7 +157,7 @@ extern int icons_col[8];
 END_EXTERN_C
 void load_icons(){	
 	int i;
-	for (i=0;i<7;i++) icons[i]=NULL;
+	for (i=0;i<8;i++) icons[i]=NULL;
 	
 	icons[0] = load_bmp_buffer(icon_game);	
 	icons_col[0]=0xFF00;

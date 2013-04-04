@@ -3935,7 +3935,7 @@ int user_main(SceSize args, void* argp) {
 	low_level_deinit();
 
 	if (bg_img) image_free(bg_img);
-	for (int i=0;i<7;i++) if (icons[i]) {free(icons[i]);icons[i]=NULL;}
+	for (int i=0;i<8;i++) if (icons[i]) {free(icons[i]);icons[i]=NULL;}
 
 	return 0;
 }
