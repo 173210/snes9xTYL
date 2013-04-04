@@ -6,7 +6,7 @@ char *s9xTYL_lang[LANGUAGE_NUMBER]={
 	"english"
 };
 
-#define MSG_TOTAL_ENTRIES 264
+#define MSG_TOTAL_ENTRIES 272
 typedef struct {
 	int msg_id;
 	char *msg;
