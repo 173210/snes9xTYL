@@ -2311,18 +2311,48 @@ void S9xProcessEvents( bool8 block ) {
 	}
 	if ((os9x_specialaction&OS9X_SAVE_STATE)&& (!(os9x_specialaction_old&OS9X_SAVE_STATE))) {
 		SceIoStat stat;
-		if (os9x_lowbat)
-			if(!psp_msg(MENU_STATE_WARNING_LOWBAT, MSG_DEFAULT)) return;
-		psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
-		os9x_save(".zat");
+
+		if ((in_emu==1)&&os9x_netplay) {		//net pause
+			net_flush_net(2);
+		}
+		before_pause();
+
+		switch (os9x_lowbat) {
+			case 1:
+				if(!psp_msg(MENU_STATE_WARNING_LOWBAT, MSG_DEFAULT)) break;
+			default:
+				psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
+				os9x_save(".zat");
+		}
+
+		if ((in_emu==1)&&os9x_netplay) {		//net unpause
+			set_cpu_clock();
+			net_send_state();
+			net_send_settings();
+		}
+		after_pause();
 	}
 	if ((os9x_specialaction&OS9X_LOAD_STATE)&& (!(os9x_specialaction_old&OS9X_LOAD_STATE))) {
 		SceIoStat stat;
+
+		if ((in_emu==1)&&os9x_netplay) {		//net pause
+			net_flush_net(2);
+		}
+		before_pause();
+
 		if (sceIoGetstat(S9xGetSaveFilename(".zat"),&stat)>=0) {
-			if (!psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) return;
-			psp_msg(MENU_STATE_ISLOADING,MSG_DEFAULT);
-			os9x_load(".zat");
+			if (psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) {
+				psp_msg(MENU_STATE_ISLOADING,MSG_DEFAULT);
+				os9x_load(".zat");
+			}
 		} else psp_msg(MENU_STATE_NOSTATE,MSG_DEFAULT);
+
+		if ((in_emu==1)&&os9x_netplay) {		//net unpause
+			set_cpu_clock();
+			net_send_state();
+			net_send_settings();
+		}
+		after_pause();
 	}
 	if (os9x_autosavetimer) {
 		struct timeval now;
