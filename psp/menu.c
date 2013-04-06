@@ -655,7 +655,16 @@ int show_debugmenu(char *mode) {
 				if ((*os9xpsp_debugmenu[sel].menu_func)(0)) {retval=0;break;}
 		} else if(new_pad & PSP_CTRL_TRIANGLE)   {
 			if (os9xpsp_debugmenu[sel].help_index>=0) {
-				inputBoxOK(help_data[os9x_language][os9xpsp_debugmenu[sel].help_index]);
+				switch (os9x_language) {
+					case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
+						inputBoxOK(help_data_ja[os9xpsp_debugmenu[sel].help_index]);
+						break;
+					case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
+						inputBoxOK(help_data_fr[os9xpsp_debugmenu[sel].help_index]);
+						break;
+					default:
+						inputBoxOK(help_data_en[os9xpsp_debugmenu[sel].help_index]);
+				}
 			}
 		} else if(new_pad & PSP_CTRL_CROSS)   { retval= 0;break; }   
     else if(new_pad & PSP_CTRL_UP)      { sel--;os9x_beep1();    }
@@ -3496,7 +3505,7 @@ void menu_inputName(char *name) {
 	memset(&osk, 0, sizeof(osk));
 	osk.size = sizeof(osk);
 	osk.language = os9x_language;
-	//if (os9x_language==LANGUAGE_JAPANESE)
+	//if (os9x_language==PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
 	osk.buttonswap = 0;
 	//else osk.buttonswap = 1;
 		

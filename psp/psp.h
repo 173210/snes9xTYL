@@ -9,19 +9,6 @@ extern int os9x_apu_ratio;
 
 #define MESSAGE_DAYS 1  //show boot message every ... days
 
-#define LANGUAGE_NUMBER 1
-
-#define LANGUAGE_ENGLISH 0
-//not implemented
-#define LANGUAGE_JAPANESE 1
-#define LANGUAGE_FRENCH 2
-#define LANGUAGE_SPANISH	3
-#define LANGUAGE_GERMAN		4
-#define LANGUAGE_ITALIAN	5
-#define LANGUAGE_DUTCH		6
-#define LANGUAGE_PORTUGUESE	7
-#define LANGUAGE_KOREAN		8
-
 
 #define RELEASE
 

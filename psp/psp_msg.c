@@ -2,10 +2,6 @@
 
 extern int os9x_language;
 
-char *s9xTYL_lang[LANGUAGE_NUMBER]={
-	"english"
-};
-
 #define MSG_TOTAL_ENTRIES 272
 typedef struct {
 	int msg_id;
@@ -357,7 +353,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{BGMUSIC_PLAYING,"Playing spc file...",0},
 	{FOUND_SRAM,"Found an SRAM file",60},
 	{CANCEL,"CANCEL",0},
-	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " Close",0},
+	{INPUTBOX_OK,"\n\n      Close",0},
 	{INIT_SPEEDHACK,"Found speedhacks, applying...",30},
 #ifdef ME_SOUND
 	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nThis window will close in 3 seconds.",60*3},
@@ -721,7 +717,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{BGMUSIC_PLAYING,"SPCファイルを再生しています...",0},
 	{FOUND_SRAM,"SRAMファイルが見つかりました",60},
 	{CANCEL,"キャンセル",0},
-	{INPUTBOX_OK,"\n\n" SJIS_CIRCLE "," SJIS_CROSS " 閉じる",0},
+	{INPUTBOX_OK,"\n\n      閉じる",0},
 #ifdef ME_SOUND
 	{BAT_ISLOW,"電池残量が低下しているため、現在SRAMや設定の保存、ステートセーブが無効にされています。\n\nこの画面は3秒で閉じます。",60*3},
 #else
@@ -752,7 +748,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 ////////////////////////////////////////////////////////////////////////////////////////
 char *psp_msg_string(int num) {
 	int msg_num=0;
-	if (os9x_language == LANGUAGE_JAPANESE)
+	if (os9x_language == PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
 		while (msg_num<MSG_TOTAL_ENTRIES) {
 			if (num==s9xTYL_msg_ja[msg_num].msg_id) return s9xTYL_msg_ja[msg_num].msg;
 			msg_num++;
@@ -777,7 +773,7 @@ char *psp_msg_string(int num) {
 int psp_msg(int num,int len) {	
 	int msg_num=0;
 
-	if (os9x_language == LANGUAGE_JAPANESE)
+	if (os9x_language == PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
 		while (msg_num<MSG_TOTAL_ENTRIES) {
 			if (num==s9xTYL_msg_ja[msg_num].msg_id) break;
 			msg_num++;
@@ -790,7 +786,7 @@ int psp_msg(int num,int len) {
 
 	if (msg_num==MSG_TOTAL_ENTRIES) return 0;
 
-	if (os9x_language == LANGUAGE_JAPANESE) {
+	if (os9x_language == PSP_SYSTEMPARAM_LANGUAGE_JAPANESE) {
 		if (len==MSG_DEFAULT)	len=s9xTYL_msg_ja[msg_num].len;
 		if (len>=0)	msgBoxLines(s9xTYL_msg_ja[msg_num].msg,s9xTYL_msg_ja[msg_num].len);
 		else if (len==-1) inputBoxOK(s9xTYL_msg_ja[msg_num].msg);

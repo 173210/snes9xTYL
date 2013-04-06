@@ -234,7 +234,7 @@ char os9x_viewfile_path[256];
 
 char os9x_nickname[256];
 int os9x_timezone,os9x_daylsavings;
-int os9x_language=LANGUAGE_ENGLISH; //need to be initialized for early error messages! (before calling getsysparam
+int os9x_language=PSP_SYSTEMPARAM_LANGUAGE_ENGLISH; //need to be initialized for early error messages! (before calling getsysparam
 int os9x_menumusic,os9x_menufx,os9x_menupadbeep;
 int os9x_autostart;
 
@@ -2865,7 +2865,7 @@ int scroll_message_input(char *name,int limit) {
 	memset(&osk, 0, sizeof(osk));
 	osk.size = sizeof(osk);
 	osk.language = os9x_language;
-	//if (os9x_language==LANGUAGE_JAPANESE)
+	//if (os9x_language==PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
 	osk.buttonswap = 0;
 	//else osk.buttonswap = 1;
 

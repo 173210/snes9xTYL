@@ -2,8 +2,8 @@
 
 #define HELP_TOTAL_ENTRIES 27
 
-static char help_data[LANGUAGE_NUMBER][HELP_TOTAL_ENTRIES][1024]  __attribute__((aligned(16))) = {
-	{//english
+static char help_data_en[HELP_TOTAL_ENTRIES][1024]  __attribute__((aligned(16))) = {
+	//english
 		"Select slot to use for loading and saving state.",
 		"Load state from current slot\nCurrent game progress will be lost!",
 		"Save state to current slot.",
@@ -31,8 +31,10 @@ static char help_data[LANGUAGE_NUMBER][HELP_TOTAL_ENTRIES][1024]  __attribute__(
 		"Render PAL as NTSC.\nPAL games have 240 vertical lines, NTSC 224.\nMost PAL games are NTSC conversion and so the 16 more lines not used.\nEnabling this option will help removing the black border at bottom.",
 		"Autosave timer.\nThis usefull feature will create a savestate for you every n minutes.\nn can be choosen between 1 to 10min.",
 		"Autosave SRAM.\nThis option will save SRAM after each modification by the game.\nThis can cause big slowdowns in some games."
-	},
-	{//japanese TODO : translation
+};
+
+static char help_data_ja[HELP_TOTAL_ENTRIES][1024]  __attribute__((aligned(16))) = {
+	//japanese TODO : translation
 		"スロットを選んで、そこでステートをロードと保存できます。",
 		"現在のスロットからステートをロード\n現在のゲーム情報が消えてしまうのでご注意。",
 		"現在のスロットにステートを保存。",
@@ -60,8 +62,10 @@ static char help_data[LANGUAGE_NUMBER][HELP_TOTAL_ENTRIES][1024]  __attribute__(
 		"PALをNTSCとして描画します。\nPALのゲームは240本の垂直線があり、NTSCは224本あります。\nMost ほとんどのPALゲームはNTSCの変換のため16本も使われていません。\nこのオプションを有効にすることで下部の黒い縁を取り除くことができます。",
 		"自動セーブタイマーです。\nこれは何分か毎にステートセーブをしてくれる便利な機能\です。\n値は1～10分に設定できます。",
 		"SRAM自動セーブ\nこのオプションはSRAMをゲームによる変更があるたびに保存させます。\nこれは一部のゲームで大きな側と低下を引き起こすことがあります。"
-	},
-	{//french TODO : translation
+};
+
+static char help_data_fr[HELP_TOTAL_ENTRIES][1024]  __attribute__((aligned(16))) = {
+	//french TODO : translation
 	  "Selectionne le slot pour charger/sauvegarder (savestate)",
 	  "Charger sauvegarde du slot courant\nLa partie en cours sera perdu!",
 	  "Sauvegarder dans le slot courant.",
@@ -89,6 +93,5 @@ static char help_data[LANGUAGE_NUMBER][HELP_TOTAL_ENTRIES][1024]  __attribute__(
 		"Render PAL as NTSC.\nPAL games have 240 vertical lines, NTSC 224.\nMost PAL games are NTSC conversion and so the 16 more lines not used.\nEnabling this option will help removing the black border at bottom.",
 		"Autosave timer.\nThis usefull feature will create a savestate for you every n minutes.\nn can be choosen between 1 to 10min.",
 		"Autosave SRAM.\nThis option will save SRAM after each modification by the game.\nThis can cause big slowdowns in some games."
-	}
 };
 	

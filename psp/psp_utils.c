@@ -539,7 +539,6 @@ void getsysparam(){
 
 	os9x_timezone=0;
 	os9x_daylsavings=0;
-	os9x_language=LANGUAGE_ENGLISH;
 	os9x_nickname[0]='\0';
 
 	if (sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME,sVal,256)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
@@ -571,21 +570,9 @@ void getsysparam(){
 		os9x_daylsavings=iVal;
 	}
 
-	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE,&iVal)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
+	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE,&os9x_language)==PSP_SYSTEMPARAM_RETVAL_FAIL)
 		//get language
-		switch(iVal) {
-				case(PSP_SYSTEMPARAM_LANGUAGE_JAPANESE):
-					os9x_language=LANGUAGE_JAPANESE;
-					break;
-				case(PSP_SYSTEMPARAM_LANGUAGE_FRENCH):
-					os9x_language=LANGUAGE_FRENCH;
-					break;
-				case(PSP_SYSTEMPARAM_LANGUAGE_ENGLISH):
-				default:
-					os9x_language=LANGUAGE_ENGLISH;
-					break;
-		}
-	}
+			os9x_language=PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
