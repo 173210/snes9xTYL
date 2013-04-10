@@ -403,12 +403,13 @@ int InputCodeBox(char *msg,char *fmt,char *code) {
 			}
 			i++;
 		}
+		sprintf(msgCodeBox,"%s\n%s\n",msgCodeBox,tmpstr);
 
 		//display it
 		i = msgBoxLinesRaw(msgCodeBox,l);
 
 		mh_printCenter(i,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
-		sprintf(msgCodeBox,"         " SJIS_CROSS " %s", psp_msg_string(CANCEL));
+		sprintf(msgCodeBox,"             " SJIS_CROSS " %s", psp_msg_string(CANCEL));
 		mh_printCenter(i,msgCodeBox,TEXT_COLOR_CANCEL);
 
 		pgScreenFlipV();

@@ -271,14 +271,14 @@ void tile_init_cache(){
 }
 }
 
-typedef union { struct { uint8 b0, b1, b2, b3; } B; uint32 W;} yo_uint32;
+
 uint8 pspConvertTile (uint8 *pCache, uint32 TileAddr,uint32 col)
 {
     register uint8 *tp = &VRAM[TileAddr];
     uint32 *p = (uint32 *) pCache;
     uint32 non_zero = 0;
     uint8 line;
-    yo_uint32 colTmp;
+    uint32 colTmp;
     
     col=(col<<24)|(col<<16)|(col<<8)|col;
 
@@ -341,43 +341,43 @@ uint8 pspConvertTile (uint8 *pCache, uint32 TileAddr,uint32 col)
     case 4:
 	for (line = 8; line != 0; line--, tp += 2)
 	{
-	    yo_uint32 p1;p1.W = 0;
-	    yo_uint32 p2;p2.W = 0;
+	    uint32 p1 = 0;
+	    uint32 p2 = 0;
 	    register uint8 pix;
 	    if ((pix = *(tp + 0)))
 	    {
-		p1.W |= odd_high[0][pix >> 4];
-		p2.W |= odd_low[0][pix & 0xf];
+		p1 |= odd_high[0][pix >> 4];
+		p2 |= odd_low[0][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 1)))
 	    {
-		p1.W |= even_high[0][pix >> 4];
-		p2.W |= even_low[0][pix & 0xf];
+		p1 |= even_high[0][pix >> 4];
+		p2 |= even_low[0][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 16)))
 	    {
-		p1.W |= odd_high[1][pix >> 4];
-		p2.W |= odd_low[1][pix & 0xf];
+		p1 |= odd_high[1][pix >> 4];
+		p2 |= odd_low[1][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 17)))
 	    {
-		p1.W |= even_high[1][pix >> 4];
-		p2.W |= even_low[1][pix & 0xf];
+		p1 |= even_high[1][pix >> 4];
+		p2 |= even_low[1][pix & 0xf];
 	    }
-	    non_zero |= p1.W | p2.W;
+	    non_zero |= p1 | p2;
 	    if (non_zero) {
-		colTmp.W = col;
-		if (!p1.B.b0) colTmp.B.b0 = 0;
-		if (!p1.B.b1) colTmp.B.b1 = 0;
-		if (!p1.B.b2) colTmp.B.b2 = 0;
-		if (!p1.B.b3) colTmp.B.b3 = 0;
-		p[0] = p1.W | colTmp.W;
-		colTmp.W = col;
-		if (!p2.B.b0) colTmp.B.b0 = 0;
-		if (!p2.B.b1) colTmp.B.b1 = 0;
-		if (!p2.B.b2) colTmp.B.b2 = 0;
-		if (!p2.B.b3) colTmp.B.b3 = 0;
-	    	p[1] = p2.W|colTmp.W;
+	    	colTmp=col;
+	    	if (!(p1&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p1&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p1&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p1&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[0] = p1|colTmp;
+	    	colTmp=col;
+	    	if (!(p2&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p2&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p2&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p2&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[1] = p2|colTmp;
 	    } else {
 	    	p[0] = p[1] = 0;
 	    }
@@ -389,38 +389,38 @@ uint8 pspConvertTile (uint8 *pCache, uint32 TileAddr,uint32 col)
     case 2:
 	for (line = 8; line != 0; line--, tp += 2)
 	{
-	    yo_uint32 p1;p1.W = 0;
-	    yo_uint32 p2;p2.W = 0;
+	    uint32 p1 = 0;
+	    uint32 p2 = 0;
 	    register uint8 pix;
 	    if ((pix = *(tp + 0)))
 	    {
-		p1.W |= odd_high[0][pix >> 4];
-		p2.W |= odd_low[0][pix & 0xf];
+		p1 |= odd_high[0][pix >> 4];
+		p2 |= odd_low[0][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 1)))
 	    {
-		p1.W |= even_high[0][pix >> 4];
-		p2.W |= even_low[0][pix & 0xf];
+		p1 |= even_high[0][pix >> 4];
+		p2 |= even_low[0][pix & 0xf];
 	    }
-	    non_zero |= p1.W | p2.W;
+	    non_zero |= p1 | p2;
 	    if (non_zero) {
-		colTmp.W = col;
-		if (!p1.B.b0) colTmp.B.b0 = 0;
-		if (!p1.B.b1) colTmp.B.b1 = 0;
-		if (!p1.B.b2) colTmp.B.b2 = 0;
-		if (!p1.B.b3) colTmp.B.b3 = 0;
-		p[0] = p1.W | colTmp.W;
-		colTmp.W = col;
-		if (!p2.B.b0) colTmp.B.b0 = 0;
-		if (!p2.B.b1) colTmp.B.b1 = 0;
-		if (!p2.B.b2) colTmp.B.b2 = 0;
-		if (!p2.B.b3) colTmp.B.b3 = 0;
-		p[1] = p2.W|colTmp.W;
+	    	colTmp=col;
+	    	if (!(p1&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p1&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p1&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p1&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[0] = p1|colTmp;
+	    	colTmp=col;
+	    	if (!(p2&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p2&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p2&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p2&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[1] = p2|colTmp;
 	    } else {
 	    	p[0] = p[1] = 0;
 	    }
 	    p+=512/4;
-	    non_zero |= p1.W | p2.W;
+	    non_zero |= p1 | p2;
 	}
 	break;
     }
@@ -434,7 +434,7 @@ uint8 pspConvertTileHires (uint8 *pCache, uint32 TileAddr,uint32 col)
     uint32 *p = (uint32 *) pCache;
     uint32 non_zero = 0;
     uint8 line;
-    yo_uint32 colTmp;
+    uint32 colTmp;
     
     col=(col<<24)|(col<<16)|(col<<8)|col;
 
@@ -497,49 +497,49 @@ uint8 pspConvertTileHires (uint8 *pCache, uint32 TileAddr,uint32 col)
     case 4:
 	for (line = 8; line != 0; line--, tp += 2)
 	{
-	    yo_uint32 p1;p1.W = 0;
-	    yo_uint32 p2;p2.W = 0;
+	    uint32 p1 = 0;
+	    uint32 p2 = 0;
 	    register uint8 pix;
 	    if ((pix = *(tp + 0)))
 	    {
-		p1.W |= odd_high[0][pix >> 4];
-		p2.W |= odd_low[0][pix & 0xf];
+		p1 |= odd_high[0][pix >> 4];
+		p2 |= odd_low[0][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 1)))
 	    {
-		p1.W |= even_high[0][pix >> 4];
-		p2.W |= even_low[0][pix & 0xf];
+		p1 |= even_high[0][pix >> 4];
+		p2 |= even_low[0][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 16)))
 	    {
-		p1.W |= odd_high[1][pix >> 4];
-		p2.W |= odd_low[1][pix & 0xf];
+		p1 |= odd_high[1][pix >> 4];
+		p2 |= odd_low[1][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 17)))
 	    {
-		p1.W |= even_high[1][pix >> 4];
-		p2.W |= even_low[1][pix & 0xf];
+		p1 |= even_high[1][pix >> 4];
+		p2 |= even_low[1][pix & 0xf];
 	    }
-	    non_zero |= p1.W | p2.W;
+	    non_zero |= p1 | p2;
 	    if (non_zero) {
-			//hirez FIX + Ruka changes
-			if(p1.B.b2)p1.W=p1.W&0x00FFFFFF | p1.B.b2<<8;
-			if(p1.B.b0)p1.W=p1.W&0xFFFF00FF | p1.B.b0<<8;
-			if(p2.B.b2)p2.W=p2.W&0x00FFFFFF | p2.B.b2<<8;
-			if(p2.B.b3)p2.W=p2.W&0xFFFF00FF | p2.B.b0<<8;
-			//orign + Ruka changes
-		colTmp.W = col;
-		if (!p1.B.b0) colTmp.B.b0 = 0;
-		if (!p1.B.b1) colTmp.B.b1 = 0;
-		if (!p1.B.b2) colTmp.B.b2 = 0;
-		if (!p1.B.b3) colTmp.B.b3 = 0;
-		p[0] = p1.W | colTmp.W;
-		colTmp.W = col;
-		if (!p2.B.b0) colTmp.B.b0 = 0;
-		if (!p2.B.b1) colTmp.B.b1 = 0;
-		if (!p2.B.b2) colTmp.B.b2 = 0;
-		if (!p2.B.b3) colTmp.B.b3 = 0;
-	    	p[1] = p2.W|colTmp.W;
+			//hirez FIX
+			if(p1&0x00FF0000)p1=p1&0x00FFFFFF | (p1&0x00FF0000)<<8;
+			if(p1&0x000000FF)p1=p1&0xFFFF00FF | (p1&0x000000FF)<<8;
+			if(p2&0x00FF0000)p2=p2&0x00FFFFFF | (p2&0x00FF0000)<<8;
+			if(p2&0x000000FF)p2=p2&0xFFFF00FF | (p2&0x000000FF)<<8;
+			//orign
+	    	colTmp=col;
+	    	if (!(p1&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p1&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p1&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p1&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[0] = p1|colTmp;
+	    	colTmp=col;
+	    	if (!(p2&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p2&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p2&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p2&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[1] = p2|colTmp;
 	    } else {
 	    	p[0] = p[1] = 0;
 	    }
@@ -551,44 +551,44 @@ uint8 pspConvertTileHires (uint8 *pCache, uint32 TileAddr,uint32 col)
     case 2:
 	for (line = 8; line != 0; line--, tp += 2)
 	{
-	    yo_uint32 p1;p1.W = 0;
-	    yo_uint32 p2;p2.W = 0;
+	    uint32 p1 = 0;
+	    uint32 p2 = 0;
 	    register uint8 pix;
 	    if ((pix = *(tp + 0)))
 	    {
-		p1.W |= odd_high[0][pix >> 4];
-		p2.W |= odd_low[0][pix & 0xf];
+		p1 |= odd_high[0][pix >> 4];
+		p2 |= odd_low[0][pix & 0xf];
 	    }
 	    if ((pix = *(tp + 1)))
 	    {
-		p1.W |= even_high[0][pix >> 4];
-		p2.W |= even_low[0][pix & 0xf];
+		p1 |= even_high[0][pix >> 4];
+		p2 |= even_low[0][pix & 0xf];
 	    }
-	    non_zero |= p1.W | p2.W;
+	    non_zero |= p1 | p2;
 	    if (non_zero) {
-			//hirez FIX + Ruka changes
-			if(p1.B.b2)p1.W=p1.W&0x00FFFFFF | p1.B.b2<<8;
-			if(p1.B.b0)p1.W=p1.W&0xFFFF00FF | p1.B.b0<<8;
-			if(p2.B.b2)p2.W=p2.W&0x00FFFFFF | p2.B.b2<<8;
-			if(p2.B.b3)p2.W=p2.W&0xFFFF00FF | p2.B.b0<<8;
-			//orign + Ruka changes
-		colTmp.W = col;
-		if (!p1.B.b0) colTmp.B.b0 = 0;
-		if (!p1.B.b1) colTmp.B.b1 = 0;
-		if (!p1.B.b2) colTmp.B.b2 = 0;
-		if (!p1.B.b3) colTmp.B.b3 = 0;
-		p[0] = p1.W | colTmp.W;
-		colTmp.W = col;
-		if (!p2.B.b0) colTmp.B.b0 = 0;
-		if (!p2.B.b1) colTmp.B.b1 = 0;
-		if (!p2.B.b2) colTmp.B.b2 = 0;
-		if (!p2.B.b3) colTmp.B.b3 = 0;
-		p[1] = p2.W|colTmp.W;
+			//hirez FIX
+			if(p1&0x00FF0000)p1=p1&0x00FFFFFF | (p1&0x00FF0000)<<8;
+			if(p1&0x000000FF)p1=p1&0xFFFF00FF | (p1&0x000000FF)<<8;
+			if(p2&0x00FF0000)p2=p2&0x00FFFFFF | (p2&0x00FF0000)<<8;
+			if(p2&0x000000FF)p2=p2&0xFFFF00FF | (p2&0x000000FF)<<8;
+			//orign
+	    	colTmp=col;
+	    	if (!(p1&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p1&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p1&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p1&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[0] = p1|colTmp;
+	    	colTmp=col;
+	    	if (!(p2&0x000000FF)) colTmp&=~0x000000FF;
+	    	if (!(p2&0x0000FF00)) colTmp&=~0x0000FF00;
+	    	if (!(p2&0x00FF0000)) colTmp&=~0x00FF0000;
+	    	if (!(p2&0xFF000000)) colTmp&=~0xFF000000;	    	
+	    	p[1] = p2|colTmp;
 	    } else {
 	    	p[0] = p[1] = 0;
 	    }
 	    p+=512/4;
-	    non_zero |= p1.W | p2.W;
+	    non_zero |= p1 | p2;
 	}
 	break;
     }
