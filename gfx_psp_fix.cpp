@@ -200,13 +200,10 @@ void initRenderingFix(){
 	sceGuEnable(GU_ALPHA_TEST);			
 	sceGuAlphaFunc(GU_EQUAL,0,0x1);
 
-	sceGuEnable(GU_SCISSOR_TEST);
 	sceGuEnable(GU_TEXTURE_2D);	
 	sceGuTexFilter(GU_NEAREST,GU_NEAREST);
 	
 	sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-	sceGuTexScale(1.0f/512.0f,1.0f/512.0f);
-	sceGuTexOffset(0,0);
 	sceGuClutMode(GU_PSM_5551,0,255,0);	
 	
 	last_palette=0;  //start in non directcolour mode, coz first things to be rendered are s

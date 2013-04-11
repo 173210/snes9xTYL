@@ -129,7 +129,6 @@ void guDrawBuffer(u16* video_buffer,int src_w,int src_h,int src_pitch,int dst_w,
   if (os9x_smoothing) sceGuTexFilter(GU_LINEAR,GU_LINEAR);
   else sceGuTexFilter(GU_NEAREST,GU_NEAREST);
   sceGuTexScale(1.0f/src_w,1.0f/src_w); // scale UVs to 0..1
-  sceGuTexOffset(0,0);
   sceGuTexWrap(GU_CLAMP,GU_CLAMP);
   
   vertices = (struct Vertex*)sceGuGetMemory(2*(1+src_w/SLICE_SIZE) * sizeof(struct Vertex));    	

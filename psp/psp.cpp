@@ -2971,14 +2971,11 @@ int scroll_message_input(char *name,int limit) {
 		while (!exit_osk) {
 
 			sceGuStart(GU_DIRECT,list);
-		sceGuEnable(GU_SCISSOR_TEST);
 		sceGuEnable(GU_TEXTURE_2D);
 		sceGuTexFilter(GU_NEAREST,GU_NEAREST);
 		sceGuDisable(GU_DEPTH_TEST);
   	sceGuDisable(GU_ALPHA_TEST);
   	//sceGuDepthMask(GU_TRUE);
-		sceGuTexScale(1.0f/512.0f,1.0f/512.0f);
-		sceGuTexOffset(0,0);
 		sceGuTexMode(GU_PSM_5551,0,0,0); //16bit texture
 		sceGuScissor(0,0,480,272);
 		sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
@@ -3192,15 +3189,12 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 			oldpos=pos;
 			sceGuStart(GU_DIRECT,list);
 
-			sceGuEnable(GU_SCISSOR_TEST);
 			sceGuEnable(GU_TEXTURE_2D);
 			sceGuTexFilter(GU_NEAREST,GU_NEAREST);
 			sceGuDisable(GU_DEPTH_TEST);
   		sceGuDisable(GU_ALPHA_TEST);
   		//sceGuDepthMask(GU_TRUE);
 
-			sceGuTexScale(1.0f/512.0f,1.0f/512.0f);
-			sceGuTexOffset(0,0);
 			sceGuTexMode(GU_PSM_5551,0,0,0); //16bit texture
 			sceGuScissor(0,0,480,272);
 

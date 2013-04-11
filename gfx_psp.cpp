@@ -251,13 +251,10 @@ void initRendering(){
 	sceGuEnable(GU_ALPHA_TEST);			
 	sceGuAlphaFunc(GU_EQUAL,0,0x1);
 
-	sceGuEnable(GU_SCISSOR_TEST);
 	sceGuEnable(GU_TEXTURE_2D);	
 	sceGuTexFilter(GU_NEAREST,GU_NEAREST);
 	
-	sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-	sceGuTexScale(1.0f/512.0f,1.0f/512.0f);
-	sceGuTexOffset(0,0);
+	sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);\
 	sceGuClutMode(GU_PSM_5551,0,255,0);	
 	
 	last_palette=0;  //start in non directcolour mode, coz first things to be rendered are s
@@ -2384,7 +2381,6 @@ void pspDrawBGMode7Background16 (uint8 *Screen, int bg)
   //sceGuTexFunc(GU_TFX_REPLACE,0);
   //if (os9x_smoothing) sceGuTexFilter(GU_LINEAR,GU_LINEAR);
   //else sceGuTexFilter(GU_NEAREST,GU_NEAREST);
-  sceGuTexScale(1.0f/src_w,1.0f/src_w); // scale UVs to 0..1
   //sceGuTexOffset(0,0);
   //sceGuTexWrap(GU_CLAMP,GU_CLAMP);
   
@@ -2408,8 +2404,6 @@ void pspDrawBGMode7Background16 (uint8 *Screen, int bg)
     vertices_ptr+=2;
   }
   sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D,vertices_ptr-vertices,0,vertices);	
-	
-  sceGuTexScale(1.0f/512.0f,1.0f/512.0f);
 #else
 
 

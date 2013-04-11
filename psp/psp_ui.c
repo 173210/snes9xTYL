@@ -44,9 +44,8 @@ void msgBox(const char *msg,int delay_vblank) {
 ////////////////////////////////////////////////////////////////////////////////////////
 int inputBox(char *msg) {
 	int pad,y;
-	char *str;
 	int l=strlen(msg);
-	str=(char*)malloc(l+32);
+	char str[l+32];
 	sprintf(str,"%s\n\n                    ", msg);
 	y=msgBoxLinesRaw(str,-1);
 	mh_printCenter(y,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
@@ -60,7 +59,6 @@ int inputBox(char *msg) {
 		if (pad&PSP_CTRL_CIRCLE) return 1;
 		if (pad&PSP_CTRL_CROSS) return 0;
 	}
-	free(str);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -68,10 +66,9 @@ int inputBox(char *msg) {
 ////////////////////////////////////////////////////////////////////////////////////////
 int inputBoxOK(char *msg) {
 	int pad;
-	char *str;
 	int l=strlen(msg);
+	char str[l+32];
 	int y;
-	str=(char*)malloc(l+32);
 	strcpy(str,msg);
 	strcat(str,psp_msg_string(INPUTBOX_OK));
 	y=msgBoxLinesRaw(str,-1);
@@ -85,7 +82,6 @@ int inputBoxOK(char *msg) {
 		if (pad&PSP_CTRL_CIRCLE) return 1;
 		if (pad&PSP_CTRL_CROSS) return 0;
 	}
-	free(str);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
