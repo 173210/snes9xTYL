@@ -3,8 +3,9 @@
 *.lo
 *.o
 *.elf
-*.PBP
+*.prx
 *.SFO
+*.PBP
 
 # Compiled Dynamic libraries
 *.so
