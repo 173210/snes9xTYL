@@ -3898,6 +3898,7 @@ int user_main(SceSize args, void* argp) {
 						close_snes_rom();
 						in_emu=0;
 					}
+					save_settings();
 					open_snes_rom();
 				break;
 				case 2:
