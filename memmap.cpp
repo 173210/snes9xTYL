@@ -882,15 +882,9 @@ again:
 //    _makepath (fname, drive, dir, name, ext);
 	strcpy(name,shortrom_filename);
 	strcpy(fname,filename);
-	char *p=strchr(rom_filename,'.');
-	char *q;
-	q=p;
-	while (p)
-	{
-	  	q=p;
-  		p=strchr(p+1,'.');
-	}
-	strcpy(ext,q+1);
+	char *p = strrchr(rom_filename,'.');
+	if (p == NULL) return FALSE;
+	strcpy(ext, p + 1);
 	
 	
 
@@ -939,18 +933,14 @@ again:
         {
         	if (unzGetCurrentFileInfo(zip_file, &unzinfo, snes_file, sizeof(snes_file), NULL, NULL, NULL, NULL) != UNZ_OK) return FALSE;
 
-            p = (char*)strchr(snes_file, '.');
-			while (q = (char *)strchr(p+1, '.'))
-			{
-       			p=q;
-		    }
+            p = (char*)(strrchr(snes_file, '.') + 1);
 	
                                 
-                if (strcasecmp(p, ".smc") == 0) break;
-                if (strcasecmp(p, ".sfc") == 0) break;
-                if (strcasecmp(p, ".swc") == 0) break;
-                if (strcasecmp(p, ".bin") == 0) break;
-                if (strcasecmp(p, ".fig") == 0) break;
+                if (strcasecmp(p, "smc") == 0) break;
+                if (strcasecmp(p, "sfc") == 0) break;
+                if (strcasecmp(p, "swc") == 0) break;
+                if (strcasecmp(p, "bin") == 0) break;
+                if (strcasecmp(p, "fig") == 0) break;
 //                if (compare(p, ".1") == 0) break;
                 if (unzGoToNextFile(zip_file) != UNZ_OK) return FALSE;
          }     

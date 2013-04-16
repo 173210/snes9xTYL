@@ -298,6 +298,7 @@ else {fclose(f);check_settings();return -3;}
 	READ_SETTING(os9x_autosavetimer)
 	READ_SETTING_SIZE(&os9x_inputs[0],32*4)
 	READ_SETTING_SIZE(rom_name,64)
+	rom_name[64] = 0;
 	READ_SETTING(os9x_autosavesram)
 	READ_SETTING(os9x_screenTop)
 	READ_SETTING(os9x_screenLeft)
@@ -494,7 +495,9 @@ if (fread(tmp_str,1,sz,f)==sz) memcpy(buff,tmp_str,sz); \
 else {fclose(f);return -3;}
 
 	READ_SETTING_SIZE(romPath,256)
+	romPath[256] = 0;
 	READ_SETTING_SIZE(lastRom,256)
+	lastRom[256] = 0;
 	READ_SETTING(os9x_menumusic)
 	READ_SETTING(os9x_menufx)
 	READ_SETTING(os9x_usballowed)

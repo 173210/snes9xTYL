@@ -3479,7 +3479,7 @@ int os9x_getfile() {
 	bypass_rom_settings=getFilePath(rom_filename,os9x_notfirstlaunch)-1;
 	if (bypass_rom_settings<0) return 0;
 
-	strcpy(lastRom,rom_filename);
+	strcpy(lastRom,os9x_shortfilename(rom_filename));
 	strcpy(romPath,LastPath);
 #endif
 	char *file_ext=strrchr((const char *)rom_filename,'/');
@@ -3607,7 +3607,8 @@ int init_snes_rom() {
 	pgCopyScreen();
 
 	if ( !Memory.LoadROM( rom_filename ) ){
-		ErrorMsg("Error while loading rom");
+		psp_msg(ERR_LOADING_ROM, MSG_DEFAULT);
+		return -1;
 	} else {
 		Memory.LoadSRAM( (char*)S9xGetSaveFilename( ".SRM" ) );
 
@@ -3669,6 +3670,7 @@ int init_snes_rom() {
 
 	S9xInitDisplay();
 	if ( !S9xGraphicsInit() ){
+		psp_msg(ERR_INIT_GFX, MSG_DEFAULT);
 		return -1;
 	}
 
@@ -3826,13 +3828,12 @@ void me_apu_debug(int flag)
 ////////////////////////////////////////////////////////////////////////////////////////
 void open_snes_rom() {
 	if (init_snes_rom()) {
-		psp_msg(ERR_INIT_ROM, MSG_DEFAULT);
 		close_snes_rom();
-	} else {
-		os9x_getnewfile=0;
-		os9x_notfirstlaunch=1;
-		pgFillAllvram(0);pgScreenFrame(2,0);
+		return;
 	}
+	os9x_getnewfile=0;
+	os9x_notfirstlaunch=1;
+	pgFillAllvram(0);pgScreenFrame(2,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -3864,8 +3865,9 @@ int user_main(SceSize args, void* argp) {
 	}
 
 	if(os9x_autostart) {
-	strcpy(rom_filename, lastRom);
-	open_snes_rom();
+		strcpy(rom_filename, romPath);
+		strncat(rom_filename, lastRom, 255 - strlen(romPath));
+		open_snes_rom();
 	}
 
 	while ( g_bLoop ) {

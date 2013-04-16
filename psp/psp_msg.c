@@ -20,6 +20,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 
 	{ERR_INIT_SNES,"Cannot init snes, memory issue",2*60},
 	{ERR_INIT_ROM,"Cannot initialize ROM",60*2},
+	{ERR_LOADING_ROM,"Error while loading rom",60*2},
+	{ERR_INIT_GFX,"Cannot initialize graphics",60*2},
 
 	{ERR_CANNOT_ALLOC_MEM,"Cannot allocate memory",30},
 
@@ -384,6 +386,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 
 	{ERR_INIT_SNES,"メモリの問題でSFCを初期化できません",2*60},
 	{ERR_INIT_ROM,"ROMを初期化できません",60*2},
+	{ERR_LOADING_ROM,"ROM読み込みエラー",60*2},
+	{ERR_INIT_GFX,"グラフィックスを初期化できません",60*2},
 
 	{ERR_CANNOT_ALLOC_MEM,"メモリを割り当てられません",30},
 
