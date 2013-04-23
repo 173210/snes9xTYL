@@ -19,7 +19,6 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{ERR_READ_MEMSTICK,"Error reading memstick.\nPlease verify it (using a PC card reader), it may be corrupted.",60},
 
 	{ERR_INIT_SNES,"Cannot init snes, memory issue",2*60},
-	{ERR_INIT_ROM,"Cannot initialize ROM",60*2},
 	{ERR_LOADING_ROM,"Error while loading rom",60*2},
 	{ERR_INIT_GFX,"Cannot initialize graphics",60*2},
 
@@ -385,7 +384,6 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{ERR_READ_MEMSTICK,"メモリースティックの読み込みでエラーが発生しました。\nメモリースティックを確認してください。\n(PCのカードリーダーを使ってください)\nメモリースティックが破損している可能\性があります。",60},
 
 	{ERR_INIT_SNES,"メモリの問題でSFCを初期化できません",2*60},
-	{ERR_INIT_ROM,"ROMを初期化できません",60*2},
 	{ERR_LOADING_ROM,"ROM読み込みエラー",60*2},
 	{ERR_INIT_GFX,"グラフィックスを初期化できません",60*2},
 
