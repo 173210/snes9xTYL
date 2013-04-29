@@ -199,15 +199,12 @@ void setupSH()
 	struct Vertex3D* vtx = vertices3D;
 	struct Vertex3D* currvtx = vtx;
 
-	float du = (GU_PI*2) / GRID_WIDTH;
 	float dh = 1.0f / GRID_WIDTH;
 
 	unsigned int i,j;
 
 	for (i = 0; i < GRID_WIDTH; ++i)
 	{
-		float u = i * du;
-
 		for (j = 0; j < GRID_HEIGHT; ++j)
 		{
 			currvtx->color = hsl2rgb(i * dh, 1.0f, 0.5f);

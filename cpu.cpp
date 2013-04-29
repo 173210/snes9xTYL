@@ -135,7 +135,7 @@ bool8 WinterGold = 0;
 extern uint8 *C4Ram;
 END_EXTERN_C
 #endif
-void debug_dump(char* filename);
+void debug_dump(const char* filename);
 //int msgBoxLines(char* msg,int delay);
 void S9xReset (void)
 {

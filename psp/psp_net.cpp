@@ -5,7 +5,6 @@
 
 extern "C" {
 #include "pspadhoc.h"
-#include "adhoc.h"
 
 extern int g_Server;
 int save_buffer_settings(uint8 *buffer);
@@ -32,10 +31,6 @@ int psp_initadhocgame(void){
 	sprintf(str_id,"%s\\/%s",os9x_nickname,shortrom_filename);
 
 	if((adhocInit(str_id) >= 0) && (adhocSelect() >=0)) { //init adhoc
-		unsigned int length;
-		uint8 *buffer;
-		int err = 0;
-		int i=0;
 		if (g_Server) os9x_conId = 1;
 		else os9x_conId = 2;
 		//buffer=(uint8*)malloc(256);
@@ -138,7 +133,7 @@ int psp_net_recv_file(char *filename) {
 				return -4;
 			}
 			crc32=caCRC32(net_buffer+4,rlen);
-			if (crc32!=*((int*)net_buffer)) {
+			if (crc32!=*((unsigned int*)net_buffer)) {
 				net_buffer[0]=0;
 				adhocSendRecvAck(net_buffer,1);
 			} else {
@@ -160,7 +155,6 @@ int psp_net_recv_file(char *filename) {
 int psp_net_send_file(char *filename) {
 	unsigned int length,crc32,l,rlen;
 	char c;
-	int ret;
 	//uint8 *buffer;
 	FILE *f;
 

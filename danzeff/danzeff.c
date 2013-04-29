@@ -6,6 +6,7 @@
 #include "pspkernel.h"
 #include "pspgu.h"
 #include "png.h"
+#include "psp/pg.h"
 #endif // #ifdef DANZEFF_SCEGU
 
 #define false 0
@@ -360,10 +361,10 @@ void surface_draw_offset16(struct danzeff_gu_surface* surface, int screenX, int 
 	unsigned short *dst;
 	unsigned short *src;
 	
-	int x,y;
+	int y;
 	for (y=0;y<intHeight;y++) {
 		src=((unsigned short *)(surface->texture)) + offsetX + (y+offsetY)*surface->surface_width;
-		dst=pgGetVramAddr(moved_x+screenX,moved_y+screenY+y);
+		dst=(unsigned short *)pgGetVramAddr(moved_x+screenX,moved_y+screenY+y);
 		memcpy(dst,src,intWidth*2);
 	}
 }

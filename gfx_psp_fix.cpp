@@ -237,7 +237,6 @@ void pspDrawFASTOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode)
 
   //uint32 O;
   s32 Xs,Ys;
-  int i;
   uint32 BaseTile, Tile;
     
   GPUPack.BG.BitShift = 4;  
@@ -251,33 +250,31 @@ void pspDrawFASTOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode)
   GPUPack.BG.Buffered = IPPU.TileCached [TILE_4BIT];
   GPUPack.BG.NameSelect = PPU.OBJNameSelect;
   GPUPack.BG.DirectColourMode = false;
-        
-/********************************************************/	
-/****************PSP STUFF*******************************/    
-/********************************************************/			
-		
+
+/********************************************************/
+/****************PSP STUFF*******************************/
+/********************************************************/
+
 	int num_vert=0;//8192;//0;
 	int I=0;
 	 for (int S = GPUPack.GFX.OBJList [I++]; S >= 0; S = GPUPack.GFX.OBJList [I++]) {
 	 	int VPos = GPUPack.GFX.VPositions [S];
 			int Size = GPUPack.GFX.Sizes[S];
-			int TileInc = 1;
-			int Offset;
 			if (VPos + Size <= (int) GPUPack.GFX.StartY || VPos > (int) GPUPack.GFX.EndY)  continue;
-			
+
 			num_vert+=(Size/8)*(Size/8);
 	}
-  
-  
+
+
   if (!(vertices[current_bitshift]=(struct Vertex*)sceGuGetMemory(num_vert*2* sizeof(struct Vertex)))){
   	debug_log("not enough vertices!");
   	return;
   }
 	vertices_ptr[current_bitshift]=vertices[current_bitshift];
 	vertices_end[current_bitshift]=vertices_ptr[current_bitshift]+num_vert*2;
-			
+
 /********************************************************/
-/********************************************************/				
+/********************************************************/
     GPUPack.GFX.Z1 = (D + 2);
     //realZ1=(int)(GPUPack.GFX.Z1);
 		I=0;
@@ -773,19 +770,18 @@ void pspDrawBackgroundMosaicFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
 			}
 		}
 	}
-  
+
 	//render
-	if (_verticesCol_ptr-_verticesCol) {  				
-  	
-		sceGuTexImage(0,512,512,512,tile_texture[current_bitshift]);		
+	if (_verticesCol_ptr-_verticesCol) {
+
+		sceGuTexImage(0,512,512,512,tile_texture[current_bitshift]);
   	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT/*GU_COLOR_5551*/|GU_VERTEX_16BIT|GU_TRANSFORM_2D,(_verticesCol_ptr-_verticesCol),0,_verticesCol);  	
-  	
+
 	}
 }
 
 
 void pspDrawBackgroundMode5Fix (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 Z2) {
-	int i;
 
   GPUPack.GFX.Pitch = GPUPack.GFX.RealPitch;
   GPUPack.GFX.PPL = GPUPack.GFX.PPLx2 >> 1;
@@ -797,37 +793,37 @@ void pspDrawBackgroundMode5Fix (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 
   uint16 *SC2;
   uint16 *SC3;
   uint32 Width;
-  
-  if (last_palette!=GPUPack.BG.DirectColourMode){  	 
+
+  if (last_palette!=GPUPack.BG.DirectColourMode){
 			//DirectColourMode has changed, so we have to reload palette
 			waitRenderingFix();
 			last_palette=GPUPack.BG.DirectColourMode;
 			clut = (u16*)NO_CPU_CACHE(&clut256[0]);
-			memcpy(clut,GPUPack.GFX.ScreenColors,256*2);			
+			memcpy(clut,GPUPack.GFX.ScreenColors,256*2);
 			if (rendering_beware_fix16)
 			for (int i=0;i<256;i++) {
 				if (clut[i]==fixedcol16) clut[i]^=1<<10; //swap blue 1st bit
 			}
 			clut[0]|=0x8000;
-  		sceGuClutLoad(256/16,clut);			
+  		sceGuClutLoad(256/16,clut);
 	}
-  
+
   //bg is 32x30 tile but needs more in case of clipping or scroll changing every line
-	int num_vert=((GPUPack.GFX.EndY-GPUPack.GFX.StartY+1)+2+pCurrentClipFix->GroupCount [bg])*(256/8+6);			
+	int num_vert=((GPUPack.GFX.EndY-GPUPack.GFX.StartY+1)+2+pCurrentClipFix->GroupCount [bg])*(256/8+6);
   if (!(vertices[current_bitshift]=(struct Vertex*)sceGuGetMemory(num_vert*2* sizeof(struct Vertex)))){
   	debug_log("not enough vertices!");
   	return;
   }
 	vertices_ptr[current_bitshift]=vertices[current_bitshift];
 	vertices_end[current_bitshift]=vertices_ptr[current_bitshift]+num_vert*2;
-		
+
 /********************************************************/
 /********************************************************/
-    
+
   GPUPack.BG.StartPalette = 0;
-                   
-	
-    
+
+
+
 
 	SC0 = (uint16 *) &VRAM[PPU.BG[bg].SCBase << 1];
   if ((PPU.BG[bg].SCSize & 1)) SC1 = SC0 + 1024;
@@ -842,22 +838,22 @@ void pspDrawBackgroundMode5Fix (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 
 
 	if ((PPU.BG[bg].SCSize & 1)) SC3 = SC2 + 1024;
 	else SC3 = SC2;
-    
+
 	if((SC3-(unsigned short*)VRAM)>0x10000) SC3=(uint16*)&VRAM[(((uint8*)SC3)-VRAM)%0x10000];
 
 
 	int Lines;
 	int VOffsetMask;
-  int VOffsetShift;
+	int VOffsetShift;
 
-  if (GPUPack.BG.TileSize == 16) {
+	if (GPUPack.BG.TileSize == 16) {
 		VOffsetMask = 0x3ff;
 		VOffsetShift = 4;
-  } else {
+	} else {
 		VOffsetMask = 0x1ff;
 		VOffsetShift = 3;
 	}
-  int endy = GPUPack.GFX.EndY;
+	uint32 endy = GPUPack.GFX.EndY;
 
 	uint32 Y = GPUPack.GFX.StartY;
 	for (uint32 g = 0; g < pCurrentClipFix->GroupCount [bg]; g++) 
@@ -870,14 +866,14 @@ void pspDrawBackgroundMode5Fix (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 
 			uint32 VOffset = LineData [y].BG[bg].VOffset;
 			uint32 HOffset = LineData [y].BG[bg].HOffset;
 			int VirtAlign = (Y + VOffset) & 7;
-		
+
 			for (Lines = 1; Lines < 8 - VirtAlign; Lines++)
 			if ((VOffset != LineData [y + Lines].BG[bg].VOffset) || (HOffset != LineData [y + Lines].BG[bg].HOffset)) break;
 
 			HOffset <<= 1;
 			if (Y + Lines > endy) Lines = endy + 1 - Y;
 		//	VirtAlign <<= 3;
-		
+
 			int ScreenLine = (VOffset + Y) >> VOffsetShift;
 			int t1;
 			int t2;
@@ -890,16 +886,16 @@ void pspDrawBackgroundMode5Fix (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 
 			}
 			uint16 *b1;
 			uint16 *b2;
-	
+
 			if (ScreenLine & 0x20) b1 = SC2, b2 = SC3;
 			else b1 = SC0, b2 = SC1;
-	
+
 			b1 += (ScreenLine & 0x1f) << 5;
 			b2 += (ScreenLine & 0x1f) << 5;
-	
+
 			int clipcount = pCurrentClipFix->Count [bg][g];
 			if (!clipcount) clipcount = 1;
-			for (int clip = 0; clip < clipcount; clip++) 
+			for (int clip = 0; clip < clipcount; clip++)
 			{
 				int Left;
 				int Right;
@@ -1229,7 +1225,7 @@ pgPrintBG(0,10,0xffff,str);
 			uint32 VOffset = LineData [Y].BG[bg].VOffset;
 			uint32 HOffset = LineData [Y].BG[bg].HOffset;
 			int VirtAlign = (Y + VOffset) & 7;
-		
+
 			for (Lines = 1; Lines < 8 - VirtAlign; Lines++)
 				if ((VOffset != LineData [Y + Lines].BG[bg].VOffset) ||	(HOffset != LineData [Y + Lines].BG[bg].HOffset)) break;
 
@@ -1256,7 +1252,7 @@ pgPrintBG(0,10,0xffff,str);
 			b1 += (ScreenLine & 0x1f) << 5;
 			b2 += (ScreenLine & 0x1f) << 5;
 
-			int clipcount = pCurrentClipFix->Count [bg][g];
+			uint32 clipcount = pCurrentClipFix->Count [bg][g];
 			if (!clipcount) clipcount = 1;
 			//int clip = 0;
 			//for (int clip = 0; clip < clipcount; clip++)
@@ -1274,7 +1270,7 @@ pgPrintBG(0,10,0xffff,str);
 					Right = pCurrentClipFix->Right [clip][bg][g];
 
 					if (Right <= Left) continue;
-				}	    
+				}
 				//uint32 sGP32 = Left  + Y*256;
 				s32 Xt=Left;
 				s32 Yt=Y;
@@ -1702,11 +1698,11 @@ info(32,0,"transp");
 		if (_2passblending||_fixaddsub) rendering_beware_fix16=1;
 		//start a new rendering pass
 		initRenderingFix();
-				
+
 		//set subscreen as drawing buffer
-		sceGuDrawBufferList(GU_PSM_5551,(void*)(512*272*2*2+256*240*2+0*256*256*2),256);		
+		sceGuDrawBufferList(GU_PSM_5551,(void*)(512*272*2*2+256*240*2+0*256*256*2),256);
 		sceGuTexMode(GU_PSM_T8,0,0,0); //8bit texture
-		
+
 		//clear the ZBuffer
 		sceGuScissor(0,starty,256,endy/*-starty*/+1);
 		sceGuClearDepth(0);
@@ -1727,13 +1723,11 @@ info(32,0,"transp");
 	   		sceGuClear(GU_COLOR_BUFFER_BIT);
 			//extern ClipDataFix debug_ClipDataFix;
 			//if(IPPU.ClipFix [1].GroupCount [5]>10)memcpy(&debug_ClipDataFix,&IPPU.ClipFix [1],sizeof(ClipDataFix));
-	   		   
+
 			if(IPPU.FixColorCount)
 			{
 				//clipping && Fix color change
 				SET_DEBUG_COUNT(FIXCOLORCOUNT_ON_COLOUR_WINDOW,IPPU.FixColorCount);
-				int startc=starty;
-				int endc=starty;
 				for (uint32 g = 0; g < IPPU.ClipFix [1].GroupCount [5]; g++) {
 					int startcl;
 					int endcl;
@@ -1809,8 +1803,8 @@ info(32,0,"transp");
 			if(IPPU.FixColorCount)
 			{
 				SET_DEBUG_COUNT(FIXCOLORCOUNT_ON_NO_COLOUR_WINDOW,IPPU.FixColorCount);
-				int startc=starty;
-				int endc=starty;
+				uint32 startc=starty;
+				uint32 endc=starty;
 				int i=0;
 				for(;i<IPPU.FixColorCount-1;i++)
 				{
@@ -1834,9 +1828,9 @@ info(32,0,"transp");
 	   			sceGuClear(GU_COLOR_BUFFER_BIT);
 			}
 		}
-	  	  	  			   
+
 	  if (ANYTHING_ON_SUB)  {
-info(32,2,"rendering subscreen ");								
+info(32,2,"rendering subscreen ");
 	      pspRenderScreenFix (GPUPack.GFX.SubScreen, true, SUB_SCREEN_DEPTH,0);
 	  } else {
 info(32,2,"nothing on subscreen");
@@ -1857,20 +1851,18 @@ info(32,2,"nothing on subscreen");
 				if (fixedcol==0) sceGuClearColor(1<<19);
 				else sceGuClearColor(0);
 			} else sceGuClearColor(0);
-			
-	   		sceGuClear(GU_COLOR_BUFFER_BIT);	   	
+
+	   		sceGuClear(GU_COLOR_BUFFER_BIT);
 	   		// and back color inside rendered area
-	   		   	
+
 	   		if (rendering_beware_fix16) {
 				if (fixedcol==IPPU.ScreenColors [0]) col^=1<<19;
 				//if (fixedcol16==IPPU.ScreenColors [0]) col^=1<<19;
-			} 
+			}
 			if(IPPU.MainColorCount)
 			{
 				//clipping && color change
 				SET_DEBUG_COUNT(MAINCOLORCOUNT_CLIP,IPPU.MainColorCount);
-				int startc=starty;
-				int endc=starty;
 				sceGuClearColor(col);
    				for (uint32 g = 0; g < IPPU.ClipFix [0].GroupCount [5]; g++) {
 					int startcl;
@@ -1893,7 +1885,7 @@ info(32,2,"nothing on subscreen");
 						if (rendering_beware_fix16) {
 							if (fixedcol==IPPU.ScreenColors [0]) col^=1<<19;
 							//if (IPPU.MainColorLog [i]==IPPU.ScreenColors [0]) col^=1<<19;
-						} 
+						}
 						sceGuClearColor(col);
 						for (uint32 c = 0; c < IPPU.ClipFix [0].Count [5][g]; c++) {
   							if (IPPU.ClipFix [0].Right [c][5][g] > IPPU.ClipFix [0].Left [c][5][g]){
@@ -1972,10 +1964,10 @@ info(32,2,"nothing on subscreen");
 	   	
 	   		// we set ZBuffer to 0
 	   		// so further blending won't update others pixels (outside colour window)	   		   	
-			sceGuClearDepth(0);			
+			sceGuClearDepth(0);
 			sceGuClear(GU_DEPTH_BUFFER_BIT);
 			// and 1 to updatable area
-			sceGuClearDepth(1);			
+			sceGuClearDepth(1);
    			for (uint32 g = 0; g < IPPU.ClipFix [0].GroupCount [5]; g++) {
   				for (uint32 c = 0; c < IPPU.ClipFix [0].Count [5][g]; c++) {
   					if (IPPU.ClipFix [0].Right [c][5][g] > IPPU.ClipFix [0].Left [c][5][g]){
@@ -1997,10 +1989,9 @@ info(32,2,"nothing on subscreen");
 			if(IPPU.MainColorCount)
 			{
 				SET_DEBUG_COUNT(MAINCOLORCOUNT_NO_CLIP,IPPU.MainColorCount);
-				int startc=starty;
-				int endc=starty;//endy+1;//IPPU.MainColorLines[1];
+				uint32 startc=starty;
+				uint32 endc=starty;//endy+1;//IPPU.MainColorLines[1];
 				int i=0;
-				extern int os9x_renderingpass;
 				//if(os9x_renderingpass==4)
 				//{
 				//	memcpy(debug_MainColorLines,IPPU.MainColorLines,256);
@@ -2032,7 +2023,7 @@ info(32,2,"nothing on subscreen");
 	   			sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
 			}
 		}
-						
+
 		// now first pass main screen (with BG/OBJ to be combined with subscreen/fixed colour
 		//invalidate last palette
 				
@@ -2136,26 +2127,26 @@ info(32,2,"nothing on subscreen");
 				sceGuBlendFunc(2,GU_FIX,GU_FIX,0xffffff,0xffffff); break;
 			case 4://add1_2
 			info(32,4,"add1_2");
-				sceGuBlendFunc(0,GU_FIX,GU_FIX,0x7f7f7f,0x7f7f7f); break;				
+				sceGuBlendFunc(0,GU_FIX,GU_FIX,0x7f7f7f,0x7f7f7f); break;
 			case 5://fix add
 			info(32,4,"addfix");
-				sceGuBlendFunc(0,GU_FIX,GU_FIX,0x7f7f7f,0x7f7f7f); break;				
+				sceGuBlendFunc(0,GU_FIX,GU_FIX,0x7f7f7f,0x7f7f7f); break;
 			case 6://add
 			info(32,4,"add***");
-				sceGuBlendFunc(0,GU_FIX,GU_FIX,0xffffff,0xffffff); break;			
+				sceGuBlendFunc(0,GU_FIX,GU_FIX,0xffffff,0xffffff); break;
 		}
-							   	
-		if (_fixaddsub) {							 
+
+		if (_fixaddsub) {
 			sceGuEnable(GU_COLOR_TEST); //color test
 			sceGuColorFunc(GU_NOTEQUAL,0,0xFFFFFF);
-			sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D,2*4,0,_vertices);		
-			
+			sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D,2*4,0,_vertices);
+
 		} else {
-			
+
 			if (IPPU.ClipFix [1].GroupCount [5]) {
 				//col win sub, so not apply blending everywhere
-				int end=-1;
-				int start;
+				uint32 end = 0;
+				uint32 start;
 				for (uint32 g = 0; g < IPPU.ClipFix [1].GroupCount [5]; g++) {
 					if(IPPU.ClipFix [1].Start [5][g] == end-1)
 						start=end;
@@ -2212,25 +2203,25 @@ info(32,2,"nothing on subscreen");
 	  // operation.
 	  
 	  
-	  if (!PPU.ForcedBlanking) {	  		  	
+	  if (!PPU.ForcedBlanking) {
 	  	
-		rendering_beware_fix16=0;	  	
+		rendering_beware_fix16=0;
 		initRenderingFix();
 
 	  	
-	  	sceGuDrawBufferList(GU_PSM_5551,(void*)(0x40000000+512*272*2*2+256*240*2+2*256*256*2),256);	  		  	
+	  	sceGuDrawBufferList(GU_PSM_5551,(void*)(0x40000000+512*272*2*2+256*240*2+2*256*256*2),256);
 	  	sceGuTexMode(GU_PSM_T8,0,0,0); //8bit texture
-	  								  		  		  	
+
 	  	//setup back colors
-		int col=(((IPPU.ScreenColors [0])&31)<<3)|(((IPPU.ScreenColors [0]>>5)&31)<<11)|(((IPPU.ScreenColors [0]>>10)&31)<<19);		
+		int col=(((IPPU.ScreenColors [0])&31)<<3)|(((IPPU.ScreenColors [0]>>5)&31)<<11)|(((IPPU.ScreenColors [0]>>10)&31)<<19);
 	  	//sceGuClearColor((((IPPU.ScreenColors [0]>>0)&31)<<3)|(((IPPU.ScreenColors [0]>>5)&31)<<11)|(((IPPU.ScreenColors [0]>>10)&31)<<19));	  	
 	  	/*if (IPPU.Clip [0].Count [5]) {
 			sceGuClearColor(col);
 	  		for (uint32 c = 0; c < IPPU.Clip [0].Count [5]; c++) {
 	  			if (IPPU.Clip [0].Right [c][5] > IPPU.Clip [0].Left [c][5]){
 		     		sceGuScissor(IPPU.Clip [0].Left [c][5],starty,(IPPU.Clip [0].Right [c][5])+1,endy+1);
-	     			sceGuClear(GU_COLOR_BUFFER_BIT);	     			
-	     		} 
+	     			sceGuClear(GU_COLOR_BUFFER_BIT);
+	     		}
 	     	}
 			sceGuScissor(0,starty,256,endy+1);
 			sceGuClearDepth(0);
@@ -2240,8 +2231,6 @@ info(32,2,"nothing on subscreen");
 			{
 				//clipping && color change
 				SET_DEBUG_COUNT(MAINCOLORCOUNT_CLIP,IPPU.MainColorCount);
-				int startc=starty;
-				int endc=starty;
 				sceGuClearColor(col);
    				for (uint32 g = 0; g < IPPU.ClipFix [0].GroupCount [5]; g++) {
 					int startcl;
@@ -2323,7 +2312,7 @@ info(32,2,"nothing on subscreen");
 			{
 				SET_DEBUG_COUNT(MAINCOLORCOUNT_NO_CLIP,IPPU.MainColorCount);
 				int startc=starty;
-				int endc=starty;//endy+1;//IPPU.MainColorLines[1];
+				uint32 endc=starty;//endy+1;//IPPU.MainColorLines[1];
 				int i=0;
 					for(;i<IPPU.MainColorCount-1;i++)
 				{

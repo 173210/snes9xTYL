@@ -3,11 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 int os9x_getstate(char *ext,char *str_time) {
 	STREAM file;
-	const char *save_filename;		
+	const char *save_filename;
 	SceIoStat stat;
 	ScePspDateTime *tfile;
-	
-	save_filename=S9xGetSaveFilename (ext);		
+
+	save_filename=S9xGetSaveFilename (ext);
 	if (sceIoGetstat(save_filename,&stat)>=0) {
 			tfile=&(stat.st_mtime);	
 			sprintf(str_time,"%4d/%02d/%02d %02d:%02d:%02d",tfile->year,tfile->month,tfile->day,
@@ -15,7 +15,7 @@ int os9x_getstate(char *ext,char *str_time) {
 			S9xOpenSnapshotFile(save_filename,1,&file);
 			S9xCloseSnapshotFile(file);								
 			return 1;
-	}				
+	}
 	return 0;
 }
 
@@ -48,11 +48,11 @@ int os9x_save(const char *ext)
 int os9x_S9Xsave(const char *ext)
 {
 	const char *save_filename;
-	
+
 	os9x_externstate_mode=1;
 	save_filename=S9xGetSaveFilename (ext);	
 	//msgBoxLines((char*)save_filename,10);	
-	S9xFreezeGame(save_filename);	
+	S9xFreezeGame(save_filename);
 	return 0;
 }
 
@@ -62,22 +62,22 @@ int os9x_S9Xsave(const char *ext)
 int os9x_ZSsave(const char *ext)
 {
 	const char *save_filename;
-	
+
 	os9x_externstate_mode=1;
 	save_filename=S9xGetSaveFilename (ext);	
 	//msgBoxLines((char*)save_filename,10);	
-	S9xFreezeGame(save_filename);	
+	S9xFreezeGame(save_filename);
 	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int os9x_load(const char *ext) {	
+int os9x_load(const char *ext) {
 	FILE *savefile;
 	const char *save_filename;
 	os9x_externstate_mode=0;
-	
+
 	save_filename=S9xGetSaveFilename (ext);	
 	savefile=fopen(save_filename,"rb");
   if (savefile) {
@@ -86,7 +86,7 @@ int os9x_load(const char *ext) {
 //		S9xInitUpdate();
 		S9xReschedule ();
 		return 1;
-	} 
+	}
 	return 0;
 }
 

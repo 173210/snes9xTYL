@@ -176,8 +176,8 @@ void STOP (char *s)
 
 #define TCALL(n)\
 {\
-    PushW (((IAPU.PC)) - ((IAPU.RAM)) + 1); \
-    ((IAPU.PC)) = ((IAPU.RAM)) + (((APUPack.APU.ExtraRAM)) [((15 - n) << 1)] + \
+    PushW (IAPU.PC - IAPU.RAM + 1); \
+    IAPU.PC = IAPU.RAM + (((APUPack.APU.ExtraRAM)) [(15 - n) << 1] + \
 	     (((APUPack.APU.ExtraRAM)) [((15 - n) << 1) + 1] << 8)); \
 }
 
@@ -252,7 +252,7 @@ APUSetZN8 ((uint8) s9xInt16);
 #else
 #define PushW(w)\
     *(((IAPU.RAM)) + 0xff + (APURegisters.S)) = w;\
-    *(((IAPU.RAM)) + 0x100 + (APURegisters.S)) = (w >> 8);\
+    *(((IAPU.RAM)) + 0x100 + (APURegisters.S)) = ((w) >> 8);\
     (APURegisters.S) -= 2;
 #define PopW(w)\
     (APURegisters.S) += 2; \

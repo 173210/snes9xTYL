@@ -7,7 +7,7 @@ int CallME(volatile struct me_struct *mei, int func, int param, int prelen, void
 		return -1;
 
 	mei->done = 0;
-	mei->func = func;
+	mei->func = (int (*)(int))func;
 	mei->param = param;
 	mei->result = 0;
 	mei->precache_len = prelen;
@@ -35,7 +35,7 @@ int BeginME(volatile struct me_struct *mei, int func, int param, int prelen, voi
 		return -1;
 
 	mei->done = 0;
-	mei->func = func;
+	mei->func = (int (*)(int))func;
 	mei->param = param;
 	mei->result = 0;
 	mei->precache_len = prelen;

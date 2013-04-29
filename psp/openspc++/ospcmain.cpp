@@ -66,13 +66,13 @@ typedef struct
 	} t_SPC_FILE;
 
 int
-openspc::Load_SPC (void *buf, int size)
+openspc::Load_SPC (void *buf, size_t size)
 {
 	const char ident[] = "SNES-SPC700 Sound File Data";
 	t_SPC_FILE  *spc_file;
 	
 	
-	if (size < sizeof (t_SPC_FILE))
+	if (size < (size_t) sizeof (t_SPC_FILE))
 		return 1;
 	spc_file = (t_SPC_FILE *) buf;
 

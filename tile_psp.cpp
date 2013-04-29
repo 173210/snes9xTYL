@@ -139,7 +139,7 @@ void tile_askforreset(s32 addr){
 }
 // get tile with hashkey=key
 // return texture index if found, 0 if not
-INLINE tile_cache_t *tile_get_cache(int cache_num,int key){
+INLINE tile_cache_t *tile_get_cache(int cache_num,u32 key){
 	 tile_cache_t *p=tile_cache_ptr[cache_num][key&TILE_HASH_MASK];
 	 for (;;){	 	
 	 	if (!p) return NULL;
@@ -523,10 +523,10 @@ uint8 pspConvertTileHires (uint8 *pCache, uint32 TileAddr,uint32 col)
 	    non_zero |= p1 | p2;
 	    if (non_zero) {
 			//hirez FIX
-			if(p1&0x00FF0000)p1=p1&0x00FFFFFF | (p1&0x00FF0000)<<8;
-			if(p1&0x000000FF)p1=p1&0xFFFF00FF | (p1&0x000000FF)<<8;
-			if(p2&0x00FF0000)p2=p2&0x00FFFFFF | (p2&0x00FF0000)<<8;
-			if(p2&0x000000FF)p2=p2&0xFFFF00FF | (p2&0x000000FF)<<8;
+			if(p1&0x00FF0000)p1=(p1&0x00FFFFFF) | ((p1&0x00FF0000)<<8);
+			if(p1&0x000000FF)p1=(p1&0xFFFF00FF) | ((p1&0x000000FF)<<8);
+			if(p2&0x00FF0000)p2=(p2&0x00FFFFFF) | ((p2&0x00FF0000)<<8);
+			if(p2&0x000000FF)p2=(p2&0xFFFF00FF) | ((p2&0x000000FF)<<8);
 			//orign
 	    	colTmp=col;
 	    	if (!(p1&0x000000FF)) colTmp&=~0x000000FF;
@@ -567,10 +567,10 @@ uint8 pspConvertTileHires (uint8 *pCache, uint32 TileAddr,uint32 col)
 	    non_zero |= p1 | p2;
 	    if (non_zero) {
 			//hirez FIX
-			if(p1&0x00FF0000)p1=p1&0x00FFFFFF | (p1&0x00FF0000)<<8;
-			if(p1&0x000000FF)p1=p1&0xFFFF00FF | (p1&0x000000FF)<<8;
-			if(p2&0x00FF0000)p2=p2&0x00FFFFFF | (p2&0x00FF0000)<<8;
-			if(p2&0x000000FF)p2=p2&0xFFFF00FF | (p2&0x000000FF)<<8;
+			if(p1&0x00FF0000)p1=(p1&0x00FFFFFF) | ((p1&0x00FF0000)<<8);
+			if(p1&0x000000FF)p1=(p1&0xFFFF00FF) | ((p1&0x000000FF)<<8);
+			if(p2&0x00FF0000)p2=(p2&0x00FFFFFF) | ((p2&0x00FF0000)<<8);
+			if(p2&0x000000FF)p2=(p2&0xFFFF00FF) | ((p2&0x000000FF)<<8);
 			//orign
 	    	colTmp=col;
 	    	if (!(p1&0x000000FF)) colTmp&=~0x000000FF;

@@ -417,13 +417,13 @@ static char ROMFilename [_MAX_PATH];
 
 static void Freeze (STREAM);
 static int Unfreeze (STREAM);
-void FreezeStruct (STREAM stream, char *name, void *base, FreezeData *fields,
+void FreezeStruct (STREAM stream, const char *name, void *base, FreezeData *fields,
 		   int num_fields);
-void FreezeBlock (STREAM stream, char *name, uint8 *block, int size);
+void FreezeBlock (STREAM stream, const char *name, uint8 *block, int size);
 
-int UnfreezeStruct (STREAM stream, char *name, void *base, FreezeData *fields,
+int UnfreezeStruct (STREAM stream, const char *name, void *base, FreezeData *fields,
 		    int num_fields);
-int UnfreezeBlock (STREAM stream, char *name, uint8 *block, int size);
+int UnfreezeBlock (STREAM stream, const char *name, uint8 *block, int size);
 
 bool8 Snapshot (const char *filename)
 {
@@ -437,7 +437,7 @@ bool8 S9xFreezeGame (const char *filename)
     {
 		Freeze (stream);
 
-		S9xCloseSnapshotFile (stream);						
+		S9xCloseSnapshotFile (stream);
 		return (TRUE);
     }
     return (FALSE);
@@ -449,7 +449,7 @@ bool8 S9xLoadSnapshot (const char *filename)
 }
 
 bool8 S9xUnfreezeGame_Internal (const char *filename);
-void debug_dump(char* filename);
+void debug_dump(const char* filename);
 bool8 S9xUnfreezeGame (const char *filename)
 {
 	bool8 bRet;
@@ -785,7 +785,7 @@ int FreezeSize (int size, int type)
     }
 }
 
-void FreezeStruct (STREAM stream, char *name, void *base, FreezeData *fields,
+void FreezeStruct (STREAM stream, const char *name, void *base, FreezeData *fields,
 		   int num_fields)
 {
     // Work out the size of the required block
@@ -874,7 +874,7 @@ void FreezeStruct (STREAM stream, char *name, void *base, FreezeData *fields,
  	free(block);
 }
 
-void FreezeBlock (STREAM stream, char *name, uint8 *block, int size)
+void FreezeBlock (STREAM stream, const char *name, uint8 *block, int size)
 {
     char *buffer;// [512];
     buffer=(char*)malloc(512);
@@ -885,7 +885,7 @@ void FreezeBlock (STREAM stream, char *name, uint8 *block, int size)
     
 }
 
-int UnfreezeStruct (STREAM stream, char *name, void *base, FreezeData *fields,
+int UnfreezeStruct (STREAM stream, const char *name, void *base, FreezeData *fields,
 		     int num_fields)
 {
     // Work out the size of the required block
@@ -982,7 +982,7 @@ int UnfreezeStruct (STREAM stream, char *name, void *base, FreezeData *fields,
     return (result);
 }
 
-int UnfreezeBlock (STREAM stream, char *name, uint8 *block, int size)
+int UnfreezeBlock (STREAM stream, const char *name, uint8 *block, int size)
 {
     char buffer [20];
     int len = 0;

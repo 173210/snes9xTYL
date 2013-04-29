@@ -40,51 +40,6 @@ void msgBox(const char *msg,int delay_vblank) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Input box : in fact confirm box...
-////////////////////////////////////////////////////////////////////////////////////////
-int inputBox(char *msg) {
-	int pad,y;
-	int l=strlen(msg);
-	char str[l+32];
-	sprintf(str,"%s\n\n                    ", msg);
-	y=msgBoxLinesRaw(str,-1);
-	mh_printCenter(y,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
-	sprintf(str,"         " SJIS_CROSS " %s", psp_msg_string(CANCEL));
-	mh_printCenter(y,str,TEXT_COLOR_CANCEL);
-	pgScreenFlipV();
-	while (get_pad()) pgWaitV();
-	while (1){
-		pad=get_pad();
-		if (pad) while (get_pad()) pgWaitV();
-		if (pad&PSP_CTRL_CIRCLE) return 1;
-		if (pad&PSP_CTRL_CROSS) return 0;
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-// input box OK : in fact confirm OK box...
-////////////////////////////////////////////////////////////////////////////////////////
-int inputBoxOK(char *msg) {
-	int pad;
-	int l=strlen(msg);
-	char str[l+32];
-	int y;
-	strcpy(str,msg);
-	strcat(str,psp_msg_string(INPUTBOX_OK));
-	y=msgBoxLinesRaw(str,-1);
-	sprintf(str,SJIS_CIRCLE "," SJIS_CROSS "      ");
-	mh_printCenter(y,str,TEXT_COLOR_OK);
-	pgScreenFlipV();
-	while (get_pad()) pgWaitV();
-	while (1){
-		pad=get_pad();
-		if (pad) while (get_pad()) pgWaitV();
-		if (pad&PSP_CTRL_CIRCLE) return 1;
-		if (pad&PSP_CTRL_CROSS) return 0;
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
 // Multiple lines message box
 ////////////////////////////////////////////////////////////////////////////////////////
 int msgBoxLines(const char *msg,int delay_vblank) {
@@ -93,8 +48,8 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 	char str[256];
 	int i,j,x,y,lines,ret;
 	
-	if (!msg) return;
-  if (!(msg[0])) return;
+	if (!msg) return -1;
+  if (!(msg[0])) return -1;
 	
 	pgCopyScreen();
 	
@@ -102,7 +57,7 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 	j=0;
 	len=0;
 	width=0;
-	while (c=msg[len]) {
+	while ((c=msg[len])) {
 		if (((c>=0x80) && (c<0xa0)) || (c>=0xe0)) {
 			len++;
 		} else {
@@ -126,7 +81,7 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 	len=0;
 	for (i=0;i<lines;i++){
 		j=0;
-		while (c=msg[len]) {
+		while ((c=msg[len])) {
 			if (((c>=0x80) && (c<0xa0)) || (c>=0xe0)) {
 				str[j++]=msg[len++];
 			} else {
@@ -148,13 +103,13 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 }
 
 int msgBoxLinesRaw(const char *msg,int rev_line) {
-	int len,width;
+	unsigned int len,width;
 	unsigned char c;
 	char str[256];
 	int i,j,x,y,lines,ret;
 
-	if (!msg) return;
-  if (!(msg[0])) return;
+	if (!msg) return -1;
+	if (!msg[0]) return -1;
 
 	pgCopyScreen();
 
@@ -162,7 +117,7 @@ int msgBoxLinesRaw(const char *msg,int rev_line) {
 	j=0;
 	len=0;
 	width=0;
-	while (c=msg[len]) {
+	while ((c=msg[len])) {
 		if (((c>=0x80) && (c<0xa0)) || (c>=0xe0)) {			
 			len++;
 		} else {
@@ -186,7 +141,7 @@ int msgBoxLinesRaw(const char *msg,int rev_line) {
 	len=0;
 	for (i=0;i<lines;i++){
 		j=0;
-		while (c=msg[len]) {
+		while ((c=msg[len])) {
 			if (((c>=0x80) && (c<0xa0)) || (c>=0xe0)) {
 				str[j++]=msg[len++];
 			} else {
@@ -219,13 +174,13 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 	x0=x;y0=y;
 	
 	if (!msg) return;
-  if (!(msg[0])) return;
+	if (!msg[0]) return;
 
 	lines=1;
 	j=0;
 	len=0;
 	width=0;
-	while (c=msg[len]) {
+	while ((c=msg[len])) {
 		if (((c>=0x80) && (c<0xa0)) || (c>=0xe0)) {			
 			len++;
 		} else {
@@ -250,7 +205,7 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 	len=0;
 	for (i=0;i<lines;i++){
 		j=0;
-		while (c=msg[len]) {
+		while ((c=msg[len])) {
 			if (((c>=0x80) && (c<0xa0)) || (c>=0xe0)) {
 				str[j++]=msg[len++];
 			} else {
@@ -266,7 +221,7 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 }
 
 
-void changeCodeVal(u32 idx,int dir,unsigned char *fmt,unsigned char *code) {
+void changeCodeVal(u32 idx,int dir,const char *fmt,char *code) {
 	if ((!fmt)||(!code)) return;
 	if (strlen(fmt)!=strlen(code)) return;
 	if (idx>=strlen(fmt)) return;
@@ -306,6 +261,51 @@ void changeCodeVal(u32 idx,int dir,unsigned char *fmt,unsigned char *code) {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+// Input box : in fact confirm box...
+////////////////////////////////////////////////////////////////////////////////////////
+int inputBox(const char *msg) {
+	int pad,y;
+	int l=strlen(msg);
+	char str[l+32];
+	sprintf(str,"%s\n\n                    ", msg);
+	y=msgBoxLinesRaw(str,-1);
+	mh_printCenter(y,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
+	sprintf(str,"         " SJIS_CROSS " %s", psp_msg_string(CANCEL));
+	mh_printCenter(y,str,TEXT_COLOR_CANCEL);
+	pgScreenFlipV();
+	while (get_pad()) pgWaitV();
+	while (1){
+		pad=get_pad();
+		if (pad) while (get_pad()) pgWaitV();
+		if (pad&PSP_CTRL_CIRCLE) return 1;
+		if (pad&PSP_CTRL_CROSS) return 0;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+// input box OK : in fact confirm OK box...
+////////////////////////////////////////////////////////////////////////////////////////
+int inputBoxOK(const char *msg) {
+	int pad;
+	int l=strlen(msg);
+	char str[l+32];
+	int y;
+	strcpy(str,msg);
+	strcat(str,psp_msg_string(INPUTBOX_OK));
+	y=msgBoxLinesRaw(str,-1);
+	sprintf(str,SJIS_CIRCLE "," SJIS_CROSS "      ");
+	mh_printCenter(y,str,TEXT_COLOR_OK);
+	pgScreenFlipV();
+	while (get_pad()) pgWaitV();
+	while (1){
+		pad=get_pad();
+		if (pad) while (get_pad()) pgWaitV();
+		if (pad&PSP_CTRL_CIRCLE) return 1;
+		if (pad&PSP_CTRL_CROSS) return 0;
+	}
+}
+
 /////////////////////////////////////////////////
 //  InputCodeBox : handle input of a formatted code
 //
@@ -317,12 +317,13 @@ void changeCodeVal(u32 idx,int dir,unsigned char *fmt,unsigned char *code) {
 //
 //  example : "%A%a%a%a : %X%X%X%X-%9%9"
 /////////////////////////////////////////////////
-static unsigned char msgCodeBox[2048];
-static unsigned char newCode[256];
-static unsigned char newFmt[256];
-static unsigned char tmpstr[100];
-int InputCodeBox(char *msg,char *fmt,char *code) {
-	int i,c,j,l,cpt;
+static char msgCodeBox[2048];
+static char newCode[256];
+static char newFmt[256];
+static char tmpstr[100];
+int InputCodeBox(const char *msg,const char *fmt,char *code) {
+	int i,c,j,l;
+	int cpt = 0;
 	int pad_cnt,old_pad,new_pad;
 	int selmax,sel=0;
 	if ((!code)||(!msg)||(!fmt)) return -1;
@@ -438,7 +439,7 @@ int InputCodeBox(char *msg,char *fmt,char *code) {
 
 
 void psp_showProgressBar(int pos,int len) {
-	int i,x,y;
+	int i;
 	i=240-100+(len-pos)*230/len;
 	if (i>240+100) i=240+100;
 	//pgCopyScreen();

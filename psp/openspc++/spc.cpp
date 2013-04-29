@@ -135,7 +135,7 @@ static const int8 SPCCycleTable[] = {
 
 #define PushW(w)\
     *(SPC_RAM + 0xFF + APURegisters.S) = w;\
-    *(SPC_RAM + 0x100 + APURegisters.S) = (w >> 8);\
+    *(SPC_RAM + 0x100 + APURegisters.S) = ((w) >> 8);\
     APURegisters.S -= 2;
 #define PopW(w)\
     APURegisters.S += 2; \
@@ -145,7 +145,7 @@ static const int8 SPCCycleTable[] = {
 
 #define PushW(w)\
     *(SPC_RAM + 0xff + APURegisters.S) = w;\
-    *(SPC_RAM + 0x100 + APURegisters.S) = (w >> 8);\
+    *(SPC_RAM + 0x100 + APURegisters.S) = ((w) >> 8);\
     APURegisters.S -= 2;
 #define PopW(w)\
     APURegisters.S += 2; \

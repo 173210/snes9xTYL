@@ -649,7 +649,7 @@ void DrawBGMode7Background16New (uint16 *Screen, int bg)
     RENDER_BACKGROUND_MODE7NEW_PHASE2 (uint16, (GPUPack.GFX.ScreenColors [b]),256)
 }
 
-void DrawBGMode7Background16PrioNew (uint16 *Screen, int bg, int prio)
+void DrawBGMode7Background16PrioNew (uint16 *Screen, int bg, uint32 prio)
 {
 	if ((GPUPack.GFX.Mode7PriorityMask >> 7)!=prio) { return; } else {
     	DrawBGMode7Background16New (Screen, bg);

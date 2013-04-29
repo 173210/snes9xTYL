@@ -1517,12 +1517,12 @@ uint8 S9xGetPPU (uint16 Address)
 						case 0:					
 							APUI03b++;
 							return CPUPack.Registers.AH;
-						case 1:				
+						case 1:
 							APUI03b++;
 							return CPUPack.Registers.XH;
 						case 2:
 							APUI03b++;
-							return CPUPack.Registers.YH;						
+							return CPUPack.Registers.YH;
 						case 3:
 							APUI03b++;
 							return CPUPack.Registers.AL;
@@ -1532,7 +1532,7 @@ uint8 S9xGetPPU (uint16 Address)
 						case 5:
 							APUI03b++;
 							return CPUPack.Registers.YL;
-						case 6:							
+						case 6:
 							APUI03b++;
 							return 0xBB;
 						case 7:
@@ -1540,27 +1540,27 @@ uint8 S9xGetPPU (uint16 Address)
 							return 0x00;
 						case 8:
 							APUI03b++;
-							return 0xFF;						
+							return 0xFF;
 						case 9:
 							APUI03b++;
 							return 0x55;
 						case 10:
 							APUI03b=0;
-							return APUI01a;						
+							return APUI01a;
 					}
 			}
 		}
 		CPUPack.CPU.BranchSkip = TRUE;
-	    if (Address & 3 < 2)
+	    if ((Address & 3) < 2)
 	    {
 		int r = yo_rand ();
 		if (r & 2)
-		{		
+		{
 		    if (r & 4){
-	    
-			return (Address & 3 == 1 ? 0xaa : 0xbb);}
+
+			return ((Address & 3) == 1 ? 0xaa : 0xbb);}
 		    else{
-		    
+
 			return ((r >> 3) & 0xff);}
 		}
 	    }

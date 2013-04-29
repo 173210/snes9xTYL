@@ -119,16 +119,6 @@ void S9xSDD1PostLoadState ()
 	S9xSetSDD1MemoryMap (i, FillRAM [0x4804 + i]);
 }
 
-static int S9xCompareSDD1LoggedDataEntries (const void *p1, const void *p2)
-{
-    uint8 *b1 = (uint8 *) p1;
-    uint8 *b2 = (uint8 *) p2;
-    uint32 a1 = (*b1 << 16) + (*(b1 + 1) << 8) + *(b1 + 2);
-    uint32 a2 = (*b2 << 16) + (*(b2 + 1) << 8) + *(b2 + 2);
-
-    return (a1 - a2);
-}
-
 void S9xSDD1SaveLoggedData ()
 {
 /*    if (Memory.SDD1LoggedDataCount != Memory.SDD1LoggedDataCountPrev)

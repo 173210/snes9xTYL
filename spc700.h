@@ -182,7 +182,7 @@ if ((ac)<=apu_target_cycles_) {\
 	if (apu_ram_write_cpt1_<apu_ram_write_cpt2_) {\
   		int cpt;\
   		for (cpt=apu_ram_write_cpt1_;cpt<apu_ram_write_cpt2_;cpt++){\
-			unsigned short dwValue = apu_ram_write_log[cpt & 0xFFFF];\				
+			unsigned short dwValue = apu_ram_write_log[cpt & 0xFFFF];\
 			(IAPU.RAM)[(dwValue>>8)|0xF4]=dwValue &0xFF;\
 		}\
 		APUPack.apu_ram_write_cpt1_me=apu_ram_write_cpt2_;\
@@ -191,8 +191,8 @@ if ((ac)<=apu_target_cycles_) {\
 		(APUPack.APU.Cycles)+=S9xAPUCycles [*(IAPU.PC)];\
 		(*S9xApuOpcodes[*(IAPU.PC)]) (); \
 		while (apu_event1_cpt1_<apu_event1_cpt2_) {\
-		    uint32 EventVal = apu_event1[apu_event1_cpt1_&APU_EVENT_MASK];\
-			uint32 V_Counter = EventVal & 0x80000000;\
+		    int32 EventVal = apu_event1[apu_event1_cpt1_&APU_EVENT_MASK];\
+			int32 V_Counter = EventVal & 0x80000000;\
 			EventVal &= 0x7FFFFFFF;\
 			if (APUPack.APU.Cycles>=EventVal) {\
 				apu_event1_cpt1_++;\
@@ -353,8 +353,8 @@ if ((Uncache_APU_Cycles)<=apu_glob_cycles) {\
 		(APUPack.APU.Cycles)+=S9xAPUCycles [*(IAPU.PC)];\
 		(*S9xApuOpcodes[*(IAPU.PC)]) (); \
 		while (apu_event1_cpt1_<apu_event1_cpt2_) {\
-		    uint32 EventVal = apu_event1[apu_event1_cpt1_&APU_EVENT_MASK];\
-			uint32 V_Counter = EventVal & 0x80000000;\
+			int32 EventVal = apu_event1[apu_event1_cpt1_&APU_EVENT_MASK];\
+			int32 V_Counter = EventVal & 0x80000000;\
 			EventVal &= 0x7FFFFFFF;\
 			if (APUPack.APU.Cycles>=EventVal) {\
 				apu_event1_cpt1_++;\

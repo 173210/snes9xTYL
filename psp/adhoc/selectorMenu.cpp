@@ -15,7 +15,7 @@ extern "C" {
 
 using namespace std;
 
-extern "C" void sceNetEtherNtostr(char *, char *);
+extern "C" void sceNetEtherNtostr(const char *, const char *);
 
 #define NUM_ENTRIES 32
 
@@ -24,7 +24,7 @@ struct PspEntry
 	char m_Name[256];
 	char m_Mac[6];
 
-	PspEntry(char *mac, char *name, int nameLen)
+	PspEntry(const unsigned char *mac, const char *name, int nameLen)
 	{
 		memcpy(m_Mac, mac, 6);
 		if(nameLen)
@@ -49,11 +49,11 @@ private:
 	int m_Max;
 
 public:
-	int DisplayPspList();
+	void DisplayPspList();
 	void ClearPspList();
 
-	int AddPsp(char *mac, char *name, int length);
-	int RemPsp(char *mac);
+	int AddPsp(const unsigned char *mac, const char *name, int length);
+	int RemPsp(const unsigned char *mac);
 	void DownList(void)
 	{
 		if(m_Pos < m_Max-1)
@@ -65,7 +65,7 @@ public:
 			m_Pos--;
 	};
 
-	int GetPsp(char *mac, char *name);
+	int GetPsp(unsigned char *mac, char *name);
 	PspSelector();
 	int m_Quit;
 };
@@ -83,7 +83,7 @@ void PspSelector::ClearPspList(void)
 	m_PspList.clear();
 }
 
-int PspSelector::AddPsp(char *mac, char *name, int length)
+int PspSelector::AddPsp(const unsigned char *mac, const char *name, int length)
 {
 	int i;
 
@@ -94,17 +94,17 @@ int PspSelector::AddPsp(char *mac, char *name, int length)
 	for(i=0; i<m_Max; i++)
 	{
 		// Don't add multiple entries
-		if(strcmp(m_PspList[i].m_Mac, mac)==0)
+		if(strcmp(m_PspList[i].m_Mac, (const char *)mac)==0)
 			return 0;
 	}
 
-	m_PspList.push_back(PspEntry(mac, name, length));	
+	m_PspList.push_back(PspEntry(mac, name, length));
 	m_Max++;
 
 	return 1;
 }
 
-int PspSelector::RemPsp(char *mac)
+int PspSelector::RemPsp(const unsigned char *mac)
 {
 	int i;
 	PspList::iterator iter;
@@ -112,7 +112,7 @@ int PspSelector::RemPsp(char *mac)
 	for(iter=m_PspList.begin(); iter != m_PspList.end(); iter++)
 	{
 		// Don't add multiple entries
-		if(strcmp((*iter).m_Mac, mac)==0)
+		if(strcmp((*iter).m_Mac, (const char *)mac)==0)
 		{
 			m_PspList.erase(iter);
 			
@@ -131,7 +131,7 @@ int PspSelector::RemPsp(char *mac)
 	return -1;
 }
 
-int PspSelector::DisplayPspList()
+void PspSelector::DisplayPspList()
 {
 	int i=0;
 
@@ -149,7 +149,7 @@ int PspSelector::DisplayPspList()
 	{
 		if(i == m_Pos)
 		{
-			//pspDebugScreenSetTextColor(0xFF00);			
+			//pspDebugScreenSetTextColor(0xFF00);
 			col=31<<5;
 		}
 		else
@@ -159,14 +159,14 @@ int PspSelector::DisplayPspList()
 		}
 
 		sceNetEtherNtostr(m_PspList[i].m_Mac, tempStr);
-		
+
 		//pspDebugScreenPrintf("  %s: %s\n", tempStr, m_PspList[i].m_Name);
 		sprintf(str,"  %s: %s\n", tempStr, m_PspList[i].m_Name);
 		mh_print(0,8+i*8,(char*)str,col);
 	}
 }
 
-int PspSelector::GetPsp(char *mac, char *name)
+int PspSelector::GetPsp(unsigned char *mac, char *name)
 {
 	if(m_Max == 0)
 		return -1;
@@ -179,12 +179,12 @@ int PspSelector::GetPsp(char *mac, char *name)
 
 PspSelector pspSel;
 
-extern "C" int AddPsp(char *mac, char *name, int length)
+extern "C" int AddPsp(const unsigned char *mac, const char *name, int length)
 {
 	return pspSel.AddPsp(mac, name, length);
 }
 
-extern "C" int DelPsp(char *mac)
+extern "C" int DelPsp(const unsigned char *mac)
 {
 	return pspSel.RemPsp(mac);
 }
@@ -204,7 +204,7 @@ extern "C" void DisplayPspList(void)
 	pspSel.DisplayPspList();
 }
 
-extern "C" int GetPspEntry(char *mac, char *name)
+extern "C" int GetPspEntry(unsigned char *mac, char *name)
 {
 	return pspSel.GetPsp(mac, name);
 }

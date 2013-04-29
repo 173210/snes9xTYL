@@ -150,9 +150,9 @@
 	bp = pCache + StartLine; \
 	for (l = LineCount; l != 0; l--, bp += 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = (*(uint32 *) bp) & d1))*/if (dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d1)) \
+	    /*if ((dd = (*(uint32 *) bp) & d1))*/if ((dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d1))) \
 		NORMAL (Offset, (uint8 *) &dd); \
-	    /*if ((dd = (*(uint32 *) (bp + 4)) & d2))*/if (dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d2)) \
+	    /*if ((dd = (*(uint32 *) (bp + 4)) & d2))*/if ((dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d2))) \
 		NORMAL (Offset + N, (uint8 *) &dd); \
 	} \
     } \
@@ -164,9 +164,9 @@
 	SWAP_DWORD (d2); \
 	for (l = LineCount; l != 0; l--, bp += 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if (dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d1)) \
+	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if ((dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d1))) \
 		FLIPPED (Offset, (uint8 *) &dd); \
-	    /*if ((dd = *(uint32 *) bp & d2))*/if (dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d2)) \
+	    /*if ((dd = *(uint32 *) bp & d2))*/if ((dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d2))) \
 		FLIPPED (Offset + N, (uint8 *) &dd); \
 	} \
     } \
@@ -178,9 +178,9 @@
 	SWAP_DWORD (d2); \
 	for (l = LineCount; l != 0; l--, bp -= 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if (dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d1)) \
+	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if ((dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d1))) \
 		FLIPPED (Offset, (uint8 *) &dd); \
-	    /*if ((dd = *(uint32 *) bp & d2))*/if (dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d2)) \
+	    /*if ((dd = *(uint32 *) bp & d2))*/if ((dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d2))) \
 		FLIPPED (Offset + N, (uint8 *) &dd); \
 	} \
     } \
@@ -189,9 +189,9 @@
 	bp = pCache + 56 - StartLine; \
 	for (l = LineCount; l != 0; l--, bp -= 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = (*(uint32 *) bp) & d1))*/ if (dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d1)) \
+	    /*if ((dd = (*(uint32 *) bp) & d1))*/ if ((dd = (((((uint32)bp[3])<<24)|(((uint32)bp[2])<<16)|(((uint32)bp[1])<<8)|((uint32)bp[0]))&d1))) \
 		NORMAL (Offset, (uint8 *) &dd); \
-	    /*if ((dd = (*(uint32 *) (bp + 4)) & d2))*/if (dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d2)) \
+	    /*if ((dd = (*(uint32 *) (bp + 4)) & d2))*/if ((dd = (((((uint32)bp[7])<<24)|(((uint32)bp[6])<<16)|(((uint32)bp[5])<<8)|((uint32)bp[4]))&d2))) \
 		NORMAL (Offset + N, (uint8 *) &dd); \
 	} \
     }
@@ -319,7 +319,7 @@
 	bp = pCache + StartLine; \
 	for (l = LineCount; l != 0; l--, bp += 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = (*(uint32 *) bp) & d1))*/if (dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1)) \
+	    /*if ((dd = (*(uint32 *) bp) & d1))*/if ((dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1))) \
 		NORMAL (Offset, (uint8 *) &dd); \
 	} \
     } \
@@ -331,7 +331,7 @@
 	/*SWAP_DWORD (d2);*/ \
 	for (l = LineCount; l != 0; l--, bp += 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if (dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1)) \
+	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if ((dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1))) \
 		FLIPPED (Offset, (uint8 *) &dd); \
 	} \
     } \
@@ -343,7 +343,7 @@
 	/*SWAP_DWORD (d2);*/ \
 	for (l = LineCount; l != 0; l--, bp -= 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if (dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1)) \
+	    /*if ((dd = *(uint32 *) (bp + 4) & d1))*/if ((dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1))) \
 		FLIPPED (Offset, (uint8 *) &dd); \
 	} \
     } \
@@ -352,7 +352,7 @@
 	bp = pCache + 56 - StartLine; \
 	for (l = LineCount; l != 0; l--, bp -= 8, Offset += GPUPack.GFX.PPL) \
 	{ \
-	    /*if ((dd = (*(uint32 *) bp) & d1))*/ if (dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1)) \
+	    /*if ((dd = (*(uint32 *) bp) & d1))*/ if ((dd = (((((uint32)bp[6])<<24)|(((uint32)bp[4])<<16)|(((uint32)bp[2])<<8)|((uint32)bp[0]))&d1))) \
 		NORMAL (Offset, (uint8 *) &dd); \
 	} \
     }    

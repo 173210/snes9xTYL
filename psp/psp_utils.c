@@ -20,15 +20,15 @@ int snd_beep1_current;
 
 
 void check_settings(){
-	int i;	
 	if (os9x_apu_ratio<16) os9x_apu_ratio=192; //default value
 	if (os9x_apu_ratio>512) os9x_apu_ratio=192; //default value
 	os9x_hack=os9x_hack&(PPU_IGNORE_FIXEDCOLCHANGES|PPU_IGNORE_WINDOW|PPU_IGNORE_ADDSUB|PPU_IGNORE_PALWRITE|GFX_FASTMODE7|HIRES_FIX);
 	if ((os9x_sndfreq!=11025)&&(os9x_sndfreq!=22050)&&(os9x_sndfreq!=33075)&&(os9x_sndfreq!=44100)) os9x_sndfreq=44100;
-	if (os9x_padindex>5) os9x_padindex=0;		
+	if (os9x_padindex>5) os9x_padindex=0;
 	//for an access to menu
 #ifndef HOME_HOOK
-	for (i=0;i<PSP_BUTTONS_TOTAL;i++) if (os9x_inputs[i]==OS9X_MENUACCESS) break;		
+	int i;
+	for (i=0;i<PSP_BUTTONS_TOTAL;i++) if (os9x_inputs[i]==OS9X_MENUACCESS) break;
 	if (i==PSP_BUTTONS_TOTAL) os9x_inputs[PSP_TL_TR]=OS9X_MENUACCESS;
 
 	if ((i>=PSP_AUP)&&(i<=PSP_ARIGHT)) {
@@ -73,7 +73,7 @@ void load_background(){
 		
 		unzGetGlobalInfo(zip_file,&pglobal_info);
 		
-		if ((bg_img_num<0)||(bg_img_num>=pglobal_info.number_entry)) {
+		if ((bg_img_num<0)||(bg_img_num>=(int)pglobal_info.number_entry)) {
 			do {
 				num=rand()%pglobal_info.number_entry;
 			} while (num==bg_img_num);
@@ -190,7 +190,7 @@ void show_background(int mul,int add){
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
-int save_rom_settings(int game_crc32,char *name){
+int save_rom_settings(int game_crc32,const char *name){
 	FILE *f;
 	char tmp_str[256];
 	int l;	
@@ -250,7 +250,7 @@ int save_rom_settings(int game_crc32,char *name){
 int load_rom_settings(int game_crc32){
 	FILE *f;
 	char tmp_str[256],rom_name[64];	
-	int l,i;
+	int l;
 	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
 	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
 	f = fopen(tmp_str,"rb");
@@ -265,12 +265,21 @@ int load_rom_settings(int game_crc32){
 		return -2;
 	}
 
+#ifdef READ_SETTING
+#undef READ_SETTING
+#endif
+
 #define READ_SETTING(a) \
 if (fread(&l,1,4,f)==4) a=l; \
 else {fclose(f);check_settings();return -3;}
 	//{char st[16];sprintf(st,"%s : %d",#a,a);msgBoxLines(st,60);}
 
 //not bigger than tmp_str size, 256
+
+#ifdef READ_SETTING_SIZE
+#undef READ_SETTING_SIZE
+#endif
+
 #define READ_SETTING_SIZE(buff,sz) \
 if (fread(tmp_str,1,sz,f)==sz) memcpy(buff,tmp_str,sz); \
 else {fclose(f);check_settings();return -3;}
@@ -298,7 +307,7 @@ else {fclose(f);check_settings();return -3;}
 	READ_SETTING(os9x_autosavetimer)
 	READ_SETTING_SIZE(&os9x_inputs[0],32*4)
 	READ_SETTING_SIZE(rom_name,64)
-	rom_name[64] = 0;
+	rom_name[63] = 0;
 	READ_SETTING(os9x_autosavesram)
 	READ_SETTING(os9x_screenTop)
 	READ_SETTING(os9x_screenLeft)
@@ -326,8 +335,7 @@ else {fclose(f);check_settings();return -3;}
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
-int save_buffer_settings(char *buffer){	
-	char tmp_str[256];
+int save_buffer_settings(char *buffer){
 	int buffer_ofs=0;
 	int l;	
 	
@@ -376,7 +384,7 @@ int save_buffer_settings(char *buffer){
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
 int load_buffer_settings(char *buffer){
-	char tmp_str[256],rom_name[64];
+	char rom_name[64];
 	int buffer_ofs=0;
 	int l;
 	
@@ -387,10 +395,19 @@ int load_buffer_settings(char *buffer){
 		return -2;
 	}
 		
+#ifdef READ_SETTING
+#undef READ_SETTING
+#endif
+
 #define READ_SETTING(a) \
 	memcpy(&a,&(buffer[buffer_ofs]),4); \
 	buffer_ofs+=4;
 	
+
+#ifdef READ_SETTING_SIZE
+#undef READ_SETTING_SIZE
+#endif
+
 //not bigger than tmp_str size, 256
 #define READ_SETTING_SIZE(buff,sz) \
 	memcpy(buff,&(buffer[buffer_ofs]),sz); \
@@ -485,19 +502,28 @@ int load_settings(void){
 		return -2;
 	}
 
+#ifdef READ_SETTING
+#undef READ_SETTING
+#endif
+
 #define READ_SETTING(a) \
 if (fread(&l,1,4,f)==4) a=l; \
 else {fclose(f);return -3;}
 
 //not bigger than tmp_str size, 256
+
+#ifdef READ_SETTING_SIZE
+#undef READ_SETTING_SIZE
+#endif
+
 #define READ_SETTING_SIZE(buff,sz) \
 if (fread(tmp_str,1,sz,f)==sz) memcpy(buff,tmp_str,sz); \
 else {fclose(f);return -3;}
 
 	READ_SETTING_SIZE(romPath,256)
-	romPath[256] = 0;
+	romPath[255] = 0;
 	READ_SETTING_SIZE(lastRom,256)
-	lastRom[256] = 0;
+	lastRom[255] = 0;
 	READ_SETTING(os9x_menumusic)
 	READ_SETTING(os9x_menufx)
 	READ_SETTING(os9x_usballowed)
@@ -544,15 +570,15 @@ void getsysparam(){
 	os9x_daylsavings=0;
 	os9x_nickname[0]='\0';
 
-	if (sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME,sVal,256)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
+	if (sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME,sVal,256)!=(int)PSP_SYSTEMPARAM_RETVAL_FAIL){
 		//get nick name
 		//now convert to sjis
 		int i=0,j=0;
-		unsigned int utf8;
+		int utf8;
 		while (sVal[i]) {
-			utf8=(uint8)sVal[i++];
-			utf8=(utf8<<8)|(uint8)sVal[i++];
-			utf8=(utf8<<8)|(uint8)sVal[i++];
+			utf8=(int)sVal[i++];
+			utf8=(utf8<<8)|(int)sVal[i++];
+			utf8=(utf8<<8)|(int)sVal[i++];
 
 			for (int k=0;k<sjis_xlate_entries;k++) {
 				if (utf8==sjis_xlate[k].utf8) {
@@ -564,16 +590,16 @@ void getsysparam(){
 		}
 		os9x_nickname[j]=0;
 	}
-	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_TIMEZONE,&iVal)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
+	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_TIMEZONE,&iVal)!=(int)PSP_SYSTEMPARAM_RETVAL_FAIL){
 		//get timezone
 		os9x_timezone=iVal;
 	}
-	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_DAYLIGHTSAVINGS,&iVal)!=PSP_SYSTEMPARAM_RETVAL_FAIL){
+	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_DAYLIGHTSAVINGS,&iVal)!=(int)PSP_SYSTEMPARAM_RETVAL_FAIL){
 		//get timezone
 		os9x_daylsavings=iVal;
 	}
 
-	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE,&os9x_language)==PSP_SYSTEMPARAM_RETVAL_FAIL)
+	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE,&os9x_language)==(int)PSP_SYSTEMPARAM_RETVAL_FAIL)
 		//get language
 			os9x_language=PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
 }
@@ -648,7 +674,7 @@ char *os9x_filename_ext(char *filename){
 //#include "snesadvance.c"
 
 int os9x_findhacks(int game_crc32){
-	int i=0,j;
+	unsigned int i=0,j;
 	int _crc32;
 	char c;
 	char str[256];
@@ -836,13 +862,6 @@ void net_flush_net(int to_send) {
 }
 
 int net_waitpause_state(int show_menu){
-	unsigned int file_size,length;
-	unsigned int crc32,rlen;
-	int ret;
-	char *filename;
-	uint8 c;
-	FILE *f;
-
 	before_pause();
 	if (show_menu) {
 		if (!os9x_lowbat) {

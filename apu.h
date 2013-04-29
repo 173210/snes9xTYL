@@ -277,24 +277,6 @@ extern struct SIAPU_APUExecuting _IAPU_APUExecuting;
 #define RESET_APU_COUNTER() {APUExecuting_Main_Counter=0;}
 #define FLUSH_APU() {apu_glob_cycles=apu_glob_cycles_Main; APUExecuting_Main_Counter=0;}
 #define UPDATE_APU_COUNTER() {\
-	if (IAPU_APUExecuting_Main==false || APUExecuting_Main_Counter==0){\
-		IAPU_APUExecuting_Main = IAPU_APUExecuting;\
-	}\
-	if (IAPU_APUExecuting_Main){\
-		cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;\
-		old_cpu_cycles=CPUPack.CPU.Cycles;\
-		apu_glob_cycles_Main=cpu_glob_cycles;\
-		if (cpu_glob_cycles>=0x00700000) {\
-			APU_EXECUTE2();\
-		}\
-	}\
-	if (APUExecuting_Main_Counter==0){\
-		FLUSH_APU();\
-	}\
-	APUExecuting_Main_Counter=0;\
-}
-#undef UPDATE_APU_COUNTER
-#define UPDATE_APU_COUNTER() {\
 	if (IAPU_APUExecuting_Main){\
 		cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;\
 		old_cpu_cycles=CPUPack.CPU.Cycles;\

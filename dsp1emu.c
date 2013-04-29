@@ -504,7 +504,6 @@ inline void DSPOp02()
    getch();
    #endif
    if (ViewerZ1==0)ViewerZ1++;
-   float NumberOfSlope=ViewerZ/-ViewerZ1;
 
    DSP1.Op02VOF=0x0000;
    int ReversedLES=0;

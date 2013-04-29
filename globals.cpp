@@ -132,7 +132,7 @@ END_EXTERN_C
 //struct InternalPPU IPPU;
 
 //struct SDMA DMA[8];
-struct __attribute__((aligned(64))) SPPUPACK PPUPack;
+struct SPPUPACK PPUPack;
 
 uint8 *HDMAMemPointers [8];
 uint8 *HDMABasePointers [8];

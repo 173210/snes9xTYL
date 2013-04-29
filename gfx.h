@@ -192,9 +192,9 @@ GPUPack.GFX.X2 [((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
 #endif
 
 #define COLOR_ADD1_2(C1, C2) \
-(((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
+((((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
           ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1) + \
-         ((C1) & (C2) & RGB_LOW_BITS_MASK) | ALPHA_BITS_MASK)
+         ((C1) & (C2) & RGB_LOW_BITS_MASK)) | ALPHA_BITS_MASK)
 
 #if defined(OLD_COLOUR_BLENDING)
 #define COLOR_SUB(C1, C2) \

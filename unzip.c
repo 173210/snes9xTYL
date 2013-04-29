@@ -162,7 +162,7 @@ local int unzlocal_getShort (fin,pX)
     uLong *pX;
 {
     uLong x ;
-    int i;
+    int i = 0;
     int err;
 
     err = unzlocal_getByte(fin,&i);
@@ -184,7 +184,7 @@ local int unzlocal_getLong (fin,pX)
     uLong *pX;
 {
     uLong x ;
-    int i;
+    int i = 0;
     int err;
 
     err = unzlocal_getByte(fin,&i);
@@ -536,10 +536,12 @@ local int unzlocal_GetCurrentFileInfoInternal (file,
 
 	/* we check the magic */
 	if (err==UNZ_OK)
+	{
 		if (unzlocal_getLong(s->file,&uMagic) != UNZ_OK)
 			err=UNZ_ERRNO;
 		else if (uMagic!=0x02014b50)
 			err=UNZ_BADZIPFILE;
+	}
 
 	if (unzlocal_getShort(s->file,&file_info.version) != UNZ_OK)
 		err=UNZ_ERRNO;
@@ -616,10 +618,12 @@ local int unzlocal_GetCurrentFileInfoInternal (file,
 			uSizeRead = extraFieldBufferSize;
 
 		if (lSeek!=0)
+		{
 			if (fseek(s->file,lSeek,SEEK_CUR)==0)
 				lSeek=0;
 			else
 				err=UNZ_ERRNO;
+		}
 		if ((file_info.size_file_extra>0) && (extraFieldBufferSize>0))
 			if (fread(extraField,(uInt)uSizeRead,1,s->file)!=1)
 				err=UNZ_ERRNO;
@@ -637,14 +641,15 @@ local int unzlocal_GetCurrentFileInfoInternal (file,
 			*(szComment+file_info.size_file_comment)='\0';
 			uSizeRead = file_info.size_file_comment;
 		}
-		else
-			uSizeRead = commentBufferSize;
+		else uSizeRead = commentBufferSize;
 
 		if (lSeek!=0)
+		{
 			if (fseek(s->file,lSeek,SEEK_CUR)==0)
 				lSeek=0;
 			else
 				err=UNZ_ERRNO;
+		}
 		if ((file_info.size_file_comment>0) && (commentBufferSize>0))
 			if (fread(szComment,(uInt)uSizeRead,1,s->file)!=1)
 				err=UNZ_ERRNO;
@@ -825,10 +830,12 @@ local int unzlocal_CheckCurrentFileCoherencyHeader (s,piSizeVar,
 
 
 	if (err==UNZ_OK)
+	{
 		if (unzlocal_getLong(s->file,&uMagic) != UNZ_OK)
 			err=UNZ_ERRNO;
 		else if (uMagic!=0x04034b50)
 			err=UNZ_BADZIPFILE;
+	}
 
 	if (unzlocal_getShort(s->file,&uData) != UNZ_OK)
 		err=UNZ_ERRNO;
@@ -1281,7 +1288,6 @@ extern int ZEXPORT unzGetGlobalComment (file, szComment, uSizeBuf)
 	char *szComment;
 	uLong uSizeBuf;
 {
-	int err=UNZ_OK;
 	unz_s* s;
 	uLong uReadThis ;
 	if (file==NULL)

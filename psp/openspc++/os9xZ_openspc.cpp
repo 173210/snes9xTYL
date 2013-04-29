@@ -115,35 +115,34 @@ SPC_ID666 *OSPC_GetID666(char *buf)
   	id->fadetime+=tmps[i]-'0';
   	i++;
   }
-  
+
 
   return id;
-  
+
 }
 
-int OSPC_Load(char *fname)
+int OSPC_Load(const char *fname)
 {
-  int err_code;
-  FILE  *f;  
+  FILE  *f;
   unsigned long filesize;
   f=fopen(fname,"rb");
-  if (f) { 
+  if (f) {
   	fseek(f,0,SEEK_END);
   	filesize=ftell(f);
-  	fseek(f,0,SEEK_SET); 	
+  	fseek(f,0,SEEK_SET);
   	spc_data=(char*)malloc(filesize);
   	spc_data2free=1;
 		fread(spc_data,1,filesize,f);
-		fclose(f);			
+		fclose(f);
 		return ospc->init(spc_data,filesize);
   } else  {
   	spc_data=NULL;
   	spc_data2free=0;
   	return -1;
-  }    
+  }
 }
 
-int OSPC_LoadBuffer(char *buff,int len) {  
+int OSPC_LoadBuffer(char *buff,int len) {
 	spc_data2free=0;
 	spc_data=buff;
 	return ospc->init(buff,len);  
@@ -153,11 +152,11 @@ void OSPC_Stop(void)
 {
 }
 
-int OSPC_PlayThread (SceSize ,void *) {
-	for (;;) {			   	
-		ospc->run(-1,(int16*)snd_buffer,(int)(1024*4));    			
+void OSPC_PlayThread (SceSize ,void *) {
+	for (;;) {
+		ospc->run(-1,(int16*)snd_buffer,(int)(1024*4));
 		sceAudioOutputPannedBlocking( OSPC_sound_fd, OSPC_volume, OSPC_volume, (char*)snd_buffer);
-				
+
 		if (OSPC_exit) break;
   }
 }
@@ -171,12 +170,12 @@ int OSPC_IsFinished() {
 	return i>(OSPC_id->playtime);
 }
 
-char *OSPC_SongName() {	
+char *OSPC_SongName() {
 	if (!OSPC_id) return NULL;
 	return OSPC_id->songname;
 }
 
-char *OSPC_GameTitle() {	
+char *OSPC_GameTitle() {
 	if (!OSPC_id) return NULL;
 	return OSPC_id->gametitle;
 }
@@ -214,20 +213,18 @@ void OSPC_show_bg(u16 *menu_bg){
 		memcpy(dst,src,480*2);
 		src+=480;
 	}
-		
+
 }
 
 void OSPC_Play(char *fname,int release,int vol) {
-	  u16 *menu_bg;	  
+	  u16 *menu_bg;
 		u16 *dst,*src;
-    int i,j,pollcpt;    
-    char str[256];    
-    char *emulator[3]={"Unknown","Zsnes","Snes9x"};
-    uint8 *scr;
-   
+    int i;
+    char str[256];
+
     OSPC_Init();
 
-    if (i=OSPC_Load(fname))
+    if ((i=OSPC_Load(fname)))
     {
     	sprintf(str,"Error at SPC loading, code : %d",i);
     	msgBoxLines(str,60);
@@ -235,14 +232,14 @@ void OSPC_Play(char *fname,int release,int vol) {
     	//GpAppExit();
     	return;
     }
-     
+
 
 	OSPC_id=OSPC_GetID666(spc_data);
-	
+
   OSPC_sound_fd = sceAudioChReserve( -1, 1024, 0 );
   OSPC_exit=0;
   OSPC_volume=vol;
-  OSPC_thread = sceKernelCreateThread( "OSPC Thread", (SceKernelThreadEntry)OSPC_PlayThread, 0x8, 256*1024, 0, 0 );    
+  OSPC_thread = sceKernelCreateThread( "OSPC Thread", (SceKernelThreadEntry)OSPC_PlayThread, 0x8, 256*1024, 0, 0 );
   if (OSPC_thread<0) {
   	msgBoxLines("Cannot create OSPC playback thread",60);
   } else {
@@ -251,16 +248,16 @@ void OSPC_Play(char *fname,int release,int vol) {
 	  scePowerSetClockFrequency(266,266,133);
 #endif
 	  sceKernelLibcGettimeofday( &OSPC_start_time, 0 );
-  	
+
   	sceKernelStartThread( OSPC_thread, 0, 0 );
-  	
-  	if (release) return;  		  		  			
+
+  	if (release) return;
   	//init bg
   	menu_bg=(u16*)malloc_64(480*272*2);
 		dst=menu_bg;
-		show_background(bg_img_mul,(os9x_lowbat?0x600000:0));	
+		show_background(bg_img_mul,(os9x_lowbat?0x600000:0));
 		for (i=0;i<272;i++) {
-			src = (u16*)pgGetVramAddr(0,i);						
+			src = (u16*)pgGetVramAddr(0,i);
 			memcpy(dst,src,480*2);
 			dst+=480;
 		}
@@ -311,37 +308,34 @@ void OSPC_Play(char *fname,int release,int vol) {
 			i=(OSPC_cur_time.tv_sec-OSPC_start_time.tv_sec)+(OSPC_cur_time.tv_usec-OSPC_start_time.tv_usec)/1000000;
   		sprintf(str,"%2d%c%.2d / %2d:%.2d",i/60,((i&1)?':':' '),i%60,OSPC_id->playtime/60,OSPC_id->playtime%60);
   		mh_print(20,100,(char*)str,(20)|(31<<5)|(18<<10));
-  		  		
+
   		if (get_pad()) break;
-  			
+
   		pgScreenFlip();
   	}
-  	OSPC_exit=1;  	
+  	OSPC_exit=1;
   	sceKernelWaitThreadEnd( OSPC_thread, NULL );
 		sceKernelDeleteThread( OSPC_thread );
 		OSPC_thread=-1;
-		
+
 		free(menu_bg);
 		fx_close();
-  }    
+  }
   sceAudioChRelease( OSPC_sound_fd );
-  OSPC_Stop();            
-  OSPC_Close();    
+  OSPC_Stop();
+  OSPC_Close();
   if (OSPC_id) free(OSPC_id);
 }
 
 
 void OSPC_PlayBuffer(char *buff,int len,int release,int vol)
 {
-    int i,j,pollcpt;
+    int i;
     char str[256];
-    SPC_ID666 *id;
-    char *emulator[3]={"Unknown","Zsnes","Snes9x"};
-    uint8 *scr;
    
     OSPC_Init();
 
-    if (i=OSPC_LoadBuffer(buff,len))
+    if ((i=OSPC_LoadBuffer(buff,len)))
     {
     	sprintf(str,"Error at SPC loading, code : %d",i);
     	msgBoxLines(str,60);

@@ -276,7 +276,7 @@ void endRendering(){
 }
 
 void waitRendering() {
-	
+
 	/*sceGuFinish();
 	sceGuSync(0,0);
 	sceGuStart(GU_DIRECT,list);
@@ -288,47 +288,44 @@ void pspDrawFASTOBJS (bool8 OnMain, uint8 D, uint8 drawmode)
 
   //uint32 O;
   s32 Xs,Ys;
-  int i;
   uint32 BaseTile, Tile;
-    
-  GPUPack.BG.BitShift = 4;  
+
+  GPUPack.BG.BitShift = 4;
   GPUPack.BG.TileShift = 5;
   GPUPack.BG.TileAddress = PPU.OBJNameBase;
   GPUPack.BG.StartPalette = 128;
   GPUPack.BG.PaletteShift = 4;
-  GPUPack.BG.PaletteMask = 7;  
+  GPUPack.BG.PaletteMask = 7;
   current_bitshift=TILE_4BIT;
   GPUPack.BG.Buffer = tile_texture[TILE_4BIT];//IPPU.TileCache8 [TILE_4BIT];
   GPUPack.BG.Buffered = IPPU.TileCached [TILE_4BIT];
   GPUPack.BG.NameSelect = PPU.OBJNameSelect;
   GPUPack.BG.DirectColourMode = false;
-        
-/********************************************************/	
-/****************PSP STUFF*******************************/    
-/********************************************************/			
-		
+
+/********************************************************/
+/****************PSP STUFF*******************************/
+/********************************************************/
+
 	int num_vert=0;//8192;//0;
 	int I=0;
 	 for (int S = GPUPack.GFX.OBJList [I++]; S >= 0; S = GPUPack.GFX.OBJList [I++]) {
 	 	int VPos = GPUPack.GFX.VPositions [S];
-			int Size = GPUPack.GFX.Sizes[S];
-			int TileInc = 1;
-			int Offset;
+			int Size = GPUPack.GFX.Sizes[S];;
 			if (VPos + Size <= (int) GPUPack.GFX.StartY || VPos > (int) GPUPack.GFX.EndY)  continue;
-			
+
 			num_vert+=(Size/8)*(Size/8);
 	}
-  
-  
+
+
   if (!(vertices[current_bitshift]=(struct Vertex*)sceGuGetMemory(num_vert*2* sizeof(struct Vertex)))){
   	debug_log("not enough vertices!");
   	return;
   }
 	vertices_ptr[current_bitshift]=vertices[current_bitshift];
 	vertices_end[current_bitshift]=vertices_ptr[current_bitshift]+num_vert*2;
-			
+
 /********************************************************/
-/********************************************************/				
+/********************************************************/
     GPUPack.GFX.Z1 = (D + 2);
     //realZ1=(int)(GPUPack.GFX.Z1);
 		I=0;
@@ -347,7 +344,7 @@ void pspDrawFASTOBJS (bool8 OnMain, uint8 D, uint8 drawmode)
 				//drawing not sub/added sprites => palette has to be 4-7 or no add/sub in effect for OBJ
 				if ((drawmode==2) && (PPU.OBJ [S].Palette >= 4) && SUB_OR_ADD(4)) continue;
 			}
-			
+
 			BaseTile = PPU.OBJ[S].Name | (PPU.OBJ[S].Palette << 10);
 
 			if (PPU.OBJ[S].HFlip)	{
@@ -793,18 +790,16 @@ void pspDrawBackgroundMosaic (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
   }
   
   //render
-	if (_verticesCol_ptr-_verticesCol) {  				
-  	
-		sceGuTexImage(0,512,512,512,tile_texture[current_bitshift]);		
-  	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT/*GU_COLOR_5551*/|GU_VERTEX_16BIT|GU_TRANSFORM_2D,(_verticesCol_ptr-_verticesCol),0,_verticesCol);  	
-  	
+	if (_verticesCol_ptr-_verticesCol) {
+
+		sceGuTexImage(0,512,512,512,tile_texture[current_bitshift]);
+  	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT/*GU_COLOR_5551*/|GU_VERTEX_16BIT|GU_TRANSFORM_2D,(_verticesCol_ptr-_verticesCol),0,_verticesCol);
+
 	}
 }
 
 
 void pspDrawBackgroundMode5 (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 Z2) {
-	int i;
-
   GPUPack.GFX.Pitch = GPUPack.GFX.RealPitch;
   GPUPack.GFX.PPL = GPUPack.GFX.PPLx2 >> 1;
   uint8 depths [2] = {Z1, Z2};
@@ -815,30 +810,30 @@ void pspDrawBackgroundMode5 (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 Z2)
   uint16 *SC2;
   uint16 *SC3;
   uint32 Width;
-  
-  if (last_palette!=GPUPack.BG.DirectColourMode){  	 
+
+  if (last_palette!=GPUPack.BG.DirectColourMode){
 			//DirectColourMode has changed, so we have to reload palette
 			waitRendering();
 			last_palette=GPUPack.BG.DirectColourMode;
 			clut = (u16*)NO_CPU_CACHE(&clut256[0]);
-			memcpy(clut,GPUPack.GFX.ScreenColors,256*2);			
+			memcpy(clut,GPUPack.GFX.ScreenColors,256*2);
 			if (rendering_beware_fix16)
 			for (int i=0;i<256;i++) {
 				if (clut[i]==fixedcol16) clut[i]^=1<<10; //swap blue 1st bit
 			}
 			clut[0]|=0x8000;
-  		sceGuClutLoad(256/16,clut);			
+  		sceGuClutLoad(256/16,clut);
 	}
-  
+
   //bg is 32x30 tile but needs more in case of clipping or scroll changing every line
-	int num_vert=((GPUPack.GFX.EndY-GPUPack.GFX.StartY+1)+2)*(256/8+6);			
+	int num_vert=((GPUPack.GFX.EndY-GPUPack.GFX.StartY+1)+2)*(256/8+6);
   if (!(vertices[current_bitshift]=(struct Vertex*)sceGuGetMemory(num_vert*2* sizeof(struct Vertex)))){
   	debug_log("not enough vertices!");
   	return;
   }
 	vertices_ptr[current_bitshift]=vertices[current_bitshift];
 	vertices_end[current_bitshift]=vertices_ptr[current_bitshift]+num_vert*2;
-		
+
 /********************************************************/
 /********************************************************/
     
@@ -1468,13 +1463,13 @@ void pspRenderScreen (uint8 *Screen, bool8 sub, uint8 D, uint8 drawmode)
 			if (os9x_fastsprite) pspDrawFASTOBJS (!sub, D,drawmode);
 	    	else pspDrawOBJS (!sub, D,drawmode);
 		}
-		if (BG0&&os9x_BG0) {	    
-	    if (TO_DRAW(0)) {	    	
+		if (BG0&&os9x_BG0) {
+	    if (TO_DRAW(0)) {
 	    	pspDrawBackground (PPU.BGMode, 0, D + 5, D + 13);
 	    }
 		}
-		if (PPU.BGMode != 6 && BG1 &&os9x_BG1) {	    
-	    if (TO_DRAW(1)) {	    	
+		if (PPU.BGMode != 6 && BG1 &&os9x_BG1) {
+	    if (TO_DRAW(1)) {
 	    	pspDrawBackground (PPU.BGMode, 1, D + 2, D + 9);
 	    }
 		}
@@ -1483,10 +1478,10 @@ void pspRenderScreen (uint8 *Screen, bool8 sub, uint8 D, uint8 drawmode)
 #if 1
 	if (OB &&os9x_OBJ)
 	{
-	    
+
 	    pspDrawOBJS (!sub, D,drawmode);
 	}
-	if (BG0 || ((FillRAM [0x2133] & 0x40) && BG1) &&os9x_BG0)
+	if ((BG0 || ((FillRAM [0x2133] & 0x40) && BG1)) &&os9x_BG0)
 	{
 	    int bg;
 

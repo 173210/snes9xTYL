@@ -2,7 +2,7 @@
 
 extern int os9x_language;
 
-#define MSG_TOTAL_ENTRIES 272
+#define MSG_TOTAL_ENTRIES 280
 typedef struct {
 	int msg_id;
 	char *msg;
@@ -707,7 +707,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{SCROLL_STRNOTFOUND,"文字列は見つかりませんでした",30},
 	{SCROLL_DISCLAIMER,"免責事項",0},
 	//Settings
-	{SETTINGS_NOTCOMPLETE,"※設定ファイルが完全ではありません※\n\n以前のバージョンのものの可能性があります。\n\n新しい設定が標準値で設定されます。",60*3},
+	{SETTINGS_NOTCOMPLETE,"※設定ファイルが完全ではありません※\n\n以前のバージョンのものの可能\性があります。\n\n新しい設定が標準値で設定されます。",60*3},
 	{SETTINGS_NOTFOUND,"設定が見つかりません。標準設定を使います。",10},
 	{SETTINGS_FORCING_DEFAULT,"強制的に標準設定を使用しています",10},
 	{SETTINGS_IGNORED,"以前の互換性のないバージョンのINIファイルです。ファイルは無視されました。",20},

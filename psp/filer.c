@@ -1,6 +1,8 @@
 //#include "main.h"
+#include "snes9x.h"
 #include "psp.h"
 #include "filer.h"
+#include "homehook.h"
 
 #define TITLE_COL ((31)|(26<<5)|(31<<10))
 #define PATH_COL ((31)|(24<<5)|(28<<10))
@@ -48,6 +50,11 @@ extern int os9x_language;
 extern int os9x_netplay;
 extern int bg_img_mul;
 
+extern int os9x_savesnap();
+extern int os9x_loadsnap(char *fname,u16 *snes_image,int *height);
+
+extern void show_background(int mul,int add);
+
 extern void show_batteryinfo(void);
 extern void show_usbinfo(void);
 
@@ -66,9 +73,9 @@ extern void show_bg(u16 *bg);
 
 ////////////////////////////////////////////////////////////////////////
 // クイックソート
-void SJISCopy(struct SceIoDirent *a, unsigned char *file)
+void SJISCopy(struct SceIoDirent *a, char *file)
 {
-	unsigned char ca;
+	char ca;
 	int i;
 
 	for(i=0;i<=strlen(a->d_name);i++){
@@ -86,13 +93,13 @@ void SJISCopy(struct SceIoDirent *a, unsigned char *file)
 }
 //#include <curl\stdcheaders.h>
 int cmpFile(SceIoDirent *a, SceIoDirent *b) {
-	unsigned char file1[0x108];
-  unsigned char file2[0x108];
-	unsigned char ca, cb;
+	char file1[0x108];
+	char file2[0x108];
+	char ca, cb;
 	int i, n, ret;	
 	if(a->d_stat.st_attr==b->d_stat.st_attr) {
-		SJISCopy(a, (unsigned char *)file1);
-		SJISCopy(b, (unsigned char *)file2);
+		SJISCopy(a, file1);
+		SJISCopy(b, file2);
 		//return strcasecmp(file1,file2);
 		n=strlen(file1);
 		for(i=0; i<=n; i++){
@@ -134,15 +141,15 @@ const struct {
 	char *szExt;
 	int nExtId;
 } stExtentions[] = {        
-    "zip",EXT_ZIP,
-    "smc",EXT_SMC,
-    "sfc",EXT_SFC,
-    "fig",EXT_FIG,
-    "bin",EXT_BIN,
-    "1",EXT_1,
-    "spc",EXT_SPC,
-    "txt",EXT_TXT,
- 		NULL, EXT_UNKNOWN
+    {"zip",EXT_ZIP},
+    {"smc",EXT_SMC},
+    {"sfc",EXT_SFC},
+    {"fig",EXT_FIG},
+    {"bin",EXT_BIN},
+    {"1",EXT_1},
+    {"spc",EXT_SPC},
+    {"txt",EXT_TXT},
+	{NULL, EXT_UNKNOWN}
 };
 
 int getExtId(const char *szFilePath) {
@@ -330,26 +337,25 @@ int getFilePath(char *out,int can_exit) {
 	static int sel=0;
 	int reload_entries=0;
 	int rows=24, top=0, x, y, h, i, /*len,*/ bMsg=0, up=0,pad_cnt=0,nopress=0,pad_cnt_acc=0;
-	int pad;
 	int retval;
 	u16 *snes_image;
 	int snesheight;
 	int image_loaded;
-	int current_smoothing;	
+	int current_smoothing;
 	char path[MAXPATH], oldDir[MAXPATH], *p;
 	int old_netplay=os9x_netplay;
-	u16 *src,*dst;
-	
-	snes_image=(u16*)(0x44000000+512*272*2*2);								
-	
+
+	snes_image=(u16*)(0x44000000+512*272*2*2);
+
 	filer_bg=(u16*)malloc(480*272*2);
 	if (!filer_bg) {
-		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);	
+		inputBoxOK("getFilePath");
+		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 		return -1;
-	}	
-	
+	}
+
 	filer_buildbg(1);
-			
+
 	strcpy(path, LastPath);
 
 	if(FilerMsg[0])
@@ -360,16 +366,16 @@ int getFilePath(char *out,int can_exit) {
 	getDirJpeg();
 	memset(jpeg_files,1,MAX_ENTRY);
 	image_loaded=2;
-	
-	if (out[0]) { //check if a file was already selected	
-		for (i=0;i<nfiles;i++){			
+
+	if (out[0]) { //check if a file was already selected
+		for (i=0;i<nfiles;i++){
 			if (!strcmp(out,files[i].d_name)) {sel=i;break;}
-		}		
+		}
 	}
-	
+
 	pgDrawFrame(16,16,480-16,272-16,28|(28<<5)|(28<<10));
-	
-	while (get_pad()) pgWaitV();	
+
+	while (get_pad()) pgWaitV();
   old_pad=0;
   
   sceKernelLibcGettimeofday( &filer_next, 0 );
@@ -615,10 +621,9 @@ int getFilePath(char *out,int can_exit) {
 		
 		if (image_loaded==1) { //jpeg already loaded
 			int x,y,xmax=128,ymax=snesheight/2;
-			u16 *dst=pgGetVramAddr(0,0);
+			u16 *dst=(unsigned short*)pgGetVramAddr(0,0);
 			for (y=0;y<ymax;y++)
 				for (x=0;x<xmax;x++) {
-					int col1=dst[(y+17/*272-ymax-12*/)*512+x+480-xmax-24];
 					int col2a=snes_image[(y*2)*256+(x*2)];
 					int col2b=snes_image[(y*2+1)*256+(x*2)];
 					int col2c=snes_image[(y*2)*256+(x*2+1)];
@@ -653,46 +658,46 @@ int getNoExtFilePath(char *out,int can_exit) {
 	unsigned long color=RGB_WHITE;
 	static int sel=0;
 	int rows=24, top=0, x, y, h, i, /*len,*/ bMsg=0, up=0,pad_cnt=5,pad_cnt_acc=0;
-	int pad;
 	int retval;
-	int current_smoothing,cnt;		
+	int current_smoothing;
+	int cnt = 0;
 	char path[MAXPATH], oldDir[MAXPATH], *p;
-	u16 *src,*dst;
-	
+
 	filer_bg=(u16*)malloc(480*272*2);
 	if (!filer_bg) {
+		inputBoxOK("getNoExtFilePath");
 		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 		return -1;
 	}
 	filer_buildbg(0);
-			
+
 	strcpy(path, LastPath);
 
 	if(FilerMsg[0])
 		bMsg=1;
-	
-	
+
+
 	getDirNoExt(path);
-	
-	
+
+
 	pgDrawFrame(16,16,480-16,272-16,28|(28<<5)|(28<<10));
-	
-	while (get_pad()) pgWaitV();	
+
+	while (get_pad()) pgWaitV();
   old_pad=0;
-  
+
   sceKernelLibcGettimeofday( &filer_next, 0 );
   filer_next.tv_usec+=33*1000;
-  
-	for(;;){       
+
+	for(;;){
 		current_smoothing=3+round(sin(cnt*3.14159/30)*3);
 		cnt++;
-		
+
 		if (g_bSleep) {
-#ifdef ME_SOUND			
-			sceGuDisplay(0);		
+#ifdef ME_SOUND
+			sceGuDisplay(0);
 //20080420
 //			scePowerSetClockFrequency(66,66,33); //set to 66Mhz
-#endif			
+#endif
 			while(g_bSleep) pgWaitVn(10);			//wait 16*10 ms
 #ifdef ME_SOUND						
 //20080420

@@ -86,9 +86,9 @@ GPUPack.GFX.X2 [((((C1) & yoRGB_REMOVE_LOW_BITS_MASK) + \
 
 
 #define COLOR_ADD1_2(C1, C2) \
-(((((C1) & yoRGB_REMOVE_LOW_BITS_MASK) + \
+((((((C1) & yoRGB_REMOVE_LOW_BITS_MASK) + \
           ((C2) & yoRGB_REMOVE_LOW_BITS_MASK)) >> 1) + \
-         ((C1) & (C2) & yoRGB_LOW_BITS_MASK) | ALPHA_BITS_MASK)
+         ((C1) & (C2) & yoRGB_LOW_BITS_MASK)) | ALPHA_BITS_MASK)
          
 #define COLOR_SUB(C1, C2) \
 GPUPack.GFX.ZERO_OR_X2 [(((C1) | yoRGB_HI_BITS_MASKx2) - \

@@ -6,7 +6,7 @@
  * and a compression quality factor are passed in.
  */
 /* image buffer, 16bits ARGB */
-int write_JPEG_file (char * filename, int quality,u16 *image_buffer,int image_width,int image_height,int image_pitch) {
+int write_JPEG_file (const char * filename, int quality,u16 *image_buffer,int image_width,int image_height,int image_pitch) {
   /* This struct contains the JPEG compression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
    * It is possible to have several such structures, representing multiple
@@ -122,10 +122,11 @@ int write_JPEG_file (char * filename, int quality,u16 *image_buffer,int image_wi
   jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
+  return 0;
 }
 
 
-int read_JPEG_file (char * filename,u16 *image_buffer,int image_width,int image_height,int image_pitch,int *height) {
+int read_JPEG_file (const char * filename,u16 *image_buffer,int image_width,int image_height,int image_pitch,int *height) {
   /* This struct contains the JPEG decompression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
    */

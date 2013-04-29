@@ -767,10 +767,10 @@ void ComputeClipWindowsFix ()
 	struct ClipData *pClip = &IPPU.Clip [0];
     struct ClipDataFix *pClipFix = &IPPU.ClipFix [0];
 	
-	int startY;// = IPPU.PreviousClipLine;
+	uint32 startY;// = IPPU.PreviousClipLine;
 	if ((startY = IPPU.PreviousClipLine) >= PPU.ScreenHeight)
 		startY = PPU.ScreenHeight;
-	int endY;
+	uint32 endY;
 	if ((endY = IPPU.CurrentLine - 1) >= PPU.ScreenHeight)
 		endY = PPU.ScreenHeight - 1;
 	if(startY > endY+1)startY=0;
@@ -814,7 +814,7 @@ void ComputeClipWindowsFix ()
 			{
 				pClipFix->Count[w][cf-1]=pClip->Count[w];
 				pClipFix->End[w][cf-1]=endY;
-				for (int i = 0; i<pClip->Count[w]; i++)
+				for (uint32 i = 0; i<pClip->Count[w]; i++)
 				{
 					pClipFix->Left[i][w][cf-1]=pClip->Left[i][w];
 					pClipFix->Right[i][w][cf-1]=pClip->Right[i][w];
@@ -831,7 +831,7 @@ void ComputeClipWindowsFix ()
 				else*/
 					pClipFix->Start[w][cf]=startY;
 				pClipFix->End[w][cf]=endY;
-				for (int i = 0; i<pClip->Count[w]; i++)
+				for (uint32 i = 0; i<pClip->Count[w]; i++)
 				{
 					pClipFix->Left[i][w][cf] = pClip->Left[i][w];
 					pClipFix->Right[i][w][cf]= pClip->Right[i][w];

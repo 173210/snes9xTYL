@@ -266,7 +266,7 @@ bool8 CMemory::Init ()
 //   DEBUGS("9f");
     
     
-    if (/*!Echo||!DummyEchoBuffer||!MixBuffer||!EchoBuffer||*/!sdd1_buffer || !C4RAM || /*!FillRAM ||*/ !RAM/* || !SRAM || !VRAM*/ || !ROM ||
+    if (/*!Echo||!DummyEchoBuffer||!MixBuffer||!EchoBuffer||*/!sdd1_buffer || !C4RAM || /*!FillRAM || !RAM || !SRAM || !VRAM ||*/ !ROM ||
         !IPPU.TileCache [TILE_2BIT] || !IPPU.TileCache [TILE_4BIT] ||
 	!IPPU.TileCache [TILE_8BIT] || !IPPU.TileCached [TILE_2BIT] ||
 	!IPPU.TileCached [TILE_4BIT] ||	!IPPU.TileCached [TILE_8BIT])
@@ -468,11 +468,10 @@ int CMemory::LoadROMMore(int TotalFileSize,int &retry_count)
     bool8 Tales = FALSE;
 	int orig_hi_score, orig_lo_score;
     int hi_score, lo_score;
-    int i;
 
     orig_hi_score = hi_score = ScoreHiROM (FALSE);
     orig_lo_score = lo_score = ScoreLoROM (FALSE);
-    
+
     if (HeaderCount == 0 && !Settings.ForceNoHeader &&
 	((hi_score > lo_score && ScoreHiROM (TRUE) > hi_score) ||
 	 (hi_score <= lo_score && ScoreLoROM (TRUE) > lo_score)))
@@ -480,7 +479,7 @@ int CMemory::LoadROMMore(int TotalFileSize,int &retry_count)
 	memmove (ROM, ROM + 512, TotalFileSize - 512);
 
 	TotalFileSize -= 512;
-	//S9xMessage (S9X_INFO, S9X_HEADER_WARNING, 
+	//S9xMessage (S9X_INFO, S9X_HEADER_WARNING,
 		//    "Try specifying the -nhd command line option if the game doesn't work\n");
     }
 
@@ -855,18 +854,17 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 extern char rom_filename[256];
 extern char shortrom_filename[64];
 bool8 CMemory::LoadROM (const char *filename)
-{	
+{
     unsigned long FileSize = 0;
     int retry_count = 0;
-    //STREAM ROMFile;                
+    //STREAM ROMFile;
     FILE *ROMFile;
     int current_pos;
     char ext [4 + 1];
     char fname [256 + 1];
     char name [256 + 1];
-    int i;
-    
-    
+
+
 
     memset (&SNESGameFixes, 0, sizeof(SNESGameFixes));
     SNESGameFixes.SRAMInitialValue = 0x60;
@@ -875,7 +873,7 @@ bool8 CMemory::LoadROM (const char *filename)
     CPUPack.CPU.TriedInterleavedMode2 = FALSE;
 
     CalculatedSize = 0;
-    
+
 
 again:
 //    _splitpath (filename, drive, dir, name, ext);
@@ -885,18 +883,18 @@ again:
 	char *p = strrchr(rom_filename,'.');
 	if (p == NULL) return FALSE;
 	strcpy(ext, p + 1);
-	
-	
 
-  
-  
-	
+
+
+
+
+
 #if defined(__WIN32__)
     memmove (&ext [0], &ext[1], 4);
 #endif
 
-    int32 TotalFileSize = 0;
-    
+    uint32 TotalFileSize = 0;
+
 
 #ifdef UNZIP_SUPPORT
 
@@ -910,32 +908,31 @@ again:
 	    unzFile zip_file = 0;    
 	    unz_file_info unzinfo;
 	    char snes_file[256]; //yoyo
-		char *p,*q;
-		char *pext;
+		char *p;
 		uint8 *ptr=(uint8*)ROM;
-		
 
-	    
-	   // S9xMessage(1,0,"yo zip1");  
+
+
+	   // S9xMessage(1,0,"yo zip1");
 	    zip_file = unzOpen(filename);
-	 //   S9xMessage(1,0,"yo zip2");  
-	
-	    			                              
-        if (!zip_file) return FALSE;                                        
+	 //   S9xMessage(1,0,"yo zip2");
 
-   //     S9xMessage(1,0,"yo zip3");  
-        unzGoToFirstFile (zip_file);                    
- //       S9xMessage(1,0,"yo zip4");  
- 
- 
 
-        for (;;) 
+        if (!zip_file) return FALSE;
+
+   //     S9xMessage(1,0,"yo zip3");
+        unzGoToFirstFile (zip_file);
+ //       S9xMessage(1,0,"yo zip4");
+
+
+
+        for (;;)
         {
         	if (unzGetCurrentFileInfo(zip_file, &unzinfo, snes_file, sizeof(snes_file), NULL, NULL, NULL, NULL) != UNZ_OK) return FALSE;
 
             p = (char*)(strrchr(snes_file, '.') + 1);
-	
-                                
+
+
                 if (strcasecmp(p, "smc") == 0) break;
                 if (strcasecmp(p, "sfc") == 0) break;
                 if (strcasecmp(p, "swc") == 0) break;
@@ -1081,9 +1078,9 @@ again:
     CheckForIPSPatch (filename, HeaderCount != 0, TotalFileSize,".ips2");
     CheckForIPSPatch (filename, HeaderCount != 0, TotalFileSize,".ips3");
     CheckForIPSPatch (filename, HeaderCount != 0, TotalFileSize,".ips4");
-    
-    
-  
+
+
+
 
     // More 
 #ifndef _BSX_151_
@@ -1094,7 +1091,7 @@ again:
     {
     	goto again;
     }
-	
+
     S9xLoadCheatFile (S9xGetSaveFilename(".cht"));
     S9xInitCheatData ();
     S9xApplyCheats ();
@@ -1477,159 +1474,140 @@ void CMemory::InitROM (bool8 Interleaved)
     memset (CompanyId, 0, 3);
 	}
 
-    if (!Settings.BS)
-	if (Memory.HiROM)
+	if (!Settings.BS)
 	{
-	Memory.SRAMSize = ROM [0xffd8];
-	strncpy (ROMName, (char *) &ROM[0xffc0], ROM_NAME_LEN - 1);
-	ROMSpeed = ROM [0xffd5];
-	ROMType = ROM [0xffd6];
-	ROMSize = ROM [0xffd7];
-	ROMChecksum = ROM [0xffde] + (ROM [0xffdf] << 8);
-	ROMComplementChecksum = ROM [0xffdc] + (ROM [0xffdd] << 8);
-	
-	memmove (ROMId, &ROM [0xffb2], 4);
-	memmove (CompanyId, &ROM [0xffb0], 2);
-	
+		if (Memory.HiROM)
+		{
+			Memory.SRAMSize = ROM [0xffd8];
+			strncpy (ROMName, (char *) &ROM[0xffc0], ROM_NAME_LEN - 1);
+			ROMSpeed = ROM [0xffd5];
+			ROMType = ROM [0xffd6];
+			ROMSize = ROM [0xffd7];
+			ROMChecksum = ROM [0xffde] + (ROM [0xffdf] << 8);
+			ROMComplementChecksum = ROM [0xffdc] + (ROM [0xffdd] << 8);
 
-	// Try to auto-detect the DSP1 chip
-	if (!Settings.ForceNoDSP1 &&
-	    (ROMType & 0xf) >= 3 && (ROMType & 0xf0) == 0)
-	    Settings.DSP1Master = TRUE;
+			memmove (ROMId, &ROM [0xffb2], 4);
+			memmove (CompanyId, &ROM [0xffb0], 2);
 
-	Settings.SDD1 = Settings.ForceSDD1;
-	if ((ROMType & 0xf0) == 0x40){
-	    Settings.SDD1 = !Settings.ForceNoSDD1;
-	}
-  	    
-	
-	if (Settings.BS)
+
+			// Try to auto-detect the DSP1 chip
+			if (!Settings.ForceNoDSP1 &&
+			    (ROMType & 0xf) >= 3 && (ROMType & 0xf0) == 0)
+				Settings.DSP1Master = TRUE;
+
+			Settings.SDD1 = Settings.ForceSDD1;
+			if ((ROMType & 0xf0) == 0x40)
+				Settings.SDD1 = !Settings.ForceNoSDD1;
+
+
+			if (Settings.BS)
 #ifdef _BSX_151_
-		;
+				;
 #else
-	    BSHiROMMap () ;//remove azz 080517;
+				BSHiROMMap () ;//remove azz 080517;
 #endif
-	else
-	if ((ROMSpeed & ~0x10) == 0x25)
-	    TalesROMMap (Interleaved);
-	else 
-	if ((ROMSpeed & ~0x10) == 0x22 &&
-	    strncmp (ROMName, "Super Street Fighter", 20) != 0)
-	{
-	    AlphaROMMap ();
-	}
-	else{
-		
-	    HiROMMap ();
-	    
-	    }
-    }
-    else
-	{
-	Memory.HiROM = FALSE;
-	Memory.SRAMSize = ROM [0x7fd8];
-	ROMSpeed = ROM [0x7fd5];
-	ROMType = ROM [0x7fd6];
-	ROMSize = ROM [0x7fd7];
-	ROMChecksum = ROM [0x7fde] + (ROM [0x7fdf] << 8);
-	ROMComplementChecksum = ROM [0x7fdc] + (ROM [0x7fdd] << 8);
-	memmove (ROMId, &ROM [0x7fb2], 4);
-	memmove (CompanyId, &ROM [0x7fb0], 2);
+			else if ((ROMSpeed & ~0x10) == 0x25)
+				TalesROMMap (Interleaved);
+			else if ((ROMSpeed & ~0x10) == 0x22 &&
+				strncmp (ROMName, "Super Street Fighter", 20) != 0)
+				AlphaROMMap ();
+			else HiROMMap ();
+		}
+		else
+		{
+			Memory.HiROM = FALSE;
+			Memory.SRAMSize = ROM [0x7fd8];
+			ROMSpeed = ROM [0x7fd5];
+			ROMType = ROM [0x7fd6];
+			ROMSize = ROM [0x7fd7];
+			ROMChecksum = ROM [0x7fde] + (ROM [0x7fdf] << 8);
+			ROMComplementChecksum = ROM [0x7fdc] + (ROM [0x7fdd] << 8);
+			memmove (ROMId, &ROM [0x7fb2], 4);
+			memmove (CompanyId, &ROM [0x7fb0], 2);
 
-	strncpy (ROMName, (char *) &ROM[0x7fc0], ROM_NAME_LEN - 1);
-	Settings.SuperFX = Settings.ForceSuperFX;
+			strncpy (ROMName, (char *) &ROM[0x7fc0], ROM_NAME_LEN - 1);
+			Settings.SuperFX = Settings.ForceSuperFX;
 
-	if ((ROMType & 0xf0) == 0x10)
-	    Settings.SuperFX = !Settings.ForceNoSuperFX;
+			if ((ROMType & 0xf0) == 0x10)
+	    		Settings.SuperFX = !Settings.ForceNoSuperFX;
 
-	// Try to auto-detect the DSP1 chip
-	if (!Settings.ForceNoDSP1 &&
-	    (ROMType & 0xf) >= 3 && (ROMType & 0xf0) == 0)
-	    Settings.DSP1Master = TRUE;
+			// Try to auto-detect the DSP1 chip
+			if (!Settings.ForceNoDSP1 &&
+	    			(ROMType & 0xf) >= 3 && (ROMType & 0xf0) == 0)
+	    			Settings.DSP1Master = TRUE;
 
-	Settings.SDD1 = Settings.ForceSDD1;
-	if ((ROMType & 0xf0) == 0x40)
-	    Settings.SDD1 = !Settings.ForceNoSDD1;
+			Settings.SDD1 = Settings.ForceSDD1;
+			if ((ROMType & 0xf0) == 0x40)
+	    			Settings.SDD1 = !Settings.ForceNoSDD1;
 
-	/*if (Settings.SDD1)
-	    S9xLoadSDD1Data ();*/
+			/*if (Settings.SDD1)
+	    			S9xLoadSDD1Data ();*/
 
-	Settings.C4 = Settings.ForceC4;
-	if ((ROMType & 0xf0) == 0xf0 &&
-            (strncmp (ROMName, "MEGAMAN X", 9) == 0 ||
-             strncmp (ROMName, "ROCKMAN X", 9) == 0))
-	{
-	    Settings.C4 = !Settings.ForceNoC4;
-	}
+			Settings.C4 = Settings.ForceC4;
+			if ((ROMType & 0xf0) == 0xf0 &&
+            			(strncmp (ROMName, "MEGAMAN X", 9) == 0 ||
+             			strncmp (ROMName, "ROCKMAN X", 9) == 0))
+	    			Settings.C4 = !Settings.ForceNoC4;
 
-	if (Settings.SuperFX)
-	{
-	    //::SRAM = ROM + 1024 * 1024 * 4;
-	    SuperFXROMMap ();
-	    Settings.MultiPlayer5Master = FALSE;
-	    //Settings.MouseMaster = FALSE;
-	    //Settings.SuperScopeMaster = FALSE;
-	    Settings.DSP1Master = FALSE;
-	    Settings.SA1 = FALSE;
-	    Settings.C4 = FALSE;
-	    Settings.SDD1 = FALSE;
+			if (Settings.SuperFX)
+			{
+	    			//::SRAM = ROM + 1024 * 1024 * 4;
+	    			SuperFXROMMap ();
+	    			Settings.MultiPlayer5Master = FALSE;
+	    			//Settings.MouseMaster = FALSE;
+	    			//Settings.SuperScopeMaster = FALSE;
+	    			Settings.DSP1Master = FALSE;
+	    			Settings.SA1 = FALSE;
+	    			Settings.C4 = FALSE;
+	    			Settings.SDD1 = FALSE;
+			}
+			else if (Settings.ForceSA1 ||
+				(!Settings.ForceNoSA1 && (ROMSpeed & ~0x10) == 0x23 && 
+	     			(ROMType & 0xf) > 3 && (ROMType & 0xf0) == 0x30))
+			{
+	    			Settings.SA1 = TRUE;
+	    			Settings.MultiPlayer5Master = FALSE;
+	    			//Settings.MouseMaster = FALSE;
+	    			//Settings.SuperScopeMaster = FALSE;
+	    			Settings.DSP1Master = FALSE;
+	    			Settings.C4 = FALSE;
+	    			Settings.SDD1 = FALSE;
+	    			SA1ROMMap ();
+			}
+			else if ((ROMSpeed & ~0x10) == 0x25)
+	    			TalesROMMap (Interleaved);
+			else if (strncmp ((char *) &ROM [0x7fc0], "SOUND NOVEL-TCOOL", 17) == 0 ||
+	   			strncmp ((char *) &ROM [0x7fc0], "DERBY STALLION 96", 17) == 0)
+			{
+	    			LoROM24MBSMap ();
+	    			Settings.DSP1Master = FALSE;
+			}
+			else if (strncmp ((char *) &ROM [0x7fc0], "THOROUGHBRED BREEDER3", 21) == 0 ||
+	    			strncmp ((char *) &ROM [0x7fc0], "RPG-TCOOL 2", 11) == 0)
+			{
+	    			SRAM512KLoROMMap ();
+	    			Settings.DSP1Master = FALSE;
+			}
+			else if (strncmp ((char *) &ROM [0x7fc0], "DEZAEMON  ", 10) == 0)
+			{
+	    			Settings.DSP1Master = FALSE;
+	    			SRAM1024KLoROMMap ();
+			}
+			else if (strncmp ((char *) &ROM [0x7fc0], "ADD-ON BASE CASSETE", 19) == 0)
+			{
+	    			Settings.MultiPlayer5Master = FALSE;
+	    			Settings.MouseMaster = FALSE;
+	    			Settings.SuperScopeMaster = FALSE;
+	    			Settings.DSP1Master = FALSE;
+ 	    			SufamiTurboLoROMMap(); 
+	    			Memory.SRAMSize = 3;
+			}
+			else if ((ROMSpeed & ~0x10) == 0x22 &&
+	    			strncmp (ROMName, "Super Street Fighter", 20) != 0)
+				AlphaROMMap ();\
+			else LoROMMap ();
+		}
 	}
-	else
-	if (Settings.ForceSA1 ||
-	    (!Settings.ForceNoSA1 && (ROMSpeed & ~0x10) == 0x23 && 
-	     (ROMType & 0xf) > 3 && (ROMType & 0xf0) == 0x30))
-	{
-	    Settings.SA1 = TRUE;
-	    Settings.MultiPlayer5Master = FALSE;
-	    //Settings.MouseMaster = FALSE;
-	    //Settings.SuperScopeMaster = FALSE;
-	    Settings.DSP1Master = FALSE;
-	    Settings.C4 = FALSE;
-	    Settings.SDD1 = FALSE;
-	    SA1ROMMap ();
-	}
-	else
-	if ((ROMSpeed & ~0x10) == 0x25)
-	    TalesROMMap (Interleaved);
-	else
-	if (strncmp ((char *) &ROM [0x7fc0], "SOUND NOVEL-TCOOL", 17) == 0 ||
-	    strncmp ((char *) &ROM [0x7fc0], "DERBY STALLION 96", 17) == 0)
-	{
-	    LoROM24MBSMap ();
-	    Settings.DSP1Master = FALSE;
-	}
-	else
-	if (strncmp ((char *) &ROM [0x7fc0], "THOROUGHBRED BREEDER3", 21) == 0 ||
-	    strncmp ((char *) &ROM [0x7fc0], "RPG-TCOOL 2", 11) == 0)
-	{
-	    SRAM512KLoROMMap ();
-	    Settings.DSP1Master = FALSE;
-	}
-	else
-	if (strncmp ((char *) &ROM [0x7fc0], "DEZAEMON  ", 10) == 0)
-	{
-	    Settings.DSP1Master = FALSE;
-	    SRAM1024KLoROMMap ();
-	}
-	else
-	if (strncmp ((char *) &ROM [0x7fc0], "ADD-ON BASE CASSETE", 19) == 0)
-	{
-	    Settings.MultiPlayer5Master = FALSE;
-	    Settings.MouseMaster = FALSE;
-	    Settings.SuperScopeMaster = FALSE;
-	    Settings.DSP1Master = FALSE;
- 	    SufamiTurboLoROMMap(); 
-	    Memory.SRAMSize = 3;
-	}
-	else
-	if ((ROMSpeed & ~0x10) == 0x22 &&
-	    strncmp (ROMName, "Super Street Fighter", 20) != 0)
-	{
-	    AlphaROMMap ();
-	}
-	else
-	    LoROMMap ();
-    }
 
     int power2 = 0;
     int size = CalculatedSize;
@@ -1850,13 +1828,12 @@ bool8 CMemory::LoadSRAM (char *filename)
 
 bool8 CMemory::SaveSRAM (char *filename)
 {
-	char text[32];
     int lsize = Memory.SRAMSize ?
 	       (1 << (Memory.SRAMSize + 3)) * 128 : 0;
-	
+
 	  /*debug*/
 //  DBG_BREAK
-	       
+
     if (Settings.SRTC)
     {
 		lsize += SRTC_SRAM_PAD;
@@ -3448,22 +3425,19 @@ if (ips_avail<mac_b) { \
 if (!(scr_update&3)) psp_showProgressBar(ips_size-ips_current,ips_size);\
 scr_update++;
 
-void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,int32 &rom_size,char *ips_ext) {
-	unsigned long FileSize = 0;
-  int retry_count = 0;
-  unsigned char bufferIPS[256];   
+void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,uint32 &rom_size,const char *ips_ext) {
+  unsigned char bufferIPS[256];
   char fname [256 + 1];
-  int i,x,y,r,v,b,scr_update;
+  int x,r,v,b,scr_update;
   FILE *patch_file;
-  uint8 *ips_data;  	
+  uint8 *ips_data;
   uint32 ips_size,ips_avail,ips_pos,ips_current;
-  long  offset = header ? 512 : 0;
-  uint32 Address;    
+  uint32 Address;
   int32 ofs;
-  uint16 PatchSize,rlen;
-  char str[256];  
+  uint16 PatchSize,rlen = 0;
+  char str[256];
   char *p;
-  
+
   strcpy(fname,rom_filename);
   p=strrchr(fname,'.');
   if (!p) return;
@@ -3472,19 +3446,19 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,int32 &ro
   if (!patch_file) {
    	//no patch
    	return;
-  }        
+  }
   fseek(patch_file,0,SEEK_END);
   ips_size=ftell(patch_file);
   fseek(patch_file,0,SEEK_SET);
-                    
-  ips_data=(uint8*)malloc(0x1000); //small read buffer    
-  if (!ips_data) {fclose (patch_file);return;}  
+
+  ips_data=(uint8*)malloc(0x1000); //small read buffer
+  if (!ips_data) {fclose (patch_file);return;}
   ips_avail=0x1000;
   ips_pos=0;
   ips_current=0;
   scr_update=0;
-  fread(ips_data,0x1000,1,patch_file);        
-                
+  fread(ips_data,0x1000,1,patch_file);
+
 	//memcpy(fname,ips_data+ips_pos,5);ips_avail-=5;ips_current+=5;ips_pos+=5;
 	IPS_READ(fname,5)
   if (strncmp (fname, "PATCH", 5) != 0) {
@@ -3496,47 +3470,47 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,int32 &ro
 	sprintf(str,"Found IPS patch : %s\nSize is : %dKo\nApplying ....",ips_ext+1,ips_size>>10);
 	msgBoxLines(str,0);
 	msgBoxLines(str,0);
-			
+
 	x=0;r=0;v=0;b=16;
-	for (;;){						    
+	for (;;){
     //memcpy(bufferIPS,ips_data+0x1000-ips_avail,3);ips_avail-=3;ips_current+=3;
     IPS_READ(bufferIPS,3)
         
    	bufferIPS[3]=0;
 		if (!strcmp((char*)bufferIPS,"EOF")) {
 			//success 
-			msgBoxLines(psp_msg_string(FILE_IPS_PATCHSUCCESS),20);			
+			msgBoxLines(psp_msg_string(FILE_IPS_PATCHSUCCESS),20);
 			break;
 		}
-      	  	
+
     Address=(((uint32)(bufferIPS[0]))<<16)|(((uint32)(bufferIPS[1]))<<8)|(((uint32)(bufferIPS[2]))<<0);
-	  		
+
 		//memcpy(bufferIPS,ips_pos,2);ips_pos+=2;
 		IPS_READ(bufferIPS,2)
 	  PatchSize=(((uint32)(bufferIPS[0]))<<8)|(((uint32)(bufferIPS[1]))<<0);
-	    
-  	if (!PatchSize) { //RLE compressed data	    	    
+
+  	if (!PatchSize) { //RLE compressed data
 	    //memcpy(bufferIPS,ips_pos,2);ips_pos+=2;
 	    IPS_READ(bufferIPS,2)
-	    rlen=(((uint32)(bufferIPS[0]))<<8)|(((uint32)(bufferIPS[1]))<<0);	    
+	    rlen=(((uint32)(bufferIPS[0]))<<8)|(((uint32)(bufferIPS[1]))<<0);
 	    //memcpy(bufferIPS,ips_pos,1);ips_pos+=1;
 	    IPS_READ(bufferIPS,1)
 	  }
 
-	  if (Address<rom_size) {		            
-	    ofs=Address;	     
-	    if (PatchSize) {		
+	  if (Address<rom_size) {
+	    ofs=Address;
+	    if (PatchSize) {
 		  	Address+=PatchSize;
 		  	if (rom_size<Address) {
 			    rom_size=Address;
 		      //		      printf("Extending\n");
 		    }
 		  //		  printf("Regular patch %04X %d\n",Address,PatchSize);
-		  	while (PatchSize--)	{		  		
+		  	while (PatchSize--)	{
 		  		//memcpy(bufferIPS,ips_pos,1);ips_pos+=1;
 		  		IPS_READ(bufferIPS,1)
 		  		ROM[ofs]=bufferIPS[0];
-		  		ofs++;		  				  		
+		  		ofs++;
 		  	}
 		  } else {
 				Address+=rlen;
@@ -3549,13 +3523,13 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,int32 &ro
 		  	memset(ROM+ofs,bufferIPS[0],rlen);
 		  	ofs+=rlen;
 		  }
-		}	else {	     
+		}	else {
 	     sprintf(str,psp_msg_string(EXTENDING_TARGET),rom_size,Address);
 	     msgBoxLines(str,30);
-	     
+
 	     memset(ROM+rom_size,0,Address-rom_size);
 	     rom_size=Address;
-	  }	
+	  }
 	  //printf("File pos %d\n",ftell(fips));
   }
 	free(ips_data);

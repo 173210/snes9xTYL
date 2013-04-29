@@ -120,7 +120,7 @@ public:
     int  ScoreLoROM (bool8 skip_header);
     void ApplyROMFixes ();
     void CheckForIPSPatch (const char *rom_filename, bool8 header,
-			   int32 &rom_size,char *ips_ext);
+			   uint32 &rom_size,const char *ips_ext);
     
     const char *TVStandard ();
     const char *Speed ();

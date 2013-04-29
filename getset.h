@@ -586,16 +586,16 @@ INLINE void S9xSetWord(uint16 Word, uint32 Address)
             if(Memory.SRAMMask>=MEMMAP_MASK){
                 WRITE_WORD(SRAM +
                            (((Address & 0x7fff) - 0x6000 +
-                             ((Address & 0xf0000) >> 3) & Memory.SRAMMask)), Word);
+                             ((Address & 0xf0000) >> 3)) & Memory.SRAMMask), Word);
             } else {
                 /* no WRITE_WORD here, since if Memory.SRAMMask=0x7ff
                  * then the high byte doesn't follow the low byte. */
                 *(SRAM +
                   (((Address & 0x7fff) - 0x6000 +
-                    ((Address & 0xf0000) >> 3) & Memory.SRAMMask))) = (uint8) Word;
+                    ((Address & 0xf0000) >> 3)) & Memory.SRAMMask)) = (uint8) Word;
                 *(SRAM +
                   ((((Address + 1) & 0x7fff) - 0x6000 +
-                    (((Address + 1) & 0xf0000) >> 3) & Memory.SRAMMask))) = (uint8) (Word >> 8);
+                    (((Address + 1) & 0xf0000) >> 3)) & Memory.SRAMMask)) = (uint8) (Word >> 8);
             }
 	    CPUPack.CPU.SRAMModified = TRUE;
 	}

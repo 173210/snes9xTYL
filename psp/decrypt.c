@@ -21,7 +21,50 @@ int c1,count;
 
 
 
-assemble() {
+int code() {
+	dx=x1a2+i;
+	ax=x1a0[i];
+	cx=0x015a;
+	bx=0x4e35;
+	
+	tmp=ax;
+	ax=si;
+	si=tmp;
+	
+	tmp=ax;
+	ax=dx;
+	dx=tmp;
+	
+	if (ax!=0) {
+		ax=ax*bx;
+	}
+	
+	tmp=ax;
+	ax=cx;
+	cx=tmp;
+	
+	if (ax!=0) {
+		ax=ax*si;
+		cx=ax+cx;
+	}
+	
+	tmp=ax;
+	ax=si;
+	si=tmp;
+	ax=ax*bx;
+	dx=cx+dx;
+	
+	ax=ax+1;
+	
+	x1a2=dx;
+	x1a0[i]=ax;
+	
+	res=ax^dx;
+	i=i+1;
+	return 0;
+}
+
+int assemble() {
 	
 	x1a0[0]= ( cle[0]*256 )+ cle[1];
 	code();
@@ -89,56 +132,13 @@ assemble() {
 	
 	
 	i=0;
-	return(0);
-}
-	
-code() {
-	dx=x1a2+i;
-	ax=x1a0[i];
-	cx=0x015a;
-	bx=0x4e35;
-	
-	tmp=ax;
-	ax=si;
-	si=tmp;
-	
-	tmp=ax;
-	ax=dx;
-	dx=tmp;
-	
-	if (ax!=0) {
-		ax=ax*bx;
-	}
-	
-	tmp=ax;
-	ax=cx;
-	cx=tmp;
-	
-	if (ax!=0) {
-		ax=ax*si;
-		cx=ax+cx;
-	}
-	
-	tmp=ax;
-	ax=si;
-	si=tmp;
-	ax=ax*bx;
-	dx=cx+dx;
-	
-	ax=ax+1;
-	
-	x1a2=dx;
-	x1a0[i]=ax;
-	
-	res=ax^dx;
-	i=i+1;
-	return(0);
+	return 0;
 }
 
 //decrypt encrypted buffer 'in' in output buffer 'out' 
 //'in' & 'out' have to be same size
 //using buff_cle
-decrypt(char *in,char *out,int size_in,char *buff_cle) {
+int decrypt(char *in,char *out,int size_in,char *buff_cle) {
 	si=0;
 	x1a2=0;
 	i=0;
@@ -148,7 +148,7 @@ decrypt(char *in,char *out,int size_in,char *buff_cle) {
 	/* if the user enter a key < 32 characters, characters of the default */
 	/* password will be used */
 	
-	strcpy(cle,"abcdefghijklmnopqrstuvwxyz012345");
+	strcpy((char *)cle,"abcdefghijklmnopqrstuvwxyz012345");
 	
 	/*printf ("PC1 Cipher 256 bits \nDECRYPT file OUT.BIN to IN.BIN\n");
 	printf("Enter a 32 chars password:");
@@ -194,7 +194,7 @@ decrypt(char *in,char *out,int size_in,char *buff_cle) {
 	/*fclose (in);
 	fclose (out);
 	fin();*/
-	return(0);
+	return 0;
 }
 
 

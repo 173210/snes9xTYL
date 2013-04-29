@@ -738,6 +738,8 @@ void StopAnalyze(){
 	debug_int( "time:", diff );
 }
 
+#else
+#include <ctype.h>
 #endif
 
 char *strcasechr(const char *s, int c){
@@ -746,7 +748,7 @@ char *strcasechr(const char *s, int c){
 
 	size = strlen( s );
 	for ( i = 0; i < size; i++ ){
-		if ( tolower(s[i]) == tolower(c) ){
+		if ( tolower((int)s[i]) == tolower(c) ){
 			return (char*)&s[i];
 		}
 	}
@@ -821,7 +823,7 @@ void _makepath( char *path, const char *drive, const char *dir, const char *fnam
 
 void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext ){
 	if ( *path && *(path + 1) == ':' ){
-		*drive = toupper( *path );
+		*drive = toupper( (int)*path );
 		path += 2;
 	} else {
 		*drive = 0;

@@ -268,7 +268,7 @@ bool8 S9xGraphicsInit ()
 
     for (uint8 bitshift = 0; bitshift < 4; bitshift++)
     {
-	for (register char i = 0; i < 16; i++)
+	for (register int i = 0; i < 16; i++)
 	{
 	    register uint32 h = 0;
 	    register uint32 l = 0;
@@ -650,7 +650,7 @@ void S9xStartScreenRefresh ()
 }
 
 extern void DrawBGMode7Background16New (uint16 *Screen, int bg);
-extern void DrawBGMode7Background16PrioNew (uint16 *Screen, int bg, int prio);
+extern void DrawBGMode7Background16PrioNew (uint16 *Screen, int bg, uint32 prio);
 
 
 

@@ -188,7 +188,7 @@ uint16 S9xSA1GetWord (uint32 address)
 	//return (S9xSA1GetByte (address) | (S9xSA1GetByte (address + 1) << 8));
     uint8 *GetAddress = SA1Pack_SA1.Map [(address >> MEMMAP_SHIFT) & MEMMAP_MASK];
     if (GetAddress >= (uint8 *) CMemory::MAP_LAST)
-		return (*(GetAddress + (address+1 & 0xffff)))<<8 | (*(GetAddress + (address & 0xffff)));
+		return (*(GetAddress + ((address+1) & 0xffff)))<<8 | (*(GetAddress + (address & 0xffff)));
 	else
 		return (S9xSA1GetByte (address) | (S9xSA1GetByte (address + 1) << 8));
 /*    uint8 *GetAddress = SA1Pack_SA1.Map [(address >> MEMMAP_SHIFT) & MEMMAP_MASK];
@@ -293,7 +293,7 @@ void S9xSA1SetWord (uint16 Word, uint32 address)
     if (Setaddress >= (uint8 *) CMemory::MAP_LAST)
     {
 	*(Setaddress + (address & 0xffff)) = Word;
-	*(Setaddress + (address+1 & 0xffff)) = Word>>8;
+	*(Setaddress + ((address+1) & 0xffff)) = Word>>8;
 	return;
 	}
 	else

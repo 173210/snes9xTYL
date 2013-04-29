@@ -35,7 +35,171 @@ char pgc_mag[2];
 
 
 #define timercmp(a, b, CMP)	(((a)->tv_sec == (b)->tv_sec) ? ((a)->tv_usec CMP (b)->tv_usec) : ((a)->tv_sec CMP (b)->tv_sec))
+
+//void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long bgcolor,unsigned char ch,char drawfg,char drawbg,char mag)
+//{
+//	unsigned char *vptr0;		//pointer to vram
+//	unsigned char *vptr;		//pointer to vram
+//	unsigned char *cfont;		//pointer to font
+//	unsigned long cx,cy;
+//	unsigned long b;
+//	char mx,my;
+//
+//	if (ch>255) return;
+//	cfont=font+ch*8;
+//	vptr0=pgGetVramAddr(x,y);
+//	for (cy=0; cy<8; cy++) {
+//		for (my=0; my<mag; my++) {
+//			vptr=vptr0;
+//			b=0x80;
+//			for (cx=0; cx<8; cx++) {
+//				for (mx=0; mx<mag; mx++) {
+//					if ((*cfont&b)!=0) {
+//						if (drawfg) *(unsigned short *)vptr=color;
+//					} else {
+//						if (drawbg) *(unsigned short *)vptr=bgcolor;
+//					}
+//					vptr+=PIXELSIZE*2;
+//				}
+//				b=b>>1;
+//			}
+//			vptr0+=LINESIZE*2;
+//		}
+//		cfont++;
+//	}
+//}
+
+
+void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long bgcolor,unsigned char ch,char drawfg,char drawbg,char mag)
+{
+	char *vptr0;		//pointer to vram
+	char *vptr;		//pointer to vram
+	unsigned char *cfont;		//pointer to font
+	unsigned long cx,cy;
+	unsigned long b;
+	char mx,my;
+	unsigned char buffer[10*10];
+	int rr,vv,bb,r,v,bl;
+	int tot,fcol;
+
+
+	if (ch>255) return;
+		
+	memset(buffer,0,10*10);
+	r=color&31;
+	v=(color>>5)&31;
+	bl=(color>>10)&31;
+		
+	cfont=(unsigned char *)font+ch*8;
+	for (cy=0; cy<8; cy++) {		
+			b=0x80;
+			for (cx=0; cx<8; cx++) {				
+					if ((*cfont&b)) buffer[(cy+1)*10+cx]=1;
+				b=b>>1;
+			}		
+		cfont++;
+	}
 	
+	vptr0=pgGetVramAddr(x,y);
+	for (cy=0; cy<8; cy++) {
+		for (my=0; my<mag; my++) {
+			vptr=vptr0;
+			b=0x80;
+			for (cx=0; cx<8; cx++) {
+				
+				ANTIALIAS_CODE(cx,cy,10)
+		
+				rr=r*tot/ANTIALIAS_FACTOR;
+				vv=v*tot/ANTIALIAS_FACTOR;
+				bb=bl*tot/ANTIALIAS_FACTOR;
+				
+				fcol=(rr)|(vv<<5)|(bb<<10);
+						
+				for (mx=0; mx<mag; mx++) {
+						if (fcol) {
+							if (drawfg) *(unsigned short *)vptr=fcol;
+						} else {
+							if (drawbg) *(unsigned short *)vptr=bgcolor;
+						}
+						vptr+=PIXELSIZE*2;
+					}
+					b=b>>1;
+			}
+			vptr0+=LINESIZE*2;
+		}
+		cfont++;
+	}		
+}
+
+void pgPutChar_shadow(unsigned long x,unsigned long y,unsigned char ch,char drawfg,char drawbg,char mag)
+{
+	char *vptr0;		//pointer to vram
+	char *vptr;		//pointer to vram
+	unsigned char *cfont;		//pointer to font
+	unsigned long cx,cy;
+	unsigned long b;
+	char mx,my;
+	unsigned char buffer[10*10];
+	int rr,vv,bb,r,v;
+	int tot,col,fcol;
+
+
+	if (ch>255) return;
+		
+	memset(buffer,0,10*10);
+	
+		
+	cfont=(unsigned char *)font+ch*8;
+	for (cy=0; cy<8; cy++) {		
+			b=0x80;
+			for (cx=0; cx<8; cx++) {				
+					if ((*cfont&b)) buffer[(cy+1)*10+cx]=1;
+				b=b>>1;
+			}		
+		cfont++;
+	}
+	
+	vptr0=pgGetVramAddr(x,y);
+	for (cy=0; cy<8; cy++) {
+		for (my=0; my<mag; my++) {
+			vptr=vptr0;
+			b=0x80;
+			for (cx=0; cx<8; cx++) {
+				
+				ANTIALIAS_CODE(cx,cy,10)
+				
+				if (tot) {			
+					for (mx=0; mx<mag; mx++) {
+						
+						col=*(unsigned short *)vptr;
+						r=col&31; v=(col>>5)&31; b=(col>>10)&31;
+						rr=r-tot;if (rr<0) rr=0;
+						vv=v-tot;if (vv<0) vv=0;
+						bb=b-tot;if (bb<0) bb=0;
+							
+						fcol=(rr)|(vv<<5)|(bb<<10);
+						
+						if (fcol) {
+							if (drawfg) *(unsigned short *)vptr=fcol;
+						} else {
+							if (drawbg) *(unsigned short *)vptr=0;
+						}
+						
+						vptr+=PIXELSIZE*2;
+					}										
+				}
+				
+					b=b>>1;
+			}
+			vptr0+=LINESIZE*2;
+		}
+		cfont++;
+	}		
+}
+
+
+
+
 void pgwait(int usec){
 	struct timeval tv,now;
 	sceKernelLibcGettimeofday( &tv, 0 );
@@ -69,7 +233,7 @@ char *pgGetVramAddr(unsigned long x,unsigned long y)
 }
 
 void pgCopyScreen(void){
-	u32 *src,*dst;
+	char *src,*dst;
 	dst=pgGetVramAddr(0,0);
 	pg_drawframe^=1;
 	src=pgGetVramAddr(0,0);
@@ -77,7 +241,7 @@ void pgCopyScreen(void){
 	memcpy(dst,src,FRAMESIZE);
 }
 
-void pgPrint(unsigned long x,unsigned long y,unsigned long color,char *str)
+void pgPrint(unsigned long x,unsigned long y,unsigned long color,const char *str)
 {
 	while (*str!=0 && x<CMAX_X && y<CMAX_Y) {
 		pgPutChar_shadow(x*8+1,y*8+1,*str,1,0,1);
@@ -92,7 +256,7 @@ void pgPrint(unsigned long x,unsigned long y,unsigned long color,char *str)
 }
 
 
-void pgPrintCenter(unsigned long y,unsigned long color,char *str){
+void pgPrintCenter(unsigned long y,unsigned long color,const char *str){
 	unsigned long x=(480-strlen(str)*8)>>4;
 	while (*str!=0 && x<CMAX_X && y<CMAX_Y) {
 		pgPutChar_shadow(x*8+1,y*8+1,*str,1,0,1);
@@ -106,7 +270,7 @@ void pgPrintCenter(unsigned long y,unsigned long color,char *str){
 	}
 }
 
-void pgPrintCenterY(unsigned long y,unsigned long color,char *str){
+void pgPrintCenterY(unsigned long y,unsigned long color,const char *str){
 	unsigned long x=(480-strlen(str)*8)>>4;
 	while (*str!=0 && x<CMAX_X /*&& (y/8)<CMAX_Y*/) {
 		pgPutChar_shadow(x*8+1,y+1,*str,1,0,1);
@@ -124,7 +288,6 @@ void pgPrintCenterY(unsigned long y,unsigned long color,char *str){
 void pgPrintSel(unsigned long x,unsigned long y,unsigned long color,char *str){
 	char *str2;
 	int xm,ym;
-	int i=0;
 			
 	xm=x;ym=y;
 	str2=str;
@@ -141,7 +304,7 @@ void pgPrintSel(unsigned long x,unsigned long y,unsigned long color,char *str){
 }
 
 
-void pgPrintBG(unsigned long x,unsigned long y,unsigned long color,char *str)
+void pgPrintBG(unsigned long x,unsigned long y,unsigned long color,const char *str)
 {
 	while (*str!=0 && x<CMAX_X && y<CMAX_Y) {
 		pgPutChar_shadow(x*8+1,y*8+1,*str,1,1,1);
@@ -155,7 +318,7 @@ void pgPrintBG(unsigned long x,unsigned long y,unsigned long color,char *str)
 	}
 }
 
-void pgPrintBGRev(unsigned long x,unsigned long y,unsigned long color,char *str)
+void pgPrintBGRev(unsigned long x,unsigned long y,unsigned long color,const char *str)
 {
 	pg_drawframe^=1;
 	while (*str!=0 && x<CMAX_X && y<CMAX_Y) {		
@@ -171,7 +334,7 @@ void pgPrintBGRev(unsigned long x,unsigned long y,unsigned long color,char *str)
 	pg_drawframe^=1;
 }
 
-void pgPrintAllBG(unsigned long x,unsigned long y,unsigned long color,char *str)
+void pgPrintAllBG(unsigned long x,unsigned long y,unsigned long color,const char *str)
 {
 	while (*str!=0 && x<CMAX_X && y<CMAX_Y) {
 		pgPutChar_shadow(x*8+1,y*8+1,*str,1,1,1);
@@ -189,7 +352,7 @@ void pgPrintAllBG(unsigned long x,unsigned long y,unsigned long color,char *str)
 	}
 }
 
-void pgPrint2(unsigned long x,unsigned long y,unsigned long color,char *str)
+void pgPrint2(unsigned long x,unsigned long y,unsigned long color,const char *str)
 {
 	while (*str!=0 && x<CMAX2_X && y<CMAX2_Y) {
 		pgPutChar_shadow(x*16+1,y*16+1,*str,1,0,2);
@@ -204,7 +367,7 @@ void pgPrint2(unsigned long x,unsigned long y,unsigned long color,char *str)
 }
 
 
-void pgPrint4(unsigned long x,unsigned long y,unsigned long color,unsigned long color2,char *str)
+void pgPrint4(unsigned long x,unsigned long y,unsigned long color,unsigned long color2,const char *str)
 {		
 	while (*str!=0 && x<CMAX4_X && y<CMAX4_Y) {
 		
@@ -276,7 +439,7 @@ void Draw_Char_Hankaku(int x,int y,unsigned char c,int col,unsigned short *vbuff
 	unsigned char ch;
 	unsigned char buffer[12*7];
 	int x1,y1;	
-	int rr,vv,bb,r,v,b,color;
+	int rr,vv,bb,r,v,b;
 	int tot;
 
 	ch = c;
@@ -343,7 +506,7 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 	unsigned char ch;
 	unsigned char buffer[12*7];
 	int x1,y1;	
-	int rr,vv,bb,r,v,b,color,col;
+	int rr,vv,bb,r,v,b,col;
 	int tot;
 
 	ch = c;
@@ -509,10 +672,10 @@ void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsig
 
 	unsigned long n;
 	unsigned short code;
-	int i, j;
-	
-	unsigned char buffer[12*12];	
-	int rr,vv,bb,r,v,b,color;
+	int j;
+
+	unsigned char buffer[12*12];
+	int rr,vv,bb,r,v,b;
 	int tot;
 
 	// SJISコードの生成
@@ -613,10 +776,10 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 
 	unsigned long n;
 	unsigned short code;
-	int i, j;
+	int j;
 	
 	unsigned char buffer[12*12];	
-	int rr,vv,bb,r,v,b,color,col;
+	int rr,vv,bb,r,v,b,col;
 	int tot;
 
 	// SJISコードの生成
@@ -665,7 +828,7 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 		for (y1=0;y1<10;y1++)
 		for (x1=0;x1<10;x1++) {		
 			if (buffer[(y1+1)*12+(x1+1)])
-				vr[y1*pitch + x1]=col;
+				vr[y1*pitch + x1]=0;
 		}
 	} else {
 		for (y1=0;y1<10;y1++)
@@ -685,11 +848,11 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 	}
 }
 
-void mh_print_light(int x,int y,unsigned char *str,int col,int smoothing) {
-	unsigned short *scr=pgGetVramAddr(x-5,y-5);
+void mh_print_light(int x,int y,const char *str,int col,int smoothing) {
+	unsigned short *scr=(unsigned short *)pgGetVramAddr(x-5,y-5);
 	unsigned short buffer[480*20],buffer2[480*20];
 	int len;
-	int i,sel,j,px,py,r,g,b,col1,col2,col3,col4,col0;
+	int j,px,py,r,g,b,col1,col2,col3,col4,col0;
 	
 	memset(buffer,0,480*20*2);
 	memset(buffer2,0,480*20*2);
@@ -749,20 +912,20 @@ void mh_print_light(int x,int y,unsigned char *str,int col,int smoothing) {
 }
 
 // by kwn
-void mh_print(int x,int y,char *str,int col) {
+void mh_print(int x,int y,const char *str,int col) {
 	mh_print_buff(x,y,480,272,str,col,NULL,0);
 }
 
-void mh_printVert(int x,int y,char *str,int col) {
+void mh_printVert(int x,int y,const char *str,int col) {
 	mh_print_buffVert(x,y,480,272,str,col,NULL,0);
 }
 
-void mh_printLimit(int x,int y,int Mx,int My,char *str,int col) {
-	mh_print_buff(x,y,Mx,My,(unsigned char*)str,col,NULL,0);
+void mh_printLimit(int x,int y,int Mx,int My,const char *str,int col) {
+	mh_print_buff(x,y,Mx,My,str,col,NULL,0);
 }
 
 
-int mh_print_buff(int x,int y,int Mx,int My,unsigned char *str,int col,unsigned short *vbuff,int pitch) {
+int mh_print_buff(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch) {
 	unsigned char ch = 0,bef = 0;
 	
 	while(*str != 0) {
@@ -789,7 +952,7 @@ int mh_print_buff(int x,int y,int Mx,int My,unsigned char *str,int col,unsigned 
 	return x;
 }
 
-int mh_print_buffVert(int x,int y,int Mx,int My,unsigned char *str,int col,unsigned short *vbuff,int pitch) {
+int mh_print_buffVert(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch) {
 	unsigned char ch = 0,bef = 0;
 	
 	while(*str != 0) {
@@ -817,19 +980,19 @@ int mh_print_buffVert(int x,int y,int Mx,int My,unsigned char *str,int col,unsig
 }
 
 
-void mh_printSel(int x,int y,unsigned char *str,int col) {	
+void mh_printSel(int x,int y,const char *str,int col) {	
 	pgFillBoxHalfer(4,y,456,y+8);
 	mh_print(x,y,str,col);
 }
 
-void mh_printSel_light(int x,int y,unsigned char *str,int col,int smoothing) {
+void mh_printSel_light(int x,int y,const char *str,int col,int smoothing) {
 	pgFillBoxHalfer(4,y,456,y+8);
 	mh_print_light(x,y,str,col,smoothing);
 }
 
 
-//yoyovoid mh_print(int x,int y,unsigned char *str,int col) {
-int mh_length(unsigned char *str) {
+//yoyovoid mh_print(int x,int y,const char *str,int col) {
+int mh_length(const char *str) {
 	unsigned char ch = 0,bef = 0;
 	int len=0;
 	while(*str != 0) {
@@ -848,8 +1011,8 @@ int mh_length(unsigned char *str) {
 	return len;
 }
 
-int mh_trimlength(unsigned char *str) {
-	unsigned char ch = 0,bef = 0;
+int mh_trimlength(const char *str) {
+	char ch = 0,bef = 0;
 	int len=0;
 	int old_pos=0,pos=0;
 	
@@ -874,7 +1037,7 @@ int mh_trimlength(unsigned char *str) {
 	return len;
 }
 
-void mh_printCenter(unsigned long y,char *str,unsigned long color){
+void mh_printCenter(unsigned long y,const char *str,unsigned long color){
 	unsigned long x=(480-mh_length(str))>>1;
 	mh_print(x,y,str,color);	
 }
@@ -883,7 +1046,7 @@ void mh_printCenter(unsigned long y,char *str,unsigned long color){
 
 void pgDrawFrame(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2, unsigned long color)
 {
-	unsigned char *vptr0;		//pointer to vram
+	char *vptr0;		//pointer to vram
 	unsigned long i;
 
 	vptr0=pgGetVramAddr(0,0);
@@ -899,7 +1062,7 @@ void pgDrawFrame(unsigned long x1, unsigned long y1, unsigned long x2, unsigned 
 
 void pgFillBox(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2, unsigned long color)
 {
-	unsigned char *vptr0;		//pointer to vram
+	char *vptr0;		//pointer to vram
 	unsigned long i, j;
 
 	vptr0=pgGetVramAddr(0,0);
@@ -912,7 +1075,7 @@ void pgFillBox(unsigned long x1, unsigned long y1, unsigned long x2, unsigned lo
 
 void pgFillBoxHalfer(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2 )
 {
-	unsigned char *vptr0;		//pointer to vram
+	char *vptr0;		//pointer to vram
 	unsigned long i, j;
 	unsigned long color;
 
@@ -930,7 +1093,7 @@ void pgFillBoxHalfer(unsigned long x1, unsigned long y1, unsigned long x2, unsig
 void pgFillvram(unsigned long color)
 {
 
-	unsigned char *vptr0;		//pointer to vram
+	char *vptr0;		//pointer to vram
 	unsigned long i;
 
 	vptr0=pgGetVramAddr(0,0);
@@ -954,8 +1117,8 @@ void pgFillAllvram(unsigned long color)
 
 void pgBitBlt(unsigned long x,unsigned long y,unsigned long w,unsigned long h,unsigned long mag,unsigned short *d)
 {
-	unsigned char *vptr0;		//pointer to vram
-	unsigned char *vptr;		//pointer to vram
+	char *vptr0;		//pointer to vram
+	char *vptr;		//pointer to vram
 	unsigned long xx,yy,mx,my;
 	unsigned short *dd;
 
@@ -1177,170 +1340,6 @@ void pgBitBltSt2wobot(unsigned long x,unsigned long y,unsigned long h,unsigned l
 	}
 }
 
-//void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long bgcolor,unsigned char ch,char drawfg,char drawbg,char mag)
-//{
-//	unsigned char *vptr0;		//pointer to vram
-//	unsigned char *vptr;		//pointer to vram
-//	unsigned char *cfont;		//pointer to font
-//	unsigned long cx,cy;
-//	unsigned long b;
-//	char mx,my;
-//
-//	if (ch>255) return;
-//	cfont=font+ch*8;
-//	vptr0=pgGetVramAddr(x,y);
-//	for (cy=0; cy<8; cy++) {
-//		for (my=0; my<mag; my++) {
-//			vptr=vptr0;
-//			b=0x80;
-//			for (cx=0; cx<8; cx++) {
-//				for (mx=0; mx<mag; mx++) {
-//					if ((*cfont&b)!=0) {
-//						if (drawfg) *(unsigned short *)vptr=color;
-//					} else {
-//						if (drawbg) *(unsigned short *)vptr=bgcolor;
-//					}
-//					vptr+=PIXELSIZE*2;
-//				}
-//				b=b>>1;
-//			}
-//			vptr0+=LINESIZE*2;
-//		}
-//		cfont++;
-//	}
-//}
-
-
-void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long bgcolor,unsigned char ch,char drawfg,char drawbg,char mag)
-{
-	unsigned char *vptr0;		//pointer to vram
-	unsigned char *vptr;		//pointer to vram
-	unsigned char *cfont;		//pointer to font
-	unsigned long cx,cy;
-	unsigned long b;
-	char mx,my;
-	unsigned char buffer[10*10];
-	int rr,vv,bb,r,v,bl;
-	int tot,fcol;
-
-
-	if (ch>255) return;
-		
-	memset(buffer,0,10*10);
-	r=color&31;
-	v=(color>>5)&31;
-	bl=(color>>10)&31;
-		
-	cfont=font+ch*8;
-	for (cy=0; cy<8; cy++) {		
-			b=0x80;
-			for (cx=0; cx<8; cx++) {				
-					if ((*cfont&b)) buffer[(cy+1)*10+cx]=1;
-				b=b>>1;
-			}		
-		cfont++;
-	}
-	
-	vptr0=pgGetVramAddr(x,y);
-	for (cy=0; cy<8; cy++) {
-		for (my=0; my<mag; my++) {
-			vptr=vptr0;
-			b=0x80;
-			for (cx=0; cx<8; cx++) {
-				
-				ANTIALIAS_CODE(cx,cy,10)
-		
-				rr=r*tot/ANTIALIAS_FACTOR;
-				vv=v*tot/ANTIALIAS_FACTOR;
-				bb=bl*tot/ANTIALIAS_FACTOR;
-				
-				fcol=(rr)|(vv<<5)|(bb<<10);
-						
-				for (mx=0; mx<mag; mx++) {
-						if (fcol) {
-							if (drawfg) *(unsigned short *)vptr=fcol;
-						} else {
-							if (drawbg) *(unsigned short *)vptr=bgcolor;
-						}
-						vptr+=PIXELSIZE*2;
-					}
-					b=b>>1;
-			}
-			vptr0+=LINESIZE*2;
-		}
-		cfont++;
-	}		
-}
-
-void pgPutChar_shadow(unsigned long x,unsigned long y,unsigned char ch,char drawfg,char drawbg,char mag)
-{
-	unsigned char *vptr0;		//pointer to vram
-	unsigned char *vptr;		//pointer to vram
-	unsigned char *cfont;		//pointer to font
-	unsigned long cx,cy;
-	unsigned long b;
-	char mx,my;
-	unsigned char buffer[10*10];
-	int rr,vv,bb,r,v,bl;
-	int tot,col,fcol;
-
-
-	if (ch>255) return;
-		
-	memset(buffer,0,10*10);
-	
-		
-	cfont=font+ch*8;
-	for (cy=0; cy<8; cy++) {		
-			b=0x80;
-			for (cx=0; cx<8; cx++) {				
-					if ((*cfont&b)) buffer[(cy+1)*10+cx]=1;
-				b=b>>1;
-			}		
-		cfont++;
-	}
-	
-	vptr0=pgGetVramAddr(x,y);
-	for (cy=0; cy<8; cy++) {
-		for (my=0; my<mag; my++) {
-			vptr=vptr0;
-			b=0x80;
-			for (cx=0; cx<8; cx++) {
-				
-				ANTIALIAS_CODE(cx,cy,10)
-				
-				if (tot) {			
-					for (mx=0; mx<mag; mx++) {
-						
-						col=*(unsigned short *)vptr;
-						r=col&31; v=(col>>5)&31; b=(col>>10)&31;
-						rr=r-tot;if (rr<0) rr=0;
-						vv=v-tot;if (vv<0) vv=0;
-						bb=b-tot;if (bb<0) bb=0;
-							
-						fcol=(rr)|(vv<<5)|(bb<<10);
-						
-						if (fcol) {
-							if (drawfg) *(unsigned short *)vptr=fcol;
-						} else {
-							if (drawbg) *(unsigned short *)vptr=0;
-						}
-						
-						vptr+=PIXELSIZE*2;
-					}										
-				}
-				
-					b=b>>1;
-			}
-			vptr0+=LINESIZE*2;
-		}
-		cfont++;
-	}		
-}
-
-
-
-
 void pgScreenFrame(long mode,long frame)
 {	
 	pg_screenmode=mode;
@@ -1386,7 +1385,6 @@ void pgScreenFlipV2()
 
 int get_pad(void)
 {
-	static int n=0;
 	SceCtrlData paddata;
 
 	memset(&paddata,0,sizeof(paddata));
@@ -1407,7 +1405,6 @@ int get_pad(void)
 
 int get_pad2(int *lx,int *ly)
 {
-	static int n=0;
 	SceCtrlData paddata;
 
 	memset(&paddata,0,sizeof(paddata));
@@ -1561,7 +1558,7 @@ void pgBitBltFull(unsigned long *d, int Height,int px,int py)
 		if (dy >= 100000) {
 			dy-=100000;
 			for (x = 8; x < 248; x+=2) {
-				cpy2x(vptr, PBlend(*(dl-128/*256*/), *dl++));
+				cpy2x(vptr, PBlend(*(dl-128/*256*/), *dl+1));
 				vptr+=2;
 			}
 			vptr0 += (LINESIZE/2);
@@ -1736,9 +1733,9 @@ void pgPrintDec(int x,int y,short col,unsigned int dec)
 
 void pgPrintDecTrim(int x,int y,short col,unsigned int dec)
 {
-    char string[12],stringfinal[12];
+    char string[12];
     int i,a;
-    
+
     for(i=0;i<11;i++) {
         a = dec % 10;
     	dec/=10;
@@ -1747,16 +1744,16 @@ void pgPrintDecTrim(int x,int y,short col,unsigned int dec)
     }
     string[i]=0;
     a=0;
-    while ((string[a]=='0')&&(a<i-1)) a++;            	    
+    while ((string[a]=='0')&&(a<i-1)) a++;
     pgPrint(x,y,col,string+a);
 }
 
 
 void pgPrintDecTrimSel(int x,int y,short col,unsigned int dec)
 {
-    char string[12],stringfinal[12];
+    char string[12];
     int i,a;
-    
+
     for(i=0;i<11;i++) {
         a = dec % 10;
     	dec/=10;
@@ -1765,7 +1762,7 @@ void pgPrintDecTrimSel(int x,int y,short col,unsigned int dec)
     }
     string[i]=0;
     a=0;
-    while ((string[a]=='0')&&(a<i-1)) a++;            	    
+    while ((string[a]=='0')&&(a<i-1)) a++;
     pgPrintSel(x,y,col,string+a);
 }
 
@@ -1773,9 +1770,9 @@ void pgPrintDecTrimSel(int x,int y,short col,unsigned int dec)
 
 void image_put(int x0,int y0,IMAGE* img,int fade,int add)
 {
-	unsigned short *dst = pgGetVramAddr(x0,y0);
-	unsigned char* src = img->pixels;
-	unsigned short* src16 = img->pixels;
+	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
+	unsigned short *src = img->pixels;
+	unsigned short *src16 = img->pixels;
 	unsigned short pal[256];
 	s32 r,g,b,fadeR,fadeG,fadeB,aR,aG,aB;
 	int i;
@@ -1834,7 +1831,7 @@ void image_put(int x0,int y0,IMAGE* img,int fade,int add)
 
 void image_put_clip(int x0,int y0,IMAGE* img,int fade,int add,int xsrc,int ysrc,int w,int h,int transp_col)
 {
-	unsigned short *dst = pgGetVramAddr(x0,y0);
+	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
 	unsigned char* src = img->pixels;
 	unsigned short* src16 = img->pixels;
 	unsigned short pal[256];
@@ -1904,7 +1901,7 @@ void image_put_clip(int x0,int y0,IMAGE* img,int fade,int add,int xsrc,int ysrc,
 
 void image_put_mul(int x0,int y0,IMAGE* img,int mul,int add)
 {
-	unsigned short *dst = pgGetVramAddr(x0,y0);
+	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
 	unsigned char* src = img->pixels;
 	unsigned short* src16 = img->pixels;
 	unsigned short pal[256];
@@ -1978,12 +1975,11 @@ void image_put_mul(int x0,int y0,IMAGE* img,int mul,int add)
 void image_put_transp_light(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int smoothing)
 {
 	unsigned short buffer[64*64],buffer2[64*64],buffer3[64*64];
-	unsigned short *dst = pgGetVramAddr(x0,y0);
+	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
 	unsigned char* src = img->pixels;
-	unsigned short pal[256];
 	s32 r,g,b,fadeR,fadeG,fadeB,aR,aG,aB;
 	int col1,col2,col3,col4,col0;
-	int i,j,px,py;
+	int j,px,py;
 	fadeB=(fade>>0)&0xFF;
 	fadeG=(fade>>8)&0xFF;
 	fadeR=(fade>>16)&0xFF;
@@ -2011,7 +2007,7 @@ void image_put_transp_light(int x0,int y0,IMAGE* img,int fade,int add,int transp
 		}
 		memcpy(buffer3,buffer,64*64*2);
 		
-		dst = pgGetVramAddr(x0,y0);
+		dst = (unsigned short *)pgGetVramAddr(x0,y0);
 		for (py=0+8;py<48+8;py++) 
 		for (px=0+8;px<48+8;px++){
 			if (buffer[py*64+px]) {
@@ -2046,7 +2042,7 @@ void image_put_transp_light(int x0,int y0,IMAGE* img,int fade,int add,int transp
 	 	
 		
 		
-		dst = pgGetVramAddr(x0,y0);
+		dst = (unsigned short *)pgGetVramAddr(x0,y0);
 		for (py=0;py<64;py++)
 		for (px=0;px<64;px++) if (buffer[py*64+px]) {
 			col0=dst[LINESIZE*py+px];
@@ -2077,7 +2073,7 @@ void image_put_transp_light(int x0,int y0,IMAGE* img,int fade,int add,int transp
 
 void image_put_transp(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int sz)
 {	
-	unsigned short *dst = pgGetVramAddr(x0,y0);
+	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
 	unsigned char* src = img->pixels;
 	unsigned short pal[256];
 	s32 r,g,b,fadeR,fadeG,fadeB,aR,aG,aB;
@@ -2106,9 +2102,9 @@ void image_put_transp(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,i
 		}
 	}
 	if (img->bit==24){		
-		int x,y;
+		u32 x,y;
 		for(y=0;y<img->height;y++) {
-			dst = pgGetVramAddr(x0,y0+y*sz/256);
+			dst = (unsigned short *)pgGetVramAddr(x0,y0+y*sz/256);
 			for(x=0;x<img->width;x++) {												
 				r=*src++;g=*src++;b=*src++;
 				if (((r<<16)|(g<<8)|b)!=transp_col) {
@@ -2124,7 +2120,7 @@ void image_put_transp(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,i
 	}
 }
 
-void ErrorMsg(char *msg){
+void ErrorMsg(const char *msg){
 	pgFillAllvram(0);
 	pgScreenFrame(1,0);
 	pgPrintCenter(11,(15<<10)|(31<<5)|31,msg);

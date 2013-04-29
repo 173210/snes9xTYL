@@ -22,7 +22,7 @@ __inline uint8 softConvertTile16New (uint8 *pCache,uint32 TileAddr,uint16 *Scree
 {
     register uint8 *tp = &VRAM[TileAddr];
     uint8 *p = tmpCache;
-    uint32 non_zero,tile_opaque,tile_mono;
+    uint32 non_zero,tile_opaque;
     uint8 line;
     yo_uint32 p1;
     yo_uint32 p2;
@@ -1518,8 +1518,8 @@ void softDrawTile16New (uint32 Tile, uint32 Offset, uint32 StartLine, uint32 Lin
     
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
     register uint8 *bp,*headerbp;
@@ -1533,7 +1533,7 @@ void softDrawTile16New (uint32 Tile, uint32 Offset, uint32 StartLine, uint32 Lin
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -1546,9 +1546,9 @@ void softDrawTile16New (uint32 Tile, uint32 Offset, uint32 StartLine, uint32 Lin
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 
@@ -1677,7 +1677,7 @@ void softDrawClippedTile16New (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -1810,11 +1810,11 @@ void softDrawTile16NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, uint
 
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -1825,7 +1825,7 @@ void softDrawTile16NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, uint
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -1838,9 +1838,9 @@ void softDrawTile16NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, uint
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 
@@ -1952,10 +1952,10 @@ void softDrawClippedTile16NewSprite (uint32 Tile, uint32 Offset,
     	GPUPack.GFX.ScreenColors = &IPPU.ScreenColors [(((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette];
     	Col = (((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette;
     }
-    
+
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
+
     if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
@@ -1963,11 +1963,11 @@ void softDrawClippedTile16NewSprite (uint32 Tile, uint32 Offset,
     }
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -1978,7 +1978,7 @@ void softDrawClippedTile16NewSprite (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -2115,14 +2115,14 @@ void softDrawHiResTile16New (uint32 Tile, uint32 Offset, uint32 StartLine, uint3
     	GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
 	   	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
 	}
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -2133,7 +2133,7 @@ void softDrawHiResTile16New (uint32 Tile, uint32 Offset, uint32 StartLine, uint3
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -2276,10 +2276,10 @@ void softDrawHiResClippedTile16New (uint32 Tile, uint32 Offset,
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
 		return;	        
-    //Tile is not blank, 'have to draw it        
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -2290,7 +2290,7 @@ void softDrawHiResClippedTile16New (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -2303,9 +2303,9 @@ void softDrawHiResClippedTile16New (uint32 Tile, uint32 Offset,
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 		Offset -= StartLine*256; //align to tile multiple    
@@ -2420,20 +2420,20 @@ void softDrawTile16ADDNew (uint32 Tile, uint32 Offset, uint32 StartLine, uint32 
     
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
+
+    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col))
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
     	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
     }
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -2444,7 +2444,7 @@ void softDrawTile16ADDNew (uint32 Tile, uint32 Offset, uint32 StartLine, uint32 
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -2566,18 +2566,18 @@ void softDrawClippedTile16ADDNew (uint32 Tile, uint32 Offset,
     
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
+
+    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col))
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
     	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
     }   
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -2588,7 +2588,7 @@ void softDrawClippedTile16ADDNew (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -2712,8 +2712,8 @@ void softDrawTile16ADDNewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, u
     
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
+
+    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col))
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
     	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
@@ -2721,11 +2721,11 @@ void softDrawTile16ADDNewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, u
 
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -2736,7 +2736,7 @@ void softDrawTile16ADDNewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, u
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -2875,11 +2875,11 @@ void softDrawClippedTile16ADDNewSprite (uint32 Tile, uint32 Offset,
     }
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -2890,7 +2890,7 @@ void softDrawClippedTile16ADDNewSprite (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -2903,9 +2903,9 @@ void softDrawClippedTile16ADDNewSprite (uint32 Tile, uint32 Offset,
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 		Offset -= StartLine*256; //align to tile multiple    
@@ -3020,21 +3020,21 @@ void softDrawHiResTile16ADDNew (uint32 Tile, uint32 Offset, uint32 StartLine, ui
     
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    
+
+
 	if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
     {
     	GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
 	   	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
 	}
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -3045,7 +3045,7 @@ void softDrawHiResTile16ADDNew (uint32 Tile, uint32 Offset, uint32 StartLine, ui
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -3200,7 +3200,7 @@ void softDrawHiResClippedTile16ADDNew (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -3339,10 +3339,10 @@ void softDrawTile16ADD1_2New (uint32 Tile, uint32 Offset, uint32 StartLine, uint
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
 		return;	        
-    //Tile is not blank, 'have to draw it        
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -3353,7 +3353,7 @@ void softDrawTile16ADD1_2New (uint32 Tile, uint32 Offset, uint32 StartLine, uint
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -3366,9 +3366,9 @@ void softDrawTile16ADD1_2New (uint32 Tile, uint32 Offset, uint32 StartLine, uint
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 
@@ -3497,7 +3497,7 @@ void softDrawClippedTile16ADD1_2New (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -3630,11 +3630,11 @@ void softDrawTile16ADD1_2NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine
 
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -3645,7 +3645,7 @@ void softDrawTile16ADD1_2NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -3658,9 +3658,9 @@ void softDrawTile16ADD1_2NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 
@@ -3768,15 +3768,15 @@ void softDrawClippedTile16ADD1_2NewSprite (uint32 Tile, uint32 Offset,
         GPUPack.GFX.ScreenColors = DirectColourMaps [(Tile >> 10) & GPUPack.BG.PaletteMask];
         Col = 0;
     }
-    else 
+    else
     {
     	GPUPack.GFX.ScreenColors = &IPPU.ScreenColors [(((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette];
     	Col = (((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette;
     }
-    
+
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
+
     if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
@@ -3784,11 +3784,11 @@ void softDrawClippedTile16ADD1_2NewSprite (uint32 Tile, uint32 Offset,
     }
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -3799,7 +3799,7 @@ void softDrawClippedTile16ADD1_2NewSprite (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -3926,24 +3926,24 @@ void softDrawHiResTile16ADD1_2New (uint32 Tile, uint32 Offset, uint32 StartLine,
     	GPUPack.GFX.ScreenColors = &IPPU.ScreenColors [(((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette];
     	Col = (((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette;
     }
-    
+
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    
-	if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
+
+
+	if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col))
     {
     	GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
 	   	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
 	}
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -3954,7 +3954,7 @@ void softDrawHiResTile16ADD1_2New (uint32 Tile, uint32 Offset, uint32 StartLine,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -4111,7 +4111,7 @@ void softDrawHiResClippedTile16ADD1_2New (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -4234,28 +4234,28 @@ void softDrawTile16SUBNew (uint32 Tile, uint32 Offset, uint32 StartLine, uint32 
         GPUPack.GFX.ScreenColors = DirectColourMaps [(Tile >> 10) & GPUPack.BG.PaletteMask];
         Col = 0;
     }
-    else 
+    else
     {
     	GPUPack.GFX.ScreenColors = &IPPU.ScreenColors [(((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette];
     	Col = (((Tile >> 10) & GPUPack.BG.PaletteMask) << GPUPack.BG.PaletteShift) + GPUPack.BG.StartPalette;
     }
-    
+
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
+
+    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col))
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
     	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
     }
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -4266,7 +4266,7 @@ void softDrawTile16SUBNew (uint32 Tile, uint32 Offset, uint32 StartLine, uint32 
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -4399,7 +4399,7 @@ void softDrawClippedTile16SUBNew (uint32 Tile, uint32 Offset,
     //Tile is not blank, 'have to draw it        
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -4410,7 +4410,7 @@ void softDrawClippedTile16SUBNew (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -4423,9 +4423,9 @@ void softDrawClippedTile16SUBNew (uint32 Tile, uint32 Offset,
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 		Offset -= StartLine*256; //align to tile multiple    
@@ -4543,11 +4543,11 @@ void softDrawTile16SUBNewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, u
 
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -4558,7 +4558,7 @@ void softDrawTile16SUBNewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, u
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -4571,9 +4571,9 @@ void softDrawTile16SUBNewSprite (uint32 Tile, uint32 Offset, uint32 StartLine, u
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 
@@ -4689,19 +4689,19 @@ void softDrawClippedTile16SUBNewSprite (uint32 Tile, uint32 Offset,
     
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
+
+    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col))
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
     	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
     }
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -4712,7 +4712,7 @@ void softDrawClippedTile16SUBNewSprite (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -4849,14 +4849,14 @@ void softDrawHiResTile16SUBNew (uint32 Tile, uint32 Offset, uint32 StartLine, ui
     	GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
 	   	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
 	}
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -4867,7 +4867,7 @@ void softDrawHiResTile16SUBNew (uint32 Tile, uint32 Offset, uint32 StartLine, ui
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -5006,14 +5006,14 @@ void softDrawHiResClippedTile16SUBNew (uint32 Tile, uint32 Offset,
     	GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
 	   	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
 	}
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -5024,7 +5024,7 @@ void softDrawHiResClippedTile16SUBNew (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -5160,14 +5160,14 @@ void softDrawTile16SUB1_2New (uint32 Tile, uint32 Offset, uint32 StartLine, uint
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
     	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
     }
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -5178,7 +5178,7 @@ void softDrawTile16SUB1_2New (uint32 Tile, uint32 Offset, uint32 StartLine, uint
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -5323,7 +5323,7 @@ void softDrawClippedTile16SUB1_2New (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -5460,7 +5460,7 @@ void softDrawTile16SUB1_2NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine
     //Tile is not blank, 'have to draw it        
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -5471,7 +5471,7 @@ void softDrawTile16SUB1_2NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -5484,19 +5484,19 @@ void softDrawTile16SUB1_2NewSprite (uint32 Tile, uint32 Offset, uint32 StartLine
 		case 7:solid_lineclip|=0x8001;break;
 
 	}
-	
+
 	if (solid_lineclip==0xFFFF) return;
-	
+
 	if ( (GPUPack.BG.Buffered [TileNumber<<1] == 2)&&(!solid_lineclip))
 	{
 
-		Offset -= StartLine*256; //align to tile multiple    
+		Offset -= StartLine*256; //align to tile multiple
 	    if (!(Tile & (V_FLIP | H_FLIP)))
 	    {
 		    //NO FLIP
-		  
+
 			bp = pCache+8;
-					
+
 			for (l = 8; l != 0; l--, bp += 8*2, Offset++)
 			   	NORMAL_SUB1_2_16_SPR_O (Offset, (uint16*)bp,index_spr);
 	    }
@@ -5602,19 +5602,19 @@ void softDrawClippedTile16SUB1_2NewSprite (uint32 Tile, uint32 Offset,
     
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
+
+    if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col))
    	{
    		GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
     	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
     }
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -5625,7 +5625,7 @@ void softDrawClippedTile16SUB1_2NewSprite (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -5756,21 +5756,21 @@ void softDrawHiResTile16SUB1_2New (uint32 Tile, uint32 Offset, uint32 StartLine,
     
     uint32 TileNumber;
     pCache = &GPUPack.BG.Buffer[(TileNumber = (TileAddr >> GPUPack.BG.TileShift)) *(128+8)];
-    
-    
+
+
 	if ((!GPUPack.BG.Buffered [TileNumber<<1])|(GPUPack.BG.Buffered [(TileNumber<<1)|1]!=Col)) 
     {
     	GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
 	   	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
 	}
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -5781,7 +5781,7 @@ void softDrawHiResTile16SUB1_2New (uint32 Tile, uint32 Offset, uint32 StartLine,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{
@@ -5920,14 +5920,14 @@ void softDrawHiResClippedTile16SUB1_2New (uint32 Tile, uint32 Offset,
     	GPUPack.BG.Buffered[TileNumber<<1] = softConvertTile16New (pCache, TileAddr,GPUPack.GFX.ScreenColors);
 	   	GPUPack.BG.Buffered[(TileNumber<<1)|1] = Col;
 	}
-    
+
 
     if (GPUPack.BG.Buffered [TileNumber<<1] == 1) //BLANK_TILE
-		return;	        
-    //Tile is not blank, 'have to draw it        
+		return;
+    //Tile is not blank, 'have to draw it
 
 
-    register uint8 *bp,*headerbp;    	
+    register uint8 *bp,*headerbp;
     uint32 solid_lineclip;
     switch (StartLine)
 	{
@@ -5938,7 +5938,7 @@ void softDrawHiResClippedTile16SUB1_2New (uint32 Tile, uint32 Offset,
 		case 4:solid_lineclip=0x0FF0;break;
 		case 5:solid_lineclip=0x1FF8;break;
 		case 6:solid_lineclip=0x3FFC;break;
-		case 7:solid_lineclip=0x7FFE;break;
+		default:solid_lineclip=0x7FFE;break;
 	}
 	switch (StartLine+LineCount) //EndLine
 	{

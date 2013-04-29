@@ -100,18 +100,15 @@ extern int NoiseFreq [32];
 #ifdef ME_SOUND
 SAPUEVENTS __attribute__((aligned(64))) stAPUEvents2;
 SAPUEVENTS  *  const __attribute__((aligned(64))) stAPUEvents_p=(SAPUEVENTS*)UNCACHE_PTR(&stAPUEvents);
-//SAPUEVENTS  *  const __attribute__((aligned(64))) stAPUEvents_p=(SAPUEVENTS*)UNCACHE_PTR(0x10000+sizeof (struct SCPUPACK));//‚Å‚«‚È‚¢
+//SAPUEVENTS  *  const __attribute__((aligned(64))) stAPUEvents_p=(SAPUEVENTS*)UNCACHE_PTR(0x10000+sizeof (struct SCPUPACK));//ï¿½Å‚ï¿½ï¿½È‚ï¿½
 
 int32 __attribute__((aligned(64))) Uncache_APU_Cycles_value;
-volatile int32 __attribute__((aligned(64))) *   const Uncache_APU_Cycles_p=(int*)UNCACHE_PTR(&stAPUEvents_p->APU_Cycles);
 //volatile int32 __attribute__((aligned(64))) *   const Uncache_APU_Cycles_p=(int*)UNCACHE_PTR(&Uncache_APU_Cycles_value);
 //volatile int32 *  const __attribute__((aligned(64))) Uncache_APU_Cycles_p=(int*)UNCACHE_PTR(&(APUuncached.Cycles));
 
 bool8 __attribute__((aligned(64))) Uncache_IAPU_APUExecuting;
-volatile bool8 *  const __attribute__((aligned(64))) Uncache_IAPU_APUExecuting_p = (bool8*)UNCACHE_PTR(&stAPUEvents_p->APUExecuting);
 
-int32 Uncache_APU_OutPorts_value;
-uint8 * const Uncache_APU_OutPorts_p=(uint8*)UNCACHE_PTR(&stAPUEvents_p->APU_OutPorts);
+int32 Uncache_APU_OutPorts_value;\
 //uint8 * const Uncache_APU_OutPorts_p=(uint8*)UNCACHE_PTR(&Uncache_APU_OutPorts_value);
 //uint8 * const Uncache_APU_OutPorts_p=(uint8*)UNCACHE_PTR(APUuncached.OutPorts);
 
@@ -215,7 +212,6 @@ void S9xResetAPU ()
 	apu_ram_write_cpt2_main=0;
 	apu_event1_cpt2_main=0;
 #endif
-	extern char* debug_str;
   
     (APURegistersUncached.YA).W = 0;
     (APURegistersUncached.X) = 0;
@@ -826,7 +822,7 @@ uint8 S9xGetAPUDSP ()
     case APU_ENVX + 0x60:
     case APU_ENVX + 0x70:
 		return ((uint8) S9xGetEnvelopeHeight (reg >> 4));
-		
+
     case APU_ENDX:
 		// To fix speech in Magical Drop 2 6/11/00
 		//	APUPack.APU.DSP[APU_ENDX] = 0;
@@ -839,16 +835,19 @@ uint8 S9xGetAPUDSP ()
 
 bool8 S9xInitAPU ()
 {
-#ifdef PSP		
-	  uint8 *apu_ram;
-	  uint8 *apu_ramc;
-	  uint8 *apu_vars;
-	  
-	  	  	  	  	  
+#ifdef PSP
+	uint8 *apu_ram;
+#ifdef ME_SOUND
+	uint8 *apu_vars;
+#else
+	uint8 *apu_ramc;
+#endif
+
+
 	  apu_ram = (uint8 *) malloc (0x10000 );
 	  //malloc(0x10);
 //    apu_vars=(uint8*)malloc(4*10+65536*4*2+65536*2*2);
-            
+
 //		IAPUuncached = (struct SIAPU *)UNCACHE_PTR(malloc(sizeof(struct SIAPU )));
 //    APUuncached = (struct SAPU *)UNCACHE_PTR(malloc(sizeof(struct SAPU )));
 //    APURegistersUncached = (struct SAPURegisters *)UNCACHE_PTR(malloc(sizeof(struct SAPURegisters )));
@@ -856,7 +855,7 @@ bool8 S9xInitAPU ()
     //IAPU = (struct SIAPU *)(malloc(sizeof(struct SIAPU )));
     //APU = (struct SAPU *)(malloc(sizeof(struct SAPU )));
     //APURegisters = (struct SAPURegisters *)(malloc(sizeof(struct SAPURegisters )));
-#ifdef ME_SOUND 
+#ifdef ME_SOUND
     apu_vars=(uint8*)malloc(4*10+65536*4*2+65536*2);
     apu_cycles_left_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*0);
 //    apu_glob_cycles_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*1);
@@ -869,22 +868,22 @@ bool8 S9xInitAPU ()
     apu_event2_cpt1_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*4);
     apu_event1_cpt2_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*5);
     apu_event2_cpt2_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*6);
-    apu_can_execute_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*7);    
+    apu_can_execute_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*7);
     apu_ram_write_cpt1_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*8);
     apu_ram_write_cpt2_p=(int*)UNCACHE_PTR(((int)apu_vars)+4*9);
-    apu_event1=(int*)UNCACHE_PTR(((int)apu_vars)+4*10);        
+    apu_event1=(int*)UNCACHE_PTR(((int)apu_vars)+4*10);
     apu_event2=(int*)UNCACHE_PTR(((int)apu_vars)+4*10+APU_EVENT_SIZE*4);
     apu_ram_write_log=(unsigned short*)UNCACHE_PTR(((int)apu_vars)+4*10+APU_EVENT_SIZE*4*2);
-#undef apu_cycles_left (*apu_cycles_left_p)
-#undef apu_glob_cycles (*apu_glob_cycles_p)
-#undef apu_event1_cpt1 (*apu_event1_cpt1_p)
-#undef apu_event2_cpt1 (*apu_event2_cpt1_p)
-#undef apu_event1_cpt2 (*apu_event1_cpt2_p)
-#undef apu_event2_cpt2 (*apu_event2_cpt2_p)
-#undef apu_init_after_load (*apu_init_after_load_)
-#undef apu_can_execute (*apu_can_execute_p)
-#undef apu_ram_write_cpt1 (*apu_ram_write_cpt1_p)
-#undef apu_ram_write_cpt2 (*apu_ram_write_cpt2_p)
+#undef apu_cycles_left
+#undef apu_glob_cycles
+#undef apu_event1_cpt1
+#undef apu_event2_cpt1
+#undef apu_event1_cpt2
+#undef apu_event2_cpt2
+#undef apu_init_after_load
+#undef apu_can_execute
+#undef apu_ram_write_cpt1
+#undef apu_ram_write_cpt2
 
  //apu_cycles_left_p=&stAPUEvents_p->apu_cycles_left;
  //apu_glob_cycles_p=&stAPUEvents_p->apu_glob_cycles;

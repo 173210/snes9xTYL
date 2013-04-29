@@ -178,11 +178,11 @@ int endUSBdrivers();
 
 float vfpumulsin(float mul,float angle,float range);
 
-int inputBoxOK(char *msg);
+int inputBoxOK(const char *msg);
 void msgBox(const char *msg,int delay_vblank=10);
 int msgBoxLines(const char *msg,int delay_vblank=10);
 int load_rom_settings(int game_crc32);
-int save_rom_settings(int game_crc32,char *name);
+int save_rom_settings(int game_crc32,const char *name);
 void check_battery();
 
 extern int pg_drawframe;
@@ -307,7 +307,8 @@ int32 os9x_ShowSub;
 int os9x_render;
 int os9x_softrendering,os9x_smoothing;
 
-int os9x_fskipvalue,os9x_autofskip_SkipFrames;
+int os9x_fskipvalue;
+uint32 os9x_autofskip_SkipFrames;
 int os9x_CyclesPercentage;
 int os9x_apuenabled;
 int* os9x_apuenabled_ptr;
@@ -335,7 +336,6 @@ int in_emu;
 static struct timeval	s_tvStart;
 static int				s_iFrame,s_iFrameAuto,s_iFrameReal;
 int				s_TotalFrame;
-static int				s_iFlip = 0;
 
 
 int os9x_paused=0;
@@ -387,7 +387,7 @@ extern "C"{
 int psp_ExitCheck(){
 	return !g_bLoop;
 }
-void ErrorExit(char* msg)
+void ErrorExit(const char* msg)
 {
 	FILE* f;
 	char tmp_str[256];
@@ -990,11 +990,9 @@ void me_GFX_Execute();
 int me_MixSound(me_sound_t *p){
 	int i;
 	u32 *src,*dst;
-	uint8 *apu_ram_save;
 	memcpy(&APUPack,(void*)UNCACHE_PTR(&APUPack),sizeof(struct SAPUPACK));
 	memcpy(&SoundData,(void*)UNCACHE_PTR(&SoundData),sizeof(SSoundData));
 	memcpy((void*)NORMAL_PTR(IAPU.RAM),(void*)UNCACHE_PTR(IAPU.RAM),0x10000);
-	volatile int dummy=0;
 	int apuenabled = (*(p->os9x_apuenabled_ptr)==2)&&(!(*(p->os9x_paused_ptr)));
 	APUPack.apu_event1_cpt1_me=apu_event1_cpt1;
 	APUPack.apu_ram_write_cpt1_me=apu_ram_write_cpt1;
@@ -1198,7 +1196,7 @@ int me_MixSound(me_sound_t *p){
 }
 #endif
 
-void debug_dump(char* filename);
+void debug_dump(const char* filename);
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1272,7 +1270,7 @@ ClipDataFix debug_ClipDataFix;
 //int debug_Line[20]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 //int debug_Value[20]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-void debug_dump(char* filename)
+void debug_dump(const char* filename)
 {
 return;
 #if 0
@@ -1461,7 +1459,9 @@ return;
 ////////////////////////////////////////////////////////////////////////////////////////
 int S9xProcessSound (SceSize ,void *) {
 	int i;
+#ifndef ME_SOUND
 	uint8 *apu_ram_save;
+#endif
 	u32 sample_count=(stSoundStatus.buffer_size)>>1;
 //debug_log( "Thread start!" );
 	memset((char*)SoundBuffer[0],0,sample_count*2);
@@ -1798,8 +1798,8 @@ void S9xSyncSpeed()
 		if (IPPU.RenderThisFrame) {//if we have draw a frame, sync speed
 		  if ( timercmp( &next1, &now, < ) ){
 		  	//too slow
-				unsigned int lag;
-				/*lag = (now.tv_sec - next1.tv_sec) * 1000000 + now.tv_usec - next1.tv_usec;
+				/*unsigned int lag;
+				lag = (now.tv_sec - next1.tv_sec) * 1000000 + now.tv_usec - next1.tv_usec;
 				if ( lag >= 1000000*1 ){ //1s lag => reset
 					next1 = now;
 				} else if (lag <= MIN_AUTOFRAME_LAG) waited=1;*/
@@ -2111,7 +2111,6 @@ void SetGeCallback(void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit) {
-	char			buf[128];
 
 
 	//if (os9x_hack & HIRES_FIX) {
@@ -2310,8 +2309,6 @@ void S9xProcessEvents( bool8 block ) {
 		os9x_TurboMode^=1;
 	}
 	if ((os9x_specialaction&OS9X_SAVE_STATE)&& (!(os9x_specialaction_old&OS9X_SAVE_STATE))) {
-		SceIoStat stat;
-
 		if ((in_emu==1)&&os9x_netplay) {		//net pause
 			net_flush_net(2);
 		}
@@ -2356,7 +2353,7 @@ void S9xProcessEvents( bool8 block ) {
 	}
 	if (os9x_autosavetimer) {
 		struct timeval now;
-		u32 diff;
+		int diff;
 		sceKernelLibcGettimeofday( &now, 0 );
 		diff  = (now.tv_sec - os9x_autosavetimer_tv.tv_sec) * 1000000 + now.tv_usec - os9x_autosavetimer_tv.tv_usec;
 		diff/=1000000;
@@ -2651,9 +2648,11 @@ int main(int argc,char **argv) {
 	//pspDebugProfilerClear();
 	/* Enable profiling */
 	//pspDebugProfilerEnable();
+#if defined(ME_SOUND) || defined(HOME_HOOK)
 	char str[256];
 	int devkit_version = sceKernelDevkitVersion();
 	SceUID mod;
+#endif
 #ifdef ME_SOUND // [Shoey/Chilly]
 	// have to do this before ME enabled or BOOOOOOOMMMMMM!!!!!!
 	scePowerSetClockFrequency(333,333,166);
@@ -2799,7 +2798,7 @@ void low_level_init(){
 
 	SetGeCallback();
 	//OSK
-	danzeff_load16(LaunchDir);
+	//danzeff_load16(LaunchDir);
 
 	//
 	//sprintf(str_tmp,"%sDATA/msg.ini",LaunchDir);
@@ -3008,7 +3007,7 @@ int scroll_message_input(char *name,int limit) {
 					}
 					break;
 			}
-			mh_printSel(200,20,(unsigned char*)name,0xFFFF);
+			mh_printSel(200,20,name,0xFFFF);
 			danzeff_render();
 
 			sceDisplayWaitVblankStart();
@@ -3072,15 +3071,15 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 
 		mh_print(0,0,title,31|(31<<5)|(31<<10));
 		strcpy(str_tmp,psp_msg_string(SCROLL_TITLE));
-		mh_print(479-mh_length((unsigned char*)str_tmp),0,(char*)str_tmp,31|(31<<5)|(31<<10));
+		mh_print(479-mh_length(str_tmp),0,(char*)str_tmp,31|(31<<5)|(31<<10));
 		sprintf(str_tmp,"  " SJIS_UP "  " SJIS_DOWN "           L R              ");
-		mh_print(479-mh_length((unsigned char*)str_tmp),0,(char*)str_tmp,20|(31<<5)|(18<<10));
+		mh_print(479-mh_length(str_tmp),0,(char*)str_tmp,20|(31<<5)|(18<<10));
 
 		if (!intro_message) {
 			strcpy(str_tmp,psp_msg_string(SCROLL_STATUS_1));
-			mh_print(479-mh_length((unsigned char*)str_tmp),262,(char*)str_tmp,31|(31<<5)|(31<<10));
+			mh_print(479-mh_length(str_tmp),262,(char*)str_tmp,31|(31<<5)|(31<<10));
 			sprintf(str_tmp,SJIS_CROSS "       SELECT       ");
-			mh_print(479-mh_length((unsigned char*)str_tmp),262,(char*)str_tmp,20|(31<<5)|(18<<10));
+			mh_print(479-mh_length(str_tmp),262,(char*)str_tmp,20|(31<<5)|(18<<10));
 		}
 
 
@@ -3132,7 +3131,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 							char *p,*q;
 							strcpy(str_tmp,msg_lines[l]);
 							p=str_tmp;
-							while (q=strstr(strupr(p),tofind)) {
+							while ((q=strstr(strupr(p),tofind))) {
 								while (p<q) *p++=' ';
 								p=q+strlen(tofind);
 							}
@@ -3454,8 +3453,6 @@ void welcome_message(){
 		sceKernelLibcTime(&cur_time);
 		cur_time+=os9x_timezone*60+os9x_daylsavings*3600;;
 		tsys=localtime(&cur_time);
-		int diff=((abs(tsys->tm_mday-tfile->day)>=MESSAGE_DAYS)||(tsys->tm_mon+1!=tfile->month)||
-						(tsys->tm_year+1900!=tfile->year));
 		show_msg=0;
 	}
 	if (show_msg) show_message();

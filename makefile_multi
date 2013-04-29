@@ -1,10 +1,17 @@
 TARGET = snes9xTYL
-INCDIR = . $(PSPSDK)/include psp psp/me psp/openspc++ psp/adhoc zlib danzeff
+
+ifdef ME_ACTIVE
+EMUNAME_VERSION = Snes9xTYLmecm 0.4.2 Mod
+else
+EMUNAME_VERSION = Snes9xTYLcm 0.4.2 Mod
+endif
+
+INCDIR = psp psp/me psp/openspc++ psp/adhoc zlib danzeff
 
 
 
 CFLAGS=  -O3 -g -G0 -Wall \
-	-DFW3X -DPSP -D__PSP__ #-DPSP_FW_VERSION=360 -DBUILD_PRX=1  \
+	-DFW3X -DPSP -D__PSP__ -DEMUNAME_VERSION="\"$(EMUNAME_VERSION)\"" #-DPSP_FW_VERSION=360 -DBUILD_PRX=1 \
 	#-mno-fp-exceptions -mno-check-zero-division -ffast-math
 	#-mgp32 -mlong32 -fstrict-aliasing \
 	#-frename-registers -fschedule-insns2 -fomit-frame-pointer -fforce-addr \
@@ -29,10 +36,7 @@ EXTRA_TARGETS = EBOOT.PBP
 EXTRA_CLEAN =
 
 # use my own target - thx to zelurker for pointing this to me in neocdpsp ;-)
-PSP_EBOOT_TITLE = toto
-ifdef ME_ACTIVE
-PSP_EBOOT_TITLE = toto
-endif
+PSP_EBOOT_TITLE = $(EMUNAME_VERSION)
 PSP_EBOOT_ICON = data/icon0.png
  
 # Object files
@@ -86,13 +90,6 @@ CFLAGS+= -DNOKERNEL
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-
-PARAM.SFO: psp/psp.h
-ifdef ME_ACTIVE
-	sh make_version_me
-else
-	sh make_version_user
-endif
 
 # Dependecies
 tile_psp.o: tile_psp.h

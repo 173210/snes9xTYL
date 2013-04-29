@@ -27,7 +27,7 @@ extern "C" {
 int OSPC_Init(void);
 
 int OSPC_Update();
-int OSPC_Load(char *fname);
+int OSPC_Load(const char *fname);
 int OSPC_LoadBuffer(char *buff,int len);
 void OSPC_PlayBuffer(char *buff,int len,int release,int vol);
 void OSPC_Close(void);

@@ -13,8 +13,11 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "psp.h"
-#include "adhoc.h"
 #include <pspwlan.h>
+#include <pspnet.h>
+#include <pspnet_adhoc.h>
+#include <pspnet_adhocctl.h>
+#include <pspnet_adhocmatching.h>
 #include <stdio.h>
 
 #include "loadutil.h" // Must be linked with KMEM memory access
@@ -27,12 +30,8 @@
 ////////////////////////////////////////////////////////////////////
 // system entries
 
-// general init
-int sceNetInit(u32 r4, u32 r5, u32 r6, u32 r7, u32 r8);
-int sceNetTerm();
-
-char g_mac[6];
-int g_unk1=0;
+unsigned char g_mac[6];
+int g_matchingid=0;
 int g_matchEvent=0;
 int g_matchOptLen=0;
 char g_matchOptData[1000];
@@ -51,10 +50,10 @@ int adhocLoadDrivers(SceModuleInfo* modInfoPtr)
 	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/ifhandle.prx"); // kernel
 	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/memab.prx");
 	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/pspnet_adhoc_auth.prx");
-	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/pspnet.prx");	
+	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/pspnet.prx");
 	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/pspnet_adhoc.prx");
 	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/pspnet_adhocctl.prx");
-	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/pspnet_adhoc_matching.prx");	
+	LoadAndStartAndPatch(modInfoPtr, "flash0:/kd/pspnet_adhoc_matching.prx");
 	FlushCaches();
 #endif
 	
@@ -64,30 +63,30 @@ int adhocLoadDrivers(SceModuleInfo* modInfoPtr)
 char temp[100];
 char debug[1000];
 
-void matchingCallback(int unk1, int event, char *mac2, int optLen, char *optData)
+void matchingCallback(int matchingid, int event, unsigned char *mac, int optlen, void *optdata)
 {
 	// This is called when there is an event, dont seem to be able to call
 	// procs from here otherwise it causes a crash
 
-	if(event==MATCHING_JOINED)
+	if(event==PSP_ADHOC_MATCHING_EVENT_HELLO)
 	{
-		AddPsp(mac2, optData, optLen);
+		AddPsp(mac, (char *)optdata, optlen);
 	}
-	else if(event==MATCHING_DISCONNECT)
+	else if(event==PSP_ADHOC_MATCHING_EVENT_DISCONNECT)
 	{
-		DelPsp(mac2);
+		DelPsp(mac);
 	}
 	else
 	{
-		g_unk1 = unk1;
+		g_matchingid = matchingid;
 		g_matchEvent = event;
-		g_matchOptLen = optLen;
+		g_matchOptLen = optlen;
 
 		// Copy across the optional data
-		strncpy(g_matchOptData, optData, optLen);
+		strncpy(g_matchOptData, optdata, optlen);
 
 		// And the MAC address
-		memcpy(g_mac, mac2, sizeof(char) * 6);
+		memcpy(g_mac, mac, sizeof(char) * 6);
 
 		matchChanged = 1;
 	}
@@ -95,13 +94,6 @@ void matchingCallback(int unk1, int event, char *mac2, int optLen, char *optData
 
 int pdpId = 0;
 int matchingId = 0;
-
-void printPdpStat(pdpStatStruct *stat)
-{
-	printf("PdpStat - pdpId=%x, mac=%x%x%x%x%x%x, port=%x, rcvdData=%x\n", stat->pdpId, 
-		stat->mac[0], stat->mac[1], stat->mac[2], stat->mac[3], stat->mac[4], stat->mac[5],
-		stat->port, stat->rcvdData);
-}
 
 SceCtrlData pspPad;
 bool g_NetInit = false;
@@ -115,7 +107,7 @@ bool g_NetAdhocMatchingStart = false;
 
 int adhocInit(char *MatchingData)
 {
-	char mac[6];
+	unsigned char mac[6];
 	struct productStruct product;
 
 	ClearPspList();
@@ -143,7 +135,7 @@ int adhocInit(char *MatchingData)
 	g_NetAdhocctlInit = true;
 
     // Connect
-    err = sceNetAdhocctlConnect("");
+    err = sceNetAdhocctlConnect(NULL);
     if (err != 0)
         return err;
 	g_NetAdhocctlConnect = true;
@@ -207,14 +199,14 @@ int adhocInit(char *MatchingData)
 	
 	printf2("sceNetAdhocMatchingCreate()\n");
 	matchingId = sceNetAdhocMatchingCreate( 3,
-											0xa,
-											0x22b,
-											0x800,
-											0x2dc6c0,
-											0x5b8d80,
-											3,
-											0x7a120,
-											matchingCallback);
+						0xa,
+						0x22b,
+						0x800,
+						0x2dc6c0,
+						0x5b8d80,
+						3,
+						0x7a120,
+						(pspAdhocMatchingCallback)matchingCallback);
 
 	if(matchingId < 0)
 	{
@@ -262,216 +254,6 @@ int g_Server = 0;
 #define PSP_SELECTING	3
 #define PSP_WAIT_EST	4
 #define PSP_ESTABLISHED	5
-
-////////////////////////////////////////////////////////////////////////////////////
-// This is just a quick and easy procedure to wait for a PSP to join, the following
-// is what is done in Lumines:
-//
-//   - Wait for a PSP to join
-//   - Add the PSP to the list of machines available
-//   - Wait for the user to select a PSP
-//   - Call sceMatchingSelectTarget
-//   - The other PSP will receive MATCHING_SELECTED event
-//   - The other PSP displays a message to accept or cancel
-//   - If accepted the other PSP calls sceMatchingSelectTarget
-//   - The first PSP receives MATCHING_ESTABLISHED
-// 
-// In lumines they then close the connection and start a new adhoc connection
-// with just those two machines in it.
-///////////////////////////////////////////////////////////////////////////////////
-int adhocSelect(void)
-{
-	SceCtrlData m_PspPad;
-	int err = 0;
-	char mac[10];
-	char name[256];
-	int waitAccept = 0;
-	int currentState = PSP_LISTING;
-	int oldButtons = 0;
-	char tempStr[100];
-	char str[256];
-	
-	sceDisplaySetMode( 0, SCREEN_WIDTH, SCREEN_HEIGHT );
-	sceDisplaySetFrameBuf( (char*)VRAM_ADDR, 512, 1, 1 );
-	pgFillAllvram(0);pgScreenFrame(2,0);
-
-	for(;;)
-	{
-		sceCtrlReadBufferPositive(&m_PspPad, 1);
-		//pspDebugScreenSetTextColor(0xFFFF);
-
-		switch(currentState)
-		{
-			case PSP_LISTING:
-			{
-				//pspDebugScreenInit();
-				//pspDebugScreenPrintf("Select a server to connect to, or triangle to return\n\n\n");
-				pgFillAllvram(0);pgScreenFrame(2,0);
-				mh_print(0,0,psp_msg_string(ADHOC_SELECTORRETURN),0xFFFF);
-				
-				DisplayPspList();
-				
-				pgScreenFlipV();
-
-				g_Server = 0;
-
-				if(m_PspPad.Buttons != oldButtons)
-				{
-					if(m_PspPad.Buttons & PSP_CTRL_UP)
-					{
-						UpList();
-					}
-
-					if(m_PspPad.Buttons & PSP_CTRL_DOWN)
-					{
-						DownList();
-					}
-
-					if(m_PspPad.Buttons & PSP_CTRL_CROSS)
-					{
-						if(GetPspEntry(mac, name) > 0)
-						{
-							currentState = PSP_SELECTING;
-							sceNetAdhocMatchingSelectTarget(matchingId, mac, 0, 0);
-						}
-					}
-
-					if(m_PspPad.Buttons & PSP_CTRL_TRIANGLE)
-						return -1;
-				}		
-				if(matchChanged)
-				{
-					if(g_matchEvent == MATCHING_SELECTED)
-					{
-						memcpy(mac, g_mac, 6);
-						strcpy(name, g_matchOptData);
-						currentState = PSP_SELECTED;
-					}
-				}
-				break;
-			}
-			case PSP_SELECTING:
-			{
-				//pspDebugScreenInit();
-				pgFillAllvram(0);pgScreenFrame(2,0);				
-				
-				sceNetEtherNtostr(mac, tempStr);
-				//printf("Waiting for %s to accept the connection\nTo cancel press O\n", tempStr);
-				sprintf(str,psp_msg_string(ADHOC_WAITING), tempStr);
-				mh_print(0,0,str,0xFFFF);
-				pgScreenFlipV();
-
-				if(m_PspPad.Buttons != oldButtons)
-				{
-					if(m_PspPad.Buttons & PSP_CTRL_CIRCLE)
-					{
-						sceNetAdhocMatchingCancelTarget(matchingId, mac);
-						currentState = PSP_LISTING;
-					}
-				}
-
-				if(matchChanged)
-				{
-					if(g_matchEvent == MATCHING_SELECTED)
-					{
-						sceNetAdhocMatchingCancelTarget(matchingId, mac);
-					}
-					else if(g_matchEvent == MATCHING_ESTABLISHED)
-					{
-						currentState = PSP_ESTABLISHED;
-					}
-					else if(g_matchEvent == MATCHING_REJECTED)
-					{
-						currentState = PSP_LISTING;
-					}
-				}
-				break;
-			}
-			case PSP_SELECTED:
-			{
-				g_Server = 1;
-
-				//pspDebugScreenInit();
-				pgFillAllvram(0);pgScreenFrame(2,0);
-				
-				sceNetEtherNtostr(mac, tempStr);
-				sprintf(str,psp_msg_string(ADHOC_REQUESTED), tempStr);
-				mh_print(0,0,str,0xFFFF);
-				pgScreenFlipV();
-
-				if(m_PspPad.Buttons != oldButtons)
-				{
-					if(m_PspPad.Buttons & PSP_CTRL_CIRCLE)
-					{
-						sceNetAdhocMatchingCancelTarget(matchingId, mac);
-						currentState = PSP_LISTING;
-					}
-					if(m_PspPad.Buttons & PSP_CTRL_CROSS)
-					{
-						sceNetAdhocMatchingSelectTarget(matchingId, mac, 0, 0);
-						currentState = PSP_WAIT_EST;
-					}
-				}
-
-				if(matchChanged)
-				{
-					if(g_matchEvent == MATCHING_CANCELED)
-					{
-						currentState = PSP_LISTING;
-					}
-				}
-				break;
-			}
-			case PSP_WAIT_EST:
-			{
-				if(matchChanged)
-				{
-					if(g_matchEvent == MATCHING_ESTABLISHED)
-					{
-						currentState = PSP_ESTABLISHED;
-					}
-				}
-				break;
-			}
-		}
-
-		matchChanged = 0;
-		oldButtons = m_PspPad.Buttons;
-
-		if(currentState == PSP_ESTABLISHED)
-			break;
-
-		sceDisplayWaitVblankStart();
-	}
-
-	char macAddr[10];
-	char *tempMac;
-	if(g_Server)
-	{
-		sceWlanGetEtherAddr(macAddr);
-		tempMac = macAddr;
-	}
-	else
-	{
-		tempMac = mac;
-	}
-
-	sceNetEtherNtostr(tempMac, tempStr);
-
-	char ssid[10];
-	sprintf(ssid, "%c%c%c%c%c%c", tempStr[9], tempStr[10], tempStr[12], tempStr[13], 
-			tempStr[15], tempStr[16]);
-	adhocReconnect(ssid);
-
-	// We only get here if both PSP's have agreed to connect
-	//pspDebugScreenInit();
-	//pspDebugScreenPrintf("Connected\n");
-	pgFillAllvram(0);pgScreenFrame(2,0);
-	mh_print(0,0,psp_msg_string(ADHOC_CONNECTED),0xFFFF);
-	pgScreenFlipV();
-
-	return 0;
-}
 
 int adhocReconnect(char *ssid)
 {
@@ -602,7 +384,7 @@ int adhocReconnect(char *ssid)
         sceKernelDelayThread(50*1000); // 50ms
     }
 
-	char macAddr[10];
+	unsigned char macAddr[6];
 	sceWlanGetEtherAddr(macAddr);
 
 	printf2("sceNetAdhocPdpCreate\n");
@@ -617,9 +399,219 @@ int adhocReconnect(char *ssid)
 		return -1;
 	}
 	g_NetAdhocPdpCreate = true;
+
+	return 0;
 }
 
-int adhocSend(void *buffer, int length)
+////////////////////////////////////////////////////////////////////////////////////
+// This is just a quick and easy procedure to wait for a PSP to join, the following
+// is what is done in Lumines:
+//
+//   - Wait for a PSP to join
+//   - Add the PSP to the list of machines available
+//   - Wait for the user to select a PSP
+//   - Call sceMatchingSelectTarget
+//   - The other PSP will receive MATCHING_SELECTED event
+//   - The other PSP displays a message to accept or cancel
+//   - If accepted the other PSP calls sceMatchingSelectTarget
+//   - The first PSP receives PSP_ADHOC_MATCHING_EVENT_COMPLETE
+// 
+// In lumines they then close the connection and start a new adhoc connection
+// with just those two machines in it.
+///////////////////////////////////////////////////////////////////////////////////
+int adhocSelect(void)
+{
+	SceCtrlData m_PspPad;
+	unsigned char mac[6];
+	char name[256];
+	int currentState = PSP_LISTING;
+	int oldButtons = 0;
+	char tempStr[100];
+	char str[256];
+	
+	sceDisplaySetMode( 0, SCREEN_WIDTH, SCREEN_HEIGHT );
+	sceDisplaySetFrameBuf( (char*)VRAM_ADDR, 512, 1, 1 );
+	pgFillAllvram(0);pgScreenFrame(2,0);
+
+	for(;;)
+	{
+		sceCtrlReadBufferPositive(&m_PspPad, 1);
+		//pspDebugScreenSetTextColor(0xFFFF);
+
+		switch(currentState)
+		{
+			case PSP_LISTING:
+			{
+				//pspDebugScreenInit();
+				//pspDebugScreenPrintf("Select a server to connect to, or triangle to return\n\n\n");
+				pgFillAllvram(0);pgScreenFrame(2,0);
+				mh_print(0,0,psp_msg_string(ADHOC_SELECTORRETURN),0xFFFF);
+				
+				DisplayPspList();
+				
+				pgScreenFlipV();
+
+				g_Server = 0;
+
+				if(m_PspPad.Buttons != oldButtons)
+				{
+					if(m_PspPad.Buttons & PSP_CTRL_UP)
+					{
+						UpList();
+					}
+
+					if(m_PspPad.Buttons & PSP_CTRL_DOWN)
+					{
+						DownList();
+					}
+
+					if(m_PspPad.Buttons & PSP_CTRL_CROSS)
+					{
+						if(GetPspEntry(mac, name) > 0)
+						{
+							currentState = PSP_SELECTING;
+							sceNetAdhocMatchingSelectTarget(matchingId, mac, 0, 0);
+						}
+					}
+
+					if(m_PspPad.Buttons & PSP_CTRL_TRIANGLE)
+						return -1;
+				}		
+				if(matchChanged)
+				{
+					if(g_matchEvent ==  PSP_ADHOC_MATCHING_EVENT_JOIN)
+					{
+						memcpy(mac, g_mac, 6);
+						strcpy(name, g_matchOptData);
+						currentState = PSP_SELECTED;
+					}
+				}
+				break;
+			}
+			case PSP_SELECTING:
+			{
+				//pspDebugScreenInit();
+				pgFillAllvram(0);pgScreenFrame(2,0);
+				
+				sceNetEtherNtostr(mac, tempStr);
+				//printf("Waiting for %s to accept the connection\nTo cancel press O\n", tempStr);
+				sprintf(str,psp_msg_string(ADHOC_WAITING), tempStr);
+				mh_print(0,0,str,0xFFFF);
+				pgScreenFlipV();
+
+				if(m_PspPad.Buttons != oldButtons)
+				{
+					if(m_PspPad.Buttons & PSP_CTRL_CIRCLE)
+					{
+						sceNetAdhocMatchingCancelTarget(matchingId, mac);
+						currentState = PSP_LISTING;
+					}
+				}
+
+				if(matchChanged)
+				{
+					if(g_matchEvent == PSP_ADHOC_MATCHING_EVENT_JOIN)
+					{
+						sceNetAdhocMatchingCancelTarget(matchingId, mac);
+					}
+					else if(g_matchEvent == PSP_ADHOC_MATCHING_EVENT_COMPLETE)
+					{
+						currentState = PSP_ESTABLISHED;
+					}
+					else if(g_matchEvent == PSP_ADHOC_MATCHING_EVENT_REJECT)
+					{
+						currentState = PSP_LISTING;
+					}
+				}
+				break;
+			}
+			case PSP_SELECTED:
+			{
+				g_Server = 1;
+
+				//pspDebugScreenInit();
+				pgFillAllvram(0);pgScreenFrame(2,0);
+				
+				sceNetEtherNtostr(mac, tempStr);
+				sprintf(str,psp_msg_string(ADHOC_REQUESTED), tempStr);
+				mh_print(0,0,str,0xFFFF);
+				pgScreenFlipV();
+
+				if(m_PspPad.Buttons != oldButtons)
+				{
+					if(m_PspPad.Buttons & PSP_CTRL_CIRCLE)
+					{
+						sceNetAdhocMatchingCancelTarget(matchingId, mac);
+						currentState = PSP_LISTING;
+					}
+					if(m_PspPad.Buttons & PSP_CTRL_CROSS)
+					{
+						sceNetAdhocMatchingSelectTarget(matchingId, mac, 0, 0);
+						currentState = PSP_WAIT_EST;
+					}
+				}
+
+				if(matchChanged)
+				{
+					if(g_matchEvent == PSP_ADHOC_MATCHING_EVENT_CANCEL)
+					{
+						currentState = PSP_LISTING;
+					}
+				}
+				break;
+			}
+			case PSP_WAIT_EST:
+			{
+				if(matchChanged)
+				{
+					if(g_matchEvent == PSP_ADHOC_MATCHING_EVENT_COMPLETE)
+					{
+						currentState = PSP_ESTABLISHED;
+					}
+				}
+				break;
+			}
+		}
+
+		matchChanged = 0;
+		oldButtons = m_PspPad.Buttons;
+
+		if(currentState == PSP_ESTABLISHED)
+			break;
+
+		sceDisplayWaitVblankStart();
+	}
+
+	unsigned char macAddr[6];
+	unsigned char *tempMac;
+	if(g_Server)
+	{
+		sceWlanGetEtherAddr(macAddr);
+		tempMac = macAddr;
+	}
+	else
+	{
+		tempMac = mac;
+	}
+
+	sceNetEtherNtostr(tempMac, tempStr);
+
+	char ssid[10];
+	sprintf(ssid, "%c%c%c%c%c%c", tempStr[9], tempStr[10], tempStr[12], tempStr[13], 
+			tempStr[15], tempStr[16]);
+	adhocReconnect(ssid);
+
+	// We only get here if both PSP's have agreed to connect
+	//pspDebugScreenInit();
+	//pspDebugScreenPrintf("Connected\n");
+	pgFillAllvram(0);pgScreenFrame(2,0);
+	mh_print(0,0,psp_msg_string(ADHOC_CONNECTED),0xFFFF);
+	pgScreenFlipV();
+
+	return 0;
+}
+
+int adhocSend(void *buffer, unsigned int length)
 {
 	int err=0;
 
@@ -634,12 +626,74 @@ int adhocSend(void *buffer, int length)
 	return err;
 }
 
+int adhocRecv(void *buffer, unsigned int *length)
+{
+	int err=0;
+	int pdpStatLength=20;
+	unsigned int pdpRecvLength=0;
+	unsigned short port=0;
+	unsigned char mac[6];
+	pdpStatStruct pspStat;
+
+	err = sceNetAdhocGetPdpStat(&pdpStatLength, &pspStat);
+	if(err<0)
+	{
+		pspDebugScreenInit();
+		printf("error calling GetPdpStat, err=%x\n", err);
+		return err;
+	}
+
+	if (pspStat.rcvdData > 0)
+	{		
+		pdpRecvLength = pspStat.rcvdData;
+		err = sceNetAdhocPdpRecv(pdpId,
+					mac,
+					&port,
+					buffer,
+					(void *)&length,
+					0,	// 0 in lumines
+					1);	// 1 in lumines
+		if(err<0)
+		{
+			pspDebugScreenInit();
+			printf("err=%x\n", err);
+			return err;
+		}
+		else	
+		{
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+int adhocRecvBlocked(void *buffer, unsigned int *length,int max_retry)
+{
+	int err=0;
+	int retry_cpt=0;
+		
+	do {
+		err = adhocRecv(buffer, length);
+		if (err>0) break;
+		sceKernelDelayThread(RECV_DELAY);
+		if (max_retry>=0) {		
+			retry_cpt++; if (retry_cpt>max_retry) return 0;
+		} else {
+			if (get_pad()&PSP_CTRL_TRIANGLE) return -1;
+		}
+	} while (err == 0);
+	
+
+	return err;
+}
+
 // Used to send the data and wait for an ack
 int adhocSendRecvAck(void *buffer, int length)
 {
 	int err=0;
 	int recvTemp=0;
-	int recvLen=1;
+	unsigned int recvLen=1;
 	int tempLen = length;
 	int sentCount = 0;
 	do
@@ -694,74 +748,10 @@ int adhocRecvSendAck(void *buffer, unsigned int *length)
 
 		rcvdCount += 0x400;
 		buffer += 0x400;
-		tempLen = length - rcvdCount;
+		tempLen = *length - rcvdCount;
 	} while(rcvdCount < *length);
 
 	// wait for an ack
-
-	return err;
-}
-
-int adhocRecv(void *buffer, unsigned int *length)
-{
-	int err=0;
-	int pdpStatLength=20;
-	unsigned int pdpRecvLength=0;
-	int port=0;
-	char mac[20];
-	pdpStatStruct pspStat;
-
-	err = sceNetAdhocGetPdpStat(&pdpStatLength, &pspStat);
-	if(err<0)
-	{
-		pspDebugScreenInit();
-		printf("error calling GetPdpStat, err=%x\n", err);
-		return err;
-	}
-
-	if (pspStat.rcvdData > 0)
-	{		
-		pdpRecvLength = pspStat.rcvdData;
-		err = sceNetAdhocPdpRecv(pdpId,
-					mac,
-					&port,
-					buffer,
-					&length,
-					0,	// 0 in lumines
-					1);	// 1 in lumines
-		if(err<0)
-		{
-			pspDebugScreenInit();
-			printf("err=%x\n", err);
-			return err;
-		}
-		else	
-		{
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-int adhocRecvBlocked(void *buffer, unsigned int *length,int max_retry)
-{
-	char mac[20];
-	int port=309;
-	int err=0;
-	int retry_cpt=0;
-		
-	do {
-		err = adhocRecv(buffer, length);
-		if (err>0) break;
-		sceKernelDelayThread(RECV_DELAY);
-		if (max_retry>=0) {		
-			retry_cpt++; if (retry_cpt>max_retry) return 0;
-		} else {
-			if (get_pad()&PSP_CTRL_TRIANGLE) return -1;
-		}
-	} while (err == 0);
-	
 
 	return err;
 }

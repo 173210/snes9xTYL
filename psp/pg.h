@@ -30,12 +30,12 @@ extern u32 new_pad, now_pad;
 
 void pgwait(int usec);
 
-void ErrorMsg(char *msg);
+void ErrorMsg(const char *msg);
 void pgwaitPress();
 int get_pad(void);
 int get_pad2(int *lx,int *ly);
-void pgPrintCenter(unsigned long y,unsigned long color,char *str);
-void pgPrintCenterY(unsigned long y,unsigned long color,char *str);
+void pgPrintCenter(unsigned long y,unsigned long color,const char *str);
+void pgPrintCenterY(unsigned long y,unsigned long color,const char *str);
 
 void pgInit();
 void pgWaitV();
@@ -44,13 +44,13 @@ void pgScreenFrame(long mode,long frame);
 void pgScreenFlip();
 void pgScreenFlipV();
 void pgScreenFlipV2();
-void pgPrint(unsigned long x,unsigned long y,unsigned long color,char *str);
+void pgPrint(unsigned long x,unsigned long y,unsigned long color,const char *str);
 void pgPrintSel(unsigned long x,unsigned long y,unsigned long color,char *str);
-void pgPrintBG(unsigned long x,unsigned long y,unsigned long color,char *str);
-void pgPrintBGRev(unsigned long x,unsigned long y,unsigned long color,char *str);
-void pgPrintAllBG(unsigned long x,unsigned long y,unsigned long color,char *str);
-void pgPrint2(unsigned long x,unsigned long y,unsigned long color,char *str);
-void pgPrint4(unsigned long x,unsigned long y,unsigned long color,unsigned long color2,char *str);
+void pgPrintBG(unsigned long x,unsigned long y,unsigned long color,const char *str);
+void pgPrintBGRev(unsigned long x,unsigned long y,unsigned long color,const char *str);
+void pgPrintAllBG(unsigned long x,unsigned long y,unsigned long color,const char *str);
+void pgPrint2(unsigned long x,unsigned long y,unsigned long color,const char *str);
+void pgPrint4(unsigned long x,unsigned long y,unsigned long color,unsigned long color2,const char *str);
 void pgFillvram(unsigned long color);
 void pgFillAllvram(unsigned long color);
 
@@ -79,18 +79,18 @@ void readpad(void);
 void pgcPuthex2(unsigned long s);
 void pgcPuthex8(unsigned long s);
 
-void mh_print(int x,int y,char *str,int col);
-void mh_printVert(int x,int y,char *str,int col);
-void mh_printLimit(int x,int y,int Mx,int My,char *str,int col);
+void mh_print(int x,int y,const char *str,int col);
+void mh_printVert(int x,int y,const char *str,int col);
+void mh_printLimit(int x,int y,int Mx,int My,const char *str,int col);
 
-void mh_print_light(int x,int y,unsigned char *str,int col,int smoothing);
-int mh_print_buff(int x,int y,int Mx,int My,unsigned char *str,int col,unsigned short *vbuff,int pitch);
-int mh_print_buffVert(int x,int y,int Mx,int My,unsigned char *str,int col,unsigned short *vbuff,int pitch);
-void mh_printSel(int x,int y,unsigned char *str,int col);
-void mh_printSel_light(int x,int y,unsigned char *str,int col,int smoothing);
-void mh_printCenter(unsigned long y,char *str,unsigned long color);
-int mh_length(unsigned char *str);
-int mh_trimlength(unsigned char *str);
+void mh_print_light(int x,int y,const char *str,int col,int smoothing);
+int mh_print_buff(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch);
+int mh_print_buffVert(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch);
+void mh_printSel(int x,int y,const char *str,int col);
+void mh_printSel_light(int x,int y,const char *str,int col,int smoothing);
+void mh_printCenter(unsigned long y,const char *str,unsigned long color);
+int mh_length(const char *str);
+int mh_trimlength(const char *str);
 
 void pgFillBoxHalfer(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2 );
 
