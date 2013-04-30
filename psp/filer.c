@@ -93,13 +93,13 @@ void SJISCopy(struct SceIoDirent *a, char *file)
 }
 //#include <curl\stdcheaders.h>
 int cmpFile(SceIoDirent *a, SceIoDirent *b) {
-	char file1[0x108];
-	char file2[0x108];
-	char ca, cb;
+	unsigned char file1[0x108];
+	unsigned char file2[0x108];
+	unsigned char ca, cb;
 	int i, n, ret;	
 	if(a->d_stat.st_attr==b->d_stat.st_attr) {
-		SJISCopy(a, file1);
-		SJISCopy(b, file2);
+		SJISCopy(a, (char *)file1);
+		SJISCopy(b, (char *)file2);
 		//return strcasecmp(file1,file2);
 		n=strlen(file1);
 		for(i=0; i<=n; i++){
@@ -140,7 +140,7 @@ void sort(SceIoDirent *a, int left, int right) {
 const struct {
 	char *szExt;
 	int nExtId;
-} stExtentions[] = {        
+} stExtentions[] = {
     {"zip",EXT_ZIP},
     {"smc",EXT_SMC},
     {"sfc",EXT_SFC},
@@ -349,7 +349,6 @@ int getFilePath(char *out,int can_exit) {
 
 	filer_bg=(u16*)malloc(480*272*2);
 	if (!filer_bg) {
-		inputBoxOK("getFilePath");
 		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 		return -1;
 	}
@@ -665,7 +664,6 @@ int getNoExtFilePath(char *out,int can_exit) {
 
 	filer_bg=(u16*)malloc(480*272*2);
 	if (!filer_bg) {
-		inputBoxOK("getNoExtFilePath");
 		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 		return -1;
 	}

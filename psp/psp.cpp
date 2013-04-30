@@ -2798,7 +2798,7 @@ void low_level_init(){
 
 	SetGeCallback();
 	//OSK
-	//danzeff_load16(LaunchDir);
+	danzeff_load16(LaunchDir);
 
 	//
 	//sprintf(str_tmp,"%sDATA/msg.ini",LaunchDir);

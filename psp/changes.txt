@@ -2,7 +2,7 @@ Next release(s) :
 - generic combo/macros => button assignment
 - more cheats feature
 - improved netplay experience
-- multiple language support
+- multiple language support => 173210 did
 - ...
 
 Snes9xTYL 0.4.2 - 2006/05/15

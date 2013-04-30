@@ -429,7 +429,6 @@ int menu_viewfile(char *mode) {
 				txtdata=(char*)malloc(fsize+2);
 				if (!txtdata) {
 					fclose(f);
-					inputBoxOK("menu_viewfile");
 					psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 					return 0;
 				}
@@ -482,7 +481,6 @@ int menu_viewfile(char *mode) {
 					char *newtxtdata;
 					newtxtdata=(char*)malloc(fsize+2+newlines);
 					if (!newtxtdata) {
-						inputBoxOK("menu_viewfile");
 						psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 						return 0;
 					}
@@ -495,7 +493,6 @@ int menu_viewfile(char *mode) {
 				msg_lines=(char**)malloc(lines*sizeof(char*));
 				if (!msg_lines) {
 					free(txtdata);
-					inputBoxOK("menu_viewfile");
 					psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 					return 0;
 				}
@@ -3642,7 +3639,6 @@ int root_menu(void) {
 
 	menu_bg=(u16*)malloc(480*272*2);
 	if (!menu_bg) {
-		inputBoxOK("root_menu");
 		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
 		return -1;
 	}
