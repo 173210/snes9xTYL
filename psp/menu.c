@@ -45,6 +45,8 @@
 
 #include "homehook.h"
 
+#include "cptbl.h"
+
 #define TITLE_COL ((31)|(26<<5)|(31<<10))
 #define PATH_COL ((31)|(24<<5)|(28<<10))
 
@@ -86,6 +88,7 @@ extern int os9x_smoothing,os9x_softrendering,os9x_apuenabled,os9x_cpuclock,os9x_
 extern int os9x_showfps,os9x_showpass,os9x_getnewfile,os9x_gammavalue,os9x_snesheight,os9x_forcepal_ntsc;
 extern int os9x_lowbat,os9x_autosavetimer,os9x_menumusic,os9x_menufx,os9x_menupadbeep;
 extern int os9x_autostart;
+extern int os9x_osk;
 extern char LaunchDir[256];
 extern char romPath[256];
 extern char lastRom[256];
@@ -1303,7 +1306,7 @@ menu_xmb_icon_t menu_xmb_icons[MENU_XMB_ICONS_NB]={
 	{2,0,0,2,MENU_ICONS_CONTROLS},
 	{3,0,0,11,MENU_ICONS_VIDEO},
 	{4,0,0,3,MENU_ICONS_SOUND},
-	{5,0,0,9,MENU_ICONS_MISC},
+	{5,0,0,10,MENU_ICONS_MISC},
 	{6,0,0,10,MENU_ICONS_CHEATS},
 	{7,0,0,2,MENU_ICONS_ABOUT},
 };
@@ -2115,6 +2118,58 @@ int menu_menupadbeep(char *mode) {
 
 int menu_autostart(char *mode) {
 	MENU_ONOFF(os9x_autostart)
+}
+
+int menu_osk(char *mode) {
+	int retval=0;
+	int to_exit=0;
+	int new_value=os9x_osk;
+	if (mode) {strcpy(mode,(os9x_osk?psp_msg_string(MENU_MISC_OSK_DANZEFF):psp_msg_string(MENU_MISC_OSK_OFFICIAL)));return 0;}
+	menu_panel_pos=479;
+	menu_cnt2=0;
+	for (;;) {
+		menu_basic(2+to_exit);
+		if (!g_bLoop) {retval=1;break;}
+
+		mh_printLimit(menu_panel_pos+5,104,479,272,new_value?psp_msg_string(MENU_MISC_OSK_DANZEFF):psp_msg_string(MENU_MISC_OSK_OFFICIAL),((31)|(24<<5)|(24<<10)));
+		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+
+		if (to_exit) {
+			if (menu_panel_pos>=479) return 0;
+		} else {
+			if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+				os9x_beep1();
+				to_exit=1;
+				menu_cnt2=0;
+			} else if (new_pad&(PSP_CTRL_CIRCLE)) {
+				os9x_beep1();
+				to_exit=1;
+				menu_cnt2=0;
+				os9x_osk=new_value;
+			} else if (new_pad&PSP_CTRL_DOWN) {
+				switch (new_value) {
+					case 0:break;
+					case 1:new_value=0;MENU_CHGVAL();break;
+				}
+			} else if (new_pad&PSP_CTRL_UP) {
+				switch (new_value) {
+					case 1:break;
+					case 0:new_value=1;MENU_CHGVAL();break;
+				}
+			}  else if (new_pad & PSP_CTRL_SELECT) {
+				if (os9x_menumusic) {
+					menu_stopmusic();
+					menu_startmusic();
+				}
+			} SNAPSHOT_CODE()
+		}
+    /*swap screen*/
+		pgScreenFlipV2();
+	}
+	return retval;
 }
 
 
@@ -3270,7 +3325,7 @@ int menu_swapbg(char *mode) {
 	return 0;
 }
 
-#define MENU_XMB_ENTRIES_NB (4+7+2+11+3+9+10+2)
+#define MENU_XMB_ENTRIES_NB (4+7+2+11+3+10+10+2)
 menu_xmb_entry_t menu_xmb_entries[MENU_XMB_ENTRIES_NB]={
 	// GAME
 	{0,0,menu_browser,MENU_ICONS_GAME_NEW,0},
@@ -3315,6 +3370,7 @@ menu_xmb_entry_t menu_xmb_entries[MENU_XMB_ENTRIES_NB]={
 	{5,6,menu_menufx,MENU_ICONS_MISC_BGFX,MENU_ICONS_MISC_BGFX_HELP},
 	{5,7,menu_menupadbeep,MENU_ICONS_MISC_PADBEEP,MENU_ICONS_MISC_PADBEEP_HELP},
 	{5,8,menu_autostart,MENU_ICONS_MISC_AUTOSTART,MENU_ICONS_MISC_AUTOSTART_HELP},
+	{5,9,menu_osk,MENU_ICONS_MISC_OSK,MENU_ICONS_MISC_OSK_HELP},
 	// CHEATS
 	{6,0,menu_addRAWcode,MENU_ICONS_CHEATS_ADDRAW,MENU_ICONS_CHEATS_ADDRAW_HELP},
 	{6,1,menu_addGGcode,MENU_ICONS_CHEATS_ADDGG,MENU_ICONS_CHEATS_ADDGG_HELP},
@@ -3487,97 +3543,7 @@ void menu_drawFrame(int selected) {
 	}*/
 }
 
-
 void menu_inputName(char *name) {
-	/*int done = 0,i,j,oldmenufx;
-	// INIT OSK
-	unsigned short intext[128]  = { 0 }; // text already in the edit box on start
-	unsigned short outtext[128] = { 0 }; // text after input
-	unsigned short desc[128]    = { 'E', 'n', 't', 'e', 'r', ' ', 'N', 'a', 'm', 'e', 0 }; // description
-	SceUtilityOskData data;
-	SceUtilityOskParams osk;
-
-	memset(&data, 0, sizeof(data));
-	data.language = os9x_language; // english
-	data.lines = 1; // just online
-	data.unk_24 = 1; // set to 1
-	data.desc = desc;
-	data.intext = intext;
-	data.outtextlength = 128; // sizeof(outtext) / sizeof(unsigned short)
-	data.outtextlimit = 21; // just allow n chars
-	data.outtext = outtext;
-
-	memset(intext,0,128*2);
-	for(i = 0; name[i]; i++) {
-		intext[i]=name[i];
-	}
-
-	memset(&osk, 0, sizeof(osk));
-	osk.size = sizeof(osk);
-	osk.language = os9x_language;
-	//if (os9x_language==PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
-	osk.buttonswap = 0;
-	//else osk.buttonswap = 1;
-
-	osk.unk_12 = 17; // What
-	osk.unk_16 = 19; // the
-	osk.unk_20 = 18; // fuck
-	osk.unk_24 = 16; // ???
-	osk.unk_48 = 1;
-	osk.data = &data;
-
-	// Only ascii code is handled so only the input of the small letters is printed
-
-	int rc = sceUtilityOskInitStart(&osk);
-	if(rc) {
-		return 0;
-	}
-	oldmenufx=os9x_menufx;
-	os9x_menufx=1;
-	while(!done) {
-		menu_basic(-1);
-
-		switch(sceUtilityOskGetStatus()) {
-		case PSP_OSK_INIT :
-			j=mh_length("Initializing OSK...");
-			i=(480-j)/2;
-			pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
-  		pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
-			pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
-			mh_print(i,130,"Initializing OSK...",31|(28<<5)|(24<<10));
-			break;
-		case PSP_OSK_VISIBLE :
-			sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
-			break;
-		case PSP_OSK_QUIT :
-			sceUtilityOskShutdownStart();
-			break;
-		case PSP_OSK_FINISHED :
-			done = 1;
-			break;
-		case PSP_OSK_NONE :
-		default :
-			break;
-		}
-
-		pgScreenFlipV2();
-	}
-
-	if (data.rc==2) {				//new value input
-		j=0;
-		for(i = 0; data.outtext[i]; i++) {
-			unsigned c = data.outtext[i];
-			if(32 <= c && c <= 127) {
-				//pspDebugScreenPrintf("%c", data.outtext[i]); // print ascii only
-				name[j++]=c;
-				if (j>=21) break;
-			}
-		}
-		name[j]=0;
-	}
-
-	os9x_menufx=oldmenufx;
-	*/
 	SceCtrlData paddata;
 	//int oldmenufx;
 	int exit_osk;
@@ -3586,37 +3552,142 @@ void menu_inputName(char *name) {
 	//os9x_menufx=1;
 
 //	danzeff_load16(LaunchDir);
-	if (!danzeff_isinitialized()) {
-		psp_msg(ERR_INIT_OSK,MSG_DEFAULT);
+	if (os9x_osk)
+	{
+		if (!danzeff_isinitialized()) {
+			psp_msg(ERR_INIT_OSK,MSG_DEFAULT);
+		} else {
+			danzeff_moveTo(20,20);
+			exit_osk=0;
+			name_pos=0;
+			while (name[name_pos]) name_pos++;
+			while (!exit_osk) {
+				menu_basic(-1);
+				sceCtrlPeekBufferPositive(&paddata, 1);
+				switch (key=danzeff_readInput(paddata)) {
+					case DANZEFF_START:exit_osk=1;break;
+					case DANZEFF_SELECT:exit_osk=2;break;
+					case 8://backspace
+						if (name_pos>0) {
+							name_pos--;
+						}
+						name[name_pos]=0;
+						break;
+					default:
+						if (key>=32) {
+							name[name_pos]=key;
+							if (name_pos<127) name_pos++;
+								name[name_pos]=0;
+						}
+						break;
+				}
+				mh_printSel_light(200,20,name,0xFFFF,menu_current_smoothing);
+				danzeff_render();
+				pgScreenFlipV2();
+			}
+		}
 	} else {
-		danzeff_moveTo(20,20);
-		exit_osk=0;
-		name_pos=0;
-		while (name[name_pos]) name_pos++;
-		while (!exit_osk) {
-			menu_basic(-1);
-			sceCtrlPeekBufferPositive(&paddata, 1);
-			switch (key=danzeff_readInput(paddata)) {
-				case DANZEFF_START:exit_osk=1;break;
-				case DANZEFF_SELECT:exit_osk=2;break;
-				case 8://backspace
-					if (name_pos>0) {
-						name_pos--;
-					}
-					name[name_pos]=0;
+		int done = 0,i,j,k,oldmenufx;
+		// INIT OSK
+		unsigned short intext[128]  = { 0 }; // text already in the edit box on start
+		unsigned short outtext[128] = { 0 }; // text after input
+		unsigned short desc[128]; // description
+		SceUtilityOskData data[1];
+		SceUtilityOskParams osk;
+
+		unsigned char *src = (unsigned char *)psp_msg_string(MENU_CHEATS_ENTERNAME);
+		for (i = 0; *src; i++) {
+			if ((0x80 < *src && *src < 0xA0) || (0xDF < *src && *src < 0xF0)) {
+				k = *src++;
+				k += *src++ << 8;
+			}
+			else k = *src++;
+			for (j = 0; j < TOTAL_TBL; j++)
+				if (map[j][0] == k)
 					break;
-				default:
-					if (key>=32) {
-						name[name_pos]=key;
-						if (name_pos<127) name_pos++;
-							name[name_pos]=0;
-					}
+			if (j == TOTAL_TBL) {
+				desc[i] = '?';
+				continue;
+			}
+			desc[i] = map[j][1];
+		}
+		desc[i] = 0;
+
+		memset(&data, 0, sizeof(data));
+		data[0].language = os9x_language; // english
+		data[0].lines = 1; // just online
+		data[0].unk_24 = 1; // set to 1
+		data[0].desc = desc;
+		data[0].intext = intext;
+		data[0].outtextlength = 128; // sizeof(outtext) / sizeof(unsigned short)
+		data[0].outtextlimit = 21; // just allow n chars
+		data[0].outtext = outtext;
+
+		memset(intext,0,128*2);
+		for(i = 0; name[i]; i++) {
+			intext[i]=name[i];
+		}
+
+		memset(&osk, 0, sizeof(osk));
+		osk.base.size = sizeof(osk);
+		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &osk.base.language);
+		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_UNKNOWN, &osk.base.buttonSwap);
+		osk.base.graphicsThread = 17;
+		osk.base.accessThread = 19;
+		osk.base.fontThread = 18;
+		osk.base.soundThread = 16;
+		osk.datacount = 1;
+		osk.data = data;
+
+		// Only ascii code is handled so only the input of the small letters is printed
+
+		int rc = sceUtilityOskInitStart(&osk);
+		if(rc) return;
+		oldmenufx=os9x_menufx;
+		os9x_menufx=1;
+		while(!done) {
+			menu_basic(-1);
+
+			switch(sceUtilityOskGetStatus()) {
+				case PSP_UTILITY_DIALOG_INIT :
+					j=mh_length("Initializing OSK...");
+					i=(480-j)/2;
+					pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
+  					pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
+					pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
+					mh_print(i,130,"Initializing OSK...",31|(28<<5)|(24<<10));
+					break;
+				case PSP_UTILITY_DIALOG_VISIBLE :
+					sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
+					break;
+				case PSP_UTILITY_DIALOG_QUIT :
+					sceUtilityOskShutdownStart();
+					break;
+				case PSP_UTILITY_DIALOG_FINISHED :
+					done = 1;
+					break;
+				case PSP_UTILITY_DIALOG_NONE :
+				default :
 					break;
 			}
-			mh_printSel_light(200,20,name,0xFFFF,menu_current_smoothing);
-			danzeff_render();
+
 			pgScreenFlipV2();
 		}
+
+		if (data[0].result!=PSP_UTILITY_OSK_RESULT_CHANGED) return;
+
+		j=0;
+		for(i = 0; data[0].outtext[i]; i++) {
+			for (k=0;k<TOTAL_TBL;k++) {
+				if (data[0].outtext[i]==map[k][1]) {
+					if (map[k][0] > 0xFF) name[j++]=map[k][0]>>8;
+					name[j++]=map[k][0]&0xFF;
+					break;
+				}
+			}
+			if (k == TOTAL_TBL) name[j++]='?';
+		}
+		name[j]=0;
 	}
 	//os9x_menufx=oldmenufx;
 

@@ -106,6 +106,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_CHEATS_ENTERGG,"Enter a Game Genie code",0},
 	{MENU_CHEATS_ENTERRAW,"Enter a RAW code\nFormat is ADDRESS - NEW VALUE",0},
 	{MENU_CHEATS_CONFIRMREMALL,"Remove all codes ?",-2},
+	{MENU_CHEATS_ENTERNAME,"Enter Name",0},
 
 	{MENU_STATE_CONFIRMLOAD,"Current game progress will be lost.\nContinue ?",-2},
 	{MENU_STATE_CONFIRMDELETE,"Delete current state ?",-2},
@@ -248,13 +249,18 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_RANDBG,"Randomize BG",0},
 	{MENU_ICONS_MISC_RANDBG_HELP,"Randomize BG from the DATA/logo.zip\nfile.",0},
 	{MENU_ICONS_MISC_BGMUSIC,"Menu background music",0},
-	{MENU_ICONS_MISC_BGMUSIC_HELP,"Menu background music requires\nmake PSP running at 300Mhz\nMusic are from DATA/music.zip file.\nSPC format only.",0},		
+	{MENU_ICONS_MISC_BGMUSIC_HELP,"Menu background music requires\nmake PSP running at 300Mhz\nMusic are from DATA/music.zip file.\nSPC format only.",0},
 	{MENU_ICONS_MISC_BGFX,"Menu background fx",0},
 	{MENU_ICONS_MISC_BGFX_HELP,"Nice FX from PS2DEV spline sample.",0},
 	{MENU_ICONS_MISC_PADBEEP,"Pad beep",0},
 	{MENU_ICONS_MISC_PADBEEP_HELP,"The beep sounds when browsing\nmenu and files.",0},
 	{MENU_ICONS_MISC_AUTOSTART,"Last ROM Auto-Start",0},
 	{MENU_ICONS_MISC_AUTOSTART_HELP,"If you set to [yes],the ROM\nwhich was loaded at last\n will start automatically\nwhen the emulator started.",0},
+	{MENU_ICONS_MISC_OSK,"OSK",0},
+	{MENU_ICONS_MISC_OSK_HELP,"OSK is On-Screen Keyboard.\nDanzeff OSK is useful\nfor typing alphabet on PSP\nSCE's official OSK is useful\nfor typing Japanese or on PS Vita.",0},
+
+	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
+	{MENU_MISC_OSK_OFFICIAL,"Official",0},
 
 	{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " Main Menu   ",0},
 	{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " Main Menu   ",0},
@@ -342,6 +348,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{SCROLL_SEARCHING,"Searching...",0},
 	{SCROLL_STRNOTFOUND,"String not found!",30},
 	{SCROLL_DISCLAIMER,"Disclaimer",0},
+	{SCROLL_OSK_DESC,"Enter String to find",0},
 	//Settings
 	{SETTINGS_NOTCOMPLETE,"!!Settings file not complete!!\n\nProbably coming from a previous version.\n\nNew settings will be set with default values",60*3},
 	{SETTINGS_NOTFOUND,"No settings found, using default",10},
@@ -374,7 +381,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{CORRUPT,"Corrupt",0},
 	{ROM_ONLY,"ROM only",0},
 	{EXTENDING,"Extending",30},
-	{EXTENDING_TARGET,"Extending target from %d to %d\n",0}
+	{EXTENDING_TARGET,"Extending target from %d to %d\n",0},
+	{INIT_OSK,"OSKを初期化しています...",0},
 };
 
 t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
@@ -470,6 +478,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_CHEATS_ENTERPAR,"プロアクションリプレイコードを入力してください",0},
 	{MENU_CHEATS_ENTERGG,"Game Genieコードを入力してください",0},
 	{MENU_CHEATS_ENTERRAW,"RAWコードを入力してください\n書式 : アドレス - 新しい値",0},
+	{MENU_CHEATS_ENTERNAME,"名前を入力してください",0},
 	{MENU_CHEATS_CONFIRMREMALL,"すべてのコードを削除しますか?",-2},
 
 	{MENU_STATE_CONFIRMLOAD,"現在のゲーム進行が失われます。\n続行しますか?",-2},
@@ -620,6 +629,11 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_PADBEEP_HELP,"ビープ音がメニューやファイル一覧を\n移動しているときに鳴ります。",0},
 	{MENU_ICONS_MISC_AUTOSTART,"最後に起動したROMを自動起動する",0},
 	{MENU_ICONS_MISC_AUTOSTART_HELP,"「はい」にすると、エミュレーターを\n起動したときに自動的に\n最後に起動したROMが起動します。",0},
+	{MENU_ICONS_MISC_OSK,"OSK",0},
+	{MENU_ICONS_MISC_OSK_HELP,"OSKとは画面上のキーボードのことです。\nDanzeff OSKはアルファベットをPSPで\n入力する際に最適です。\nSCE公式OSKは日本語やePSPで\n入力する際に最適です。",0},
+
+	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
+	{MENU_MISC_OSK_OFFICIAL,"公式",0},
 
 	{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " メインメニュー   ",0},
 	{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " メインメニュー   ",0},
@@ -706,6 +720,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{SCROLL_SEARCHING,"検索しています...",0},
 	{SCROLL_STRNOTFOUND,"文字列は見つかりませんでした",30},
 	{SCROLL_DISCLAIMER,"免責事項",0},
+	{SCROLL_OSK_DESC,"検索する文字列を入力してください",0},
 	//Settings
 	{SETTINGS_NOTCOMPLETE,"※設定ファイルが完全ではありません※\n\n以前のバージョンのものの可能\性があります。\n\n新しい設定が標準値で設定されます。",60*3},
 	{SETTINGS_NOTFOUND,"設定が見つかりません。標準設定を使います。",10},
@@ -738,7 +753,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{CORRUPT,"不明",0},
 	{ROM_ONLY,"ROMのみ",0},
 	{EXTENDING,"適用範囲を拡大しています",30},
-	{EXTENDING_TARGET,"適用範囲を%dから%dに拡大しています\n",0}
+	{EXTENDING_TARGET,"適用範囲を%dから%dに拡大しています\n",0},
+	{INIT_OSK,"OSKを初期化しています...",0},
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////

@@ -478,6 +478,7 @@ int save_settings(void){
 	fwrite(&bg_img_num,1,4,f);
 	fwrite(&os9x_menupadbeep,1,4,f);
 	fwrite(&os9x_autostart,1,4,f);
+	fwrite(&os9x_osk,1,4,f);
 	fclose(f);
 	return 0;
 }
@@ -530,6 +531,7 @@ else {fclose(f);return -3;}
 	READ_SETTING(bg_img_num)
 	READ_SETTING(os9x_menupadbeep)
 	if (fread(&l, 1, 4, f) == 4) os9x_autostart = l;
+	if (fread(&l, 1, 4, f) == 4) os9x_osk = l;
 
 	fclose(f);
 	return 0;

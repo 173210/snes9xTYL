@@ -153,6 +153,8 @@ extern "C" {
 #include "message.c"
 #include "decrypt.h"
 
+#include "cptbl.h"
+
 #ifdef HOME_HOOK
 #include "homehook.h"
 #endif
@@ -236,7 +238,7 @@ char os9x_nickname[256];
 int os9x_timezone,os9x_daylsavings;
 int os9x_language=PSP_SYSTEMPARAM_LANGUAGE_ENGLISH; //need to be initialized for early error messages! (before calling getsysparam
 int os9x_menumusic,os9x_menufx,os9x_menupadbeep;
-int os9x_autostart;
+int os9x_autostart,os9x_osk;
 
 IMAGE* bg_img;
 int bg_img_mul;
@@ -2489,6 +2491,7 @@ void initvar_withdefault() {
 	os9x_menufx=0; //menu background FX disabled
 	os9x_menupadbeep=1; //beep when selecting something
 	os9x_autostart = 0; //do not auto-boot
+	os9x_osk = 1; //danzeff
 	os9x_usballowed=0; //no usb
 
 	os9x_apu_ratio=256; //100%
@@ -2797,8 +2800,6 @@ void low_level_init(){
 	S9xInitAPU();
 
 	SetGeCallback();
-	//OSK
-	danzeff_load16(LaunchDir);
 
 	//
 	//sprintf(str_tmp,"%sDATA/msg.ini",LaunchDir);
@@ -2825,7 +2826,7 @@ void low_level_deinit(){
 	S9xFreeSound();
 #endif
 	//OSK
-	danzeff_free();
+	if (os9x_osk) danzeff_free();
 
 
 	//network
@@ -2836,118 +2837,6 @@ void low_level_deinit(){
 }
 
 int scroll_message_input(char *name,int limit) {
-	/*int done = 0,i,j;
-	// INIT OSK
-	unsigned short intext[128]  = { 0 }; // text already in the edit box on start
-	unsigned short outtext[128] = { 0 }; // text after input
-	unsigned short desc[128]    = {'E','n','t','e','r',' ','S','t','r','i','n','g',' ','t','o',' ','f','i','n','d', 0 }; // description
-	SceUtilityOskData data;
-	SceUtilityOskParams osk;
-	struct Vertex *vertices,*vertices_ptr;
-	u16 *scr_bg=(u16*)(0x44000000+(512*272*2)*2);
-
-	memset(&data, 0, sizeof(data));
-	data.language = os9x_language; // english
-	data.lines = 1; // just online
-	data.unk_24 = 1; // set to 1
-	data.desc = desc;
-	data.intext = intext;
-	data.outtextlength = 128; // sizeof(outtext) / sizeof(unsigned short)
-	data.outtextlimit = limit; // just allow n chars
-	data.outtext = outtext;
-
-	memset(intext,0,128*2);
-	for(i = 0; name[i]; i++) {
-		intext[i]=name[i];
-	}
-
-	memset(&osk, 0, sizeof(osk));
-	osk.size = sizeof(osk);
-	osk.language = os9x_language;
-	//if (os9x_language==PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
-	osk.buttonswap = 0;
-	//else osk.buttonswap = 1;
-
-	osk.unk_12 = 17; // What
-	osk.unk_16 = 19; // the
-	osk.unk_20 = 18; // fuck
-	osk.unk_24 = 16; // ???
-	osk.unk_48 = 1;
-	osk.data = &data;
-
-	// Only ascii code is handled so only the input of the small letters is printed
-
-	int rc = sceUtilityOskInitStart(&osk);
-	if(rc) {
-		return 0;
-	}
-	while(!done) {
-
-		sceGuStart(GU_DIRECT,list);
-		sceGuEnable(GU_SCISSOR_TEST);
-		sceGuEnable(GU_TEXTURE_2D);
-		sceGuTexFilter(GU_NEAREST,GU_NEAREST);
-		sceGuDisable(GU_DEPTH_TEST);
-  	sceGuDisable(GU_ALPHA_TEST);
-  	//sceGuDepthMask(GU_TRUE);
-		sceGuTexScale(1.0f/512.0f,1.0f/512.0f);
-		sceGuTexOffset(0,0);
-		sceGuTexMode(GU_PSM_5551,0,0,0); //16bit texture
-		sceGuScissor(0,0,480,272);
-		sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-		sceGuTexImage(0,512,512,512,(u8*)scr_bg);
-  	vertices = (struct Vertex*)sceGuGetMemory(2 * sizeof(struct Vertex));
-  	vertices_ptr=vertices;
-		vertices_ptr[0].u = 0; vertices_ptr[0].v = 0;
-		vertices_ptr[0].x = 0; vertices_ptr[0].y = 0; vertices_ptr[0].z = 0;
-		vertices_ptr[1].u = 480; vertices_ptr[1].v = 272;
-		vertices_ptr[1].x = 480; vertices_ptr[1].y = 272; vertices_ptr[1].z = 0;
-		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D,2,0,vertices);
-		sceGuFinish();
-  	sceGuSync(0,0);
-
-		switch(sceUtilityOskGetStatus()) {
-		case PSP_OSK_INIT :
-			j=mh_length((unsigned char*)"Initializing OSK...");
-			i=(480-j)/2;
-			pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
-  		pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
-			pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
-			mh_print(i,130,"Initializing OSK...",31|(28<<5)|(24<<10));
-			break;
-		case PSP_OSK_VISIBLE :
-			sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
-			break;
-		case PSP_OSK_QUIT :
-			sceUtilityOskShutdownStart();
-			break;
-		case PSP_OSK_FINISHED :
-			done = 1;
-			break;
-		case PSP_OSK_NONE :
-		default :
-			break;
-		}
-
-		sceDisplayWaitVblankStart();
-  	sceGuSwapBuffers();
-		pg_drawframe++;
-		pg_drawframe&=1;
-	}
-
-	if (data.rc==2) {				//new value input
-		j=0;
-		for(i = 0; data.outtext[i]; i++) {
-			unsigned c = data.outtext[i];
-			if(32 <= c && c <= 127) {
-				//pspDebugScreenPrintf("%c", data.outtext[i]); // print ascii only
-				name[j++]=c;
-				if (j>=limit) break;
-			}
-		}
-		name[j]=0;
-	}
-	return (data.rc==2);*/
 	struct Vertex *vertices,*vertices_ptr;
 	u16 *scr_bg=(u16*)(0x44000000+(512*272*2)*2);
 
@@ -2959,67 +2848,201 @@ int scroll_message_input(char *name,int limit) {
 	//os9x_menufx=1;
 
 //	danzeff_load16(LaunchDir);
-	if (!danzeff_isinitialized()) {
-		psp_msg(ERR_INIT_OSK, MSG_DEFAULT);
-		return 0;
+	if (os9x_osk) {
+		if (!danzeff_isinitialized()) {
+			psp_msg(ERR_INIT_OSK, MSG_DEFAULT);
+			return 0;
+		} else {
+			danzeff_moveTo(20,20);
+			exit_osk=0;
+			name_pos=0;
+			while (name[name_pos]) name_pos++;
+			while (!exit_osk) {
+
+				sceGuStart(GU_DIRECT,list);
+				sceGuEnable(GU_TEXTURE_2D);
+				sceGuTexFilter(GU_NEAREST,GU_NEAREST);
+				sceGuDisable(GU_DEPTH_TEST);
+  				sceGuDisable(GU_ALPHA_TEST);
+  				//sceGuDepthMask(GU_TRUE);
+				sceGuTexMode(GU_PSM_5551,0,0,0); //16bit texture
+				sceGuScissor(0,0,480,272);
+				sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
+				sceGuTexImage(0,512,512,512,(u8*)scr_bg);
+  				vertices = (struct Vertex*)sceGuGetMemory(2 * sizeof(struct Vertex));
+  				vertices_ptr=vertices;
+				vertices_ptr[0].u = 0; vertices_ptr[0].v = 0;
+				vertices_ptr[0].x = 0; vertices_ptr[0].y = 0; vertices_ptr[0].z = 0;
+				vertices_ptr[1].u = 480; vertices_ptr[1].v = 272;
+				vertices_ptr[1].x = 480; vertices_ptr[1].y = 272; vertices_ptr[1].z = 0;
+				sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D,2,0,vertices);
+				sceGuFinish();
+  				sceGuSync(0,0);
+
+				sceCtrlPeekBufferPositive(&paddata, 1);
+				switch (key=danzeff_readInput(paddata)) {
+					case DANZEFF_START:exit_osk=1;break;
+					case DANZEFF_SELECT:exit_osk=2;break;
+					case 8://backspace
+						if (name_pos>0) {
+							name_pos--;
+						}
+						name[name_pos]=0;
+						break;
+					default:
+						if (key>=32) {
+							name[name_pos]=key;
+							if (name_pos<limit-1) name_pos++;
+								name[name_pos]=0;
+						}
+						break;
+				}
+				mh_printSel(200,20,name,0xFFFF);
+				danzeff_render();
+
+				sceDisplayWaitVblankStart();
+  				sceGuSwapBuffers();
+				pg_drawframe++;
+				pg_drawframe&=1;
+			}
+
+			while (get_pad()) pgWaitV();
+
+			return (exit_osk==1);
+		}
 	} else {
-		danzeff_moveTo(20,20);
-		exit_osk=0;
-		name_pos=0;
-		while (name[name_pos]) name_pos++;
-		while (!exit_osk) {
+		int done = 0,i,j,k;
+		// INIT OSK
+		unsigned short intext[128]  = { 0 }; // text already in the edit box on start
+		unsigned short outtext[128] = { 0 }; // text after input
+		unsigned short desc[128]; // description
+		SceUtilityOskData data[1];
+		SceUtilityOskParams osk;
+		struct Vertex *vertices,*vertices_ptr;
+		u16 *scr_bg=(u16*)(0x44000000+(512*272*2)*2);
+
+		unsigned char *src = (unsigned char *)psp_msg_string(SCROLL_OSK_DESC);
+		for (i = 0; *src; i++) {
+			if ((0x80 < *src && *src < 0xA0) || (0xDF < *src && *src < 0xF0)) {
+				k = *src++;
+				k += *src++ << 8;
+			}
+			else k = *src++;
+			for (j = 0; j < TOTAL_TBL; j++)
+				if (map[j][0] == k)
+					break;
+			if (j == TOTAL_TBL) {
+				desc[i] = '?';
+				continue;
+			}
+			desc[i] = map[j][1];
+		}
+		desc[i] = 0;
+
+		memset(&data, 0, sizeof(data));
+		data[0].language = os9x_language; // english
+		data[0].lines = 1; // just online
+		data[0].unk_24 = 1; // set to 1
+		data[0].desc = desc;
+		data[0].intext = intext;
+		data[0].outtextlength = 128; // sizeof(outtext) / sizeof(unsigned short)
+		data[0].outtextlimit = limit; // just allow n chars
+		data[0].outtext = outtext;
+
+		memset(intext,0,128*2);
+		for(i = 0; name[i]; i++) {
+			intext[i]=name[i];
+		}
+
+		memset(&osk, 0, sizeof(osk));
+		osk.base.size = sizeof(osk);
+		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &osk.base.language);
+		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_UNKNOWN, &osk.base.buttonSwap);
+		osk.base.graphicsThread = 17;
+		osk.base.accessThread = 19;
+		osk.base.fontThread = 18;
+		osk.base.soundThread = 16;
+		osk.datacount = 1;
+		osk.data = data;
+
+	// Only ascii code is handled so only the input of the small letters is printed
+
+		int rc = sceUtilityOskInitStart(&osk);
+		if(rc) {
+			return 0;
+		}
+		while(!done) {
 
 			sceGuStart(GU_DIRECT,list);
-		sceGuEnable(GU_TEXTURE_2D);
-		sceGuTexFilter(GU_NEAREST,GU_NEAREST);
-		sceGuDisable(GU_DEPTH_TEST);
-  	sceGuDisable(GU_ALPHA_TEST);
-  	//sceGuDepthMask(GU_TRUE);
-		sceGuTexMode(GU_PSM_5551,0,0,0); //16bit texture
-		sceGuScissor(0,0,480,272);
-		sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-		sceGuTexImage(0,512,512,512,(u8*)scr_bg);
-  	vertices = (struct Vertex*)sceGuGetMemory(2 * sizeof(struct Vertex));
-  	vertices_ptr=vertices;
-		vertices_ptr[0].u = 0; vertices_ptr[0].v = 0;
-		vertices_ptr[0].x = 0; vertices_ptr[0].y = 0; vertices_ptr[0].z = 0;
-		vertices_ptr[1].u = 480; vertices_ptr[1].v = 272;
-		vertices_ptr[1].x = 480; vertices_ptr[1].y = 272; vertices_ptr[1].z = 0;
-		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D,2,0,vertices);
-		sceGuFinish();
-  	sceGuSync(0,0);
+			sceGuEnable(GU_SCISSOR_TEST);
+			sceGuEnable(GU_TEXTURE_2D);
+			sceGuTexFilter(GU_NEAREST,GU_NEAREST);
+			sceGuDisable(GU_DEPTH_TEST);
+  			sceGuDisable(GU_ALPHA_TEST);
+  			//sceGuDepthMask(GU_TRUE);
+			sceGuTexScale(1.0f/512.0f,1.0f/512.0f);
+			sceGuTexOffset(0,0);
+			sceGuTexMode(GU_PSM_5551,0,0,0); //16bit texture
+			sceGuScissor(0,0,480,272);
+			sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
+			sceGuTexImage(0,512,512,512,(u8*)scr_bg);
+  			vertices = (struct Vertex*)sceGuGetMemory(2 * sizeof(struct Vertex));
+  			vertices_ptr=vertices;
+			vertices_ptr[0].u = 0; vertices_ptr[0].v = 0;
+			vertices_ptr[0].x = 0; vertices_ptr[0].y = 0; vertices_ptr[0].z = 0;
+			vertices_ptr[1].u = 480; vertices_ptr[1].v = 272;
+			vertices_ptr[1].x = 480; vertices_ptr[1].y = 272; vertices_ptr[1].z = 0;
+			sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D,2,0,vertices);
+			sceGuFinish();
+  			sceGuSync(0,0);
 
-			sceCtrlPeekBufferPositive(&paddata, 1);
-			switch (key=danzeff_readInput(paddata)) {
-				case DANZEFF_START:exit_osk=1;break;
-				case DANZEFF_SELECT:exit_osk=2;break;
-				case 8://backspace
-					if (name_pos>0) {
-						name_pos--;
-					}
-					name[name_pos]=0;
-					break;
-				default:
-					if (key>=32) {
-						name[name_pos]=key;
-						if (name_pos<limit-1) name_pos++;
-							name[name_pos]=0;
-					}
-					break;
+			switch(sceUtilityOskGetStatus()) {
+			case PSP_UTILITY_DIALOG_INIT :
+				j=mh_length("Initializing OSK...");
+				i=(480-j)/2;
+				pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
+  				pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
+				pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
+				mh_print(i,130,"Initializing OSK...",31|(28<<5)|(24<<10));
+				break;
+			case PSP_UTILITY_DIALOG_VISIBLE :
+				sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
+				break;
+			case PSP_UTILITY_DIALOG_QUIT :
+				sceUtilityOskShutdownStart();
+				break;
+			case PSP_UTILITY_DIALOG_FINISHED :
+				done = 1;
+				break;
+			case PSP_UTILITY_DIALOG_NONE :
+			default :
+				break;
 			}
-			mh_printSel(200,20,name,0xFFFF);
-			danzeff_render();
 
 			sceDisplayWaitVblankStart();
-  		sceGuSwapBuffers();
+			sceGuSwapBuffers();
 			pg_drawframe++;
 			pg_drawframe&=1;
 		}
 
-		while (get_pad()) pgWaitV();
+		if (data[0].result!=PSP_UTILITY_OSK_RESULT_CHANGED) return 0;
 
-		return (exit_osk==1);
+		j=0;
+		for(i = 0; data[0].outtext[i]; i++) {
+			for (k=0;k<TOTAL_TBL;k++) {
+				if (data[0].outtext[i]==map[k][1]) {
+					if (map[k][0] > 0xFF) name[j++]=map[k][0]>>8;
+					name[j++]=map[k][0]&0xFF;
+					break;
+				}
+			}
+			if (k == TOTAL_TBL) name[j++]='?';
+		}
+		name[j]=0;
+
+		return 1;
 	}
+
 	//os9x_menufx=oldmenufx;
 
 //	danzeff_free();
@@ -3845,6 +3868,9 @@ int user_main(SceSize args, void* argp) {
 	initvar_withdefault();
 	load_settings();
 
+	//OSK
+	if (os9x_osk) danzeff_load16(LaunchDir);
+
 	load_background();
 
 	load_icons();
@@ -3861,7 +3887,7 @@ int user_main(SceSize args, void* argp) {
 		//snd_beep2_handle[i]=sceAudioChReserve( -1, ((size_snd_beep2-44)/4)&(~63), 0 );
 	}
 
-	if(os9x_autostart) {
+	if (os9x_autostart) {
 		strcpy(rom_filename, romPath);
 		strncat(rom_filename, lastRom, 255 - strlen(romPath));
 		open_snes_rom();
