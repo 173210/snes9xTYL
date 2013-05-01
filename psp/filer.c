@@ -101,7 +101,7 @@ int cmpFile(SceIoDirent *a, SceIoDirent *b) {
 		SJISCopy(a, (char *)file1);
 		SJISCopy(b, (char *)file2);
 		//return strcasecmp(file1,file2);
-		n=strlen(file1);
+		n=strlen((char *)file1);
 		for(i=0; i<=n; i++){
 			ca=file1[i]; cb=file2[i];
 			ret = ca-cb;

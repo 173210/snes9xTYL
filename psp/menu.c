@@ -3202,12 +3202,12 @@ int menu_fpslimit(char *mode) {
 		if (new_value) sprintf(str_tmp,"%dfps",new_value);
 		else sprintf(str_tmp,psp_msg_string(MENU_VIDEO_SLIMITVALUE_AUTO));
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE_WITH_FAST),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT "   " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3267,12 +3267,12 @@ int menu_apuratio(char *mode) {
 		sprintf(str_tmp,"%.2f%%",(float)new_value*100.0f/256.0f);
 
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE_WITH_FAST),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT "   " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;

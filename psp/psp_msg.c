@@ -80,7 +80,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_TITLE_GENERIC_BAT_LOW,"Low!",0},
 
 	{MENU_CHANGE_VALUE,"  ,   change value",0},
-	{MENU_CHANGE_VALUE,"  ,   change value -  ,  fast",0},
+	{MENU_CHANGE_VALUE_WITH_FAST,"  ,   change value -  ,  fast",0},
 	{MENU_CANCEL_VALIDATE,"  ,   cancel   -      validate",0},
 	{MENU_DEFAULT_VALUE,"   default value",0},
 	{MENU_YES,"yes",0},
@@ -453,7 +453,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_TITLE_GENERIC_BAT_LOW,"残量低下.",0},
 
 	{MENU_CHANGE_VALUE,"  ,   値を変更",0},
-	{MENU_CHANGE_VALUE,"  ,   値を変更   -    ,  高速",0},
+	{MENU_CHANGE_VALUE_WITH_FAST,"  ,   値を変更   -    ,  高速",0},
 	{MENU_CANCEL_VALIDATE,"  ,   キャンセル -    適用",0},
 	{MENU_DEFAULT_VALUE,"   標準値",0},
 	{MENU_YES,"はい",0},
@@ -583,7 +583,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_VIDEO_SCRCALIB,"画面位置補正",0},
 	{MENU_ICONS_VIDEO_SCRCALIB_HELP,"邪魔な黒い枠を取り除くのに\n役立ちます。",0},
 	{MENU_ICONS_VIDEO_SHOWFPS,"FPS表\示",0},
-	{MENU_ICONS_VIDEO_SHOWFPS_HELP,"1行目はエミュレートされる\nフレーム数を表\示します。\n二行目は本当のFPSを表\示します。",0},
+	{MENU_ICONS_VIDEO_SHOWFPS_HELP,"1行目はエミュレートされる\nフレーム数を表\示します。\n2行目は本当のFPSを表\示します。",0},
 
 	{MENU_VIDEO_MODE_1_1,"等倍",0},
 	{MENU_VIDEO_MODE_ZOOM_FIT,"画面に合わせて拡大",0},
