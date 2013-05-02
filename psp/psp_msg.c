@@ -362,7 +362,6 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{FOUND_SRAM,"Found an SRAM file",60},
 	{CANCEL,"CANCEL",0},
 	{INPUTBOX_OK,"\n\n      Close",0},
-	{INIT_SPEEDHACK,"Found speedhacks, applying...",30},
 #ifdef ME_SOUND
 	{BAT_ISLOW,"Battery is low, saving is now disabled (SRAM,states and settings).\n\nThis window will close in 3 seconds.",60*3},
 #else
@@ -729,7 +728,6 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{SETTINGS_FOUND,"設定が見つかりました\n\n""%s""",0},
 	{SETTINGS_DIFF,"異なるバージョンのINIファイルです。",20},
 	//Others
-	{INIT_SPEEDHACK,"スピードハックが見つかりました。適用しています...",30},
 	{APU_DEBUGGING,"APUデバッグ",10},
 	{BGMUSIC_PLAYING,"SPCファイルを再生しています...",0},
 	{FOUND_SRAM,"SRAMファイルが見つかりました",60},

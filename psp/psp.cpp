@@ -3682,7 +3682,7 @@ int init_snes_rom() {
 		}
 
 		if ((os9x_applyhacks)&&(os9x_findhacks(Memory.ROMCRC32))) {
-			msgBox(psp_msg_string(INIT_SPEEDHACK));
+			msgBox("Found speedhacks, applying...",30);
 		}
 	}
 
