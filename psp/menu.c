@@ -1343,10 +1343,15 @@ void menu_startmusic(){
 		srand((now.tv_usec+now.tv_sec*1000000));
 
 		unzGetGlobalInfo(zip_file,&pglobal_info);
-		do {
-			num=rand()%pglobal_info.number_entry;
-		} while (num==menu_musicidx);
-		menu_musicidx=num;
+		if (os9x_menumusic == 1) {
+			do {
+				num=rand()%pglobal_info.number_entry;
+			} while (num==menu_musicidx);
+			menu_musicidx=num;
+		} else {
+			if (menu_musicidx>=pglobal_info.number_entry) num=menu_musicidx=0;
+			else num=++menu_musicidx;
+		}
 
 		unzGoToFirstFile(zip_file);
 		while (num--) {
@@ -2106,7 +2111,64 @@ int menu_autosaveUpdSRAM(char *mode){
 }
 
 int menu_menumusic(char *mode) {
-	MENU_ONOFF(os9x_menumusic)
+	if (mode) {
+		if (!os9x_menumusic) strcpy(mode,psp_msg_string(MENU_NO));
+		else if (os9x_menumusic==1) strcpy(mode,psp_msg_string(MENU_MISC_BGMUSIC_RAND));
+		else strcpy(mode,psp_msg_string(MENU_MISC_BGMUSIC_ORDER));
+		return 0;
+	}
+
+	int retval=0;
+	int to_exit=0;
+	int new_value=os9x_menumusic;
+
+	menu_panel_pos=479;
+	menu_cnt2=0;
+	for (;;) {
+		menu_basic(2+to_exit);
+		if (!g_bLoop) {retval=1;break;}
+
+		if (!new_value) strcpy(str_tmp,psp_msg_string(MENU_NO));
+		else if (new_value==1) strcpy(str_tmp,psp_msg_string(MENU_MISC_BGMUSIC_RAND));
+		else strcpy(str_tmp,psp_msg_string(MENU_MISC_BGMUSIC_ORDER));
+
+		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
+		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+
+		if (to_exit) {
+			if (menu_panel_pos>=479) return 0;
+		} else {
+			if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+				os9x_beep1();
+				to_exit=1;
+				menu_cnt2=0;
+			} else if (new_pad&(PSP_CTRL_CIRCLE)) {
+				os9x_beep1();
+				to_exit=1;
+				menu_cnt2=0;
+				os9x_menumusic=new_value;
+			} else if (new_pad&PSP_CTRL_DOWN) {
+				if (!new_value) new_value=2;
+				else new_value--;
+				MENU_CHGVAL();
+			} else if (new_pad&PSP_CTRL_UP) {
+				if (new_value==2) new_value=0;
+				else new_value++;
+				MENU_CHGVAL();
+			}  else if (new_pad & PSP_CTRL_SELECT) {
+				if (os9x_menumusic) {
+					menu_stopmusic();
+					menu_startmusic();
+				}
+			} SNAPSHOT_CODE()
+		}
+		/*swap screen*/
+		pgScreenFlipV2();
+	}
+	return retval;
 }
 
 int menu_menufx(char *mode) {
@@ -3320,7 +3382,7 @@ int menu_swapbg(char *mode) {
 	}
 	if (!bg_img) return 1;
 
-	int oldnum=bg_img_num;
+	int new_value=bg_img_num;
 	int retval=0;
 	int to_exit=0;
 	unsigned long limit = get_background_num() - 1;
@@ -3331,7 +3393,7 @@ int menu_swapbg(char *mode) {
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
 
-		sprintf(str_tmp,"%d",bg_img_num + 1);
+		sprintf(str_tmp,"%d",new_value + 1);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
 		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE_WITH_FAST),PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
@@ -3345,7 +3407,6 @@ int menu_swapbg(char *mode) {
 		} else {
 		if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
 			os9x_beep1();
-			bg_img_num=oldnum;
 			to_exit=1;
 			menu_cnt2=0;
 		} else if (new_pad&PSP_CTRL_CIRCLE) {
@@ -3354,26 +3415,27 @@ int menu_swapbg(char *mode) {
 				free(bg_img->pixels);
 				free(bg_img);
 				bg_img=NULL;
+				bg_img_num=new_value;
 				load_background();
 				menu_buildbg();
 			}
 			to_exit=1;
 			menu_cnt2=0;
 		} else if (new_pad&PSP_CTRL_DOWN) {
-			if (bg_img_num<=0) bg_img_num=limit;
-			else bg_img_num--;
+			if (new_value<=0) new_value=limit;
+			else new_value--;
 			MENU_CHGVAL();
 		} else if (new_pad&PSP_CTRL_UP) {
-			if (bg_img_num>=limit) bg_img_num=1;
-			else bg_img_num++;
+			if (new_value>=limit) new_value=1;
+			else new_value++;
 			MENU_CHGVAL();
 		} else if (new_pad&PSP_CTRL_LTRIGGER) {
-			if (bg_img_num>9) bg_img_num-=8;
-    			else bg_img_num=1;
+			if (new_value>9) new_value-=8;
+    			else new_value=1;
 			MENU_CHGVAL();
 		} else if (new_pad&PSP_CTRL_RTRIGGER) {
-			if (bg_img_num<limit-8) bg_img_num+=8;
-			else bg_img_num=limit;
+			if (new_value<limit-8) new_value+=8;
+			else new_value=limit;
 			MENU_CHGVAL();
 		} else if (new_pad&PSP_CTRL_TRIANGLE) {
 			os9x_beep1();

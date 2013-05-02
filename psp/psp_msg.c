@@ -2,7 +2,7 @@
 
 extern int os9x_language;
 
-#define MSG_TOTAL_ENTRIES 280
+#define MSG_TOTAL_ENTRIES 288
 typedef struct {
 	int msg_id;
 	char *msg;
@@ -123,6 +123,10 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_GAME_SAVINGDEFAULTSETTINGS,"Saving current settings as default profile",30},
 	{MENU_GAME_CONFIRMRESET,"Reset Snes ?",-2},
 	{MENU_MISC_SAVINGJPEG,"Saving JPEG snapshot...",10},
+
+	{MENU_MISC_BGMUSIC_RAND,"Play randomly",0},
+	{MENU_MISC_BGMUSIC_ORDER,"Play in order",0},
+
 	{MENU_MISC_BGMUSIC_UNKNOWN,"unknown",0},
 	{MENU_MISC_BGMUSIC_GAMETITLE,"Playing : ",0},
 	{MENU_MISC_BGMUSIC_TITLE,"Title : ",0},
@@ -383,7 +387,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{ROM_ONLY,"ROM only",0},
 	{EXTENDING,"Extending",30},
 	{EXTENDING_TARGET,"Extending target from %d to %d\n",0},
-	{INIT_OSK,"OSKを初期化しています...",0},
+	{INIT_OSK,"Initializing OSK...",0}
 };
 
 t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
@@ -497,6 +501,10 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_GAME_SAVINGDEFAULTSETTINGS,"現在の設定を標準設定として保存しています",30},
 	{MENU_GAME_CONFIRMRESET,"SFCをリセットしますか?",-2},
 	{MENU_MISC_SAVINGJPEG,"JPEGスナップショットを保存しています...",10},
+
+	{MENU_MISC_BGMUSIC_RAND,"ランダムに再生",0},
+	{MENU_MISC_BGMUSIC_ORDER,"順に再生",0},
+
 	{MENU_MISC_BGMUSIC_UNKNOWN,"不明",0},
 	{MENU_MISC_BGMUSIC_GAMETITLE,"ゲーム : ",0},
 	{MENU_MISC_BGMUSIC_TITLE,"題名 : ",0},
@@ -756,7 +764,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{ROM_ONLY,"ROMのみ",0},
 	{EXTENDING,"適用範囲を拡大しています",30},
 	{EXTENDING_TARGET,"適用範囲を%dから%dに拡大しています\n",0},
-	{INIT_OSK,"OSKを初期化しています...",0},
+	{INIT_OSK,"OSKを初期化しています...",0}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
