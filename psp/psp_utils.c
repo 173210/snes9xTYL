@@ -40,6 +40,22 @@ void check_settings(){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
+unsigned long get_background_num(){
+	unzFile zip_file;
+	char str[256];
+	sprintf(str,"%sDATA/logo.zip",LaunchDir);
+
+
+	zip_file = unzOpen(str);
+	if (!zip_file) return 0;
+
+	unz_global_info pglobal_info;
+
+	unzGetGlobalInfo(zip_file,&pglobal_info);
+	unzClose (zip_file);
+	return pglobal_info.number_entry;
+}
+
 void load_background(){	
 	/*FILE *fd;
 	sprintf(str_tmp,"%sDATA/logo.bmp",LaunchDir);
@@ -58,28 +74,28 @@ void load_background(){
 	char str[256],*buffer;	
 	int l,height;
 	sprintf(str,"%sDATA/logo.zip",LaunchDir);
-		
-	
-	zip_file = 0;    
+
+
+	zip_file = 0;
 	bg_img=NULL;
-	
+
 	zip_file = unzOpen(str);
 	if (zip_file) {
 		unz_global_info pglobal_info;
 		struct timeval now;
 		int num;
-		sceKernelLibcGettimeofday( &now, 0 );		
+		sceKernelLibcGettimeofday( &now, 0 );
 		srand((now.tv_usec+now.tv_sec*1000000));
-		
+
 		unzGetGlobalInfo(zip_file,&pglobal_info);
-		
+
 		if ((bg_img_num<0)||(bg_img_num>=(int)pglobal_info.number_entry)) {
 			do {
 				num=rand()%pglobal_info.number_entry;
 			} while (num==bg_img_num);
 			bg_img_num=num;
 		} else  num=bg_img_num;
-						
+
 		unzGoToFirstFile(zip_file);
 		while (num--) {
 			unzGoToNextFile(zip_file);
@@ -88,18 +104,18 @@ void load_background(){
 			return;
 		}
 		unzOpenCurrentFile (zip_file);
-		
+
 		sprintf(str,"%sDATA/logo.jpg",LaunchDir);
 		jpegFile=fopen(str,"wb");
 		if (!jpegFile) {
 			unzCloseCurrentFile (zip_file);
-    	unzClose (zip_file);   
+    	unzClose (zip_file);
     	return;
-    }		
+    }
 		buffer=(char*)malloc(4096);
 		l = unzinfo.uncompressed_size;
 		for (;;) {
-			if (l>4096) {				
+			if (l>4096) {
 				unzReadCurrentFile(zip_file,(void*)(buffer), 4096, NULL);
 				fwrite(buffer,1,4096,jpegFile);
 				l-=4096;
@@ -111,8 +127,8 @@ void load_background(){
 		}
 		fclose(jpegFile);
 		unzCloseCurrentFile (zip_file);
-    unzClose (zip_file);   
-		
+    unzClose (zip_file);
+
 		free(buffer);
 
 		bg_img=(IMAGE*)malloc(sizeof(IMAGE));

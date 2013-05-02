@@ -106,6 +106,7 @@ extern char os9x_viewfile_path[256];
 extern void S9xReset (void);
 
 extern void show_background(int mul,int add);
+extern unsigned long get_background_num();
 extern void load_background();
 extern void os9x_savecheats();
 
@@ -3312,17 +3313,91 @@ int menu_apuratio(char *mode) {
 }
 
 int menu_swapbg(char *mode) {
-	if (mode) {mode[0]=0;return 0;}
-
-	if (bg_img) {
-		free(bg_img->pixels);
-		free(bg_img);
-		bg_img=NULL;
-		bg_img_num=-1;
-		load_background();
-		menu_buildbg();
+	if (mode) {
+		if (bg_img) sprintf(mode,"%d",bg_img_num + 1);
+		else strcpy(mode,"No Data");
+		return 0;
 	}
-	return 0;
+	if (!bg_img) return 1;
+
+	int oldnum=bg_img_num;
+	int retval=0;
+	int to_exit=0;
+	unsigned long limit = get_background_num() - 1;
+
+	menu_panel_pos=479;
+	menu_cnt2=0;
+	for (;;) {
+		menu_basic(2+to_exit);
+		if (!g_bLoop) {retval=1;break;}
+
+		sprintf(str_tmp,"%d",bg_img_num + 1);
+		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
+		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE_WITH_FAST),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_MISC_SWAPBG_RAND),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+
+		if (to_exit) {
+			if (menu_panel_pos>=479) return 0;
+		} else {
+		if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+			os9x_beep1();
+			bg_img_num=oldnum;
+			to_exit=1;
+			menu_cnt2=0;
+		} else if (new_pad&PSP_CTRL_CIRCLE) {
+			os9x_beep1();
+			if (bg_img) {
+				free(bg_img->pixels);
+				free(bg_img);
+				bg_img=NULL;
+				load_background();
+				menu_buildbg();
+			}
+			to_exit=1;
+			menu_cnt2=0;
+		} else if (new_pad&PSP_CTRL_DOWN) {
+			if (bg_img_num<=0) bg_img_num=limit;
+			else bg_img_num--;
+			MENU_CHGVAL();
+		} else if (new_pad&PSP_CTRL_UP) {
+			if (bg_img_num>=limit) bg_img_num=1;
+			else bg_img_num++;
+			MENU_CHGVAL();
+		} else if (new_pad&PSP_CTRL_LTRIGGER) {
+			if (bg_img_num>9) bg_img_num-=8;
+    			else bg_img_num=1;
+			MENU_CHGVAL();
+		} else if (new_pad&PSP_CTRL_RTRIGGER) {
+			if (bg_img_num<limit-8) bg_img_num+=8;
+			else bg_img_num=limit;
+			MENU_CHGVAL();
+		} else if (new_pad&PSP_CTRL_TRIANGLE) {
+			os9x_beep1();
+			if (bg_img) {
+				free(bg_img->pixels);
+				free(bg_img);
+				bg_img=NULL;
+				bg_img_num=-1;
+				load_background();
+				menu_buildbg();
+			}
+			to_exit=1;
+			menu_cnt2=0;
+		}  else if (new_pad & PSP_CTRL_SELECT) {
+			if (os9x_menumusic) {
+				menu_stopmusic();
+				menu_startmusic();
+			}
+		} SNAPSHOT_CODE()
+	}
+		//swap screen
+		pgScreenFlipV2();
+	}
+	return retval;
 }
 
 #define MENU_XMB_ENTRIES_NB (4+7+2+11+3+10+10+2)
@@ -3365,7 +3440,7 @@ menu_xmb_entry_t menu_xmb_entries[MENU_XMB_ENTRIES_NB]={
 	{5,1,menu_viewfile,MENU_ICONS_MISC_FILEVIEWER,MENU_ICONS_MISC_FILEVIEWER_HELP},
 	{5,2,show_debugmenu,MENU_ICONS_MISC_HACKDEBUG,MENU_ICONS_MISC_HACKDEBUG_HELP},
 	{5,3,menu_snapshot,MENU_ICONS_MISC_SNAPSHOT,MENU_ICONS_MISC_SNAPSHOT_HELP},
-	{5,4,menu_swapbg,MENU_ICONS_MISC_RANDBG,MENU_ICONS_MISC_RANDBG_HELP},
+	{5,4,menu_swapbg,MENU_ICONS_MISC_SWAPBG,MENU_ICONS_MISC_SWAPBG_HELP},
 	{5,5,menu_menumusic,MENU_ICONS_MISC_BGMUSIC,MENU_ICONS_MISC_BGMUSIC_HELP},
 	{5,6,menu_menufx,MENU_ICONS_MISC_BGFX,MENU_ICONS_MISC_BGFX_HELP},
 	{5,7,menu_menupadbeep,MENU_ICONS_MISC_PADBEEP,MENU_ICONS_MISC_PADBEEP_HELP},

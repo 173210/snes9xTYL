@@ -246,8 +246,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_HACKDEBUG_HELP,"For advanced users.\nHelp to tune the rendering and\ngain some speed.",0},
 	{MENU_ICONS_MISC_SNAPSHOT,"Snapshot",0},
 	{MENU_ICONS_MISC_SNAPSHOT_HELP,"Take a snapshot of the current\ngame screen.\nUsed in file browser.",0},
-	{MENU_ICONS_MISC_RANDBG,"Randomize BG",0},
-	{MENU_ICONS_MISC_RANDBG_HELP,"Randomize BG from the DATA/logo.zip\nfile.",0},
+	{MENU_ICONS_MISC_SWAPBG,"Swap BG",0},
+	{MENU_ICONS_MISC_SWAPBG_HELP,"Swap BG from the DATA/logo.zip\nfile.",0},
 	{MENU_ICONS_MISC_BGMUSIC,"Menu background music",0},
 	{MENU_ICONS_MISC_BGMUSIC_HELP,"Menu background music requires\nmake PSP running at 300Mhz\nMusic are from DATA/music.zip file.\nSPC format only.",0},
 	{MENU_ICONS_MISC_BGFX,"Menu background fx",0},
@@ -258,6 +258,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_AUTOSTART_HELP,"If you set to [yes],the ROM\nwhich was loaded at last\n will start automatically\nwhen the emulator started.",0},
 	{MENU_ICONS_MISC_OSK,"OSK",0},
 	{MENU_ICONS_MISC_OSK_HELP,"OSK is On-Screen Keyboard.\nDanzeff OSK is useful\nfor typing alphabet on PSP\nSCE's official OSK is useful\nfor typing Japanese or on PS Vita.",0},
+
+	{MENU_MISC_SWAPBG_RAND,"   Random",0},
 
 	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
 	{MENU_MISC_OSK_OFFICIAL,"Official",0},
@@ -618,8 +620,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_HACKDEBUG_HELP,"高度なユーザー向けです。\n描画を調整してスピードを\n得るのに役立ちます。",0},
 	{MENU_ICONS_MISC_SNAPSHOT,"スナップショット",0},
 	{MENU_ICONS_MISC_SNAPSHOT_HELP,"現在のゲームの画面の\nスナップショットを撮ります。\nファイル一覧で使われます。",0},
-	{MENU_ICONS_MISC_RANDBG,"ランダムバックグラウンド",0},
-	{MENU_ICONS_MISC_RANDBG_HELP,"DATA/logo.zipから\nランダムに背景を表\示します。",0},
+	{MENU_ICONS_MISC_SWAPBG,"背景切り替え",0},
+	{MENU_ICONS_MISC_SWAPBG_HELP,"DATA/logo.zipから\n背景を表\示します。",0},
 	{MENU_ICONS_MISC_BGMUSIC,"メニューBGM",0},
 	{MENU_ICONS_MISC_BGMUSIC_HELP,"メニューBGMはPSPを300MHzで\n動作させる必要があります。\n音楽はDATA/music.zipから再生します。\nSPCフォーマットのみです。",0},
 	{MENU_ICONS_MISC_BGFX,"メニューバックグラウンドCG",0},
@@ -630,6 +632,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_AUTOSTART_HELP,"「はい」にすると、エミュレーターを\n起動したときに自動的に\n最後に起動したROMが起動します。",0},
 	{MENU_ICONS_MISC_OSK,"OSK",0},
 	{MENU_ICONS_MISC_OSK_HELP,"OSKとは画面上のキーボードのことです。\nDanzeff OSKはアルファベットをPSPで\n入力する際に最適です。\nSCE公式OSKは日本語やePSPで\n入力する際に最適です。",0},
+
+	{MENU_MISC_SWAPBG_RAND,"   ランダム",0},
 
 	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
 	{MENU_MISC_OSK_OFFICIAL,"公式",0},
