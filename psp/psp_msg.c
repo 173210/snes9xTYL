@@ -228,7 +228,9 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_VIDEO_ENGINE_ACCEL_ACCUR,"PSP accel. + accur. soft.",0},
 	{MENU_VIDEO_ENGINE_ACCEL_APPROX,"PSP accel. + approx. soft.",0},
 	{MENU_VIDEO_SLIMITVALUE_AUTO,"AUTO (detect PAL/NTSC)",0},
-	{MENU_VIDEO_FSKIP_AUTO,"AUTO",0},
+	{MENU_VIDEO_FSKIP_MODE_AUTO,"auto change below %d",0},
+	{MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO,"   auto change below set value",0},
+	{MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED,"   fixed",0},
 
 	{MENU_STATUS_VIDEO_SCRCALIB,"PAD : SCREEN POSITION  " SJIS_STAR "  ANALOG STICK : SCREEN SIZE  " SJIS_STAR "  " SJIS_TRIANGLE " default  " SJIS_STAR "  " SJIS_CROSS " Exit",0},
 
@@ -606,7 +608,9 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_VIDEO_ENGINE_ACCEL_ACCUR,"PSPｱｸｾﾗﾚｰﾀ+正確なｿﾌﾄｳｪｱ描画",0},
 	{MENU_VIDEO_ENGINE_ACCEL_APPROX,"PSPｱｸｾﾗﾚｰﾀ+ほぼ正確なｿﾌﾄｳｪｱ描画",0},
 	{MENU_VIDEO_SLIMITVALUE_AUTO,"自動 (PAL/NTSCを判別する)",0},
-	{MENU_VIDEO_FSKIP_AUTO,"自動",0},
+	{MENU_VIDEO_FSKIP_MODE_AUTO,"%d以下で自動的に変更",0},
+	{MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO,"   設定値以下で自動的に変更",0},
+	{MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED,"   固定",0},
 
 	{MENU_STATUS_VIDEO_SCRCALIB,"十\字ボタン : 画面位置  " SJIS_STAR "  アナログスティック : 画面サイズ  " SJIS_STAR "  " SJIS_TRIANGLE " 標準  " SJIS_STAR "  " SJIS_CROSS " 終了",0},
 
