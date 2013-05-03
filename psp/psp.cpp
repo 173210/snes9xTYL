@@ -122,7 +122,7 @@
 
 /* Define the module info section */
 //PSP_MODULE_INFO("snes9xTYL", 0x1000, 0, 4);
-PSP_MODULE_INFO("snes9xTYL", 0, 0, 4);
+PSP_MODULE_INFO(snes9xTYL, 0, 0, 4);
 /* Define the main thread's attribute value (optional) */
 //PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VFPU);
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
@@ -267,7 +267,6 @@ char * me_debug_str=(char*)UNCACHE_PTR(&me_debug_str_value);
 
 #define AUTO_FSKIP 10
 #define SKEEZIX_FSKIP 11
-#define MAX_AUTO_SKIP 9
 #define MIN_AUTOFRAME_LAG 200  //0,2 ms
 
 int os9x_netplay,os9x_conId; //conId : 2 is client, 1 is server
@@ -311,6 +310,7 @@ int os9x_softrendering,os9x_smoothing;
 
 int os9x_fskipvalue;
 uint32 os9x_autofskip_SkipFrames;
+uint32 os9x_autofskip_MaxSkipFrames;
 int os9x_CyclesPercentage;
 int os9x_apuenabled;
 int* os9x_apuenabled_ptr;
@@ -1833,7 +1833,7 @@ void S9xSyncSpeed()
 		//AUTO FRAME SKIPPING
 		if (IPPU.RenderThisFrame) {
 			//WE HAVE RENDERED A FRAME, so sync was performed
-	  	if (!waited && (os9x_autofskip_SkipFrames<MAX_AUTO_SKIP) ) {
+	  	if (!waited && (os9x_autofskip_SkipFrames<os9x_autofskip_MaxSkipFrames) ) {
 	  		//it was too slow
 				os9x_autofskip_SkipFrames++;
 			} else {
@@ -2532,6 +2532,7 @@ void initvar_withdefault() {
 	os9x_softrendering=4;//psp accel+approx soft
 	os9x_smoothing=1;
 	os9x_fskipvalue=0;
+	os9x_autofskip_MaxSkipFrames=9;
 	os9x_autofskip_SkipFrames=0;
 	os9x_speedlimit=1;
 

@@ -84,8 +84,8 @@ extern u16 os9x_savestate_mini[128*120];
 extern u32 new_pad,old_pad;
 extern int os9x_vsync,os9x_padindex,os9x_usballowed;
 extern int os9x_BG0,os9x_BG1,os9x_BG2,os9x_BG3,os9x_OBJ,os9x_easy,os9x_fastsprite,os9x_applyhacks,os9x_hack;
-extern int os9x_smoothing,os9x_softrendering,os9x_apuenabled,os9x_cpuclock,os9x_fskipvalue,os9x_render,os9x_speedlimit,os9x_sndfreq;
-extern int os9x_showfps,os9x_showpass,os9x_getnewfile,os9x_gammavalue,os9x_snesheight,os9x_forcepal_ntsc;
+extern int os9x_smoothing,os9x_softrendering,os9x_apuenabled,os9x_cpuclock,os9x_fskipvalue,os9x_autofskip_MaxSkipFrames,os9x_render;
+extern int os9x_speedlimit,os9x_sndfreq,os9x_showfps,os9x_showpass,os9x_getnewfile,os9x_gammavalue,os9x_snesheight,os9x_forcepal_ntsc;
 extern int os9x_lowbat,os9x_autosavetimer,os9x_menumusic,os9x_menufx,os9x_menupadbeep;
 extern int os9x_autostart;
 extern int os9x_osk;
@@ -2001,9 +2001,14 @@ int menu_fskip(char *mode){
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_fskipvalue;
+	int autofskip;
+
+	if (os9x_fskipvalue<10) autofskip=0;
+	else autofskip=1;
+
 	if (mode) {
-		if (os9x_fskipvalue<10) sprintf(mode,"%d",os9x_fskipvalue);
-		else sprintf(mode,psp_msg_string(MENU_VIDEO_FSKIP_AUTO));
+		if (autofskip) sprintf(mode,psp_msg_string(MENU_VIDEO_FSKIP_MODE_AUTO),os9x_autofskip_MaxSkipFrames);
+		else sprintf(mode,"%d",os9x_fskipvalue);
 		return 0;
 	}
 
@@ -2013,15 +2018,16 @@ int menu_fskip(char *mode){
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
 
-		if (new_value<10) sprintf(str_tmp,"%d",new_value);
-		else sprintf(str_tmp,psp_msg_string(MENU_VIDEO_FSKIP_AUTO));
+		sprintf(str_tmp,"%d",new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(autofskip?MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED:MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_SQUARE,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_TRIANGLE,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,160,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,160,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2034,13 +2040,19 @@ int menu_fskip(char *mode){
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
-	    	os9x_fskipvalue=new_value;
-	    } else if (new_pad&PSP_CTRL_DOWN) {
+		if(autofskip) {
+			os9x_fskipvalue=10;
+			os9x_autofskip_MaxSkipFrames=new_value;
+		} else os9x_fskipvalue=new_value;
+	} else if (new_pad&PSP_CTRL_DOWN) {
     		if (new_value) {new_value--;MENU_CHGVAL();}
     	} else if (new_pad&PSP_CTRL_UP) {
-	    	if (new_value<10) {new_value++;MENU_CHGVAL();}
+	    	if (new_value<9) {new_value++;MENU_CHGVAL();}
+    	} else if (new_pad&PSP_CTRL_SQUARE) {
+		autofskip = !autofskip;
     	} else if (new_pad&PSP_CTRL_TRIANGLE) {
-	    	new_value=10;
+		autofskip = 1;
+	    	new_value=9;
     	}  else if (new_pad & PSP_CTRL_SELECT) {
 					if (os9x_menumusic) {
 						menu_stopmusic();
