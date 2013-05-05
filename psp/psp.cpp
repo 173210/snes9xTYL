@@ -2999,12 +2999,12 @@ int scroll_message_input(char *name,int limit) {
 
 			switch(sceUtilityOskGetStatus()) {
 			case PSP_UTILITY_DIALOG_INIT :
-				j=mh_length("Initializing OSK...");
+				j=mh_length(psp_msg_string(INIT_OSK));
 				i=(480-j)/2;
 				pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
   				pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
 				pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
-				mh_print(i,130,"Initializing OSK...",31|(28<<5)|(24<<10));
+				mh_print(i,130,psp_msg_string(INIT_OSK),31|(28<<5)|(24<<10));
 				break;
 			case PSP_UTILITY_DIALOG_VISIBLE :
 				sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation

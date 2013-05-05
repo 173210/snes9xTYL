@@ -1476,16 +1476,18 @@ void menu_basic(int selected) {
   }
   else pad_cnt--;
 
-  //add the 'X to return' message at bottom
-	mh_printCenter(262,psp_msg_string(MENU_STATUS_GENERIC_MSG1),INFOBAR_COL);
+	//add the 'X to return' message at bottom
+	if (selected > -2) {
+		mh_printCenter(262,psp_msg_string(MENU_STATUS_GENERIC_MSG1),INFOBAR_COL);
 
-	{
-		sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_FREERAM),menu_free_ram);
-		mh_print(480-mh_length(str_tmp),262,str_tmp,INFOBAR_COL);
-	}
-	if (menu_music) {
-		sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_CHANGEMUSIC));
-		mh_print(13,262,str_tmp,INFOBAR_COL);
+		{
+			sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_FREERAM),menu_free_ram);
+			mh_print(480-mh_length(str_tmp),262,str_tmp,INFOBAR_COL);
+		}
+		if (menu_music) {
+			sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_CHANGEMUSIC));
+			mh_print(13,262,str_tmp,INFOBAR_COL);
+		}
 	}
 
   //right panel
@@ -2000,11 +2002,16 @@ int menu_gamma(char *mode){
 int menu_fskip(char *mode){
 	int retval=0;
 	int to_exit=0;
-	int new_value=os9x_fskipvalue;
+	int new_value;
 	int autofskip;
 
-	if (os9x_fskipvalue<10) autofskip=0;
-	else autofskip=1;
+	if (os9x_fskipvalue<10) {
+		autofskip=0;
+		new_value=os9x_fskipvalue;
+	} else {
+		autofskip=1;
+		new_value=os9x_autofskip_MaxSkipFrames;
+	}
 
 	if (mode) {
 		if (autofskip) sprintf(mode,psp_msg_string(MENU_VIDEO_FSKIP_MODE_AUTO),os9x_autofskip_MaxSkipFrames);
@@ -3389,10 +3396,10 @@ int menu_apuratio(char *mode) {
 int menu_swapbg(char *mode) {
 	if (mode) {
 		if (bg_img) sprintf(mode,"%d",bg_img_num + 1);
-		else strcpy(mode,"No Data");
+		else strcpy(mode,psp_msg_string(MENU_MUSIC_SWAPBG_NODATA));
 		return 0;
 	}
-	if (!bg_img) return 1;
+	if (!bg_img) return 0;
 
 	int new_value=bg_img_num;
 	int retval=0;
@@ -3438,12 +3445,12 @@ int menu_swapbg(char *mode) {
 			else new_value--;
 			MENU_CHGVAL();
 		} else if (new_pad&PSP_CTRL_UP) {
-			if (new_value>=limit) new_value=1;
+			if (new_value>=limit) new_value=0;
 			else new_value++;
 			MENU_CHGVAL();
 		} else if (new_pad&PSP_CTRL_LTRIGGER) {
 			if (new_value>9) new_value-=8;
-    			else new_value=1;
+    			else new_value=0;
 			MENU_CHGVAL();
 		} else if (new_pad&PSP_CTRL_RTRIGGER) {
 			if (new_value<limit-8) new_value+=8;
@@ -3575,7 +3582,7 @@ void menu_drawFrame(int selected) {
   show_batteryinfo();
   show_usbinfo();
 
-  if (selected==-1) return;
+  if (selected<0) return;
 
   //draw icons
   for (i=-1;i<7;i++) {
@@ -3736,7 +3743,7 @@ void menu_inputName(char *name) {
 			}
 		}
 	} else {
-		int done = 0,i,j,k,oldmenufx;
+		int done = 0,i,j,k;
 		// INIT OSK
 		unsigned short intext[128]  = { 0 }; // text already in the edit box on start
 		unsigned short outtext[128] = { 0 }; // text after input
@@ -3788,23 +3795,33 @@ void menu_inputName(char *name) {
 		osk.datacount = 1;
 		osk.data = data;
 
-		// Only ascii code is handled so only the input of the small letters is printed
-
 		int rc = sceUtilityOskInitStart(&osk);
 		if(rc) return;
-		oldmenufx=os9x_menufx;
-		os9x_menufx=1;
 		while(!done) {
-			menu_basic(-1);
+			menu_basic(-2);
+
+			if (!os9x_menufx) {
+				sceGuStart(GU_DIRECT,list);
+
+				//set draw buffer
+				sceGuDrawBuffer(GU_PSM_5551,(void*)pgGetVramAddr(0,0),512);
+
+				// clear depth buffer
+				sceGuClearDepth(0);
+				sceGuClear(GU_DEPTH_BUFFER_BIT);
+
+				sceGuFinish();
+				sceGuSync(0,0);
+			}
 
 			switch(sceUtilityOskGetStatus()) {
 				case PSP_UTILITY_DIALOG_INIT :
-					j=mh_length("Initializing OSK...");
+					j=mh_length(psp_msg_string(INIT_OSK));
 					i=(480-j)/2;
 					pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
   					pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
 					pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
-					mh_print(i,130,"Initializing OSK...",31|(28<<5)|(24<<10));
+					mh_print(i,130,psp_msg_string(INIT_OSK),31|(28<<5)|(24<<10));
 					break;
 				case PSP_UTILITY_DIALOG_VISIBLE :
 					sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation

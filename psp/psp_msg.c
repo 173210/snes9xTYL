@@ -265,6 +265,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_OSK,"OSK",0},
 	{MENU_ICONS_MISC_OSK_HELP,"OSK is On-Screen Keyboard.\nDanzeff OSK is useful\nfor typing alphabet on PSP\nSCE's official OSK is useful\nfor typing Japanese or on PS Vita.",0},
 
+	{MENU_MUSIC_SWAPBG_NODATA,"No Data",0},
 	{MENU_MISC_SWAPBG_RAND,"   Random",0},
 
 	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
@@ -451,7 +452,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_STATUS_GENERIC_NEEDRELOAD,"変更を適用するには再読み込みが必要かもしれません",0},
 	{MENU_STATUS_GENERIC_NEEDRESET,"変更を適用するにはリセットが必要かもしれません",0},
 	{MENU_STATUS_GENERIC_FREERAM,"空きメモリ : %dKo",0},
-	{MENU_STATUS_GENERIC_CHANGEMUSIC,"音楽を変えるにはSELECTボタンを押してください",0},
+	{MENU_STATUS_GENERIC_CHANGEMUSIC,"音楽を変えるにはSELECTボタンを、",0},
 
 	{MENU_TITLE_GENERIC_BAT,"%02d%c%02d 電池:%s%s%s残り%02d%%%s 温度.%d℃",0},
 	{MENU_TITLE_GENERIC_BAT_TIME,"(%02d時間%02d分)",0},
@@ -645,6 +646,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_ICONS_MISC_OSK,"OSK",0},
 	{MENU_ICONS_MISC_OSK_HELP,"OSKとは画面上のキーボードのことです。\nDanzeff OSKはアルファベットをPSPで\n入力する際に最適です。\nSCE公式OSKは日本語やePSPで\n入力する際に最適です。",0},
 
+	{MENU_MUSIC_SWAPBG_NODATA,"データがありません",0},
 	{MENU_MISC_SWAPBG_RAND,"   ランダム",0},
 
 	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
