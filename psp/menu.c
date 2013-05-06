@@ -723,7 +723,7 @@ int show_debugmenu(char *mode) {
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Main menu \5,\7 to select ,\6,\b to change value");
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
-    mh_print(8,0,psp_msg_string(MENU_TITLE_MISC_HACKDEBUG),TITLE_COL);
+    mh_print(0,0,psp_msg_string(MENU_TITLE_MISC_HACKDEBUG),TITLE_COL);
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Return game \5,\7 to select ,\6,\b to change value");
     {
     	char status_bar[100];
@@ -1121,7 +1121,7 @@ int show_inputsmenu(char *mode) {
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Main menu \5,\7 to select ,\6,\b to change value");
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
-    mh_print(8,0,psp_msg_string(MENU_TITLE_CONTROLS_INPUT),TITLE_COL);
+    mh_print(0,0,psp_msg_string(MENU_TITLE_CONTROLS_INPUT),TITLE_COL);
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Return game \5,\7 to select ,\6,\b to change value");
     //mh_print(8,262,SJIS_CIRCLE " OK " SJIS_CROSS " Back to Game       " SJIS_STAR "       " SJIS_TRIANGLE " Help        " SJIS_STAR "       " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",INFOBAR_COL);
     {
@@ -1420,7 +1420,7 @@ int menu_buildbg() {
 
 	pgFillBoxHalfer(0,0,479,9);
 	pgFillBoxHalfer(0,272-10,479,271);
-	mh_print(0,0,EMUNAME_VERSION,(31<<0)|(30<<5)|(20<<10));
+	mh_print(0,0," " EMUNAME_VERSION,(31<<0)|(30<<5)|(20<<10));
 
 	for (i=0;i<272;i++) {
 		src = (u16*)pgGetVramAddr(0,i);
@@ -3659,9 +3659,9 @@ void menu_drawFrame(int selected) {
 					menu_xmb_entries[i].menu_func(str_tmp);
 					if (str_tmp[0]) {//a value has to be shown
 						mh_print_light(x,100+y+4,psp_msg_string(menu_xmb_entries[i].label_id),31|(31<<5)|(31<<10),menu_current_smoothing);
-						mh_print(x+160,100+y+4,str_tmp,31|(31<<5)|(31<<10));
-						pgDrawFrame(x,100+y+4+12,x+160+mh_length(str_tmp),100+y+4+12,(28|(28<<5)|(28<<10)));
-						pgDrawFrame(x+1,100+y+4+13,x+161+mh_length(str_tmp),100+y+4+13,(12|(12<<5)|(12<<10)));
+						mh_print(x+156,100+y+4,str_tmp,31|(31<<5)|(31<<10));
+						pgDrawFrame(x,100+y+4+12,x+156+mh_length(str_tmp),100+y+4+12,(28|(28<<5)|(28<<10)));
+						pgDrawFrame(x+1,100+y+4+13,x+157+mh_length(str_tmp),100+y+4+13,(12|(12<<5)|(12<<10)));
 					} else {
 						mh_print_light(x,100+y+4,psp_msg_string(menu_xmb_entries[i].label_id),31|(31<<5)|(24<<10),menu_current_smoothing);
 					}
@@ -3681,7 +3681,7 @@ void menu_drawFrame(int selected) {
 					menu_xmb_entries[i].menu_func(str_tmp);
 					if (str_tmp[0]) {//a value has to be shown
 						mh_print(x,100+y,psp_msg_string(menu_xmb_entries[i].label_id),20|(20<<5)|(20<<10));
-						mh_print(x+160,100+y,str_tmp,20|(20<<5)|(20<<10));
+						mh_print(x+156,100+y,str_tmp,20|(20<<5)|(20<<10));
 					} else {
 						mh_print(x,100+y,psp_msg_string(menu_xmb_entries[i].label_id),20|(20<<5)|(12<<10));
 					}
