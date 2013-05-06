@@ -1343,13 +1343,13 @@ void menu_startmusic(){
 		srand((now.tv_usec+now.tv_sec*1000000));
 
 		unzGetGlobalInfo(zip_file,&pglobal_info);
-		if (os9x_menumusic == 1) {
+		if (os9x_menumusic==1) {
 			do {
 				num=rand()%pglobal_info.number_entry;
 			} while (num==menu_musicidx);
 			menu_musicidx=num;
 		} else {
-			if (menu_musicidx>=pglobal_info.number_entry) num=menu_musicidx=0;
+			if (menu_musicidx>=pglobal_info.number_entry-1) num=menu_musicidx=0;
 			else num=++menu_musicidx;
 		}
 
@@ -2230,6 +2230,10 @@ int menu_osk(char *mode) {
 				os9x_beep1();
 				to_exit=1;
 				menu_cnt2=0;
+				if (os9x_osk==0 && new_value==1)
+					danzeff_load16(LaunchDir);
+				else if (os9x_osk==1 && new_value==0)
+					danzeff_free();
 				os9x_osk=new_value;
 			} else if (new_pad&PSP_CTRL_DOWN) {
 				switch (new_value) {
@@ -3806,10 +3810,6 @@ void menu_inputName(char *name) {
 				//set draw buffer
 				sceGuDrawBuffer(GU_PSM_5551,(void*)pgGetVramAddr(0,0),512);
 
-				// clear depth buffer
-				sceGuClearDepth(0);
-				sceGuClear(GU_DEPTH_BUFFER_BIT);
-
 				sceGuFinish();
 				sceGuSync(0,0);
 			}
@@ -3846,8 +3846,8 @@ void menu_inputName(char *name) {
 		for(i = 0; data[0].outtext[i]; i++) {
 			for (k=0;k<TOTAL_TBL;k++) {
 				if (data[0].outtext[i]==map[k][1]) {
-					if (map[k][0] > 0xFF) name[j++]=map[k][0]>>8;
-					name[j++]=map[k][0]&0xFF;
+					if (map[k][0] > 0xFF) name[j++]=map[k][0]&0xFF;
+					name[j++]=map[k][0]>>8;
 					break;
 				}
 			}
