@@ -3846,8 +3846,8 @@ void menu_inputName(char *name) {
 		for(i = 0; data[0].outtext[i]; i++) {
 			for (k=0;k<TOTAL_TBL;k++) {
 				if (data[0].outtext[i]==map[k][1]) {
-					if (map[k][0] > 0xFF) name[j++]=map[k][0]&0xFF;
-					name[j++]=map[k][0]>>8;
+					name[j++]=map[k][0]&0xFF;
+					if (map[k][0] > 0xFF) name[j++]=map[k][0]>>8;
 					break;
 				}
 			}
