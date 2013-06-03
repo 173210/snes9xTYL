@@ -48,7 +48,7 @@
 #include "apu.h"
 #include "gfx.h"
 #include "sa1.h"
-
+#include "spc7110emu.h"
 
 
 
@@ -65,6 +65,8 @@ extern int debug_counts[];
 extern int HDMA_ModeByteCounts [8];
 extern uint8 *HDMAMemPointers [8];
 extern uint8 *HDMABasePointers [8];
+
+extern SPC7110 s7emu;
 
 // #define SETA010_HDMA_FROM_CART
 
@@ -244,6 +246,21 @@ void S9xDoDMA (uint8 Channel)
 
 		FillRAM [0x4801] = 0;
     }
+
+	if (Settings.SPC7110 && (d->AAddress == 0x4800 || d->ABank == 0x50))
+	{
+		spc7110_dma = (uint8 *) malloc (sizeof (uint8) * count);
+		for (int i = 0; i < count; i++)
+			spc7110_dma[i] = s7emu.decomp.read();
+
+		int32 icount = s7emu.r4809 | (s7emu.r480a << 8);
+		icount -= count;
+		s7emu.r4809 =  icount & 0x00ff;
+		s7emu.r480a = (icount & 0xff00) >> 8;
+
+		inc = 1;
+		d->AAddress -= count;
+	}
 /*	if(Settings.SPC7110&&(d->AAddress==0x4800||d->ABank==0x50))
 	{
 		uint32 i,j;
@@ -724,8 +741,6 @@ void S9xDoDMA (uint8 Channel)
 			switch (d->TransferMode)
 			{
 			case 0:
-			case 2:
-			case 6:
 				Work = S9xGetPPU (0x2100 + d->BAddress);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
 				d->AAddress += inc;
@@ -733,7 +748,6 @@ void S9xDoDMA (uint8 Channel)
 				break;
 				
 			case 1:
-			case 5:
 				Work = S9xGetPPU (0x2100 + d->BAddress);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
 				d->AAddress += inc;
@@ -746,6 +760,23 @@ void S9xDoDMA (uint8 Channel)
 				count--;
 				break;
 				
+			case 2:
+			case 6:
+				if (Settings.SPC7110)
+				{
+					Work = S9xGetPPU (0x2100 + d->BAddress);
+					S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
+					d->AAddress += inc;
+					if (!--count)
+						break;
+				}
+
+				Work = S9xGetPPU (0x2100 + d->BAddress);
+				S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
+				d->AAddress += inc;
+				--count;
+				break;
+
 			case 3:
 			case 7:
 				Work = S9xGetPPU (0x2100 + d->BAddress);
@@ -797,6 +828,34 @@ void S9xDoDMA (uint8 Channel)
 				count--;
 				break;
 				
+			case 5:
+				if (Settings.SPC7110)
+				{
+					Work = S9xGetPPU (0x2100 + d->BAddress);
+					S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
+					d->AAddress += inc;
+					if (!--count)
+						break;
+
+					Work = S9xGetPPU (0x2101 + d->BAddress);
+					S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
+					d->AAddress += inc;
+					if (!--count)
+						break;
+				}
+
+				Work = S9xGetPPU (0x2100 + d->BAddress);
+				S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
+				d->AAddress += inc;
+				if (!--count)
+					break;
+
+				Work = S9xGetPPU (0x2101 + d->BAddress);
+				S9xSetByte (Work, (d->ABank << 16) + d->AAddress);
+				d->AAddress += inc;
+				count--;
+				break;
+
 			default:
 #ifdef DEBUGGER
 				if (1) //Settings.TraceDMA)
@@ -806,7 +865,8 @@ void S9xDoDMA (uint8 Channel)
 					S9xMessage (S9X_TRACE, S9X_DMA_TRACE, String);
 				}
 #endif
-				count = 0;
+				if (!Settings.SPC7110)
+					count = 0;
 				break;
 			}
 			CHECK_SOUND();
@@ -832,16 +892,16 @@ void S9xDoDMA (uint8 Channel)
     while (CPUPack.CPU.Cycles > CPUPack.CPU.NextEvent) S9xDoHBlankProcessing ();
 //	S9xUpdateAPUTimer();
 
-/*	if(Settings.SPC7110&&spc7110_dma)
+	if(Settings.SPC7110&&spc7110_dma)
 	{
-		if(spc7110_dma&&s7_wrap) {
+		if(spc7110_dma/*&&s7_wrap*/) {
 #ifdef PSP
 		        free (spc7110_dma);
 #else			
 			delete [] spc7110_dma;
 #endif
 		}
-	}*/
+	}
 
 update_address:
     // Super Punch-Out requires that the A-BUS address be updated after the

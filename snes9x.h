@@ -315,6 +315,9 @@ struct SSettings{
     bool8  SDD1;
     bool8  SDD1Pack;
 
+	bool8  SPC7110;
+	bool8  SPC7110RTC;
+
     // Sound options
     uint32 SoundPlaybackRate;
 

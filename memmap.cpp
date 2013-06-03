@@ -65,6 +65,7 @@ extern "C" {
 #include "sa1.h"
 #include "srtc.h"
 #include "sdd1.h"
+#include "spc7110.h"
 
 #include "soundux.h"
 
@@ -1429,6 +1430,8 @@ void CMemory::InitROM (bool8 Interleaved)
     Settings.C4 = FALSE;
     Settings.SDD1 = FALSE;
     Settings.SRTC = FALSE;
+	Settings.SPC7110 = FALSE;
+	Settings.SPC7110RTC = FALSE;
 
 	Settings.BS = FALSE;//add azz 080517
 
@@ -1499,8 +1502,31 @@ void CMemory::InitROM (bool8 Interleaved)
 			if ((ROMType & 0xf0) == 0x40)
 				Settings.SDD1 = !Settings.ForceNoSDD1;
 
+			Settings.SRTC = ((ROMType & 0xf0) >> 4) == 5;
 
-			if (Settings.BS)
+			if (Settings.SRTC)
+				S9xInitSRTC();
+
+			if (((ROMSpeed & 0x0F) == 0x0A) && ((ROMType & 0xF0) == 0xF0))
+			{
+				Settings.SPC7110 = true;
+				if ((ROMType & 0x0F) == 0x09)
+					Settings.SPC7110RTC = true;
+				S9xInitSPC7110();
+			}
+
+			if (Settings.SRTC || Settings.SPC7110RTC)
+			{
+				if (Settings.SRTC)
+					S9xSyncSRTC(GetCurrentTime());
+				else if (Settings.SPC7110RTC)
+					S9xSyncSPC7110RTC(GetCurrentTime());
+				SaveSRTC();
+			}
+
+			if (Settings.SPC7110)
+				SPC7110HiROMMap();
+			else if (Settings.BS)
 #ifdef _BSX_151_
 				;
 #else
@@ -1728,6 +1754,35 @@ void CMemory::InitROM (bool8 Interleaved)
     S9xMessage (0/*S9X_INFO*/, S9X_ROM_INFO, String);
 }
 
+bool8 CMemory::LoadSRTC (void)
+{
+	FILE	*fp;
+	size_t	ignore;
+
+	fp = fopen(S9xGetSaveFilename(".rtc"), "rb");
+	if (!fp)
+		return (FALSE);
+
+	ignore = fread(RTCData.reg, 1, 20, fp);
+	fclose(fp);
+
+	return (TRUE);
+}
+
+bool8 CMemory::SaveSRTC (void)
+{
+	FILE	*fp;
+	size_t	ignore;
+
+	fp = fopen(S9xGetSaveFilename(".rtc"), "wb");
+	if (!fp)
+		return (FALSE);
+
+	ignore = fwrite(RTCData.reg, 1, 20, fp);
+	fclose(fp);
+
+	return (TRUE);
+}
 
 bool8 CMemory::LoadSRAM (char *filename)
 {
@@ -1766,6 +1821,9 @@ bool8 CMemory::LoadSRAM (char *filename)
 				memmove (SRAM, SRAM + 512, lsize);
 		    }
 		    
+			if (Settings.SRTC || Settings.SPC7110RTC)
+				LoadSRTC();
+/*
 		    if (len == lsize + SRTC_SRAM_PAD)
 		    {
 				S9xSRTCPostLoadState ();
@@ -1774,6 +1832,7 @@ bool8 CMemory::LoadSRAM (char *filename)
 				rtc.mode = MODE_READ;
 		    }
 		    else S9xHardResetSRTC ();	
+*/
 			return (TRUE);
 		}
 #ifdef _BSX_151_
@@ -1817,7 +1876,7 @@ bool8 CMemory::LoadSRAM (char *filename)
 			}
 		}
 #endif
-		S9xHardResetSRTC ();
+		//S9xHardResetSRTC ();
 		return (FALSE);
     }
     if (Settings.SDD1)
@@ -1833,13 +1892,13 @@ bool8 CMemory::SaveSRAM (char *filename)
 
 	  /*debug*/
 //  DBG_BREAK
-
+/*
     if (Settings.SRTC)
     {
 		lsize += SRTC_SRAM_PAD;
 		S9xSRTCPreSaveState ();
     }
-
+*/
     if (Settings.SDD1)
     {
 		S9xSDD1SaveLoggedData ();
@@ -1863,6 +1922,8 @@ bool8 CMemory::SaveSRAM (char *filename)
 #if defined(__linux)
 		    chown (filename, getuid (), getgid ());
 #endif
+			if (Settings.SRTC || Settings.SPC7110RTC)
+				SaveSRTC();
 		    return (TRUE);
 		}
     }
@@ -2788,6 +2849,102 @@ void CMemory::BSHiROMMap ()
     WriteProtectROM ();
 }
 
+void CMemory::SPC7110HiROMMap ()
+{
+	int c;
+	int i;
+
+	// Banks 00->3f and 80->bf
+	for (c = 0; c < 0x400; c += 16)
+	{
+		Map [c + 0] = Map [c + 0x800] = RAM;
+		BlockIsRAM [c + 0] = BlockIsRAM [c + 0x800] = TRUE;
+		Map [c + 1] = Map [c + 0x801] = RAM;
+		BlockIsRAM [c + 1] = BlockIsRAM [c + 0x801] = TRUE;
+
+		Map [c + 2] = Map [c + 0x802] = (uint8 *) MAP_PPU;
+		Map [c + 3] = Map [c + 0x803] = (uint8 *) MAP_PPU;
+		Map [c + 4] = Map [c + 0x804] = (uint8 *) MAP_CPU;
+		Map [c + 5] = Map [c + 0x805] = (uint8 *) MAP_CPU;
+
+		Map [c + 6] = (uint8 *) MAP_HIROM_SRAM;
+		Map [c + 7] = (uint8 *) MAP_HIROM_SRAM;
+		Map [c + 0x806] = Map [c + 0x807]= (uint8 *) MAP_NONE;
+
+		for (i = c + 8; i < c + 16; i++)
+		{
+			Map [i] = Map [i + 0x800] = &ROM [(c << 12) % CalculatedSize];
+			BlockIsROM [i] = BlockIsROM [i + 0x800] = TRUE;
+		}
+
+		for (i = c; i < c + 16; i++)
+		{
+			int ppu = i & 15;
+			MemorySpeed [i] = 
+			MemorySpeed [i + 0x800] = ppu >= 2 && ppu <= 3 ? ONE_CYCLE : SLOW_ONE_CYCLE;
+		}
+    }
+
+	// Banks 30->3f and b0->bf, address ranges 6000->7fff is S-RAM.
+	for (c = 0; c < 16; c++)
+	{
+		Map [0x306 + (c << 4)] = (uint8 *) MAP_HIROM_SRAM;
+		Map [0x307 + (c << 4)] = (uint8 *) MAP_HIROM_SRAM;
+		Map [0xb06 + (c << 4)] = (uint8 *) MAP_NONE;
+		Map [0xb07 + (c << 4)] = (uint8 *) MAP_NONE;
+		BlockIsRAM [0x306 + (c << 4)] = TRUE;
+		BlockIsRAM [0x307 + (c << 4)] = TRUE;
+		//	BlockIsRAM [0xb06 + (c << 4)] = TRUE;
+		//	BlockIsRAM [0xb07 + (c << 4)] = TRUE;
+	}
+
+	// Banks 40->7f and c0->ff
+	for (c = 0; c < 0x400; c += 16)
+	{
+		for (i = c; i < c + 16; i++)
+		{
+			Map [i + 0x400] = Map [i + 0xc00] = &ROM [(c << 12) % CalculatedSize];
+			MemorySpeed [i + 0x400] = MemorySpeed [i + 0xc00] = SLOW_ONE_CYCLE;
+			BlockIsROM [i + 0x400] = BlockIsROM [i + 0xc00] = TRUE;
+		}
+	}
+
+	for (c=0;c<0x10;c++)
+	{
+		Map [0x500+c] = (uint8 *)MAP_SPC7110_DRAM;
+		BlockIsROM [0x500+c] = TRUE;
+	}
+
+	for (c=0;c<0x100;c++)
+	{
+		Map [0xD00+c] = (uint8 *) MAP_SPC7110_ROM;
+		Map [0xE00+c] = (uint8 *) MAP_SPC7110_ROM;
+		Map [0xF00+c] = (uint8 *) MAP_SPC7110_ROM;
+		BlockIsROM [0xD00+c] = BlockIsROM [0xE00+c] = BlockIsROM [0xF00+c] = TRUE;
+	}
+
+	MapRAM ();
+	WriteProtectROM ();
+}
+
+void CMemory::SPC7110Sram(uint8 newstate)
+{
+	if (newstate & 0x80)
+	{
+		Map[6] = (uint8 *)MAP_HIROM_SRAM;
+		Map[7] = (uint8 *)MAP_HIROM_SRAM;
+		Map[0x306] = (uint8 *)MAP_HIROM_SRAM;
+		Map[0x307] = (uint8 *)MAP_HIROM_SRAM;
+	}
+	else
+	{
+		Map[6] = (uint8 *)MAP_RONLY_SRAM;
+		Map[7] = (uint8 *)MAP_RONLY_SRAM;
+		Map[0x306] = (uint8 *)MAP_RONLY_SRAM;
+		Map[0x307] = (uint8 *)MAP_RONLY_SRAM;
+	}
+}
+
 const char *CMemory::TVStandard ()
 {
     return (Settings.PAL ? "PAL" : "NTSC");
@@ -2851,8 +3008,12 @@ const char *CMemory::KartContents ()
 
     sprintf (tmp, "%s", Contents [(ROMType & 0xf) % 3]);
 
-    if ((ROMType & 0xf) >= 3)
-	sprintf (tmp, "%s+%s", tmp, CoPro [(ROMType & 0xf0) >> 4]);
+	if (Settings.SPC7110 && Settings.SPC7110RTC)
+		sprintf (tmp, "%s+%s", tmp, "SPC7110+RTC");
+	else if (Settings.SPC7110)
+		sprintf (tmp, "%s+%s", tmp, "SPC7110");
+	else if ((ROMType & 0xf) >= 3)
+		sprintf (tmp, "%s+%s", tmp, CoPro [(ROMType & 0xf0) >> 4]);
 
     return (tmp);
 }
@@ -2873,7 +3034,7 @@ void CMemory::ApplyROMFixes ()
 {
     // Enable S-RTC (Real Time Clock) emulation for Dai Kaijyu Monogatari 2
     //Settings.SRTC = ((ROMType & 0xf0) >> 4) == 5;
-	Settings.SRTC = (((ROMType & 0xff) << 8) + (ROMSpeed & 0xff))==0x5535;
+	//Settings.SRTC = (((ROMType & 0xff) << 8) + (ROMSpeed & 0xff))==0x5535;
 
     Settings.StrikeGunnerOffsetHack = strcmp (ROMName, "STRIKE GUNNER") == 0 ? 7 : 0;
 

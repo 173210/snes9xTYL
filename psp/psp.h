@@ -179,6 +179,8 @@ void StopSoundThread();
 void InitSoundThread();
 void FileLog(char* msg);
 
+time_t GetCurrentTime();
+
 typedef struct {
 	unsigned char *buffer[4];
 	int buffer_ready;	
