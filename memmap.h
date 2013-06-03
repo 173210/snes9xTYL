@@ -84,6 +84,8 @@ public:
     void  InitROM (bool8);
     bool8 LoadSRAM (char *);
     bool8 SaveSRAM (char *);
+	bool8 LoadSRTC (void);
+	bool8 SaveSRTC (void);
     bool8 Init ();
     void  Deinit ();
     bool8 TEMP_ReInit ();
@@ -115,6 +117,8 @@ public:
     void AlphaROMMap ();
     void SA1ROMMap ();
     void BSHiROMMap ();
+	void SPC7110HiROMMap();
+	void SPC7110Sram(uint8);
     bool8 AllASCII (uint8 *b, int size);
     int  ScoreHiROM (bool8 skip_header);
     int  ScoreLoROM (bool8 skip_header);
@@ -150,6 +154,7 @@ public:
 #ifdef _BSX_151_
 	,MAP_BSX//add azz 20080517
 #endif
+	, MAP_SPC7110_ROM, MAP_SPC7110_DRAM, MAP_RONLY_SRAM
 	, MAP_LAST
     };
     enum { MAX_ROM_SIZE = 0x600000 };
