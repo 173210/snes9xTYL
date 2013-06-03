@@ -4102,4 +4102,13 @@ return;
 	//pgPrintBG(0,6,0xffff,szBuf);	
 	
 }
+
+time_t GetCurrentTime()
+{
+	time_t cur_time;
+	sceKernelLibcTime(&cur_time);
+	cur_time += os9x_timezone * 60 + os9x_daylsavings * 3600;
+	return cur_time;
+}
+
 void test(int a,int b){}

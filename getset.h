@@ -46,7 +46,7 @@
 #include "cpuexec.h"
 #include "sa1.h"
 #include "bsx.h"
-
+#include "spc7110.h"
 
 //extern uint16 mem_check;
 #if 0
@@ -117,6 +117,7 @@ INLINE uint8 S9xGetByte (uint32 Address)
 #endif
         return (*(SRAM + ((((Address&0xFF0000)>>1) |(Address&0x7FFF)) &Memory.SRAMMask)));
 
+	case CMemory::MAP_RONLY_SRAM:
     case CMemory::MAP_HIROM_SRAM:
 #ifdef VAR_CYCLES
 	CPUPack.CPU.Cycles += SLOW_ONE_CYCLE;
@@ -138,6 +139,19 @@ INLINE uint8 S9xGetByte (uint32 Address)
     case CMemory::MAP_C4:
 	return (S9xGetC4 (Address & 0xffff));
 //#endif
+
+	case CMemory::MAP_SPC7110_ROM:
+#ifdef VAR_CYCLES
+	CPUPack.CPU.Cycles += SLOW_ONE_CYCLE;
+#endif
+	return (S9xGetSPC7110Byte(Address));
+
+	case CMemory::MAP_SPC7110_DRAM:
+#ifdef VAR_CYCLES
+	CPUPack.CPU.Cycles += SLOW_ONE_CYCLE;
+#endif
+	return (S9xGetSPC7110(0x4800));
+
 #ifdef _BSX_151_
 	case CMemory::MAP_BSX:
         return S9xGetBSX(Address);
@@ -251,6 +265,7 @@ INLINE uint16 S9xGetWord (uint32 Address)
                 ((*(SRAM + (((((Address+1)&0xFF0000)>>1) |((Address+1)&0x7FFF)) &Memory.SRAMMask)))<<8);
         }
 
+	case CMemory::MAP_RONLY_SRAM:
     case CMemory::MAP_HIROM_SRAM:
 #ifdef VAR_CYCLES
 	CPUPack.CPU.Cycles += SLOW_ONE_CYCLE * 2;
@@ -287,6 +302,21 @@ INLINE uint16 S9xGetWord (uint32 Address)
 	return (S9xGetC4 (Address & 0xffff) |	
 		(S9xGetC4 ((Address + 1) & 0xffff) << 8));
 //#endif    
+
+	case CMemory::MAP_SPC7110_ROM:
+#ifdef VAR_CYCLES
+	CPUPack.CPU.Cycles += SLOW_ONE_CYCLE * 2;
+#endif
+	return (S9xGetSPC7110Byte(Address) |
+		(S9xGetSPC7110Byte(Address + 1) << 8));
+
+	case CMemory::MAP_SPC7110_DRAM:
+#ifdef VAR_CYCLES
+	CPUPack.CPU.Cycles += SLOW_ONE_CYCLE * 2;
+#endif
+	return (S9xGetSPC7110(0x4800) |
+		(S9xGetSPC7110(0x4800) << 8));
+
 #ifdef _BSX_151_
 	case CMemory::MAP_BSX:
         return S9xGetBSX(Address)| (S9xGetBSX((Address+1))<<8);
@@ -662,6 +692,8 @@ INLINE uint8 *GetBasePointer (uint32 Address)
 
     switch ((int) GetAddress)
     {
+	case CMemory::MAP_SPC7110_ROM:
+		return (S9xGetBasePointerSPC7110(Address));
     case CMemory::MAP_PPU:
 	return (FillRAM - 0x2000);
     case CMemory::MAP_CPU:
@@ -699,6 +731,8 @@ INLINE uint8 *S9xGetMemPointer (uint32 Address)
 
     switch ((int) GetAddress)
     {
+	case CMemory::MAP_SPC7110_ROM:
+		return (S9xGetBasePointerSPC7110(Address) + (Address & 0xffff));
     case CMemory::MAP_PPU:
 	return (FillRAM - 0x2000 + (Address & 0xffff));
     case CMemory::MAP_CPU:
@@ -801,6 +835,15 @@ INLINE void S9xSetPCBase (uint32 Address)
 	CPUPack.CPU.PCBase = SRAM - 0x6000;
 	CPUPack.CPU.PC = CPUPack.CPU.PCBase + (Address & 0xffff);
 	return;
+
+	case CMemory::MAP_SPC7110_ROM:
+#ifdef VAR_CYCLES
+	CPUPack.CPU.MemSpeed = SLOW_ONE_CYCLE;
+	CPUPack.CPU.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
+#endif
+	CPUPack.CPU.PCBase = S9xGetBasePointerSPC7110(Address);
+	return;
+
     case CMemory::MAP_C4:
 #ifdef VAR_CYCLES
 	CPUPack.CPU.MemSpeed = SLOW_ONE_CYCLE;

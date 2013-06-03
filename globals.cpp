@@ -63,6 +63,9 @@ int apu_event1_cpt2_main;
 #endif
 //int old_cpu_cycles,cpu_glob_cycles;
 struct SDSP1 DSP1;
+struct SSPC7110Snapshot s7snap;
+struct SSRTCSnapshot srtcsnap;
+struct SRTCData RTCData;
 
 START_EXTERN_C
 char String[513];

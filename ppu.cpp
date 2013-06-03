@@ -2123,7 +2123,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 	DMA[d].LineCount = byte & 0x7f;
 	DMA[d].Repeat = !(byte & 0x80);
 	break;
-
+/*
     case 0x4800:
     case 0x4801:
     case 0x4802:
@@ -2139,6 +2139,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 
 	S9xSetSDD1MemoryMap (Address - 0x4804, byte & 7);
 	break;
+*/
     default:
 #ifdef DEBUGGER
 	missing.unknowncpu_write = Address;
@@ -2149,6 +2150,10 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 	    S9xMessage (S9X_TRACE, S9X_PPU_TRACE, String);
 	}
 #endif
+	if (Settings.SPC7110 && Address >= 0x4800)
+		S9xSetSPC7110(byte, Address);
+	else if (Settings.SDD1 && Address >= 0x4804 && Address <= 0x4807)
+		S9xSetSDD1MemoryMap (Address - 0x4804, byte & 7);
 	break;
     }
     FillRAM [Address] = byte;
@@ -2653,7 +2658,10 @@ if (g_debuginfo)
 	}
 	    
 #endif
-	break;
+	if (Settings.SPC7110 && Address >= 0x4800)
+		return (S9xGetSPC7110(Address));
+	else
+		break;
     }
 #ifdef __debug_io_gb__
 if (g_debuginfo)

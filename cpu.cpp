@@ -56,7 +56,7 @@ extern "C" {
 
 #include "srtc.h"
 #include "sdd1.h"
-//#include "spc7110.h"
+#include "spc7110.h"
 
 #ifndef ZSNES_FX
 #include "fxemu.h"
@@ -158,11 +158,12 @@ void S9xReset (void)
     memset (VRAM, 0x00, 0x10000);
     memset (RAM, 0x55, 0x20000);
 
-/*	if(Settings.SPC7110)
-		S9xSpc7110Reset();*/
+	if (Settings.SPC7110)
+		S9xResetSPC7110();
     S9xResetCPU ();
     S9xResetPPU ();
-    S9xResetSRTC ();
+	if (Settings.SRTC)
+		S9xResetSRTC ();
     if (Settings.SDD1)
         S9xResetSDD1 ();
 

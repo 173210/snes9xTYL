@@ -63,6 +63,7 @@
 #include "sa1.h"
 #include "srtc.h"
 #include "sdd1.h"
+#include "spc7110.h"
 
 extern uint8 SRAM[];
 
@@ -389,6 +390,88 @@ static FreezeData SnapSA1 [] = {
     {OFFSET (sum), 8, INT_V},
     {OFFSET (overflow), 1, INT_V}
 };
+
+#undef OFFSET
+#define OFFSET(f) Offset(f,struct SSPC7110Snapshot *)
+
+static FreezeData SnapSPC7110Snap [] = {
+    {OFFSET (r4801), 1, INT_V},
+    {OFFSET (r4802), 1, INT_V},
+    {OFFSET (r4803), 1, INT_V},
+    {OFFSET (r4804), 1, INT_V},
+    {OFFSET (r4805), 1, INT_V},
+    {OFFSET (r4806), 1, INT_V},
+    {OFFSET (r4807), 1, INT_V},
+    {OFFSET (r4808), 1, INT_V},
+    {OFFSET (r4809), 1, INT_V},
+    {OFFSET (r480a), 1, INT_V},
+    {OFFSET (r480b), 1, INT_V},
+    {OFFSET (r480c), 1, INT_V},
+    {OFFSET (r4811), 1, INT_V},
+    {OFFSET (r4812), 1, INT_V},
+    {OFFSET (r4813), 1, INT_V},
+    {OFFSET (r4814), 1, INT_V},
+    {OFFSET (r4815), 1, INT_V},
+    {OFFSET (r4816), 1, INT_V},
+    {OFFSET (r4817), 1, INT_V},
+    {OFFSET (r4818), 1, INT_V},
+    {OFFSET (r481x), 1, INT_V},
+    {OFFSET (r4814_latch), 1, INT_V},
+    {OFFSET (r4815_latch), 1, INT_V},
+    {OFFSET (r4820), 1, INT_V},
+    {OFFSET (r4821), 1, INT_V},
+    {OFFSET (r4822), 1, INT_V},
+    {OFFSET (r4823), 1, INT_V},
+    {OFFSET (r4824), 1, INT_V},
+    {OFFSET (r4825), 1, INT_V},
+    {OFFSET (r4826), 1, INT_V},
+    {OFFSET (r4827), 1, INT_V},
+    {OFFSET (r4828), 1, INT_V},
+    {OFFSET (r4829), 1, INT_V},
+    {OFFSET (r482a), 1, INT_V},
+    {OFFSET (r482b), 1, INT_V},
+    {OFFSET (r482c), 1, INT_V},
+    {OFFSET (r482d), 1, INT_V},
+    {OFFSET (r482e), 1, INT_V},
+    {OFFSET (r482f), 1, INT_V},
+    {OFFSET (r4830), 1, INT_V},
+    {OFFSET (r4831), 1, INT_V},
+    {OFFSET (r4832), 1, INT_V},
+    {OFFSET (r4833), 1, INT_V},
+    {OFFSET (r4834), 1, INT_V},
+    {OFFSET (dx_offset), 4, INT_V},
+    {OFFSET (ex_offset), 4, INT_V},
+    {OFFSET (fx_offset), 4, INT_V},
+    {OFFSET (r4840), 1, INT_V},
+    {OFFSET (r4841), 1, INT_V},
+    {OFFSET (r4842), 1, INT_V},
+    {OFFSET (rtc_state), 4, INT_V},
+    {OFFSET (rtc_mode), 4, INT_V},
+    {OFFSET (rtc_index), 4, INT_V},
+    {OFFSET (decomp_mode), 4, INT_V},
+    {OFFSET (decomp_offset), 4, INT_V},
+    {OFFSET (decomp_buffer), SPC7110_DECOMP_BUFFER_SIZE, uint8_ARRAY_V},
+    {OFFSET (decomp_buffer_rdoffset), 4, INT_V},
+    {OFFSET (decomp_buffer_wroffset), 4, INT_V},
+    {OFFSET (decomp_buffer_length), 4, INT_V},
+#define O(N) \
+    {OFFSET (context[N].index), 1, INT_V}, \
+    {OFFSET (context[N].invert), 1, INT_V}
+    O(  0), O(  1), O(  2), O(  3), O(  4), O(  5), O(  6), O(  7),
+    O(  8), O(  9), O( 10), O( 11), O( 12), O( 13), O( 14), O( 15),
+    O( 16), O( 17), O( 18), O( 19), O( 20), O( 21), O( 22), O( 23),
+    O( 24), O( 25), O( 26), O( 27), O( 28), O( 29), O( 30), O( 31)
+#undef O
+};
+
+#undef OFFSET
+#define OFFSET(f) Offset(f,struct SSRTCSnapshot *)
+
+static FreezeData SnapSRTCSnap [] = {
+    {OFFSET (rtc_mode), 4, INT_V},
+    {OFFSET (rtc_index), 4, INT_V}
+};
+
 #ifdef _BSX_151_
 #undef OFFSET
 #define OFFSET(f) Offset(f,struct SBSX *)
@@ -408,7 +491,7 @@ static FreezeData SnapBSX [] = {
     {OFFSET (PPU), 32, uint8_ARRAY_V},
     {OFFSET (MMC), 16, uint8_ARRAY_V},
     {OFFSET (prevMMC), 16, uint8_ARRAY_V},
-    {OFFSET (test2192), 32, uint8_ARRAY_V},
+    {OFFSET (test2192), 32, uint8_ARRAY_V}
 };
 #endif
 
@@ -533,7 +616,7 @@ static void Freeze_Internal (STREAM stream)
 	S9xSuperFXPreSaveState ();
 #endif
 
-    S9xSRTCPreSaveState ();
+    //S9xSRTCPreSaveState ();
 
     for (i = 0; i < 8; i++)
     {
@@ -573,6 +656,22 @@ static void Freeze_Internal (STREAM stream)
 	FreezeStruct (stream, "SAR", &SA1Pack_SA1Registers, SnapSA1Registers, 
 		      COUNT (SnapSA1Registers));
     }
+
+	if (Settings.SPC7110)
+	{
+		S9xSPC7110PreSaveState();
+		FreezeStruct (stream, "S71", &s7snap, SnapSPC7110Snap, COUNT(SnapSPC7110Snap));
+	}
+
+	if (Settings.SRTC)
+	{
+		S9xSRTCPreSaveState();
+		FreezeStruct (stream, "SRT", &srtcsnap, SnapSRTCSnap, COUNT(SnapSRTCSnap));
+	}
+
+	if (Settings.SRTC || Settings.SPC7110RTC)
+		FreezeBlock (stream, "CLK", RTCData.reg, 20);
+
 #ifdef _BSX_151_
 	if (Settings.BS)
 	{
@@ -723,6 +822,9 @@ static int Unfreeze (STREAM stream)
 		(IAPU_APUExecuting) = FALSE;
 		S9xSetSoundMute (TRUE);
  }
+
+	if (Settings.SA1)
+	{
     if ((result = UnfreezeStruct (stream, "SA1", &SA1Pack_SA1, SnapSA1, 
 				  COUNT(SnapSA1))) == SUCCESS)
     {
@@ -735,6 +837,25 @@ static int Unfreeze (STREAM stream)
 	S9xFixSA1AfterSnapshotLoad ();
 	SA1Pack_SA1.Flags |= sa1_old_flags & (TRACE_FLAG);
     }
+	}
+
+	if (Settings.SPC7110)
+	{
+		if ((result = UnfreezeStruct (stream, "S71", &s7snap, SnapSPC7110Snap, COUNT (SnapSPC7110Snap))) != SUCCESS)
+			return (result);
+	}
+
+	if (Settings.SRTC)
+	{
+		if ((result = UnfreezeStruct (stream, "SRT", &srtcsnap, SnapSRTCSnap, COUNT (SnapSRTCSnap))) != SUCCESS)
+			return (result);
+	}
+
+	if (Settings.SRTC || Settings.SPC7110RTC)
+	{
+		if ((result = UnfreezeBlock (stream, "CLK", RTCData.reg, 20)) != SUCCESS)
+			return (result);
+	}
 
 #ifdef _BSX_151_
 	// BS
@@ -762,7 +883,12 @@ static int Unfreeze (STREAM stream)
 	S9xSuperFXPostLoadState ();
 #endif
 
-    S9xSRTCPostLoadState ();
+	if (Settings.SPC7110)
+		S9xSPC7110PostLoadState();
+
+	if (Settings.SRTC)
+		S9xSRTCPostLoadState();
+    //S9xSRTCPostLoadState ();
     if (Settings.SDD1)	S9xSDD1PostLoadState ();
     
 //    (IAPUuncached.NextAPUTimerPos) = CPUPack.CPU.Cycles * 10000L;
