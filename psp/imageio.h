@@ -1,6 +1,8 @@
 #ifndef _IMAGEIO_H_
 #define _IMAGEIO_H_
 
+#include <stdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

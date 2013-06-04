@@ -10,7 +10,7 @@ INCDIR = psp psp/me psp/openspc++ psp/adhoc zlib danzeff
 
 
 
-CFLAGS=  -O3 -G0 -Wall \
+CFLAGS= -O3 -G0 -Wall -pipe \
 	-DFW3X -DPSP -D__PSP__ -DEMUNAME_VERSION="\"$(EMUNAME_VERSION)\"" #-DPSP_FW_VERSION=360 -DBUILD_PRX=1 \
 	#-mno-fp-exceptions -mno-check-zero-division -ffast-math
 	#-mgp32 -mlong32 -fstrict-aliasing \

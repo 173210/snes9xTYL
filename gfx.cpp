@@ -1492,19 +1492,6 @@ void DrawBackgroundMode5New (uint32 /* BGMODE */, uint32 bg, uint32 prio)
 	SC3 = SC2;
     
     int Lines;
-    int VOffsetMask;
-    int VOffsetShift;
-
-    if (GPUPack.BG.TileSize == 16)
-    {
-	VOffsetMask = 0x3ff;
-	VOffsetShift = 4;
-    }
-    else
-    {
-	VOffsetMask = 0x1ff;
-	VOffsetShift = 3;
-    }
 //    int endy = IPPU.LatchedInterlace ? GPUPack.GFX.EndY << 1 : GPUPack.GFX.EndY;
     int endy = GPUPack.GFX.EndY;
 
@@ -1527,7 +1514,7 @@ void DrawBackgroundMode5New (uint32 /* BGMODE */, uint32 bg, uint32 prio)
 	    Lines = endy + 1 - Y;
 //	VirtAlign <<= 3;
 	
-	int ScreenLine = (VOffset + Y) >> VOffsetShift;
+	int ScreenLine = (VOffset + Y) >> (GPUPack.BG.TileSize == 16 ? 4 : 3);
 	int t1;
 	int t2;
 	if (((VOffset + Y) & 15) > 7)
@@ -2437,15 +2424,15 @@ void S9xUpdateScreen (){
 			GPUPack.GFX.S = GPUPack.GFX.Screen;
 			GPUPack.GFX.Delta = (GPUPack.GFX.SubScreen - GPUPack.GFX.Screen) >> 1;
 			orgS9xUpdateScreen();
-			u32 *src,*src2,*dst;
-			src2=src=(u32*)(GPUPack.GFX.Screen+starty*GPUPack.GFX.Pitch2);
 			/*if (!os9x_render)	{
 				dst=(u32*)(0x44000000+512*2*(272*swap_buf+starty ));
-				for (int y=endy-starty+1;y;y--,dst+=256/2) __memcpy4a((long unsigned int*)dst,(long unsigned int*)src,256*2/4);				
+				for (int y=endy-starty+1;y;y--,dst+=256/2) __memcpy4a((long unsigned int*)dst,(long unsigned int*)src,256*2/4);
 			} else*/ {
-				dst=(u32*)(0x44000000+512*272*2*2+256*240*2+2*256*256*2+starty*256*2 );
-				for (int y=endy-starty+1;y;y--) __memcpy4a((long unsigned int*)dst,(long unsigned int*)src,256*2/4);				
-				
+				for (int y=endy-starty+1;y;y--)
+					__memcpy4a(
+						(long unsigned int*)(0x44000000+512*272*2*2+256*240*2+2*256*256*2+starty*256*2),
+						(long unsigned int*)GPUPack.GFX.Screen+starty*GPUPack.GFX.Pitch2,
+						256*2/4);
 			}
 			// put back cache off and writeback Dcache
 			GPUPack.GFX.Screen = (uint8*)CACHE_OFF(GPUPack.GFX.Screen);

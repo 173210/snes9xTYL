@@ -85,6 +85,7 @@ int psp_initadhocgame(void){
 int psp_net_recv_file(char *filename) {
 	unsigned int file_size,length;
 	unsigned int crc32,rlen;
+	char *_net_buffer = (char *)net_buffer;
 //	uint8 *buffer;
 	FILE *f;
 
@@ -133,7 +134,7 @@ int psp_net_recv_file(char *filename) {
 				return -4;
 			}
 			crc32=caCRC32(net_buffer+4,rlen);
-			if (crc32!=*((unsigned int*)net_buffer)) {
+			if (crc32!=*((unsigned int*)_net_buffer)) {
 				net_buffer[0]=0;
 				adhocSendRecvAck(net_buffer,1);
 			} else {
@@ -155,6 +156,7 @@ int psp_net_recv_file(char *filename) {
 int psp_net_send_file(char *filename) {
 	unsigned int length,crc32,l,rlen;
 	char c;
+	char *_net_buffer = (char *)net_buffer;
 	//uint8 *buffer;
 	FILE *f;
 
@@ -199,7 +201,7 @@ int psp_net_send_file(char *filename) {
 		length-=rlen;
 
 		crc32=caCRC32(net_buffer+4,rlen);
-		*((int*)net_buffer)=crc32;
+		*((int*)_net_buffer)=crc32;
 		for (;;) {
 			if (adhocSendRecvAck(net_buffer,rlen+4)<0) {
 				//free(buffer);

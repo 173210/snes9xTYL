@@ -201,7 +201,6 @@ void S9xResetAPU ()
     apu_cycles_left=0;
 
 //sprintf (tmp,"ResetApu1 %d,%d",apu_event1_cpt1,apu_glob_cycles);//msgBoxLines(tmp,80);
-	apu_glob_cycles=apu_glob_cycles_Main=0;   
     apu_event1_cpt1=0;
 	apu_event1_cpt2=0;
     apu_event2_cpt1=0;
@@ -902,7 +901,8 @@ bool8 S9xInitAPU ()
     //force write		    
     sceKernelDcacheWritebackInvalidateAll();                
 #ifdef ME_SOUND
-    IAPU.RAM=IAPUuncached.RAM = (uint8*)(apu_ram);        
+    IAPU.RAM = (uint8*)(apu_ram);
+    IAPUuncached.RAM = (uint8*)(apu_ram);
 #else
     IAPUuncached.RAM = (uint8*)UNCACHE_PTR(apu_ram);        
  	apu_ramc = (uint8 *) malloc (0x10000 );

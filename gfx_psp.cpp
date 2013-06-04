@@ -860,16 +860,6 @@ void pspDrawBackgroundMode5 (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 Z2)
 
 
 	int Lines;
-	int VOffsetMask;
-  int VOffsetShift;
-
-  if (GPUPack.BG.TileSize == 16) {
-		VOffsetMask = 0x3ff;
-		VOffsetShift = 4;
-  } else {
-		VOffsetMask = 0x1ff;
-		VOffsetShift = 3;
-	}
   int endy = GPUPack.GFX.EndY;
 
   for (int Y = GPUPack.GFX.StartY; Y <= endy; Y += Lines) {
@@ -885,7 +875,7 @@ void pspDrawBackgroundMode5 (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 Z2)
 		if (Y + Lines > endy) Lines = endy + 1 - Y;
 	//	VirtAlign <<= 3;
 	
-		int ScreenLine = (VOffset + Y) >> VOffsetShift;
+		int ScreenLine = (VOffset + Y) >> (GPUPack.BG.TileSize == 16 ? 4 : 3);
 		int t1;
 		int t2;
 		if (((VOffset + Y) & 15) > 7) {

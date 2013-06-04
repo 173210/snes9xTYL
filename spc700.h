@@ -222,7 +222,10 @@ if ((ac)<=apu_target_cycles_) {\
 			} else break;\
 		}\
 }\
-*((int*)(Uncache_APU_OutPorts))=*((int*)(APUPack.APU.OutPorts)); \
+Uncache_APU_OutPorts[0]=APUPack.APU.OutPorts[0]; \
+Uncache_APU_OutPorts[1]=APUPack.APU.OutPorts[1]; \
+Uncache_APU_OutPorts[2]=APUPack.APU.OutPorts[2]; \
+Uncache_APU_OutPorts[3]=APUPack.APU.OutPorts[3]; \
 (apu_event1_cpt1)=APUPack.apu_event1_cpt1_me=apu_event1_cpt1_;\
 Uncache_APU_Cycles=APUPack.APU.Cycles; \
 } \
@@ -334,14 +337,12 @@ if (apu_event2_cpt1<apu_event2_cpt2) { \
 #define APU_EXECUTE2() { \
 if ((Uncache_APU_Cycles)<=apu_glob_cycles) {\
 	int apu_target_cycles_=apu_glob_cycles;\
-  int apu_event1_cpt1_,apu_event2_cpt1_;\
-  int apu_event1_cpt2_,apu_event2_cpt2_;\
+  int apu_event1_cpt1_;\
+  int apu_event1_cpt2_;\
   int apu_ram_write_cpt1_,apu_ram_write_cpt2_; \
   APUPack.APU.Cycles=Uncache_APU_Cycles; \
   apu_event1_cpt1_=apu_event1_cpt1;\
-  apu_event2_cpt1_=apu_event2_cpt1;\
   apu_event1_cpt2_=apu_event1_cpt2;\
-  apu_event2_cpt2_=apu_event2_cpt2;\
   apu_ram_write_cpt1_=apu_ram_write_cpt1;\
   apu_ram_write_cpt2_=apu_ram_write_cpt2;\
   if (apu_ram_write_cpt1_<apu_ram_write_cpt2_) { \
@@ -384,8 +385,7 @@ if ((Uncache_APU_Cycles)<=apu_glob_cycles) {\
 			} else break;\
 		}\
 }\
-*((int*)(APUPack.APU.OutPorts))=*((int*)(APUPack.APU.OutPorts)); \
-(apu_event1_cpt1)=apu_event1_cpt1_;\
+apu_event1_cpt1=apu_event1_cpt1_;\
  APUPack.APU.Cycles=APUPack.APU.Cycles; \
 apu_glob_cycles-=cpu_glob_cycles;\
 Uncache_APU_Cycles-=cpu_glob_cycles;\

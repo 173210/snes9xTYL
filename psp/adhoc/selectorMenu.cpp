@@ -106,7 +106,6 @@ int PspSelector::AddPsp(const unsigned char *mac, const char *name, int length)
 
 int PspSelector::RemPsp(const unsigned char *mac)
 {
-	int i;
 	PspList::iterator iter;
 
 	for(iter=m_PspList.begin(); iter != m_PspList.end(); iter++)
@@ -115,13 +114,9 @@ int PspSelector::RemPsp(const unsigned char *mac)
 		if(strcmp((*iter).m_Mac, (const char *)mac)==0)
 		{
 			m_PspList.erase(iter);
-			
-			if(m_Pos == i)
-				m_Pos = 0;
 
-			if(m_Pos > i)
-				m_Pos--;
-			
+			UpList();
+
 			m_Max--;
 
 			return 0;

@@ -742,77 +742,6 @@ void update_pad(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Power callback
-////////////////////////////////////////////////////////////////////////////////////////
-int PowerCallback(int unknown, int pwrflags,void *common){
-	//debug_log("Power Callback");
-
-	if (pwrflags & PSP_POWER_CB_HOLD_SWITCH) {
-		//can be used for any purpose, debugging, profiling,...
-	}
-
-#ifdef ME_SOUND
-	if (pwrflags & PSP_POWER_CB_POWER_SWITCH) {
-		if (!g_bSleep) { //going to sleep
-			g_bSleep=1;
-			/**os9x_paused_ptr=1;
-			StopSoundThread();
-			sceGuDisplay(0);
-			scePowerSetClockFrequency(33,33,16); //set to 12Mhz
-			sceKernelDelayThread(1000000*3);*/
-		} else { // resuming
-			g_bSleep=0;
-			//set_cpu_clock();
-			/*scePowerSetClockFrequency(222,222,111);
-			sceGuDisplay(1);
-
-			Settings.Paused=false;*/
-		}
-	}
-#else
-	if ((!g_bSleep)&&((pwrflags & PSP_POWER_CB_POWER_SWITCH) || (pwrflags & PSP_POWER_CB_SUSPENDING))) {
-		//msgBoxLines("Going into sleep mode\n\nPlease wait...",60);
-
-		g_bSleep=1;
-		*os9x_paused_ptr=1;
-		StopSoundThread();
-		scePowerSetClockFrequency(222,222,111);
-		Settings.Paused = TRUE;
-	}else if (g_bSleep&&(pwrflags & (PSP_POWER_CB_RESUME_COMPLETE|PSP_POWER_CB_RESUMING))) {
-		//msgBoxLines("Resuming from sleep mode\n\nPlease wait...",60);
-		g_bSleep=0;
-		Settings.Paused=false;
-	}
-#endif
-	int cbid = sceKernelCreateCallback("Power Callback", PowerCallback,NULL);
-	scePowerRegisterCallback(0, cbid);
-
-	return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-// Thread to create the callbacks and then begin polling
-////////////////////////////////////////////////////////////////////////////////////////
-int CallbackThread(SceSize args, void *argp){
-	scePowerRegisterCallback( 0, sceKernelCreateCallback( "Power Callback",  PowerCallback,NULL ) );
-	sceKernelSleepThreadCB();
-	return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-// Sets up the callback thread and returns its thread id
-////////////////////////////////////////////////////////////////////////////////////////
-int SetupCallbacks()
-{
-	int thid = 0;
-	thid = sceKernelCreateThread( "update_thread", CallbackThread, 0x10, 0xFA0, PSP_THREAD_ATTR_USER, 0 );
-	if( thid >= 0 ){
-		sceKernelStartThread(thid, 0, 0);
-	}
-	return thid;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
 // set psp cpu clock
 ////////////////////////////////////////////////////////////////////////////////////////
 void set_cpu_clock(){
@@ -2766,10 +2695,6 @@ void low_level_init(){
 	scePowerLock(0); //sleep mode cannot be triggered with this :-)
 #endif
 
-#ifndef HOME_HOOK
-	g_updatethread=SetupCallbacks();
-#endif
-
 	// create dirs if needed
 	checkdirs();
 
@@ -3464,19 +3389,14 @@ void welcome_message(){
 	char str[256];
 	int res,show_msg=1;
 	SceIoStat stat;
-	ScePspDateTime *tfile;
 
 	sprintf(str,"%s%s",LaunchDir,"s9xTYL.ini");
 	res=sceIoGetstat("s9xTYL.ini",&stat);
 	if (res<0) res=sceIoGetstat(str,&stat);
 	if (res>=0) {
-
-		tfile=&(stat.st_mtime);
 		time_t cur_time;
-		struct tm *tsys;
 		sceKernelLibcTime(&cur_time);
 		cur_time+=os9x_timezone*60+os9x_daylsavings*3600;;
-		tsys=localtime(&cur_time);
 		show_msg=0;
 	}
 	if (show_msg) show_message();

@@ -467,11 +467,8 @@ int CMemory::LoadROMMore(int TotalFileSize,int &retry_count)
 {
 	bool8 Interleaved = FALSE;
     bool8 Tales = FALSE;
-	int orig_hi_score, orig_lo_score;
-    int hi_score, lo_score;
-
-    orig_hi_score = hi_score = ScoreHiROM (FALSE);
-    orig_lo_score = lo_score = ScoreLoROM (FALSE);
+    int hi_score = ScoreHiROM (FALSE);
+    int lo_score = ScoreLoROM (FALSE);
 
     if (HeaderCount == 0 && !Settings.ForceNoHeader &&
 	((hi_score > lo_score && ScoreHiROM (TRUE) > hi_score) ||
@@ -929,7 +926,7 @@ again:
 
         for (;;)
         {
-        	if (unzGetCurrentFileInfo(zip_file, &unzinfo, snes_file, sizeof(snes_file), NULL, NULL, NULL, NULL) != UNZ_OK) return FALSE;
+        	if (unzGetCurrentFileInfo(zip_file, &unzinfo, snes_file, sizeof(snes_file), NULL, 0, NULL, 0) != UNZ_OK) return FALSE;
 
             p = (char*)(strrchr(snes_file, '.') + 1);
 
@@ -1757,13 +1754,11 @@ void CMemory::InitROM (bool8 Interleaved)
 bool8 CMemory::LoadSRTC (void)
 {
 	FILE	*fp;
-	size_t	ignore;
 
 	fp = fopen(S9xGetSaveFilename(".rtc"), "rb");
 	if (!fp)
 		return (FALSE);
 
-	ignore = fread(RTCData.reg, 1, 20, fp);
 	fclose(fp);
 
 	return (TRUE);
@@ -1772,13 +1767,11 @@ bool8 CMemory::LoadSRTC (void)
 bool8 CMemory::SaveSRTC (void)
 {
 	FILE	*fp;
-	size_t	ignore;
 
 	fp = fopen(S9xGetSaveFilename(".rtc"), "wb");
 	if (!fp)
 		return (FALSE);
 
-	ignore = fwrite(RTCData.reg, 1, 20, fp);
 	fclose(fp);
 
 	return (TRUE);
@@ -3589,7 +3582,7 @@ scr_update++;
 void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,uint32 &rom_size,const char *ips_ext) {
   unsigned char bufferIPS[256];
   char fname [256 + 1];
-  int x,r,v,b,scr_update;
+  int scr_update;
   FILE *patch_file;
   uint8 *ips_data;
   uint32 ips_size,ips_avail,ips_pos,ips_current;
@@ -3632,7 +3625,6 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,uint32 &r
 	msgBoxLines(str,0);
 	msgBoxLines(str,0);
 
-	x=0;r=0;v=0;b=16;
 	for (;;){
     //memcpy(bufferIPS,ips_data+0x1000-ips_avail,3);ips_avail-=3;ips_current+=3;
     IPS_READ(bufferIPS,3)

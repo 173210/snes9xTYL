@@ -100,7 +100,7 @@ void load_background(){
 		while (num--) {
 			unzGoToNextFile(zip_file);
 		}
-		if (unzGetCurrentFileInfo(zip_file, &unzinfo, str, sizeof(str), NULL, NULL, NULL, NULL) != UNZ_OK) {
+		if (unzGetCurrentFileInfo(zip_file, &unzinfo, str, sizeof(str), NULL, 0, NULL, 0) != UNZ_OK) {
 			return;
 		}
 		unzOpenCurrentFile (zip_file);
@@ -402,7 +402,7 @@ int save_buffer_settings(char *buffer){
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
 int load_buffer_settings(char *buffer){
-	char rom_name[64];
+	//char rom_name[64];
 	int buffer_ofs=0;
 	int l;
 	
@@ -464,7 +464,7 @@ int load_buffer_settings(char *buffer){
 
 	check_settings();
 
-	rom_name[63]=0;
+	//rom_name[63]=0;
 
 	//sprintf(tmp_str,"Settings received!\n\n""%s""",rom_name);
 	//msgBoxLines(tmp_str,30);
