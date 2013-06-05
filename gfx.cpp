@@ -2431,7 +2431,7 @@ void S9xUpdateScreen (){
 				for (int y=endy-starty+1;y;y--)
 					__memcpy4a(
 						(long unsigned int*)(0x44000000+512*272*2*2+256*240*2+2*256*256*2+starty*256*2),
-						(long unsigned int*)GPUPack.GFX.Screen+starty*GPUPack.GFX.Pitch2,
+						(long unsigned int*)(GPUPack.GFX.Screen+starty*GPUPack.GFX.Pitch2),
 						256*2/4);
 			}
 			// put back cache off and writeback Dcache
