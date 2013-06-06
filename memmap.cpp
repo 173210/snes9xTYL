@@ -1504,10 +1504,10 @@ void CMemory::InitROM (bool8 Interleaved)
 			if (Settings.SRTC)
 				S9xInitSRTC();
 
-			if (((ROMSpeed & 0x0F) == 0x0A) && ((ROMType & 0xF0) == 0xF0))
+			if (((ROMSpeed & 0x0f) == 0x0a) && ((ROMType & 0xf0) == 0xf0))
 			{
 				Settings.SPC7110 = true;
-				if ((ROMType & 0x0F) == 0x09)
+				if ((ROMType & 0x0f) == 0x09)
 					Settings.SPC7110RTC = true;
 				S9xInitSPC7110();
 			}
@@ -1518,7 +1518,6 @@ void CMemory::InitROM (bool8 Interleaved)
 					S9xSyncSRTC(GetCurrentTime());
 				else if (Settings.SPC7110RTC)
 					S9xSyncSPC7110RTC(GetCurrentTime());
-				SaveSRTC();
 			}
 
 			if (Settings.SPC7110)
@@ -1753,27 +1752,33 @@ void CMemory::InitROM (bool8 Interleaved)
 
 bool8 CMemory::LoadSRTC (void)
 {
+/*
 	FILE	*fp;
+	size_t	ignore;
 
 	fp = fopen(S9xGetSaveFilename(".rtc"), "rb");
 	if (!fp)
 		return (FALSE);
 
+	ignore = fread(RTCData.reg, 1, 20, fp);
 	fclose(fp);
-
+*/
 	return (TRUE);
 }
 
 bool8 CMemory::SaveSRTC (void)
 {
+/*
 	FILE	*fp;
+	size_t	ignore;
 
 	fp = fopen(S9xGetSaveFilename(".rtc"), "wb");
 	if (!fp)
 		return (FALSE);
 
+	ignore = fwrite(RTCData.reg, 1, 20, fp);
 	fclose(fp);
-
+*/
 	return (TRUE);
 }
 
@@ -1854,7 +1859,7 @@ bool8 CMemory::LoadSRAM (char *filename)
 #else
 				S9xMessage(S9X_INFO, S9X_ROM_INFO, "The SRAM file wasn't found: BS-X.srm was read instead.");
 #endif
-				S9xHardResetSRTC();
+				//S9xHardResetSRTC();
 				return (TRUE);
 			}
 			else
@@ -1864,7 +1869,7 @@ bool8 CMemory::LoadSRAM (char *filename)
 #else
 				S9xMessage(S9X_INFO, S9X_ROM_INFO, "The SRAM file wasn't found, BS-X.srm wasn't found either.");
 #endif
-				S9xHardResetSRTC();
+				//S9xHardResetSRTC();
 				return (FALSE);
 			}
 		}
@@ -2902,40 +2907,22 @@ void CMemory::SPC7110HiROMMap ()
 		}
 	}
 
-	for (c=0;c<0x10;c++)
+	for (c = 0; c < 0x10; c++)
 	{
-		Map [0x500+c] = (uint8 *)MAP_SPC7110_DRAM;
-		BlockIsROM [0x500+c] = TRUE;
+		Map [0x500 + c] = (uint8 *) MAP_SPC7110_DRAM;
+		BlockIsROM [0x500 + c] = TRUE;
 	}
 
-	for (c=0;c<0x100;c++)
+	for (c = 0; c < 0x100; c++)
 	{
-		Map [0xD00+c] = (uint8 *) MAP_SPC7110_ROM;
-		Map [0xE00+c] = (uint8 *) MAP_SPC7110_ROM;
-		Map [0xF00+c] = (uint8 *) MAP_SPC7110_ROM;
-		BlockIsROM [0xD00+c] = BlockIsROM [0xE00+c] = BlockIsROM [0xF00+c] = TRUE;
+		Map [0xD00 + c] = (uint8 *) MAP_SPC7110_ROM;
+		Map [0xE00 + c] = (uint8 *) MAP_SPC7110_ROM;
+		Map [0xF00 + c] = (uint8 *) MAP_SPC7110_ROM;
+		BlockIsROM [0xD00 + c] = BlockIsROM [0xE00 + c] = BlockIsROM [0xF00 + c] = TRUE;
 	}
 
 	MapRAM ();
 	WriteProtectROM ();
-}
-
-void CMemory::SPC7110Sram(uint8 newstate)
-{
-	if (newstate & 0x80)
-	{
-		Map[6] = (uint8 *)MAP_HIROM_SRAM;
-		Map[7] = (uint8 *)MAP_HIROM_SRAM;
-		Map[0x306] = (uint8 *)MAP_HIROM_SRAM;
-		Map[0x307] = (uint8 *)MAP_HIROM_SRAM;
-	}
-	else
-	{
-		Map[6] = (uint8 *)MAP_RONLY_SRAM;
-		Map[7] = (uint8 *)MAP_RONLY_SRAM;
-		Map[0x306] = (uint8 *)MAP_RONLY_SRAM;
-		Map[0x307] = (uint8 *)MAP_RONLY_SRAM;
-	}
 }
 
 const char *CMemory::TVStandard ()
