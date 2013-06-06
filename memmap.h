@@ -117,8 +117,7 @@ public:
     void AlphaROMMap ();
     void SA1ROMMap ();
     void BSHiROMMap ();
-	void SPC7110HiROMMap();
-	void SPC7110Sram(uint8);
+	void SPC7110HiROMMap ();
     bool8 AllASCII (uint8 *b, int size);
     int  ScoreHiROM (bool8 skip_header);
     int  ScoreLoROM (bool8 skip_header);
