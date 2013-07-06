@@ -213,11 +213,11 @@ void getDir(const char *path) {
 			nfiles++;
 			continue;
 		}
-		if(getExtId(files[nfiles].d_name) != EXT_UNKNOWN) nfiles++;				
+		if(getExtId(files[nfiles].d_name) != EXT_UNKNOWN) nfiles++;
 	}
-		
+
 	sceIoDclose(fd);
-		
+
 	if (nfiles) {
 		if(b)
 			sort(files+1, 0, nfiles-2);
@@ -228,16 +228,14 @@ void getDir(const char *path) {
 
 void getDirJpeg() {
 	int fd;
-	char path[256];
 	nfiles_jpeg = 0;
-					
-	sprintf(path,"%sSAVES/",LaunchDir);
-	fd = sceIoDopen(path);
-	if (fd<0){				
+
+	fd = sceIoDopen("ms0:/PSP/SAVEDATA/s9xTYL_SAVES");
+	if (fd<0){
 		psp_msg(ERR_READ_MEMSTICK,MSG_DEFAULT);
 		return ;
 	}
-	
+
 	while(nfiles_jpeg<MAX_ENTRY){
 		if(sceIoDread(fd, &files_jpeg[nfiles_jpeg])<=0) break;
 				
@@ -246,20 +244,20 @@ void getDirJpeg() {
 		if(files_jpeg[nfiles_jpeg].d_stat.st_attr == TYPE_DIR) {
 			continue;
 		}
-		
+
 		if(strstr(files_jpeg[nfiles_jpeg].d_name,".jpg")) nfiles_jpeg++;
 	}
-		
-	sceIoDclose(fd);			
+
+	sceIoDclose(fd);
 }
 
 
 void getDirNoExt(const char *path) {
 	int fd, b=0;
 //	char *p;
-	
+
 	nfiles = 0;
-			
+
 	if(strcmp(path,"ms0:/")){		
 		strcpy(files[nfiles].d_name,"..");
 		files[nfiles].d_stat.st_attr = TYPE_DIR;
@@ -432,41 +430,48 @@ int getFilePath(char *out,int can_exit) {
 			old_netplay=os9x_netplay;
 			//recompute background
 			filer_buildbg(1);
-			
+
 		}
 		show_bg(filer_bg);
-											
+
     if ((image_loaded==2)&&( nopress )) { //try new one if not keeping key pressed
     	if ((files[sel].d_stat.st_attr == TYPE_FILE)&&(jpeg_files[sel])) {
 				char filename [MAXPATH + 1];
-				char drive [MAXPATH + 1];
-				char dir [MAXPATH + 1];
-				char fname [MAXPATH + 1];
-				char ext [MAXPATH + 1];
+				char *fname;
+				const char *src;
+				char *dst = filename;
 				int n;
 				debug_log("check jpeg");
-				_splitpath (files[sel].d_name, drive, dir, fname, ext);
-				sprintf(dir,"%sSAVES",LaunchDir);
-				//_makepath (filename, drive, dir, fname, ".jpg");
-				//debug_log(filename);//needed of crash, don't know why
-				sprintf(filename,"%s.jpg",fname);
-				
-				for (n=0;n<nfiles_jpeg;n++){
-					if (!strcasecmp(filename,files_jpeg[n].d_name)) break;
+				for (src = "ms0:/PSP/SAVEDATA/s9xTYL_SAVES/"; !*src; dst++) {
+					*dst = *src;
+					src++;
 				}
-				if (n<nfiles_jpeg) {
-					_makepath (filename, drive, dir, fname, ".jpg");
-					image_loaded=os9x_loadsnap(filename,snes_image,&snesheight); 
-				} else image_loaded=0;
+				fname = strrchr(files[sel].d_name, '/') + 1;
+				for (src = fname; *src != '.' && !*src; dst++) {
+					*dst = *src;
+					src++;
+				}
+				for (src = ".jpg"; !*src; dst++) {
+					*dst = *src;
+					src++;
+				}
+				*dst = 0;
+
+				for (n=0;n<nfiles_jpeg;n++){
+					if (!strcasecmp(fname,files_jpeg[n].d_name)) break;
+				}
+				if (n<nfiles_jpeg)
+					image_loaded=os9x_loadsnap(filename,snes_image,&snesheight);
+				else image_loaded=0;
 				if (!image_loaded) jpeg_files[sel]=0;
 			}
-		} 
-			          
-		
+		}
+
+
 		show_batteryinfo();
 		show_usbinfo();
-		
-                              				        
+
+
 		if(new_pad & (PSP_CTRL_CIRCLE|PSP_CTRL_SQUARE)){
 			int is_square=new_pad & PSP_CTRL_SQUARE;
 			if(files[sel].d_stat.st_attr == TYPE_DIR){
