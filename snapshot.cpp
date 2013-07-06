@@ -637,7 +637,7 @@ static void Freeze_Internal (STREAM stream)
     FreezeBlock (stream, "VRA", VRAM, 0x10000);
     FreezeBlock (stream, "RAM", RAM, 0x20000);
     FreezeBlock (stream, "SRA", SRAM, 0x20000);
-    FreezeBlock (stream, "FIL", FillRAM, 0x8000);
+    FreezeBlock (stream, "FIL", ROM_GLOBAL, 0x8000);
     if (Settings.APUEnabled)
     {
 // APU
@@ -782,7 +782,7 @@ static int Unfreeze (STREAM stream)
 		return (result);
 	}
 
-    if ((result = UnfreezeBlock (stream, "FIL", FillRAM, 0x8000)) != SUCCESS)
+    if ((result = UnfreezeBlock (stream, "FIL", ROM_GLOBAL, 0x8000)) != SUCCESS)
 	{
 		return (result);
 	}
@@ -1249,7 +1249,7 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 		READ_STREAM (t, 8, fs);
 		READ_STREAM (t, 3019, fs);
 		S9xSetCPU (t [2], 0x4200);
-		FillRAM [0x4210] = t [3];
+		ROM_GLOBAL [0x4210] = t [3];
 		PPU.IRQVBeamPos = READ_WORD (&t [4]);
 		PPU.IRQHBeamPos = READ_WORD (&t [2527]);
 		PPU.Brightness = t [6];
@@ -1331,17 +1331,17 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 			S9xSetPPU (t [1488 + i], 0x2122);
 		
 		PPU.CGADD = (uint8) READ_WORD (&t [105]);
-		FillRAM [0x212c] = t [108];
-		FillRAM [0x212d] = t [109];
+		ROM_GLOBAL [0x212c] = t [108];
+		ROM_GLOBAL [0x212d] = t [109];
 		PPU.ScreenHeight = READ_WORD (&t [111]);
-		FillRAM [0x2133] = t [2526];
-		FillRAM [0x4202] = t [113];
-		FillRAM [0x4204] = t [114];
-		FillRAM [0x4205] = t [115];
-		FillRAM [0x4214] = t [116];
-		FillRAM [0x4215] = t [117];
-		FillRAM [0x4216] = t [118];
-		FillRAM [0x4217] = t [119];
+		ROM_GLOBAL [0x2133] = t [2526];
+		ROM_GLOBAL [0x4202] = t [113];
+		ROM_GLOBAL [0x4204] = t [114];
+		ROM_GLOBAL [0x4205] = t [115];
+		ROM_GLOBAL [0x4214] = t [116];
+		ROM_GLOBAL [0x4215] = t [117];
+		ROM_GLOBAL [0x4216] = t [118];
+		ROM_GLOBAL [0x4217] = t [119];
 		PPU.VBeamPosLatched = READ_WORD (&t [122]);
 		PPU.HBeamPosLatched = READ_WORD (&t [120]);
 		PPU.Window1Left = t [127];
@@ -1364,9 +1364,9 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 		PPU.CentreY = READ_WORD (&t [152]);
 		// JoyAPos t[154]
 		// JoyBPos t[155]
-		FillRAM [0x2134] = t [156]; // Matrix mult
-		FillRAM [0x2135] = t [157]; // Matrix mult
-		FillRAM [0x2136] = t [158]; // Matrix mult
+		ROM_GLOBAL [0x2134] = t [156]; // Matrix mult
+		ROM_GLOBAL [0x2135] = t [157]; // Matrix mult
+		ROM_GLOBAL [0x2136] = t [158]; // Matrix mult
 		PPU.WRAM = READ_DWORD (&t [161]);
 		
 		for (i = 0; i < 128; i++)
@@ -1478,7 +1478,7 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 		{
 			READ_STREAM (SRAM, 64 * 1024, fs);
 			SEEK_STREAM (64 * 1024, SEEK_CUR,fs);
-			READ_STREAM (FillRAM + 0x7000, 692, fs);
+			READ_STREAM (ROM_GLOBAL + 0x7000, 692, fs);
 		}
 		if (Settings.SA1)
 		{
@@ -1504,7 +1504,7 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 			SA1Pack_SA1Registers.PC  = READ_DWORD (&t [636]);
 			SA1Pack_SA1Registers.P.W = t [620] | (t [624] << 8);
 			
-			memmove (&FillRAM [0x3000], t + 692, 2 * 1024);
+			memmove (&ROM_GLOBAL [0x3000], t + 692, 2 * 1024);
 			
 			READ_STREAM (SRAM, 64 * 1024, fs);
 			SEEK_STREAM (64 * 1024, SEEK_CUR,fs);

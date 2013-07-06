@@ -105,10 +105,10 @@ void S9xSetSDD1MemoryMap (uint32 bank, uint32 value)
 
 void S9xResetSDD1 ()
 {
-    memset (&FillRAM [0x4800], 0, 4);
+    memset (&ROM_GLOBAL [0x4800], 0, 4);
     for (int i = 0; i < 4; i++)
     {
-	FillRAM [0x4804 + i] = i;
+	ROM_GLOBAL [0x4804 + i] = i;
 	S9xSetSDD1MemoryMap (i, i);
     }
 }
@@ -116,7 +116,7 @@ void S9xResetSDD1 ()
 void S9xSDD1PostLoadState ()
 {
     for (int i = 0; i < 4; i++)
-	S9xSetSDD1MemoryMap (i, FillRAM [0x4804 + i]);
+	S9xSetSDD1MemoryMap (i, ROM_GLOBAL [0x4804 + i]);
 }
 
 void S9xSDD1SaveLoggedData ()

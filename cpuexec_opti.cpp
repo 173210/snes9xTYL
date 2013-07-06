@@ -392,7 +392,7 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
   	//PPU.OAMAddr = PPU.SavedOAMAddr;
     //PPU.OAMFlip = 0;            
     CPUPack.CPU.V_Counter = 0;
-    FillRAM[0x213F]^=0x80;
+    ROM_GLOBAL[0x213F]^=0x80;
     CPUPack.CPU.NMIActive = FALSE;
     //CPUPack.ICPU.Frame++;
     PPU.HVBeamCounterLatched = 0;
@@ -461,7 +461,7 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
 #endif
   if (CPUPack.CPU.V_Counter == FIRST_VISIBLE_LINE)
     {
-      FillRAM[0x4210] = 0;
+      ROM_GLOBAL[0x4210] = 0;
       CPUPack.CPU.Flags &= ~NMI_FLAG;
       S9xStartScreenRefresh ();
     }
@@ -485,7 +485,7 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
 	  missing.dma_this_frame = 0;
 #endif
 	  IPPU.MaxBrightness = PPU.Brightness;
-      PPU.ForcedBlanking = (FillRAM[0x2100] >> 7) & 1;
+      PPU.ForcedBlanking = (ROM_GLOBAL[0x2100] >> 7) & 1;
       
       if(!PPU.ForcedBlanking){
 				PPU.OAMAddr = PPU.SavedOAMAddr;			
@@ -499,8 +499,8 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
 				PPU.OAMFlip = 0;
 			}
 
-      FillRAM[0x4210] = 0x80;
-      if (FillRAM[0x4200] & 0x80) {
+      ROM_GLOBAL[0x4210] = 0x80;
+      if (ROM_GLOBAL[0x4200] & 0x80) {
 	  		CPUPack.CPU.NMIActive = TRUE;
 	  		CPUPack.CPU.Flags |= NMI_FLAG;
 	  		CPUPack.CPU.NMICycleCount = CPUPack.CPU.NMITriggerPoint;

@@ -695,11 +695,11 @@ INLINE uint8 *GetBasePointer (uint32 Address)
 	case CMemory::MAP_SPC7110_ROM:
 		return (S9xGetBasePointerSPC7110(Address));
     case CMemory::MAP_PPU:
-	return (FillRAM - 0x2000);
+	return (ROM_GLOBAL - 0x2000);
     case CMemory::MAP_CPU:
-	return (FillRAM - 0x4000);
+	return (ROM_GLOBAL - 0x4000);
     case CMemory::MAP_DSP:
-	return (FillRAM - 0x6000);
+	return (ROM_GLOBAL - 0x6000);
     case CMemory::MAP_SA1RAM:
     case CMemory::MAP_LOROM_SRAM:
         return (SRAM + ((((Address&0xFF0000)>>1)|(Address&0x7FFF)) & Memory.SRAMMask) - (Address&0xffff));
@@ -734,11 +734,11 @@ INLINE uint8 *S9xGetMemPointer (uint32 Address)
 	case CMemory::MAP_SPC7110_ROM:
 		return (S9xGetBasePointerSPC7110(Address) + (Address & 0xffff));
     case CMemory::MAP_PPU:
-	return (FillRAM - 0x2000 + (Address & 0xffff));
+	return (ROM_GLOBAL - 0x2000 + (Address & 0xffff));
     case CMemory::MAP_CPU:
-	return (FillRAM - 0x4000 + (Address & 0xffff));
+	return (ROM_GLOBAL - 0x4000 + (Address & 0xffff));
     case CMemory::MAP_DSP:
-	return (FillRAM - 0x6000 + (Address & 0xffff));
+	return (ROM_GLOBAL - 0x6000 + (Address & 0xffff));
     case CMemory::MAP_SA1RAM:
     case CMemory::MAP_LOROM_SRAM:
         return (SRAM + ((((Address&0xFF0000)>>1)|(Address&0x7FFF)) & Memory.SRAMMask));
@@ -787,7 +787,7 @@ INLINE void S9xSetPCBase (uint32 Address)
 	CPUPack.CPU.MemSpeed = ONE_CYCLE;
 	CPUPack.CPU.MemSpeedx2 = TWO_CYCLES;
 #endif	
-	CPUPack.CPU.PCBase = FillRAM - 0x2000;
+	CPUPack.CPU.PCBase = ROM_GLOBAL - 0x2000;
 	CPUPack.CPU.PC = CPUPack.CPU.PCBase + (Address & 0xffff);
 	return;
 	
@@ -796,7 +796,7 @@ INLINE void S9xSetPCBase (uint32 Address)
 	CPUPack.CPU.MemSpeed = ONE_CYCLE;
 	CPUPack.CPU.MemSpeedx2 = TWO_CYCLES;
 #endif
-	CPUPack.CPU.PCBase = FillRAM - 0x4000;
+	CPUPack.CPU.PCBase = ROM_GLOBAL - 0x4000;
 	CPUPack.CPU.PC = CPUPack.CPU.PCBase + (Address & 0xffff);
 	return;
 	
@@ -805,7 +805,7 @@ INLINE void S9xSetPCBase (uint32 Address)
 	CPUPack.CPU.MemSpeed = SLOW_ONE_CYCLE;
 	CPUPack.CPU.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
 #endif	
-	CPUPack.CPU.PCBase = FillRAM - 0x6000;
+	CPUPack.CPU.PCBase = ROM_GLOBAL - 0x6000;
 	CPUPack.CPU.PC = CPUPack.CPU.PCBase + (Address & 0xffff);
 	return;
 	

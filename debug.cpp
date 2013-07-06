@@ -1458,7 +1458,7 @@ static void debug_process_command (char *Line)
 	{
 		int	SmallWidth, LargeWidth, SmallHeight, LargeHeight;
 
-		switch ((Memory.FillRAM[0x2101] >> 5) & 7)
+		switch ((Memory.ROM_GLOBAL[0x2101] >> 5) & 7)
 		{
 
 			case 0:
@@ -1974,37 +1974,37 @@ static void debug_whats_used (void)
 
 	printf("Screen mode: %d, ", PPU.BGMode);
 
-	if (PPU.BGMode <= 1 && (Memory.FillRAM[0x2105] & 8))
+	if (PPU.BGMode <= 1 && (Memory.ROM_GLOBAL[0x2105] & 8))
 		printf("(BG#2 Priority), ");
 
 	printf("Brightness: %d, ", PPU.Brightness);
 
-	if (Memory.FillRAM[0x2100] & 0x80)
+	if (Memory.ROM_GLOBAL[0x2100] & 0x80)
 		printf("(screen blanked), ");
 
 	printf("\n");
 
-	if (Memory.FillRAM[0x2133] & 1)
+	if (Memory.ROM_GLOBAL[0x2133] & 1)
 		printf("Interlace, ");
 
-	if (Memory.FillRAM[0x2133] & 4)
+	if (Memory.ROM_GLOBAL[0x2133] & 4)
 		printf("240 line visible, ");
 
-	if (Memory.FillRAM[0x2133] & 8)
+	if (Memory.ROM_GLOBAL[0x2133] & 8)
 		printf("Pseudo 512 pixels horizontal resolution, ");
 
-	if (Memory.FillRAM[0x2133] & 0x40)
+	if (Memory.ROM_GLOBAL[0x2133] & 0x40)
 		printf("Mode 7 priority per pixel, ");
 
 	printf("\n");
 
-	if (PPU.BGMode == 7 && (Memory.FillRAM[0x211a] & 3))
+	if (PPU.BGMode == 7 && (Memory.ROM_GLOBAL[0x211a] & 3))
 		printf("Mode 7 flipping, ");
 
 	if (PPU.BGMode == 7)
-		printf("Mode 7 screen repeat: %d, ", (Memory.FillRAM[0x211a] & 0xc0) >> 6);
+		printf("Mode 7 screen repeat: %d, ", (Memory.ROM_GLOBAL[0x211a] & 0xc0) >> 6);
 
-	if (Memory.FillRAM[0x2130] & 1)
+	if (Memory.ROM_GLOBAL[0x2130] & 1)
 		printf("32K colour mode, ");
 
 	printf("\n");
@@ -2024,12 +2024,12 @@ static void debug_whats_used (void)
 		       PPU.CentreX, PPU.CentreY);
 	}
 
-	if ((Memory.FillRAM[0x2106] & 0xf0) && (Memory.FillRAM[0x2106] & 0x0f))
+	if ((Memory.ROM_GLOBAL[0x2106] & 0xf0) && (Memory.ROM_GLOBAL[0x2106] & 0x0f))
 	{
 		printf("Mosaic effect(%d) on, ", PPU.Mosaic);
 
 		for (int i = 0; i < 4; i++)
-			if (Memory.FillRAM[0x2106] & (1 << i))
+			if (Memory.ROM_GLOBAL[0x2106] & (1 << i))
 				printf("BG%d, ", i);
 	}
 
@@ -2038,13 +2038,13 @@ static void debug_whats_used (void)
 	if (PPU.HVBeamCounterLatched)
 		printf("V and H beam pos latched, \n");
 
-	if (Memory.FillRAM[0x4200] & 0x20)
+	if (Memory.ROM_GLOBAL[0x4200] & 0x20)
 		printf("V-IRQ enabled at %d, \n", PPU.IRQVBeamPos);
 
-	if (Memory.FillRAM[0x4200] & 0x10)
+	if (Memory.ROM_GLOBAL[0x4200] & 0x10)
 		printf("H-IRQ enabled at %d, \n", PPU.IRQHBeamPos);
 
-	if (Memory.FillRAM[0x4200] & 0x80)
+	if (Memory.ROM_GLOBAL[0x4200] & 0x80)
 		printf("V-blank NMI enabled, \n");
 
 	for (int i = 0; i < 8; i++)
@@ -2088,7 +2088,7 @@ static void debug_whats_used (void)
 
 	const char	*s = "";
 
-	switch ((Memory.FillRAM[0x2130] & 0xc0) >> 6)
+	switch ((Memory.ROM_GLOBAL[0x2130] & 0xc0) >> 6)
 	{
 		case 0:
 			s = "always on";
@@ -2111,7 +2111,7 @@ static void debug_whats_used (void)
 
 	for (int i = 0; i < 5; i++)
 	{
-		if (Memory.FillRAM[0x212c] & (1 << i))
+		if (Memory.ROM_GLOBAL[0x212c] & (1 << i))
 		{
 			switch (i)
 			{
@@ -2140,7 +2140,7 @@ static void debug_whats_used (void)
 
 	printf("\n");
 
-	switch ((Memory.FillRAM[0x2130] & 0x30) >> 4)
+	switch ((Memory.ROM_GLOBAL[0x2130] & 0x30) >> 4)
 	{
 		case 0:
 			s = "always on";
@@ -2163,7 +2163,7 @@ static void debug_whats_used (void)
 
 	for (int i = 0; i < 5; i++)
 	{
-		if (Memory.FillRAM[0x212d] & (1 << i))
+		if (Memory.ROM_GLOBAL[0x212d] & (1 << i))
 		{
 			switch (i)
 			{
@@ -2192,31 +2192,31 @@ static void debug_whats_used (void)
 
 	printf("\n");
 
-	if ((Memory.FillRAM[0x2131] & 0x3f))
+	if ((Memory.ROM_GLOBAL[0x2131] & 0x3f))
 	{
-		if (Memory.FillRAM[0x2131] & 0x80)
+		if (Memory.ROM_GLOBAL[0x2131] & 0x80)
 		{
-			if (Memory.FillRAM[0x2130] & 0x02)
+			if (Memory.ROM_GLOBAL[0x2130] & 0x02)
 				printf("Subscreen subtract");
 			else
 				printf("Fixed colour subtract");
 		}
 		else
 		{
-			if (Memory.FillRAM[0x2130] & 0x02)
+			if (Memory.ROM_GLOBAL[0x2130] & 0x02)
 				printf("Subscreen addition");
 			else
 				printf("Fixed colour addition");
 		}
 
-		if (Memory.FillRAM[0x2131] & 0x40)
+		if (Memory.ROM_GLOBAL[0x2131] & 0x40)
 			printf("(half): ");
 		else
 			printf(": ");
 
 		for (int i = 0; i < 6; i++)
 		{
-			if (Memory.FillRAM[0x2131] & (1 << i))
+			if (Memory.ROM_GLOBAL[0x2131] & (1 << i))
 			{
 				switch (i)
 				{
@@ -2250,7 +2250,7 @@ static void debug_whats_used (void)
 		printf("\n");
 	}
 
-	printf("Window 1 (%d, %d, %02x, %02x): ", PPU.Window1Left, PPU.Window1Right, Memory.FillRAM[0x212e], Memory.FillRAM[0x212f]);
+	printf("Window 1 (%d, %d, %02x, %02x): ", PPU.Window1Left, PPU.Window1Right, Memory.ROM_GLOBAL[0x212e], Memory.ROM_GLOBAL[0x212f]);
 
 	for (int i = 0; i < 6; i++)
 	{

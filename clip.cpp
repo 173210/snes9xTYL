@@ -104,7 +104,7 @@ void ComputeClipWindows ()
 	    {
 		if (c == 0) // ... on the main screen
 		{
-		    if ((FillRAM [0x2130] & 0xc0) == 0xc0)
+		    if ((ROM_GLOBAL [0x2130] & 0xc0) == 0xc0)
 		    {
 			// The whole of the main screen is switched off,
 			// completely clip everything.
@@ -117,13 +117,13 @@ void ComputeClipWindows ()
 			continue;
 		    }
 		    else
-		    if ((FillRAM [0x2130] & 0xc0) == 0x00)
+		    if ((ROM_GLOBAL [0x2130] & 0xc0) == 0x00)
 			continue;
 		}
 		else
 		{
 		    // .. colour window on the sub-screen.
-		    if ((FillRAM [0x2130] & 0x30) == 0x30)
+		    if ((ROM_GLOBAL [0x2130] & 0x30) == 0x30)
 		    {
 			// The sub-screen is switched off, completely
 			// clip everything.
@@ -136,26 +136,26 @@ void ComputeClipWindows ()
 			return;
 		    }
 		    else
-		    if ((FillRAM [0x2130] & 0x30) == 0x00)
+		    if ((ROM_GLOBAL [0x2130] & 0x30) == 0x00)
 			continue;
 		}
 	    }
 	    if (!Settings.DisableGraphicWindows)
 	    {
 		if (w == 5 || pClip->Count [5] ||
-		    (FillRAM [0x212c + c] & 
-		     FillRAM [0x212e + c] & (1 << w)))
+		    (ROM_GLOBAL [0x212c + c] & 
+		     ROM_GLOBAL [0x212e + c] & (1 << w)))
 		{
 		    struct Band Win1[3];
 		    struct Band Win2[3];
 		    uint32 Window1Enabled = 0;
 		    uint32 Window2Enabled = 0;
 		    bool8 invert = (w == 5 && 
-				    ((c == 1 && (FillRAM [0x2130] & 0x30) == 0x10) ||
-				     (c == 0 && (FillRAM [0x2130] & 0xc0) == 0x40)));
+				    ((c == 1 && (ROM_GLOBAL [0x2130] & 0x30) == 0x10) ||
+				     (c == 0 && (ROM_GLOBAL [0x2130] & 0xc0) == 0x40)));
 
 		    if (w == 5 ||
-			(FillRAM [0x212c + c] & FillRAM [0x212e + c] & (1 << w)))
+			(ROM_GLOBAL [0x212c + c] & ROM_GLOBAL [0x212e + c] & (1 << w)))
 		    {
 			if (PPU.ClipWindow1Enable [w])
 			{

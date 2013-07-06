@@ -154,7 +154,7 @@ void S9xReset (void)
 #ifdef ZSNES_FX
     WinterGold = Settings.WinterGold;
 #endif
-    ZeroMemory (FillRAM, 0x8000);
+    ZeroMemory (ROM_GLOBAL, 0x8000);
     memset (VRAM, 0x00, 0x10000);
     memset (RAM, 0x55, 0x20000);
 

@@ -320,7 +320,7 @@ static int ReadOrigSnapshot (STREAM snap)
 	return (result);
     if ((result = ReadBlock ("SRA:", ::SRAM, 0x10000, snap)) != SUCCESS)
 	return (result);
-    if ((result = ReadBlock ("FIL:", FillRAM, 0x8000, snap)) != SUCCESS)
+    if ((result = ReadBlock ("FIL:", ROM_GLOBAL, 0x8000, snap)) != SUCCESS)
 	return (result);
     if (ReadBlock ("APU:", &OrigAPU, sizeof (OrigAPU), snap) == SUCCESS)
     {

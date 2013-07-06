@@ -206,7 +206,7 @@ bool8 LoadZip (const char *zipname, int32 *TotalFileSize, int32 *headers, uint8 
 		char	name[132];
 		unzGetCurrentFileInfo(file, &info, name, 128, NULL, 0, NULL, 0);
 
-		if (info.uncompressed_size > CMemory::MAX_ROM_SIZE + 512)
+		if (info.uncompressed_size > Memory.MAX_ROM_SIZE + 512)
 		{
 			port = unzGoToNextFile(file);
 			continue;
@@ -257,7 +257,7 @@ bool8 LoadZip (const char *zipname, int32 *TotalFileSize, int32 *headers, uint8 
 
 	do
 	{
-		assert(info.uncompressed_size <= CMemory::MAX_ROM_SIZE + 512);
+		assert(info.uncompressed_size <= Memory.MAX_ROM_SIZE + 512);
 
 		int	FileSize = info.uncompressed_size;
 		int	l = unzReadCurrentFile(file, ptr, FileSize);
@@ -280,13 +280,13 @@ bool8 LoadZip (const char *zipname, int32 *TotalFileSize, int32 *headers, uint8 
 
 		int	len;
 
-		if (ptr - Memory.ROM < CMemory::MAX_ROM_SIZE + 512 && (isdigit(ext[0]) && ext[1] == 0 && ext[0] < '9'))
+		if (ptr - Memory.ROM < Memory.MAX_ROM_SIZE + 512 && (isdigit(ext[0]) && ext[1] == 0 && ext[0] < '9'))
 		{
 			more = TRUE;
 			ext[0]++;
 		}
 		else
-		if (ptr - Memory.ROM < CMemory::MAX_ROM_SIZE + 512)
+		if (ptr - Memory.ROM < Memory.MAX_ROM_SIZE + 512)
 		{
 			if (ext == tmp)
 				len = strlen(filename);

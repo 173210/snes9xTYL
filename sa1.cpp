@@ -56,13 +56,13 @@ void S9xSA1Init ()
     SA1Pack_SA1.Waiting = FALSE;
     SA1Pack_SA1.Flags = 0;
     SA1Pack_SA1.Executing = FALSE;
-    memset (&FillRAM [0x2200], 0, 0x200);
-    FillRAM [0x2200] = 0x20;
-    FillRAM [0x2220] = 0x00;
-    FillRAM [0x2221] = 0x01;
-    FillRAM [0x2222] = 0x02;
-    FillRAM [0x2223] = 0x03;
-    FillRAM [0x2228] = 0xff;
+    memset (&ROM_GLOBAL [0x2200], 0, 0x200);
+    ROM_GLOBAL [0x2200] = 0x20;
+    ROM_GLOBAL [0x2220] = 0x00;
+    ROM_GLOBAL [0x2221] = 0x01;
+    ROM_GLOBAL [0x2222] = 0x02;
+    ROM_GLOBAL [0x2223] = 0x03;
+    ROM_GLOBAL [0x2228] = 0xff;
     SA1Pack_SA1.op1 = 0;
     SA1Pack_SA1.op2 = 0;
     SA1Pack_SA1.arithmetic_op = 0;
@@ -73,8 +73,8 @@ void S9xSA1Init ()
 void S9xSA1Reset ()
 {
     SA1Pack_SA1Registers.PB = 0;
-    SA1Pack_SA1Registers.PC = FillRAM [0x2203] |
-		      (FillRAM [0x2204] << 8);
+    SA1Pack_SA1Registers.PC = ROM_GLOBAL [0x2203] |
+		      (ROM_GLOBAL [0x2204] << 8);
     SA1Pack_SA1Registers.D.W = 0;
     SA1Pack_SA1Registers.DB = 0;
     SA1Pack_SA1Registers.SH = 1;
@@ -98,7 +98,7 @@ void S9xSA1Reset ()
     S9xSA1FixCycles ();
     SA1Pack_SA1.Executing = TRUE;
     SA1Pack_SA1.BWRAM = SRAM;
-    FillRAM [0x2225] = 0;
+    ROM_GLOBAL [0x2225] = 0;
 }
 
 void S9xSA1SetBWRAMMemMap (uint8 val)
@@ -137,11 +137,11 @@ void S9xFixSA1AfterSnapshotLoad ()
     S9xSA1SetPCBase (SA1Pack_SA1.ShiftedPB + SA1Pack_SA1Registers.PC);
     S9xSA1UnpackStatus ();
     S9xSA1FixCycles ();
-    SA1Pack_SA1.VirtualBitmapFormat = (FillRAM [0x223f] & 0x80) ? 2 : 4;
-    BWRAM = SRAM + (FillRAM [0x2224] & 7) * 0x2000;
-    S9xSA1SetBWRAMMemMap (FillRAM [0x2225]);
+    SA1Pack_SA1.VirtualBitmapFormat = (ROM_GLOBAL [0x223f] & 0x80) ? 2 : 4;
+    BWRAM = SRAM + (ROM_GLOBAL [0x2224] & 7) * 0x2000;
+    S9xSA1SetBWRAMMemMap (ROM_GLOBAL [0x2225]);
 
-    SA1Pack_SA1.Waiting = (FillRAM [0x2200] & 0x60) != 0;
+    SA1Pack_SA1.Waiting = (ROM_GLOBAL [0x2200] & 0x60) != 0;
     SA1Pack_SA1.Executing = !SA1Pack_SA1.Waiting;
 }
 
@@ -385,17 +385,17 @@ void S9xSA1SetPCBase (uint32 address)
     switch ((int) GetAddress)
     {
     case CMemory::MAP_PPU:
-	SA1Pack_SA1.PCBase = FillRAM - 0x2000;
+	SA1Pack_SA1.PCBase = ROM_GLOBAL - 0x2000;
 	SA1Pack_SA1.PC = SA1Pack_SA1.PCBase + (address & 0xffff);
 	return;
 	
     case CMemory::MAP_CPU:
-	SA1Pack_SA1.PCBase = FillRAM - 0x4000;
+	SA1Pack_SA1.PCBase = ROM_GLOBAL - 0x4000;
 	SA1Pack_SA1.PC = SA1Pack_SA1.PCBase + (address & 0xffff);
 	return;
 	
     case CMemory::MAP_DSP:
-	SA1Pack_SA1.PCBase = FillRAM - 0x6000;
+	SA1Pack_SA1.PCBase = ROM_GLOBAL - 0x6000;
 	SA1Pack_SA1.PC = SA1Pack_SA1.PCBase + (address & 0xffff);
 	return;
 	
@@ -475,11 +475,11 @@ uint8 S9xGetSA1 (uint32 address)
     switch (address)
     {
     case 0x2300:
-	return ((uint8) ((FillRAM [0x2209] & 0x5f) | 
+	return ((uint8) ((ROM_GLOBAL [0x2209] & 0x5f) | 
 		 (CPUPack.CPU.IRQActive & (SA1_IRQ_SOURCE | SA1_DMA_IRQ_SOURCE))));
     case 0x2301:
-	return ((FillRAM [0x2200] & 0xf) |
-		(FillRAM [0x2301] & 0xf0));
+	return ((ROM_GLOBAL [0x2200] & 0xf) |
+		(ROM_GLOBAL [0x2301] & 0xf0));
     case 0x2306:
 	return ((uint8)  SA1Pack_SA1.sum);
     case 0x2307:
@@ -492,9 +492,9 @@ uint8 S9xGetSA1 (uint32 address)
 	return ((uint8) (SA1Pack_SA1.sum >> 32));
     case 0x230d:
     {
-	uint8 byte = FillRAM [0x230d];
+	uint8 byte = ROM_GLOBAL [0x230d];
 
-	if (FillRAM [0x2258] & 0x80)
+	if (ROM_GLOBAL [0x2258] & 0x80)
 	{
 	    S9xSA1ReadVariableLengthData (TRUE, FALSE);
 	}
@@ -506,7 +506,7 @@ uint8 S9xGetSA1 (uint32 address)
 #endif	
 	break;
     }
-    return (FillRAM [address]);
+    return (ROM_GLOBAL [address]);
 }
 
 void S9xSetSA1 (uint8 byte, uint32 address)
@@ -518,14 +518,14 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	SA1Pack_SA1.Waiting = (byte & 0x60) != 0;
 //	SA1Pack_SA1.Executing = !SA1Pack_SA1.Waiting && SA1Pack_SA1.S9xOpcodes;
 
-	if (!(byte & 0x20) && (FillRAM [0x2200] & 0x20))
+	if (!(byte & 0x20) && (ROM_GLOBAL [0x2200] & 0x20))
 	{
 	    S9xSA1Reset ();
 	}
 	if (byte & 0x80)
 	{
-	    FillRAM [0x2301] |= 0x80;
-	    if (FillRAM [0x220a] & 0x80)
+	    ROM_GLOBAL [0x2301] |= 0x80;
+	    if (ROM_GLOBAL [0x220a] & 0x80)
 	    {
 		SA1Pack_SA1.Flags |= IRQ_PENDING_FLAG;
 		SA1Pack_SA1.IRQActive |= SNES_IRQ_SOURCE;
@@ -534,7 +534,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	}
 	if (byte & 0x10)
 	{
-	    FillRAM [0x2301] |= 0x10;
+	    ROM_GLOBAL [0x2301] |= 0x10;
 #ifdef DEBUGGER
 		printf ("###SA1 NMI\n");
 #endif
@@ -542,13 +542,13 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	break;
 
     case 0x2201:
-	if (((byte ^ FillRAM [0x2201]) & 0x80) &&
-	    (FillRAM [0x2300] & byte & 0x80))
+	if (((byte ^ ROM_GLOBAL [0x2201]) & 0x80) &&
+	    (ROM_GLOBAL [0x2300] & byte & 0x80))
 	{
 	    S9xSetIRQ (SA1_IRQ_SOURCE);
 	}
-	if (((byte ^ FillRAM [0x2201]) & 0x20) &&
-	    (FillRAM [0x2300] & byte & 0x20))
+	if (((byte ^ ROM_GLOBAL [0x2201]) & 0x20) &&
+	    (ROM_GLOBAL [0x2300] & byte & 0x20))
 	{
 	    S9xSetIRQ (SA1_DMA_IRQ_SOURCE);
 	}
@@ -556,70 +556,70 @@ void S9xSetSA1 (uint8 byte, uint32 address)
     case 0x2202:
 	if (byte & 0x80)
 	{
-	    FillRAM [0x2300] &= ~0x80;
+	    ROM_GLOBAL [0x2300] &= ~0x80;
 	    S9xClearIRQ (SA1_IRQ_SOURCE);
 	}
 	if (byte & 0x20)
 	{
-	    FillRAM [0x2300] &= ~0x20;
+	    ROM_GLOBAL [0x2300] &= ~0x20;
 	    S9xClearIRQ (SA1_DMA_IRQ_SOURCE);
 	}
 	break;
     case 0x2203:
-//	printf ("SA1 reset vector: %04x\n", byte | (FillRAM [0x2204] << 8));
+//	printf ("SA1 reset vector: %04x\n", byte | (ROM_GLOBAL [0x2204] << 8));
 	break;
     case 0x2204:
-//	printf ("SA1 reset vector: %04x\n", (byte << 8) | FillRAM [0x2203]);
+//	printf ("SA1 reset vector: %04x\n", (byte << 8) | ROM_GLOBAL [0x2203]);
 	break;
 
     case 0x2205:
-//	printf ("SA1 NMI vector: %04x\n", byte | (FillRAM [0x2206] << 8));
+//	printf ("SA1 NMI vector: %04x\n", byte | (ROM_GLOBAL [0x2206] << 8));
 	break;
     case 0x2206:
-//	printf ("SA1 NMI vector: %04x\n", (byte << 8) | FillRAM [0x2205]);
+//	printf ("SA1 NMI vector: %04x\n", (byte << 8) | ROM_GLOBAL [0x2205]);
 	break;
 
     case 0x2207:
-//	printf ("SA1 IRQ vector: %04x\n", byte | (FillRAM [0x2208] << 8));
+//	printf ("SA1 IRQ vector: %04x\n", byte | (ROM_GLOBAL [0x2208] << 8));
 	break;
     case 0x2208:
-//	printf ("SA1 IRQ vector: %04x\n", (byte << 8) | FillRAM [0x2207]);
+//	printf ("SA1 IRQ vector: %04x\n", (byte << 8) | ROM_GLOBAL [0x2207]);
 	break;
 
     case 0x2209:
-	FillRAM [0x2209] = byte;
+	ROM_GLOBAL [0x2209] = byte;
 	if (byte & 0x80)
-	    FillRAM [0x2300] |= 0x80;
+	    ROM_GLOBAL [0x2300] |= 0x80;
 
-	if (byte & FillRAM [0x2201] & 0x80)
+	if (byte & ROM_GLOBAL [0x2201] & 0x80)
 	{
 	    S9xSetIRQ (SA1_IRQ_SOURCE);
 	}
 	break;
     case 0x220a:
-	if (((byte ^ FillRAM [0x220a]) & 0x80) &&
-	    (FillRAM [0x2301] & byte & 0x80))
+	if (((byte ^ ROM_GLOBAL [0x220a]) & 0x80) &&
+	    (ROM_GLOBAL [0x2301] & byte & 0x80))
 	{
 	    SA1Pack_SA1.Flags |= IRQ_PENDING_FLAG;
 	    SA1Pack_SA1.IRQActive |= SNES_IRQ_SOURCE;
 //	    SA1Pack_SA1.Executing = !SA1Pack_SA1.Waiting;
 	}
-	if (((byte ^ FillRAM [0x220a]) & 0x40) &&
-	    (FillRAM [0x2301] & byte & 0x40))
+	if (((byte ^ ROM_GLOBAL [0x220a]) & 0x40) &&
+	    (ROM_GLOBAL [0x2301] & byte & 0x40))
 	{
 	    SA1Pack_SA1.Flags |= IRQ_PENDING_FLAG;
 	    SA1Pack_SA1.IRQActive |= TIMER_IRQ_SOURCE;
 //	    SA1Pack_SA1.Executing = !SA1Pack_SA1.Waiting;
 	}
-	if (((byte ^ FillRAM [0x220a]) & 0x20) &&
-	    (FillRAM [0x2301] & byte & 0x20))
+	if (((byte ^ ROM_GLOBAL [0x220a]) & 0x20) &&
+	    (ROM_GLOBAL [0x2301] & byte & 0x20))
 	{
 	    SA1Pack_SA1.Flags |= IRQ_PENDING_FLAG;
 	    SA1Pack_SA1.IRQActive |= DMA_IRQ_SOURCE;
 //	    SA1Pack_SA1.Executing = !SA1Pack_SA1.Waiting;
 	}
-	if (((byte ^ FillRAM [0x220a]) & 0x10) &&
-	    (FillRAM [0x2301] & byte & 0x10))
+	if (((byte ^ ROM_GLOBAL [0x220a]) & 0x10) &&
+	    (ROM_GLOBAL [0x2301] & byte & 0x10))
 	{
 #ifdef DEBUGGER
 	    printf ("###SA1 NMI\n");
@@ -630,38 +630,38 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	if (byte & 0x80)
 	{
 	    SA1Pack_SA1.IRQActive &= ~SNES_IRQ_SOURCE;
-	    FillRAM [0x2301] &= ~0x80;
+	    ROM_GLOBAL [0x2301] &= ~0x80;
 	}
 	if (byte & 0x40)
 	{
 	    SA1Pack_SA1.IRQActive &= ~TIMER_IRQ_SOURCE;
-	    FillRAM [0x2301] &= ~0x40;
+	    ROM_GLOBAL [0x2301] &= ~0x40;
 	}
 	if (byte & 0x20)
 	{
 	    SA1Pack_SA1.IRQActive &= ~DMA_IRQ_SOURCE;
-	    FillRAM [0x2301] &= ~0x20;
+	    ROM_GLOBAL [0x2301] &= ~0x20;
 	}
 	if (byte & 0x10)
 	{
 	    // Clear NMI
-	    FillRAM [0x2301] &= ~0x10;
+	    ROM_GLOBAL [0x2301] &= ~0x10;
 	}
 	if (!SA1Pack_SA1.IRQActive)
 	    SA1Pack_SA1.Flags &= ~IRQ_PENDING_FLAG;
 	break;
     case 0x220c:
-//	printf ("SNES NMI vector: %04x\n", byte | (FillRAM [0x220d] << 8));
+//	printf ("SNES NMI vector: %04x\n", byte | (ROM_GLOBAL [0x220d] << 8));
 	break;
     case 0x220d:
-//	printf ("SNES NMI vector: %04x\n", (byte << 8) | FillRAM [0x220c]);
+//	printf ("SNES NMI vector: %04x\n", (byte << 8) | ROM_GLOBAL [0x220c]);
 	break;
 
     case 0x220e:
-//	printf ("SNES IRQ vector: %04x\n", byte | (FillRAM [0x220f] << 8));
+//	printf ("SNES IRQ vector: %04x\n", byte | (ROM_GLOBAL [0x220f] << 8));
 	break;
     case 0x220f:
-//	printf ("SNES IRQ vector: %04x\n", (byte << 8) | FillRAM [0x220e]);
+//	printf ("SNES IRQ vector: %04x\n", (byte << 8) | ROM_GLOBAL [0x220e]);
 	break;
 
     case 0x2210:
@@ -676,22 +676,22 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	break;
     case 0x2212:
 #ifndef __GP32__        
-//	printf ("H-Timer %04x\n", byte | (FillRAM [0x2213] << 8));
+//	printf ("H-Timer %04x\n", byte | (ROM_GLOBAL [0x2213] << 8));
 #endif	
 	break;
     case 0x2213:
 #ifndef __GP32__            
-//	printf ("H-Timer %04x\n", (byte << 8) | FillRAM [0x2212]);
+//	printf ("H-Timer %04x\n", (byte << 8) | ROM_GLOBAL [0x2212]);
 #endif		
 	break;
     case 0x2214:
 #ifndef __GP32__            
-//	printf ("V-Timer %04x\n", byte | (FillRAM [0x2215] << 8));
+//	printf ("V-Timer %04x\n", byte | (ROM_GLOBAL [0x2215] << 8));
 #endif		
 	break;
     case 0x2215:
 #ifndef __GP32__            
-//	printf ("V-Timer %04x\n", (byte << 8) | FillRAM [0x2214]);
+//	printf ("V-Timer %04x\n", (byte << 8) | ROM_GLOBAL [0x2214]);
 #endif		
 	break;
     case 0x2220:
@@ -706,8 +706,8 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	BWRAM = SRAM + (byte & 7) * 0x2000;
 	break;
     case 0x2225:
-//	printf ("BWRAM image SA1 %02x -> 0x6000 (%02x)\n", byte, FillRAM [address]);
-	if (byte != FillRAM [address])
+//	printf ("BWRAM image SA1 %02x -> 0x6000 (%02x)\n", byte, ROM_GLOBAL [address]);
+	if (byte != ROM_GLOBAL [address])
 	    S9xSA1SetBWRAMMemMap (byte);
 	break;
     case 0x2226:
@@ -748,51 +748,51 @@ void S9xSetSA1 (uint8 byte, uint32 address)
     case 0x2232:
     case 0x2233:
     case 0x2234:
-	FillRAM [address] = byte;
+	ROM_GLOBAL [address] = byte;
 #if 0
 	printf ("DMA source start %06x\n", 
-		FillRAM [0x2232] | (FillRAM [0x2233] << 8) |
-		(FillRAM [0x2234] << 16));
+		ROM_GLOBAL [0x2232] | (ROM_GLOBAL [0x2233] << 8) |
+		(ROM_GLOBAL [0x2234] << 16));
 #endif
 	break;
     case 0x2235:
-	FillRAM [address] = byte;
+	ROM_GLOBAL [address] = byte;
 	break;
     case 0x2236:
-	FillRAM [address] = byte;
-	if ((FillRAM [0x2230] & 0xa4) == 0x80)
+	ROM_GLOBAL [address] = byte;
+	if ((ROM_GLOBAL [0x2230] & 0xa4) == 0x80)
 	{
 	    // Normal DMA to I-RAM
 	    S9xSA1DMA ();
 	}
 	else
-	if ((FillRAM [0x2230] & 0xb0) == 0xb0)
+	if ((ROM_GLOBAL [0x2230] & 0xb0) == 0xb0)
 	{
-	    FillRAM [0x2300] |= 0x20;
-	    if (FillRAM [0x2201] & 0x20)
+	    ROM_GLOBAL [0x2300] |= 0x20;
+	    if (ROM_GLOBAL [0x2201] & 0x20)
 		S9xSetIRQ (SA1_DMA_IRQ_SOURCE);
 	    SA1Pack_SA1.in_char_dma = TRUE;
 	}
 	break;
     case 0x2237:
-	FillRAM [address] = byte;
-	if ((FillRAM [0x2230] & 0xa4) == 0x84)
+	ROM_GLOBAL [address] = byte;
+	if ((ROM_GLOBAL [0x2230] & 0xa4) == 0x84)
 	{
 	    // Normal DMA to BW-RAM
 	    S9xSA1DMA ();
 	}
 #if 0
 	printf ("DMA dest address %06x\n", 
-		FillRAM [0x2235] | (FillRAM [0x2236] << 8) |
-		(FillRAM [0x2237] << 16));
+		ROM_GLOBAL [0x2235] | (ROM_GLOBAL [0x2236] << 8) |
+		(ROM_GLOBAL [0x2237] << 16));
 #endif
 	break;
     case 0x2238:
     case 0x2239:
-	FillRAM [address] = byte;
+	ROM_GLOBAL [address] = byte;
 #if 0
 	printf ("DMA length %04x\n", 
-		FillRAM [0x2238] | (FillRAM [0x2239] << 8));
+		ROM_GLOBAL [0x2238] | (ROM_GLOBAL [0x2239] << 8));
 #endif
 	break;
     case 0x223f:
@@ -811,16 +811,16 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	    Trace ();
 	}
 #endif
-	FillRAM [address] = byte;
+	ROM_GLOBAL [address] = byte;
 	break;
 
     case 0x224f:
-	FillRAM [address] = byte;
-	if ((FillRAM [0x2230] & 0xb0) == 0xa0)
+	ROM_GLOBAL [address] = byte;
+	if ((ROM_GLOBAL [0x2230] & 0xb0) == 0xa0)
 	{
 	    // Char conversion 2 DMA enabled
 	    memmove (&ROM [/*CMemory::*/Memory.MAX_ROM_SIZE - 0x10000] + SA1Pack_SA1.in_char_dma * 16,
-		     &FillRAM [0x2240], 16);
+		     &ROM_GLOBAL [0x2240], 16);
 	    SA1Pack_SA1.in_char_dma = (SA1Pack_SA1.in_char_dma + 1) & 7;
 	    if ((SA1Pack_SA1.in_char_dma & 3) == 0)
 	    {
@@ -868,13 +868,13 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	}
 	break;
     case 0x2258:    // Variable bit-field length/auto inc/start.
-	FillRAM [0x2258] = byte;
+	ROM_GLOBAL [0x2258] = byte;
 	S9xSA1ReadVariableLengthData (TRUE, FALSE);
 	return;
     case 0x2259:
     case 0x225a:
     case 0x225b:    // Variable bit-field start address
-	FillRAM [address] = byte;
+	ROM_GLOBAL [address] = byte;
 	// XXX: ???
 	SA1Pack_SA1.variable_bit_pos = 0;
 	S9xSA1ReadVariableLengthData (FALSE, TRUE);
@@ -884,17 +884,17 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	break;
     }
     if (address >= 0x2200 && address <= 0x22ff)
-	FillRAM [address] = byte;
+	ROM_GLOBAL [address] = byte;
 }
 
 static void S9xSA1CharConv2 ()
 {
-    uint32 dest = FillRAM [0x2235] | (FillRAM [0x2236] << 8);
+    uint32 dest = ROM_GLOBAL [0x2235] | (ROM_GLOBAL [0x2236] << 8);
     uint32 offset = (SA1Pack_SA1.in_char_dma & 7) ? 0 : 1;
-    int depth = (FillRAM [0x2231] & 3) == 0 ? 8 :
-		(FillRAM [0x2231] & 3) == 1 ? 4 : 2;
+    int depth = (ROM_GLOBAL [0x2231] & 3) == 0 ? 8 :
+		(ROM_GLOBAL [0x2231] & 3) == 1 ? 4 : 2;
     int bytes_per_char = 8 * depth;
-    uint8 *p = &FillRAM [0x3000] + dest + offset * bytes_per_char;
+    uint8 *p = &ROM_GLOBAL [0x3000] + dest + offset * bytes_per_char;
     uint8 *q = &ROM [/*CMemory::*/Memory.MAX_ROM_SIZE - 0x10000] + offset * 64;
 
     switch (depth)
@@ -926,19 +926,19 @@ static void S9xSA1CharConv2 ()
 
 static void S9xSA1DMA ()
 {
-    uint32 src =  FillRAM [0x2232] |
-	         (FillRAM [0x2233] << 8) |
-		 (FillRAM [0x2234] << 16);
-    uint32 dst =  FillRAM [0x2235] |
-	         (FillRAM [0x2236] << 8) |
-		 (FillRAM [0x2237] << 16);
-    uint32 len =  FillRAM [0x2238] |
-		 (FillRAM [0x2239] << 8);
+    uint32 src =  ROM_GLOBAL [0x2232] |
+	         (ROM_GLOBAL [0x2233] << 8) |
+		 (ROM_GLOBAL [0x2234] << 16);
+    uint32 dst =  ROM_GLOBAL [0x2235] |
+	         (ROM_GLOBAL [0x2236] << 8) |
+		 (ROM_GLOBAL [0x2237] << 16);
+    uint32 len =  ROM_GLOBAL [0x2238] |
+		 (ROM_GLOBAL [0x2239] << 8);
 
     uint8 *s;
     uint8 *d;
 
-    switch (FillRAM [0x2230] & 3)
+    switch (ROM_GLOBAL [0x2230] & 3)
     {
     case 0: // ROM
 	s = SA1Pack_SA1.Map [(src >> MEMMAP_SHIFT) & MEMMAP_MASK];
@@ -956,11 +956,11 @@ static void S9xSA1DMA ()
     case 2:
 	src &= 0x3ff;
 	len &= 0x3ff;
-	s = &FillRAM [0x3000] + src;
+	s = &ROM_GLOBAL [0x3000] + src;
 	break;
     }
 
-    if (FillRAM [0x2230] & 4)
+    if (ROM_GLOBAL [0x2230] & 4)
     {
 	dst &= Memory.SRAMMask;
 	len &= Memory.SRAMMask;
@@ -970,12 +970,12 @@ static void S9xSA1DMA ()
     {
 	dst &= 0x3ff;
 	len &= 0x3ff;
-	d = &FillRAM [0x3000] + dst;
+	d = &ROM_GLOBAL [0x3000] + dst;
     }
     memmove (d, s, len);
-    FillRAM [0x2301] |= 0x20;
+    ROM_GLOBAL [0x2301] |= 0x20;
     
-    if (FillRAM [0x220a] & 0x20)
+    if (ROM_GLOBAL [0x220a] & 0x20)
     {
 	SA1Pack_SA1.Flags |= IRQ_PENDING_FLAG;
 	SA1Pack_SA1.IRQActive |= DMA_IRQ_SOURCE;
@@ -985,10 +985,10 @@ static void S9xSA1DMA ()
 
 void S9xSA1ReadVariableLengthData (bool8 inc, bool8 no_shift)
 {
-    uint32 addr =  FillRAM [0x2259] |
-		  (FillRAM [0x225a] << 8) |
-		  (FillRAM [0x225b] << 16);
-    uint8 shift = FillRAM [0x2258] & 15;
+    uint32 addr =  ROM_GLOBAL [0x2259] |
+		  (ROM_GLOBAL [0x225a] << 8) |
+		  (ROM_GLOBAL [0x225b] << 16);
+    uint8 shift = ROM_GLOBAL [0x2258] & 15;
 
     if (no_shift)
 	shift = 0;
@@ -1007,13 +1007,13 @@ void S9xSA1ReadVariableLengthData (bool8 inc, bool8 no_shift)
 		  (S9xSA1GetWord (addr + 2) << 16);
 
     data >>= s;
-    FillRAM [0x230c] = (uint8) data;
-    FillRAM [0x230d] = (uint8) (data >> 8);
+    ROM_GLOBAL [0x230c] = (uint8) data;
+    ROM_GLOBAL [0x230d] = (uint8) (data >> 8);
     if (inc)
     {
 	SA1Pack_SA1.variable_bit_pos = (SA1Pack_SA1.variable_bit_pos + shift) & 15;
-	FillRAM [0x2259] = (uint8) addr;
-	FillRAM [0x225a] = (uint8) (addr >> 8);
-	FillRAM [0x225b] = (uint8) (addr >> 16);
+	ROM_GLOBAL [0x2259] = (uint8) addr;
+	ROM_GLOBAL [0x225a] = (uint8) (addr >> 8);
+	ROM_GLOBAL [0x225b] = (uint8) (addr >> 16);
     }
 }

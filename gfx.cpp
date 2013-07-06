@@ -587,8 +587,8 @@ void S9xStartScreenRefresh ()
 	IPPU.PreviousLine = IPPU.CurrentLine = 0;
 	IPPU.MaxBrightness = PPU.Brightness;
 	IPPU.LatchedBlanking = PPU.ForcedBlanking;
-	IPPU.LatchedInterlace = (FillRAM[0x2133] & 1);
-//	IPPU.Interlace = (FillRAM[0x2133] & 1);
+	IPPU.LatchedInterlace = (ROM_GLOBAL[0x2133] & 1);
+//	IPPU.Interlace = (ROM_GLOBAL[0x2133] & 1);
 	if (Settings.SupportHiRes && (PPU.BGMode == 5 || PPU.BGMode == 6 ||
 				      IPPU.LatchedInterlace/*IPPU.Interlace*/))
 	{
@@ -2339,11 +2339,11 @@ void S9xUpdateScreen (){
 #endif
 
 	GPUPack.GFX.S = GPUPack.GFX.Screen;
-  GPUPack.GFX.r2131 = FillRAM [0x2131];
-  GPUPack.GFX.r212c = FillRAM [0x212c];
-  GPUPack.GFX.r212d = FillRAM [0x212d];
-  GPUPack.GFX.r2130 = FillRAM [0x2130];
-  GPUPack.GFX.Pseudo = (FillRAM [0x2133] & 8) != 0 &&
+  GPUPack.GFX.r2131 = ROM_GLOBAL [0x2131];
+  GPUPack.GFX.r212c = ROM_GLOBAL [0x212c];
+  GPUPack.GFX.r212d = ROM_GLOBAL [0x212d];
+  GPUPack.GFX.r2130 = ROM_GLOBAL [0x2130];
+  GPUPack.GFX.Pseudo = (ROM_GLOBAL [0x2133] & 8) != 0 &&
 		 (GPUPack.GFX.r212c & 15) != (GPUPack.GFX.r212d & 15) &&
 		 (GPUPack.GFX.r2131 & 0x3f) == 0;
 
@@ -2487,7 +2487,7 @@ void S9xUpdateScreen (){
     uint32 back;
         
     //mario hack : fixed colour addition on backdrop colour
-    if (!(FillRAM [0x2131] & 0x80) &&(FillRAM[0x2131] & 0x20) &&
+    if (!(ROM_GLOBAL [0x2131] & 0x80) &&(ROM_GLOBAL[0x2131] & 0x20) &&
 		    (PPU.FixedColourRed || PPU.FixedColourGreen || PPU.FixedColourBlue))
 	{
 	    back = (IPPU.XB[PPU.FixedColourRed]) |
@@ -2562,7 +2562,7 @@ PROF_END(11);
 		if (PPU.BGMode <= 1)
 	    {
 			
-	    	if (FillRAM [0x2105] & 8)
+	    	if (ROM_GLOBAL [0x2105] & 8)
 	    	{
 	    		
 	    		GPUPack.GFX.S = GPUPack.GFX.SubScreen;
@@ -2673,11 +2673,11 @@ PROF_END(11);
 				    else DrawOBJSFastNew(0);
 
 			}				
-			if (BG0 || ((FillRAM [0x2133] & 0x40) && BG1))
+			if (BG0 || ((ROM_GLOBAL [0x2133] & 0x40) && BG1))
 			{
 			    //int bg;
 			    FIXCLIP(0);
-			    if (OB&&(FillRAM [0x2133] & 0x40))
+			    if (OB&&(ROM_GLOBAL [0x2133] & 0x40))
 			    {
 			    	
 			    	info(32,11,"mode 7 ext");
@@ -2793,7 +2793,7 @@ PROF_END(11);
 	    if (PPU.BGMode <= 1)
 	    {
 			
-	    	if (FillRAM [0x2105] & 8)
+	    	if (ROM_GLOBAL [0x2105] & 8)
 	    	{
 	    		if (BG3_SUB && PPU.BGMode == 0)	{GPUPack.GFX.pCurrentClip = &IPPU.Clip [1];DrawBackgroundNew (PPU.BGMode, 3,0);}
 				if (BG2_SUB){GPUPack.GFX.pCurrentClip = &IPPU.Clip [1];DrawBackgroundNew (PPU.BGMode, 2,0);}
@@ -2881,11 +2881,11 @@ PROF_END(11);
 				    else DrawOBJSFastNew(0);
 
 			}				
-			if (BG0 || ((FillRAM [0x2133] & 0x40) && BG1))
+			if (BG0 || ((ROM_GLOBAL [0x2133] & 0x40) && BG1))
 			{
 			    //int bg;
 			    FIXCLIP(0);
-			    if (OB&&(FillRAM [0x2133] & 0x40))
+			    if (OB&&(ROM_GLOBAL [0x2133] & 0x40))
 			    {
 			    	info(32,11,"mode 7 ext");
 					GPUPack.GFX.Mode7Mask = 0x7f;

@@ -67,7 +67,7 @@
 #define READ_3WORD(s) ( *(uint8 *) (s) |\
                        (*((uint8 *) (s) + 1) << 8) |\
                        (*((uint8 *) (s) + 2) << 16))
-                          
+
 #endif
 
 #define MEMMAP_BLOCK_SIZE (0x1000)
@@ -79,62 +79,62 @@
 
 class CMemory {
 public:
-    bool8 LoadROM (const char *);
-    int LoadROMMore(int TotalFileSize,int &retry_count);
-    void  InitROM (bool8);
-    bool8 LoadSRAM (char *);
-    bool8 SaveSRAM (char *);
+	bool8 LoadROM (const char *);
+	int LoadROMMore(int TotalFileSize,int &retry_count);
+	void  InitROM (bool8);
+	bool8 LoadSRAM (char *);
+	bool8 SaveSRAM (char *);
 	bool8 LoadSRTC (void);
 	bool8 SaveSRTC (void);
-    bool8 Init ();
-    void  Deinit ();
-    bool8 TEMP_ReInit ();
-    void  TEMP_DeInit ();    
-    void  FreeSDD1Data ();
-    
-    /***********************/
-    /* GP32 */
-//    bool8 TEMP_DeInit();
-//    bool8 TEMP_ReInit();    
-    /***********************/
-    
-    
-    void WriteProtectROM ();
-    void FixROMSpeed ();
-    void MapRAM ();
-    void MapExtraRAM ();
-//    char *Safe (const char *);
+	bool8 Init ();
+	void  Deinit ();
+	bool8 TEMP_ReInit ();
+	void  TEMP_DeInit ();
+	void  FreeSDD1Data ();
+
+	/***********************/
+	/* GP32 */
+//	bool8 TEMP_DeInit();
+//	bool8 TEMP_ReInit();
+	/***********************/
+
+
+	void WriteProtectROM ();
+	void FixROMSpeed ();
+	void MapRAM ();
+	void MapExtraRAM ();
+//	char *Safe (const char *);
 	void DeInterleavedRom(bool8 Tales);
-    
-    void LoROMMap ();
-    void LoROM24MBSMap ();
-    void SRAM512KLoROMMap ();
-    void SRAM1024KLoROMMap ();
-    void SufamiTurboLoROMMap ();
-    void HiROMMap ();
-    void SuperFXROMMap ();
-    void TalesROMMap (bool8);
-    void AlphaROMMap ();
-    void SA1ROMMap ();
-    void BSHiROMMap ();
+
+	void LoROMMap ();
+	void LoROM24MBSMap ();
+	void SRAM512KLoROMMap ();
+	void SRAM1024KLoROMMap ();
+	void SufamiTurboLoROMMap ();
+	void HiROMMap ();
+	void SuperFXROMMap ();
+	void TalesROMMap (bool8);
+	void AlphaROMMap ();
+	void SA1ROMMap ();
+	void BSHiROMMap ();
 	void SPC7110HiROMMap ();
-    bool8 AllASCII (uint8 *b, int size);
-    int  ScoreHiROM (bool8 skip_header);
-    int  ScoreLoROM (bool8 skip_header);
-    void ApplyROMFixes ();
-    void CheckForIPSPatch (const char *rom_filename, bool8 header,
-			   uint32 &rom_size,const char *ips_ext);
-    
-    const char *TVStandard ();
-    const char *Speed ();
-    const char *StaticRAMSize ();
-    const char *MapType ();
-    const char *MapMode ();
-    const char *KartContents ();
-    const char *Size ();
-    const char *Headers ();
-    const char *ROMID ();
-    const char *CompanyID ();
+	bool8 AllASCII (uint8 *b, int size);
+	int  ScoreHiROM (bool8 skip_header);
+	int  ScoreLoROM (bool8 skip_header);
+	void ApplyROMFixes ();
+	void CheckForIPSPatch (const char *rom_filename, bool8 header,
+				uint32 &rom_size,const char *ips_ext);
+
+	const char *TVStandard ();
+	const char *Speed ();
+	const char *StaticRAMSize ();
+	const char *MapType ();
+	const char *MapMode ();
+	const char *KartContents ();
+	const char *Size ();
+	const char *Headers ();
+	const char *ROMID ();
+	const char *CompanyID ();
 #ifdef _BSX_151_
 	//add azz 080517
 	void CMemory::map_WriteProtectROM (void);
@@ -142,31 +142,33 @@ public:
 	void CMemory::ParseSNESHeader (uint8 *RomHeader);
 	int CMemory::LoadROMMore_151(int TotalFileSize,int &retry_count);
 	uint8 ExtendedFormat;
-    enum { NOPE, YEAH, BIGFIRST, SMALLFIRST };
+	enum { NOPE, YEAH, BIGFIRST, SMALLFIRST };
 	void BS_151();
 #endif
-	
+
 	enum {
-	MAP_PPU, MAP_CPU, MAP_DSP, MAP_LOROM_SRAM, MAP_HIROM_SRAM,
-	MAP_NONE, MAP_DEBUG, MAP_C4, MAP_BWRAM, MAP_BWRAM_BITMAP,
-	MAP_BWRAM_BITMAP2, MAP_SA1RAM
+		MAP_PPU, MAP_CPU, MAP_DSP, MAP_LOROM_SRAM, MAP_HIROM_SRAM,
+		MAP_NONE, MAP_DEBUG, MAP_C4, MAP_BWRAM, MAP_BWRAM_BITMAP,
+		MAP_BWRAM_BITMAP2, MAP_SA1RAM
 #ifdef _BSX_151_
-	,MAP_BSX//add azz 20080517
+		,MAP_BSX//add azz 20080517
 #endif
-	, MAP_SPC7110_ROM, MAP_SPC7110_DRAM, MAP_RONLY_SRAM
-	, MAP_LAST
-    };
-    enum { MAX_ROM_SIZE = 0x600000 };
+		, MAP_SPC7110_ROM, MAP_SPC7110_DRAM, MAP_RONLY_SRAM
+		, MAP_LAST
+	};
   //  enum { MAX_ROM_SIZE = 0x400000 };
-	//uint32 MAX_ROM_SIZE;
-	
-    
+	uint32 MAX_ROM_SIZE;
+/*#ifdef __PSP__
+	SceUID ROM_HANDLER;
+#endif*/
+
+
 //    uint8 *RAM;
 //    uint8 *ROM;
 //    uint8 *VRAM;
 //    uint8 *SRAM;
 //    uint8 *BWRAM;
-//    uint8 *FillRAM;
+//    uint8 *ROM_GLOBAL;
 //    uint8 *C4RAM;
     bool8 HiROM;
     bool8 LoROM;
@@ -220,13 +222,13 @@ extern SMEMMAPBLOCKS SetWordMap [MEMMAP_NUM_BLOCKS];
 extern uint8 ** const Map;
 extern CMemory Memory;
 extern uint8 SRAM[];
-extern uint8 * const ROM;
+extern uint8 *ROM_GLOBAL;
+extern uint8 *ROM;
 //extern uint8 *RegRAM;
 extern uint8 RAM[];
 extern uint8 VRAM[];
 //extern uint8 *VRAMmode7;
 extern uint8 *BWRAM;
-extern uint8 * const FillRAM;
 extern uint8 *C4RAM;
 
 extern uint8 *BSRAM;//add azz 080517

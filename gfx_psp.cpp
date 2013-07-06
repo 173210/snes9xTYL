@@ -1440,7 +1440,7 @@ void pspRenderScreen (uint8 *Screen, bool8 sub, uint8 D, uint8 drawmode)
 		}
 		if (BG2&&os9x_BG2) {	    
 	    if (TO_DRAW(2)) {	    	
-	    	pspDrawBackground (PPU.BGMode, 2, D + 3,  (FillRAM [0x2105] & 8) == 0 ? D + 6 : D + 17);
+	    	pspDrawBackground (PPU.BGMode, 2, D + 3,  (ROM_GLOBAL [0x2105] & 8) == 0 ? D + 6 : D + 17);
 	    }
 		}
 		if (BG3 && PPU.BGMode == 0 && os9x_BG3) {	    
@@ -1471,11 +1471,11 @@ void pspRenderScreen (uint8 *Screen, bool8 sub, uint8 D, uint8 drawmode)
 
 	    pspDrawOBJS (!sub, D,drawmode);
 	}
-	if ((BG0 || ((FillRAM [0x2133] & 0x40) && BG1)) &&os9x_BG0)
+	if ((BG0 || ((ROM_GLOBAL [0x2133] & 0x40) && BG1)) &&os9x_BG0)
 	{
 	    int bg;
 
-	    if (FillRAM [0x2133] & 0x40)
+	    if (ROM_GLOBAL [0x2133] & 0x40)
 	    {
 		GPUPack.GFX.Mode7Mask = 0x7f;
 		GPUPack.GFX.Mode7PriorityMask = 0x80;
@@ -1538,11 +1538,11 @@ void pspS9xUpdateScreen (){
   render_timestamp++;
 
   /*GPUPack.GFX.S = GPUPack.GFX.Screen;
-  GPUPack.GFX.r2131 = FillRAM [0x2131];
-  GPUPack.GFX.r212c = FillRAM [0x212c];
-  GPUPack.GFX.r212d = FillRAM [0x212d];
-  GPUPack.GFX.r2130 = FillRAM [0x2130];
-  GPUPack.GFX.Pseudo = (FillRAM [0x2133] & 8) != 0 &&
+  GPUPack.GFX.r2131 = ROM_GLOBAL [0x2131];
+  GPUPack.GFX.r212c = ROM_GLOBAL [0x212c];
+  GPUPack.GFX.r212d = ROM_GLOBAL [0x212d];
+  GPUPack.GFX.r2130 = ROM_GLOBAL [0x2130];
+  GPUPack.GFX.Pseudo = (ROM_GLOBAL [0x2133] & 8) != 0 &&
     (GPUPack.GFX.r212c & 15) != (GPUPack.GFX.r212d & 15) &&
     (GPUPack.GFX.r2131 & 0x3f) == 0;
 
@@ -1568,7 +1568,7 @@ void pspS9xUpdateScreen (){
                 
   if (GPUPack.GFX.Pseudo)	{
   	GPUPack.GFX.r2131 = 0x5f;
-	  GPUPack.GFX.r212d = (FillRAM [0x212c] ^ FillRAM [0x212d]) & 15;
+	  GPUPack.GFX.r212d = (ROM_GLOBAL [0x212c] ^ ROM_GLOBAL [0x212d]) & 15;
 	  GPUPack.GFX.r212c &= ~GPUPack.GFX.r212d;
 	  GPUPack.GFX.r2130 |= 2;
 	}

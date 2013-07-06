@@ -209,7 +209,7 @@ void S9xInitCheatData ()
 {
     Cheat.RAM = /*Memory.*/RAM;
     Cheat.SRAM = ::SRAM;
-    Cheat.FillRAM = /*Memory.*/FillRAM;
+    Cheat.ROM_GLOBAL = /*Memory.*/ROM_GLOBAL;
 }
 
 int S9xAddCheat (bool8 enable, bool8 save_current_value, uint32 address, uint8 byte)

@@ -1,5 +1,5 @@
 static uint8 GetPPU_RAM (uint16 Address) {
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 }
 
 static uint8 GetPPU_2102 (uint16 Address) {
@@ -27,12 +27,12 @@ static uint8 GetPPU_213x (uint16 Address) {
 	if (PPU.Need16x8Mulitply) {
 		int32 r = (int32) PPU.MatrixA * (int32) (PPU.MatrixB >> 8);
 
-		FillRAM[0x2134] = (uint8) r;
-		FillRAM[0x2135] = (uint8)(r >> 8);
-		FillRAM[0x2136] = (uint8)(r >> 16);
+		ROM_GLOBAL[0x2134] = (uint8) r;
+		ROM_GLOBAL[0x2135] = (uint8)(r >> 8);
+		ROM_GLOBAL[0x2136] = (uint8)(r >> 16);
 		PPU.Need16x8Mulitply = FALSE;
 	}
-  return (FillRAM[Address]);
+  return (ROM_GLOBAL[Address]);
 }
 
 static uint8 GetPPU_2137 (uint16 Address) {
@@ -139,7 +139,7 @@ static uint8 GetPPU_213F (uint16 Address)
    // NTSC/PAL and which field flags
 	    PPU.VBeamFlip = PPU.HBeamFlip = 0;
 	    
-	    return ((Settings.PAL ? 0x10 : 0) | (FillRAM[0x213f] & 0xc0));
+	    return ((Settings.PAL ? 0x10 : 0) | (ROM_GLOBAL[0x213f] & 0xc0));
 }
 
 static uint8 GetPPU_APUR (uint16 Address) {
@@ -186,7 +186,7 @@ static uint8 GetPPU_APUR (uint16 Address) {
 			return ((r >> 3) & 0xff);
 		}
 	}
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 }
 
 static uint8 GetPPU_2180 (uint16 Address) {
@@ -270,7 +270,7 @@ uint8 S9xGetPPU (uint16 Address) {
 #endif
 		// XXX:
 		
-	        return (0); //FillRAM[Address]);
+	        return (0); //ROM_GLOBAL[Address]);
 	    }
 	}
 	
@@ -281,7 +281,7 @@ uint8 S9xGetPPU (uint16 Address) {
 	if (Address < 0x3040)
 	    byte = S9xSuperFXReadReg (Address);
 	else
-	    byte = FillRAM [Address];
+	    byte = ROM_GLOBAL [Address];
 
 #ifdef CPU_SHUTDOWN
 	if (Address == 0x3030)
@@ -290,7 +290,7 @@ uint8 S9xGetPPU (uint16 Address) {
 	if (Address == 0x3031)
 	    CLEAR_IRQ_SOURCE (GSU_IRQ_SOURCE);
 #else
-	byte = FillRAM [Address];
+	byte = ROM_GLOBAL [Address];
 
 //if (Address != 0x3030 && Address != 0x3031)
 //printf ("%04x\n", Address);
@@ -304,7 +304,7 @@ uint8 S9xGetPPU (uint16 Address) {
 	if (Address == 0x3031)
 	{
 	    CLEAR_IRQ_SOURCE (GSU_IRQ_SOURCE);
-	    FillRAM [0x3031] = byte & 0x7f;
+	    ROM_GLOBAL [0x3031] = byte & 0x7f;
 	}
 	return (byte);
 #endif

@@ -58,6 +58,10 @@ extern const char *S9xGetSaveFilename( const char *e );
 #include "display.h"
 
 extern "C" {
+#ifdef __PSP__
+#include <kubridge.h>
+#endif
+
 #include "cheats.h"
 }
 
@@ -232,21 +236,40 @@ bool8 CMemory::Init ()
 {
 //DEBUGS("9a");
     //RAM	    = (uint8 *) malloc (0x20000);
-//DEBUGS("9b");    
+//DEBUGS("9b");
 //    SRAM    = (uint8 *) malloc (0x20000+MAX_RTC_INDEX+16);
 //    VRAM    = (uint8 *) malloc (0x10000);
-//DEBUGS("9c");    
-    //FillRAM = (uint8 *) malloc(0x8000);
+//DEBUGS("9c");
+    //ROM_GLOBAL = (uint8 *) malloc(0x8000);
     C4RAM   = (uint8 *) malloc(0x2000);
-    
+
     sdd1_buffer = (uint8 *) malloc (0x10000);
 
 //DEBUGS("9d");	
-	//try to use storage instead of heap mem	
+	//try to use storage instead of heap mem
 
-  //ROM     = (uint8 *) calloc (MAX_ROM_SIZE + 0x200 + 0x8000,1);
+#ifdef __PSP__
+	if(kuKernelGetModel() > 0) {
+		MAX_ROM_SIZE = 0x1000000;
+		//ROM_HANDLER = sceKernelAllocPartitionMemory(
+		//	sceKernelDevkitVersion() >> 24 == 6 ? 9 : 8, "ROM", PSP_SMEM_Low, MAX_ROM_SIZE + 0x200 + 0x8000, NULL);
+		//ROM_GLOBAL = (uint8 *)(ROM_HANDLER <= 0 ? 0 : sceKernelGetBlockHeadAddr(ROM_HANDLER));
+		ROM_GLOBAL = (uint8 *)0xA000000;
+	} else
+#endif
+	{
+		MAX_ROM_SIZE = 0x600000;
+		ROM_GLOBAL = (uint8 *)malloc(MAX_ROM_SIZE + 0x200 + 0x8000);
+	}
+	memset(ROM_GLOBAL, 0, MAX_ROM_SIZE + 0x200 + 0x8000);
+	ROM = ROM_GLOBAL + 0x8000;
+#ifdef _BSX_151_
+	BSRAM = ROM + 0x400000;
+	BIOSROM = ROM + 0x300000;
+#endif
+
 //DEBUGS("9e");
-  //FillRAM = NULL;
+  //ROM_GLOBAL = NULL;
 
 	clut256=(u16*)(0x44000000+2*512*272*2+256*240*2+3*256*256*2);
 	tile_texture[0]=(u8*)(0x44000000+2*512*272*2+256*240*2+3*256*256*2+256*2*3);
@@ -267,7 +290,7 @@ bool8 CMemory::Init ()
 //   DEBUGS("9f");
     
     
-    if (/*!Echo||!DummyEchoBuffer||!MixBuffer||!EchoBuffer||*/!sdd1_buffer || !C4RAM || /*!FillRAM || !RAM || !SRAM || !VRAM ||*/ !ROM ||
+    if (/*!Echo||!DummyEchoBuffer||!MixBuffer||!EchoBuffer||*/!sdd1_buffer || !C4RAM || /*!ROM_GLOBAL || !RAM || !SRAM || !VRAM ||*/ !ROM ||
         !IPPU.TileCache [TILE_2BIT] || !IPPU.TileCache [TILE_4BIT] ||
 	!IPPU.TileCache [TILE_8BIT] || !IPPU.TileCached [TILE_2BIT] ||
 	!IPPU.TileCached [TILE_4BIT] ||	!IPPU.TileCached [TILE_8BIT])
@@ -282,10 +305,10 @@ bool8 CMemory::Init ()
 	return (FALSE);
     }
 	
-    // FillRAM uses first 32K of ROM image area, otherwise space just
+    // ROM_GLOBAL uses first 32K of ROM image area, otherwise space just
     // wasted. Might be read by the SuperFX code.
 
-  //  FillRAM = ROM;
+  //  ROM_GLOBAL = ROM;
     
 
     // Add 0x8000 to ROM image pointer to stop SuperFX code accessing
@@ -295,12 +318,12 @@ bool8 CMemory::Init ()
     //C4RAM    = ROM + 0x400000 + 8192 * 8;
 //    ::ROM    = ROM;
 //    ::SRAM   = SRAM;
-//    ::RegRAM = FillRAM;
+//    ::RegRAM = ROM_GLOBAL;
 
 #ifdef ZSNES_FX
     SFXPlotTable = ROM + 0x400000;
 #else
-    SuperFX.pvRegisters = &FillRAM [0x3000];
+    SuperFX.pvRegisters = &ROM_GLOBAL [0x3000];
     SuperFX.nRamBanks = 2;	// Most only use 1.  1=64KB, 2=128KB=1024Mb
     SuperFX.pvRam = ::SRAM;
     SuperFX.nRomBanks = (2 * 1024 * 1024) / (32 * 1024);
@@ -326,10 +349,16 @@ void CMemory::Deinit ()
 	
 /*    if (RAM)
     {free ((uint8*)RAM);RAM = NULL;}   */   
-    //if (ROM)
-    //{ROM-=0x8000;free(ROM);ROM = NULL;}    
-    //if (FillRAM)
-    //{free((uint8*)FillRAM);FillRAM = NULL;}
+    if (ROM_GLOBAL) {
+#ifdef __PSP__
+        if(kuKernelGetModel() > 0)
+	{ROM_GLOBAL = ROM = NULL;}
+        else
+#endif
+        {free(ROM_GLOBAL);ROM_GLOBAL = ROM = NULL;}
+    }
+    //if (ROM_GLOBAL)
+    //{free((uint8*)ROM_GLOBAL);ROM_GLOBAL = NULL;}
     if (C4RAM)
     {free((uint8*)C4RAM);C4RAM = NULL;}
 
@@ -635,7 +664,6 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
     
     FreeSDD1Data ();
     InitROM (Tales);
-    FixMapPSP();
     return 0;
 }
 #ifdef _BSX_151_
@@ -957,28 +985,28 @@ again:
 		 
 //		 S9xMessage(1,0,"ok");
 
-		 
+
          unzCloseCurrentFile (zip_file);
-         unzClose (zip_file);    
-         
+         unzClose (zip_file);
+
          int calc_size = (FileSize / 0x2000) * 0x2000;
 
 	    if ((FileSize - calc_size == 512 && !Settings.ForceNoHeader) ||
 			Settings.ForceHeader)
 	    {
 			memmove (ptr, ptr + 512, calc_size);
-			
+
 			HeaderCount++;
 			FileSize -= 512;
 	    }
 	    TotalFileSize += FileSize;
-		strcpy (ROMFilename, fname);		
+		strcpy (ROMFilename, fname);
     }
     else
 #endif
     {
-    
-    
+
+
 	//if ((ROMFile = OPEN_STREAM (fname, "rb")) == NULL)
 	    //return (FALSE);
 	 ROMFile = fopen(fname,"rb");
@@ -987,19 +1015,19 @@ again:
 	strcpy (ROMFilename, fname);
 
 	HeaderCount = 0;
-	uint8 *ptr = ROM;	
+	uint8 *ptr = ROM;
 	bool8 more = FALSE;
 	do
-	{								
+	{
 	    //FileSize = READ_STREAM (ptr, MAX_ROM_SIZE + 0x200 - (ptr - ROM), ROMFile);
 	    fseek(ROMFile,0,SEEK_END);
 	    FileSize=ftell(ROMFile);
 	    fseek(ROMFile,0,SEEK_SET);
 			current_pos=FileSize;
-			
+
 			{char str[64];sprintf(str,psp_msg_string(LOADING_ROM),FileSize>>10);msgBoxLines(str,0);msgBoxLines(str,0); }
-			
-			while (current_pos>0) {    	    
+
+			while (current_pos>0) {
 	    	psp_showProgressBar(current_pos,FileSize);
 	    	if (current_pos>0x8000) {
 	    		fread(ptr,0x8000,1,ROMFile);
@@ -1015,30 +1043,30 @@ again:
 	    ptr=ROM;
 	    fclose(ROMFile);
 	    	    
-	    //CLOSE_STREAM (ROMFile);	    	  
-	    
+	    //CLOSE_STREAM (ROMFile);
+
 	    int calc_size = (FileSize / 0x2000) * 0x2000;
 
-	    if ((FileSize - calc_size == 512 && !Settings.ForceNoHeader) ||	Settings.ForceHeader) {
-				memmove (ptr, ptr + 512, calc_size);			
+	    if ((FileSize - calc_size == 512 && !Settings.ForceNoHeader) || Settings.ForceHeader) {
+				memmove (ptr, ptr + 512, calc_size);
 				HeaderCount++;
 				FileSize -= 512;
-	    }	    
+	    }
 	    TotalFileSize += FileSize;
 
 	    int len;
-	    if (ptr - ROM < MAX_ROM_SIZE + 0x200 && (isdigit (ext [0]) && ext [1] == 0 && ext [0] < '9')) {
+	    if ((uint32)(ptr - ROM) < MAX_ROM_SIZE + 0x200 && (isdigit (ext [0]) && ext [1] == 0 && ext [0] < '9')) {
 				more = TRUE;
 				ext [0]++;
 #if defined(__WIN32__)||defined(__GP32__)||defined(__PSP__)
                 memmove (&ext [1], &ext [0], 4);
                 ext [0] = '.';
 #endif
-			
+
 		//_makepath (fname, drive, dir, name, ext);
 	    }
 	    else
-	    if (ptr- ROM < MAX_ROM_SIZE + 0x200 &&
+	    if ((uint32)(ptr - ROM) < MAX_ROM_SIZE + 0x200 &&
 		(((len = strlen (name)) == 7 || len == 8) &&
 		 strncasecmp (name, "sf", 2) == 0 &&
 		 isdigit (name [2]) && isdigit (name [3]) && isdigit (name [4]) &&
@@ -1050,7 +1078,7 @@ again:
                 memmove (&ext [1], &ext [0], 4);
                 ext [0] = '.';
 #endif
-		
+
 		//_makepath (fname, drive, dir, name, ext);
 	    }
 	    else
@@ -1089,11 +1117,9 @@ again:
     {
     	goto again;
     }
-
     S9xLoadCheatFile (S9xGetSaveFilename(".cht"));
     S9xInitCheatData ();
     S9xApplyCheats ();
-
     S9xReset ();
 
     return (TRUE);
@@ -1728,6 +1754,11 @@ void CMemory::InitROM (bool8 Interleaved)
 	     MapMode (),
 	     TVStandard (),
 	     StaticRAMSize ());
+
+    for (i =0; i < 4; i++)
+    	if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ROMName[i]) == NULL) break;
+    if (i == 4) sprintf (String, "%s\nROMId: %s  %s: %2.2s",
+			String, ROMId, psp_msg_string(COMPANY), CompanyId);
 #else
     sprintf (String, "\"%s\" [%s] %s, %s\nType: %s, Mode: %s, TV: %s, S-RAM: %s",
 	     ROMName,
@@ -1740,11 +1771,6 @@ void CMemory::InitROM (bool8 Interleaved)
 	     TVStandard (),
 	     StaticRAMSize ());
 #endif
-
-    for (i =0; i < 4; i++)
-    	if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ROMName[i]) == NULL) break;
-    if (i == 4) sprintf (String, "%s\nROMId: %s  %s: %2.2s",
-			String, ROMId, psp_msg_string(COMPANY), CompanyId);
 
     InitNewMap();
     S9xMessage (0/*S9X_INFO*/, S9X_ROM_INFO, String);
@@ -2424,7 +2450,7 @@ void CMemory::SA1ROMMap ()
 	BlockIsRAM [c + 1] = BlockIsRAM [c + 0x801] = TRUE;
 
 	Map [c + 2] = Map [c + 0x802] = (uint8 *) MAP_PPU;
-	Map [c + 3] = Map [c + 0x803] = (uint8 *) &FillRAM [0x3000] - 0x3000;
+	Map [c + 3] = Map [c + 0x803] = (uint8 *) &ROM_GLOBAL [0x3000] - 0x3000;
 	Map [c + 4] = Map [c + 0x804] = (uint8 *) MAP_CPU;
 	Map [c + 5] = Map [c + 0x805] = (uint8 *) MAP_CPU;
 	Map [c + 6] = Map [c + 0x806] = (uint8 *) MAP_BWRAM;
@@ -2486,9 +2512,9 @@ void CMemory::SA1ROMMap ()
     // Banks 00->3f and 80->bf
     for (c = 0; c < 0x400; c += 16)
     {
-	SA1Pack_SA1.Map [c + 0] = SA1Pack_SA1.Map [c + 0x800] = &FillRAM [0x3000];
+	SA1Pack_SA1.Map [c + 0] = SA1Pack_SA1.Map [c + 0x800] = &ROM_GLOBAL [0x3000];
 	SA1Pack_SA1.Map [c + 1] = SA1Pack_SA1.Map [c + 0x801] = (uint8 *) MAP_NONE;
-	SA1Pack_SA1.WriteMap [c + 0] = SA1Pack_SA1.WriteMap [c + 0x800] = &FillRAM [0x3000];
+	SA1Pack_SA1.WriteMap [c + 0] = SA1Pack_SA1.WriteMap [c + 0x800] = &ROM_GLOBAL [0x3000];
 	SA1Pack_SA1.WriteMap [c + 1] = SA1Pack_SA1.WriteMap [c + 0x801] = (uint8 *) MAP_NONE;
     }
 
@@ -3205,13 +3231,13 @@ void CMemory::ApplyROMFixes ()
     if (strcmp (ROMId, "ZBPJ") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0093f1 >> MEMMAP_SHIFT] + 0x93f1;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x304a;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x304a;
     }
     /* DAISENRYAKU EXPERTWW2 */
     if (strcmp (ROMId, "AEVJ") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0ed18d >> MEMMAP_SHIFT] + 0xd18d;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x3000;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
     }
     /* debjk2 */
     if (strcmp (ROMId, "A2DJ") == 0)
@@ -3222,13 +3248,13 @@ void CMemory::ApplyROMFixes ()
     if (strcmp (ROMId, "AZIJ") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x008083 >> MEMMAP_SHIFT] + 0x8083;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x3020;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3020;
     }
     /* SFC SDGUNDAMGNEXT */
     if (strcmp (ROMId, "ZX3J") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0087f2 >> MEMMAP_SHIFT] + 0x87f2;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x30c4;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x30c4;
     }
     /* ShougiNoHanamichi */
     if (strcmp (ROMId, "AARJ") == 0)
@@ -3281,33 +3307,33 @@ void CMemory::ApplyROMFixes ()
     if (strcmp (ROMId, "AKFJ") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x008c93 >> MEMMAP_SHIFT] + 0x8c93;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x300a;
-	SA1Pack_SA1.WaitByteAddress2 = FillRAM + 0x300e;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x300a;
+	SA1Pack_SA1.WaitByteAddress2 = ROM_GLOBAL + 0x300e;
     }
     /* KIRBY SUPER DELUXE US */
     if (strcmp (ROMId, "AKFE") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x008cb8 >> MEMMAP_SHIFT] + 0x8cb8;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x300a;
-	SA1Pack_SA1.WaitByteAddress2 = FillRAM + 0x300e;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x300a;
+	SA1Pack_SA1.WaitByteAddress2 = ROM_GLOBAL + 0x300e;
     }
     /* SUPER MARIO RPG JAP & US */
     if (strcmp (ROMId, "ARWJ") == 0 || strcmp (ROMId, "ARWE") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc0816f >> MEMMAP_SHIFT] + 0x816f;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x3000;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
     }
     /* marvelous.zip */
     if (strcmp (ROMId, "AVRJ") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0085f2 >> MEMMAP_SHIFT] + 0x85f2;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x3024;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3024;
     }
     /* AUGUSTA3 MASTERS NEW */
     if (strcmp (ROMId, "AO3J") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00dddb >> MEMMAP_SHIFT] + 0xdddb;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x37b4;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x37b4;
     }
     /* OSHABERI PARODIUS */
     if (strcmp (ROMId, "AJOJ") == 0)
@@ -3323,25 +3349,25 @@ void CMemory::ApplyROMFixes ()
     if (strcmp (ROMId, "AONJ") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00df33 >> MEMMAP_SHIFT] + 0xdf33;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x37b4;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x37b4;
     }
     /* PGA EUROPEAN TOUR */
     if (strcmp (ROMId, "AEPE") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x003700 >> MEMMAP_SHIFT] + 0x3700;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x3102;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3102;
     }
     /* PGA TOUR 96 */
     if (strcmp (ROMId, "A3GE") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x003700 >> MEMMAP_SHIFT] + 0x3700;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x3102;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3102;
     }
     /* POWER RANGERS 4 */
     if (strcmp (ROMId, "A4RE") == 0)
     {
 	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x009899 >> MEMMAP_SHIFT] + 0x9899;
-	SA1Pack_SA1.WaitByteAddress1 = FillRAM + 0x3000;
+	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
     }
     /* PACHISURO PALUSUPE */
     if (strcmp (ROMId, "AGFJ") == 0)

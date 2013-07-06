@@ -199,7 +199,7 @@ typedef struct SCheatData
 	uint8	CSRAM[0x10000];
 	uint8	CIRAM[0x2000];
 	uint8	*RAM;
-	uint8	*FillRAM;
+	uint8	*ROM_GLOBAL;
 	uint8	*SRAM;
 	uint32	ALL_BITS[0x32000 >> 5];
 	uint8	CWatchRAM[0x32000];

@@ -449,7 +449,7 @@ STATIC inline void REGISTER_2104 (uint8 byte)
     if (!(PPU.OAMFlip & 1))
 	PPU.OAMAddr++;
 
-    FillRAM [0x2104] = byte;
+    ROM_GLOBAL [0x2104] = byte;
 }
 
 STATIC inline void REGISTER_2118 (uint8 Byte)
@@ -482,13 +482,13 @@ STATIC inline void REGISTER_2118 (uint8 Byte)
 	if (Settings.TraceVRAM && !CPUPack.CPU.InDMA)
 	{
 	    printf ("VRAM write byte: $%04X (%d,%d)\n", PPU.VMA.Address,
-		    FillRAM[0x2115] & 3,
-		    (FillRAM [0x2115] & 0x0c) >> 2);
+		    ROM_GLOBAL[0x2115] & 3,
+		    (ROM_GLOBAL [0x2115] & 0x0c) >> 2);
 	}
 #endif	
 	PPU.VMA.Address += PPU.VMA.Increment;
     }
-//    FillRAM [0x2118] = Byte;
+//    ROM_GLOBAL [0x2118] = Byte;
 }
 
 STATIC inline void REGISTER_2118_tile (uint8 Byte)
@@ -509,7 +509,7 @@ STATIC inline void REGISTER_2118_tile (uint8 Byte)
    
     if (!PPU.VMA.High)
 	PPU.VMA.Address += PPU.VMA.Increment;
-//    FillRAM [0x2118] = Byte;
+//    ROM_GLOBAL [0x2118] = Byte;
 }
 
 STATIC inline void REGISTER_2118_linear (uint8 Byte)
@@ -526,7 +526,7 @@ STATIC inline void REGISTER_2118_linear (uint8 Byte)
    
     if (!PPU.VMA.High)
 	PPU.VMA.Address += PPU.VMA.Increment;
-//    FillRAM [0x2118] = Byte;
+//    ROM_GLOBAL [0x2118] = Byte;
 }
 
 STATIC inline void REGISTER_2119 (uint8 Byte)
@@ -558,13 +558,13 @@ STATIC inline void REGISTER_2119 (uint8 Byte)
 	if (Settings.TraceVRAM && !CPUPack.CPU.InDMA)
 	{
 	    printf ("VRAM write word: $%04X (%d,%d)\n", PPU.VMA.Address,
-		    FillRAM[0x2115] & 3,
-		    (FillRAM [0x2115] & 0x0c) >> 2);
+		    ROM_GLOBAL[0x2115] & 3,
+		    (ROM_GLOBAL [0x2115] & 0x0c) >> 2);
 	}
 #endif	
 	PPU.VMA.Address += PPU.VMA.Increment;
     }
-//    FillRAM [0x2119] = Byte;
+//    ROM_GLOBAL [0x2119] = Byte;
 }
 
 STATIC inline void REGISTER_2119_tile (uint8 Byte)
@@ -584,7 +584,7 @@ STATIC inline void REGISTER_2119_tile (uint8 Byte)
  
     if (PPU.VMA.High)
 	PPU.VMA.Address += PPU.VMA.Increment;
-//    FillRAM [0x2119] = Byte;
+//    ROM_GLOBAL [0x2119] = Byte;
 }
 
 STATIC inline void REGISTER_2119_linear (uint8 Byte)
@@ -601,7 +601,7 @@ STATIC inline void REGISTER_2119_linear (uint8 Byte)
     
     if (PPU.VMA.High)
 	PPU.VMA.Address += PPU.VMA.Increment;
-//    FillRAM [0x2119] = Byte;
+//    ROM_GLOBAL [0x2119] = Byte;
 }
 STATIC inline void FixColorsLog_BeforeUpdate()
 {
@@ -765,13 +765,13 @@ STATIC inline void REGISTER_2122(uint8 Byte)
 	}
     }
     PPU.CGFLIP ^= 1;
-//    FillRAM [0x2122] = Byte;
+//    ROM_GLOBAL [0x2122] = Byte;
 }
 
 STATIC inline void REGISTER_2180(uint8 Byte)
 {
     RAM[PPU.WRAM++] = Byte;
     PPU.WRAM &= 0x1FFFF;
-    FillRAM [0x2180] = Byte;
+    ROM_GLOBAL [0x2180] = Byte;
 }
 #endif

@@ -1992,7 +1992,7 @@ void RenderScreen (uint8 *Screen, bool8 sub, bool8 force_no_add, uint8 D)
 	if (BG2)
 	{
 	    orgSelectTileRenderer (sub || !SUB_OR_ADD(2));
-	    orgDrawBackground (PPU.BGMode, 2, D + 3, (FillRAM [0x2105] & 8) == 0 ? 
+	    orgDrawBackground (PPU.BGMode, 2, D + 3, (ROM_GLOBAL [0x2105] & 8) == 0 ? 
 D + 6 : D + 17);
 	}
 	if (BG3 && PPU.BGMode == 0)
@@ -2029,11 +2029,11 @@ D + 6 : D + 17);
 	    orgSelectTileRenderer (sub || !SUB_OR_ADD(4));
 	    orgDrawOBJS (!sub, D);
 	}
-	if (BG0 || ((FillRAM [0x2133] & 0x40) && BG1))
+	if (BG0 || ((ROM_GLOBAL [0x2133] & 0x40) && BG1))
 	{
 	    int bg;
 
-	    if (FillRAM [0x2133] & 0x40)
+	    if (ROM_GLOBAL [0x2133] & 0x40)
 	    {
 		GPUPack.GFX.Mode7Mask = 0x7f;
 		GPUPack.GFX.Mode7PriorityMask = 0x80;
@@ -2090,11 +2090,11 @@ void orgS9xUpdateScreen ()
   int32 x2 = 1;
 
   /*GPUPack.GFX.S = GPUPack.GFX.Screen;
-  GPUPack.GFX.r2131 = FillRAM [0x2131];
-  GPUPack.GFX.r212c = FillRAM [0x212c];
-  GPUPack.GFX.r212d = FillRAM [0x212d];
-  GPUPack.GFX.r2130 = FillRAM [0x2130];
-  GPUPack.GFX.Pseudo = (FillRAM [0x2133] & 8) != 0 &&
+  GPUPack.GFX.r2131 = ROM_GLOBAL [0x2131];
+  GPUPack.GFX.r212c = ROM_GLOBAL [0x212c];
+  GPUPack.GFX.r212d = ROM_GLOBAL [0x212d];
+  GPUPack.GFX.r2130 = ROM_GLOBAL [0x2130];
+  GPUPack.GFX.Pseudo = (ROM_GLOBAL [0x2133] & 8) != 0 &&
     (GPUPack.GFX.r212c & 15) != (GPUPack.GFX.r212d & 15) &&
     (GPUPack.GFX.r2131 & 0x3f) == 0;
 
@@ -2121,8 +2121,8 @@ void orgS9xUpdateScreen ()
 	if (GPUPack.GFX.Pseudo)
 	{
 		GPUPack.GFX.r2131 = 0x5f;
-		GPUPack.GFX.r212d = (FillRAM [0x212c] ^
-		FillRAM [0x212d]) & 15;
+		GPUPack.GFX.r212d = (ROM_GLOBAL [0x212c] ^
+		ROM_GLOBAL [0x212d]) & 15;
 		GPUPack.GFX.r212c &= ~GPUPack.GFX.r212d;
 		GPUPack.GFX.r2130 |= 2;
 	}

@@ -316,7 +316,7 @@ void S9xStartCheatSearch (SCheatData *d)
 {
 	memmove(d->CWRAM, d->RAM, 0x20000);
 	memmove(d->CSRAM, d->SRAM, 0x10000);
-	memmove(d->CIRAM, &d->FillRAM[0x3000], 0x2000);
+	memmove(d->CIRAM, &d->ROM_GLOBAL[0x3000], 0x2000);
 	memset((char *) d->ALL_BITS, 0xff, 0x32000 >> 3);
 }
 
@@ -359,10 +359,10 @@ void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp, S9xCheatData
 
 		for (i = 0; i < 0x2000 - l; i++)
 		{
-			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTDS(size, d->FillRAM + 0x3000, i), _S9XCHTDS(size, d->CIRAM, i)))
+			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTDS(size, d->ROM_GLOBAL + 0x3000, i), _S9XCHTDS(size, d->CIRAM, i)))
 			{
 				if (update)
-					d->CIRAM[i] = d->FillRAM[i + 0x3000];
+					d->CIRAM[i] = d->ROM_GLOBAL[i + 0x3000];
 			}
 			else
 				BIT_CLEAR(d->IRAM_BITS, i);
@@ -394,10 +394,10 @@ void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp, S9xCheatData
 
 		for (i = 0; i < 0x2000 - l; i++)
 		{
-			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTD(size, d->FillRAM + 0x3000, i), _S9XCHTD(size, d->CIRAM, i)))
+			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTD(size, d->ROM_GLOBAL + 0x3000, i), _S9XCHTD(size, d->CIRAM, i)))
 			{
 				if (update)
-					d->CIRAM[i] = d->FillRAM[i + 0x3000];
+					d->CIRAM[i] = d->ROM_GLOBAL[i + 0x3000];
 			}
 			else
 				BIT_CLEAR(d->IRAM_BITS, i);
@@ -450,10 +450,10 @@ void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp, S9xCheatDataS
 
 		for (i = 0; i < 0x2000 - l; i++)
 		{
-			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTDS(size, d->FillRAM + 0x3000, i), (int32) value))
+			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTDS(size, d->ROM_GLOBAL + 0x3000, i), (int32) value))
 			{
 				if (update)
-					d->CIRAM[i] = d->FillRAM[i + 0x3000];
+					d->CIRAM[i] = d->ROM_GLOBAL[i + 0x3000];
 			}
 			else
 				BIT_CLEAR(d->IRAM_BITS, i);
@@ -485,10 +485,10 @@ void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp, S9xCheatDataS
 
 		for (i = 0; i < 0x2000 - l; i++)
 		{
-			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTD(size, d->FillRAM + 0x3000, i), value))
+			if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, _S9XCHTD(size, d->ROM_GLOBAL + 0x3000, i), value))
 			{
 				if (update)
-					d->CIRAM[i] = d->FillRAM[i + 0x3000];
+					d->CIRAM[i] = d->ROM_GLOBAL[i + 0x3000];
 			}
 			else
 				BIT_CLEAR(d->IRAM_BITS, i);
@@ -542,7 +542,7 @@ void S9xSearchForAddress (SCheatData *d, S9xCheatComparisonType cmp, S9xCheatDat
 		if (TEST_BIT(d->IRAM_BITS, i) && _S9XCHTC(cmp, i + 0x30000, (int32) value))
 		{
 			if (update)
-				d->CIRAM[i] = d->FillRAM[i + 0x3000];
+				d->CIRAM[i] = d->ROM_GLOBAL[i + 0x3000];
 		}
 		else
 			BIT_CLEAR(d->IRAM_BITS, i);
@@ -574,6 +574,6 @@ void S9xOutputCheatSearchResults (SCheatData *d)
 	for (i = 0; i < 0x2000; i++)
 	{
 		if (TEST_BIT(d->IRAM_BITS, i))
-			printf("IRAM: %05x: %02x\n", i, d->FillRAM[i + 0x3000]);
+			printf("IRAM: %05x: %02x\n", i, d->ROM_GLOBAL[i + 0x3000]);
 	}
 }

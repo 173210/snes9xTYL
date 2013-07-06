@@ -28,7 +28,7 @@ ASFLAGS = $(CFLAGS) -c
 LIBDIR = 
 LDFLAGS =
 #USE_PSPSDK_LIBC=1
-LIBS = -lpng -lm -lpspaudio -lpspgu -lpsppower -ljpeg -lpsputility -lstdc++ -lpspwlan -lpspgum_vfpu  -lpspvfpu -lpspgu -lpspusb -lpspusbstor
+LIBS = -lpng -lm -lpspaudio -lpspgu -lpsppower -ljpeg -lpsputility -lstdc++ -lpspwlan -lpspgum_vfpu  -lpspvfpu -lpspgu -lpspusb -lpspusbstor -lpspkubridge
 #-lpspgum -lpspgu 
 
 

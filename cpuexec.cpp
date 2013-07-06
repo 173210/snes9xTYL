@@ -420,11 +420,11 @@ void S9xDoHEventProcessing (void)
 				else
 					Timings.V_Max = Timings.V_Max_Master;		// 262 (NTSC), 312?(PAL)
 
-				Memory.FillRAM[0x213F] ^= 0x80;
+				Memory.ROM_GLOBAL[0x213F] ^= 0x80;
 				PPU.RangeTimeOver = 0;
 
 				// FIXME: reading $4210 will wait 2 cycles, then perform reading, then wait 4 more cycles.
-				Memory.FillRAM[0x4210] = Model->_5A22;
+				Memory.ROM_GLOBAL[0x4210] = Model->_5A22;
 				CPU.NMILine = FALSE;
 				Timings.NMITriggerPos = 0xffff;
 
@@ -466,7 +466,7 @@ void S9xDoHEventProcessing (void)
 				missing.dma_this_frame = 0;
 			#endif
 				IPPU.MaxBrightness = PPU.Brightness;
-				PPU.ForcedBlanking = (Memory.FillRAM[0x2100] >> 7) & 1;
+				PPU.ForcedBlanking = (Memory.ROM_GLOBAL[0x2100] >> 7) & 1;
 
 				if (!PPU.ForcedBlanking)
 				{
@@ -486,8 +486,8 @@ void S9xDoHEventProcessing (void)
 				}
 
 				// FIXME: writing to $4210 will wait 6 cycles.
-				Memory.FillRAM[0x4210] = 0x80 | Model->_5A22;
-				if (Memory.FillRAM[0x4200] & 0x80)
+				Memory.ROM_GLOBAL[0x4210] = 0x80 | Model->_5A22;
+				if (Memory.ROM_GLOBAL[0x4200] & 0x80)
 				{
 					// FIXME: triggered at HC=6, checked just before the final CPU cycle,
 					// then, when to call S9xOpcode_NMI()?
@@ -499,7 +499,7 @@ void S9xDoHEventProcessing (void)
 
 			if (CPU.V_Counter == PPU.ScreenHeight + 3)	// FIXME: not true
 			{
-				if (Memory.FillRAM[0x4200] & 1)
+				if (Memory.ROM_GLOBAL[0x4200] & 1)
 					S9xDoAutoJoypad();
 			}
 

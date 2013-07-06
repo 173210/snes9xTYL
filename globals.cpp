@@ -94,26 +94,25 @@ struct SSA1PACK __attribute__((aligned(64))) SA1Pack;
 
 //uint8 * __attribute__((aligned(64))) Map [MEMMAP_NUM_BLOCKS];
 #if 0
-SMEMMAPBLOCKS __attribute__((aligned(64))) GetByteMap [MEMMAP_NUM_BLOCKS];
-SMEMMAPBLOCKS __attribute__((aligned(64))) GetWordMap [MEMMAP_NUM_BLOCKS];
-SMEMMAPBLOCKS __attribute__((aligned(64))) SetByteMap [MEMMAP_NUM_BLOCKS];
-SMEMMAPBLOCKS __attribute__((aligned(64))) SetWordMap [MEMMAP_NUM_BLOCKS];
+SMEMMAPBLOCKS __attribute__((aligned(64))) GetByteMap[MEMMAP_NUM_BLOCKS];
+SMEMMAPBLOCKS __attribute__((aligned(64))) GetWordMap[MEMMAP_NUM_BLOCKS];
+SMEMMAPBLOCKS __attribute__((aligned(64))) SetByteMap[MEMMAP_NUM_BLOCKS];
+SMEMMAPBLOCKS __attribute__((aligned(64))) SetWordMap[MEMMAP_NUM_BLOCKS];
 #endif
 uint8 ** const Map =(uint8 ** )0x00010000;//0x00010000 0x00014000 need 0x1000*4
 uint8 __attribute__((aligned(64))) SRAM[0x20000+MAX_RTC_INDEX+16];
-uint8 __attribute__((aligned(64))) ROM_GLOBAL[CMemory::MAX_ROM_SIZE + 0x200 + 0x8000];
-uint8 * const ROM = ROM_GLOBAL+0x8000;
+uint8 *ROM_GLOBAL;
+uint8 *ROM;
 //uint8 *RegRAM = NULL;
 uint8 *C4RAM = NULL;
 uint8 __attribute__((aligned(64)))RAM[0x20000];
 uint8 __attribute__((aligned(64))) VRAM[0x10000];
 //uint8 *VRAMmode7 = NULL;
 uint8 *BWRAM = NULL;
-uint8 * const FillRAM = ROM_GLOBAL;
 
 #ifdef _BSX_151_
-uint8 *	BSRAM   = ROM + 0x400000;//add azz 080517
-uint8 *BIOSROM = ROM + 0x300000; // BS
+uint8 *BSRAM; //add azz 080517
+uint8 *BIOSROM; // BS
 #include "bsx.h"
 struct SBSX BSX;
 #endif

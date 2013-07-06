@@ -170,7 +170,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
     {
     case 0x2100:
 	// Brightness and screen blank bit
-	if (Byte != FillRAM [0x2100])
+	if (Byte != ROM_GLOBAL [0x2100])
 	{
 		//extern int debug_Line[20];
 		//extern int debug_Value[20];
@@ -192,7 +192,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 			if (PPU.Brightness > IPPU.MaxBrightness)
 				IPPU.MaxBrightness = PPU.Brightness;
 		}
-		if ((FillRAM[0x2100] & 0x80) != (Byte & 0x80))
+		if ((ROM_GLOBAL[0x2100] & 0x80) != (Byte & 0x80))
 		{
 			IPPU.ColorsChanged = TRUE;
 			PPU.ForcedBlanking = (Byte >> 7) & 1;
@@ -202,7 +202,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 
     case 0x2101:
 	// Sprite (OBJ) tile address
-	if (Byte != FillRAM [0x2101])
+	if (Byte != ROM_GLOBAL [0x2101])
 	{
 		INFO_FLUSH_REDRAW("2101");
 	    FLUSH_REDRAW ();
@@ -259,7 +259,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
     case 0x2105:
 	// Screen mode (0 - 7), background tile sizes and background 3
 	// priority
-	if (Byte != FillRAM [0x2105])
+	if (Byte != ROM_GLOBAL [0x2105])
 	{
 		INFO_FLUSH_REDRAW("2105");
 	    FLUSH_REDRAW ();
@@ -278,7 +278,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 
     case 0x2106:
 	// Mosaic pixel size and enable
-	if (Byte != FillRAM [0x2106])
+	if (Byte != ROM_GLOBAL [0x2106])
 	{
 		INFO_FLUSH_REDRAW("2106");
 	    FLUSH_REDRAW ();
@@ -295,7 +295,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	}
 	break;
     case 0x2107:		// [BG0SC]
-	if (Byte != FillRAM [0x2107])
+	if (Byte != ROM_GLOBAL [0x2107])
 	{
 		INFO_FLUSH_REDRAW("2107");
 	    FLUSH_REDRAW ();
@@ -306,7 +306,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
 
     case 0x2108:		// [BG1SC]
-	if (Byte != FillRAM [0x2108])
+	if (Byte != ROM_GLOBAL [0x2108])
 	{
 		INFO_FLUSH_REDRAW("2108");
 	    FLUSH_REDRAW ();
@@ -317,7 +317,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
 
     case 0x2109:		// [BG2SC]
-	if (Byte != FillRAM [0x2109])
+	if (Byte != ROM_GLOBAL [0x2109])
 	{
 		INFO_FLUSH_REDRAW("2109");
 	    FLUSH_REDRAW ();
@@ -328,7 +328,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
 
     case 0x210A:		// [BG3SC]
-	if (Byte != FillRAM [0x210a])
+	if (Byte != ROM_GLOBAL [0x210a])
 	{
 		INFO_FLUSH_REDRAW("210A");
 	    FLUSH_REDRAW ();
@@ -339,7 +339,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
 
     case 0x210B:		// [BG01NBA]
-	if (Byte != FillRAM [0x210b])
+	if (Byte != ROM_GLOBAL [0x210b])
 	{
 		INFO_FLUSH_REDRAW("210B");
 	    FLUSH_REDRAW ();
@@ -350,7 +350,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
 
     case 0x210C:		// [BG23NBA]
-	if (Byte != FillRAM [0x210c])
+	if (Byte != ROM_GLOBAL [0x210c])
 	{
 		INFO_FLUSH_REDRAW("210C");
 	    FLUSH_REDRAW ();
@@ -458,7 +458,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 
     case 0x211a:
 	// Mode 7 outside rotation area display mode and flipping
-	if (Byte != FillRAM [0x211a])
+	if (Byte != ROM_GLOBAL [0x211a])
 	{
 		INFO_FLUSH_REDRAW("211A");
 	    FLUSH_REDRAW ();
@@ -508,7 +508,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 
     case 0x2123:
 	// Window 1 and 2 enable for backgrounds 1 and 2
-	if (Byte != FillRAM [0x2123])
+	if (Byte != ROM_GLOBAL [0x2123])
 	{
 		if (os9x_hack&PPU_IGNORE_WINDOW) return;
 		INFO_FLUSH_REDRAW("2123");
@@ -537,7 +537,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2124:
 	// Window 1 and 2 enable for backgrounds 3 and 4
-	if (Byte != FillRAM [0x2124])
+	if (Byte != ROM_GLOBAL [0x2124])
 	{
 		if (os9x_hack&PPU_IGNORE_WINDOW) return;
 		INFO_FLUSH_REDRAW("2124");
@@ -566,7 +566,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2125:
 	// Window 1 and 2 enable for objects and colour window
-	if (Byte != FillRAM [0x2125])
+	if (Byte != ROM_GLOBAL [0x2125])
 	{
 		if (os9x_hack&PPU_IGNORE_WINDOW) return;
 		INFO_FLUSH_REDRAW("2125");
@@ -595,7 +595,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2126:
 	// Window 1 left position
-	if (Byte != FillRAM [0x2126])
+	if (Byte != ROM_GLOBAL [0x2126])
 	{
 		//if(os9x_softrendering<2 || !((PPU.BGMode!=2)&&(!Settings.WrestlemaniaArcade)) || (PPU.BGMode==4) || (PPU.BGMode==7))
 		if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==4)) && (PPU.BGMode!=7))
@@ -616,7 +616,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2127:
 	// Window 1 right position
-	if (Byte != FillRAM [0x2127])
+	if (Byte != ROM_GLOBAL [0x2127])
 	{
 		if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==4)) && (PPU.BGMode!=7))	
 		{
@@ -636,7 +636,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2128:
 	// Window 2 left position
-	if (Byte != FillRAM [0x2128])
+	if (Byte != ROM_GLOBAL [0x2128])
 	{
 		if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==4)) && (PPU.BGMode!=7))	
 		{
@@ -656,7 +656,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2129:
 	// Window 2 right position
-	if (Byte != FillRAM [0x2129])
+	if (Byte != ROM_GLOBAL [0x2129])
 	{
 		if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==4)) && (PPU.BGMode!=7))	
 		{
@@ -676,7 +676,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x212a:
 	// Windows 1 & 2 overlap logic for backgrounds 1 - 4
-	if (Byte != FillRAM [0x212a])
+	if (Byte != ROM_GLOBAL [0x212a])
 	{
 		if (os9x_hack&PPU_IGNORE_WINDOW) return;
 		INFO_FLUSH_REDRAW("212A");
@@ -691,7 +691,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x212b:
 	// Windows 1 & 2 overlap logic for objects and colour window
-	if (Byte != FillRAM [0x212b])
+	if (Byte != ROM_GLOBAL [0x212b])
 	{
 		if (os9x_hack&PPU_IGNORE_WINDOW) return;
 		INFO_FLUSH_REDRAW("212B");
@@ -704,19 +704,19 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x212c:
 	// Main screen designation (backgrounds 1 - 4 and objects)
-	if (Byte != FillRAM [0x212c])
+	if (Byte != ROM_GLOBAL [0x212c])
 	{
 		INFO_FLUSH_REDRAW("212C");
 	    FLUSH_REDRAW ();
 		INC_DEBUG_COUNT(20);
 	    PPU.RecomputeClipWindows = TRUE;
-	    FillRAM [Address] = Byte;
+	    ROM_GLOBAL [Address] = Byte;
 	    return;
 	}
 	break;
     case 0x212d:
 	// Sub-screen designation (backgrounds 1 - 4 and objects)
-	if (Byte != FillRAM [0x212d])
+	if (Byte != ROM_GLOBAL [0x212d])
 	{
 		INFO_FLUSH_REDRAW("212D");
 		FLUSH_REDRAW ();
@@ -726,13 +726,13 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 		missing.subscreen = 1;
 #endif
 	    PPU.RecomputeClipWindows = TRUE;
-	    FillRAM [Address] = Byte;
+	    ROM_GLOBAL [Address] = Byte;
 	    return;
 	}
 	break;
     case 0x212e:
 	// Window mask designation for main screen ?
-	if (Byte != FillRAM [0x212e])
+	if (Byte != ROM_GLOBAL [0x212e])
 	{
 		INFO_FLUSH_REDRAW("212E");
 	    FLUSH_REDRAW ();
@@ -742,7 +742,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x212f:
 	// Window mask designation for sub-screen ?
-	if (Byte != FillRAM [0x212f])
+	if (Byte != ROM_GLOBAL [0x212f])
 	{
 		INFO_FLUSH_REDRAW("212F");
 	    FLUSH_REDRAW ();
@@ -752,7 +752,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2130:
 	// Fixed colour addition or screen addition
-	if (Byte != FillRAM [0x2130])
+	if (Byte != ROM_GLOBAL [0x2130])
 	{
 		if (os9x_hack&PPU_IGNORE_ADDSUB) return;
 		INFO_FLUSH_REDRAW("2130");
@@ -767,7 +767,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2131:
 	// Colour addition or subtraction select
-	if (Byte != FillRAM[0x2131])
+	if (Byte != ROM_GLOBAL[0x2131])
 	{
 		if (os9x_hack&PPU_IGNORE_ADDSUB) return;
 		INFO_FLUSH_REDRAW("2131");
@@ -779,7 +779,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	    if (Byte & 0x80)
 	    {
 		// Subtract
-		if (FillRAM[0x2130] & 0x02)
+		if (ROM_GLOBAL[0x2130] & 0x02)
 		    missing.subscreen_sub = 1;
 		else
 		    missing.fixed_colour_sub = 1;
@@ -787,7 +787,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	    else
 	    {
 		// Addition
-		if (FillRAM[0x2130] & 0x02)
+		if (ROM_GLOBAL[0x2130] & 0x02)
 		    missing.subscreen_add = 1;
 		else
 		    missing.fixed_colour_add = 1;
@@ -796,7 +796,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	}
 	break;
     case 0x2132:
-	if (Byte != FillRAM [0x2132])
+	if (Byte != ROM_GLOBAL [0x2132])
 	{
 		INC_DEBUG_COUNT(44);
 		if(os9x_softrendering>=2 && !(os9x_hack&OLD_PSP_ACCEL) && (PPU.BGMode!=7))	
@@ -857,7 +857,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2133:
 	// Screen settings
-	if (Byte != FillRAM [0x2133])
+	if (Byte != ROM_GLOBAL [0x2133])
 	{
 #ifdef DEBUGGER
 	    if (Byte & 0x40)
@@ -953,7 +953,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	_SPCInPB (Address & 3, Byte);
 #else	
 //	CPUPack.CPU.Flags |= DEBUG_MODE_FLAG;
-	FillRAM [Address] = Byte;
+	ROM_GLOBAL [Address] = Byte;
 	
 	APU_EXECUTE2 ();
 	//(IAPU.RAM) [(Address & 3) + 0xf4] = Byte;
@@ -1027,7 +1027,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	    if (Address >= 0x2200 && Address <0x23ff)
 		S9xSetSA1 (Byte, Address);
 	    else
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 	    return;
 	}
 	else
@@ -1053,16 +1053,16 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 		return;
 	    
     #ifdef ZSNES_FX
-	    FillRAM [Address] = Byte;
+	    ROM_GLOBAL [Address] = Byte;
 	    if (Address < 0x3040)
 		S9xSuperFXWriteReg (Byte, Address);
     #else
 	    switch (Address)
 	    {
 	    case 0x3030:
-		if ((FillRAM [0x3030] ^ Byte) & FLG_G)
+		if ((ROM_GLOBAL [0x3030] ^ Byte) & FLG_G)
 		{
-		    FillRAM [Address] = Byte;
+		    ROM_GLOBAL [Address] = Byte;
 		    // Go flag has been changed
 		    if (Byte & FLG_G)
 			S9xSuperFXExec ();
@@ -1070,46 +1070,46 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 			FxFlushCache ();
 		}
 		else
-		    FillRAM [Address] = Byte;
+		    ROM_GLOBAL [Address] = Byte;
 		break;
 
 	    case 0x3031:
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 		break;
 	    case 0x3033:
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 		break;
 	    case 0x3034:
-		FillRAM [Address] = Byte & 0x7f;
+		ROM_GLOBAL [Address] = Byte & 0x7f;
 		break;
 	    case 0x3036:
-		FillRAM [Address] = Byte & 0x7f;
+		ROM_GLOBAL [Address] = Byte & 0x7f;
 		break;
 	    case 0x3037:
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 		break;
 	    case 0x3038:
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 		break;
 	    case 0x3039:
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 		break;
 	    case 0x303a:
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 		break;
 	    case 0x303b:
 		break;
 	    case 0x303f:
-		FillRAM [Address] = Byte;
+		ROM_GLOBAL [Address] = Byte;
 		break;
 	    case 0x301f:
-		FillRAM [Address] = Byte;
-		FillRAM [0x3000 + GSU_SFR] |= FLG_G;
+		ROM_GLOBAL [Address] = Byte;
+		ROM_GLOBAL [0x3000 + GSU_SFR] |= FLG_G;
 		S9xSuperFXExec ();
 		return;
 
 	    default:
-		FillRAM[Address] = Byte;
+		ROM_GLOBAL[Address] = Byte;
 		if (Address >= 0x3100)
 		{
 		    FxCacheWriteAccess (Address);
@@ -1120,7 +1120,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	    return;
 	}
     }
-    FillRAM[Address] = Byte;
+    ROM_GLOBAL[Address] = Byte;
 }
 #endif
 /**********************************************************************************************/
@@ -1141,7 +1141,7 @@ uint8 S9xGetPPU (uint16 Address)
 	case 0x2100:
 	case 0x2101:
 	
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 	case 0x2102:
 #ifdef DEBUGGER
 	    missing.oam_address_read = 1;
@@ -1158,7 +1158,7 @@ uint8 S9xGetPPU (uint16 Address)
 	case 0x210a:
 	case 0x210b:
 	case 0x210c:
-	    return (FillRAM[Address]);	    
+	    return (ROM_GLOBAL[Address]);	    
 	case 0x210d:
 	case 0x210e:
 	case 0x210f:
@@ -1170,9 +1170,9 @@ uint8 S9xGetPPU (uint16 Address)
 #ifdef DEBUGGER
 	    missing.bg_offset_read = 1;
 #endif
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 	case 0x2115:
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 	case 0x2116:
 	    return (uint8)(PPU.VMA.Address);
 	case 0x2117:
@@ -1180,7 +1180,7 @@ uint8 S9xGetPPU (uint16 Address)
 	case 0x2118:
 	case 0x2119:
 	case 0x211a:
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 	case 0x211b:
 	case 0x211c:
 	case 0x211d:
@@ -1190,7 +1190,7 @@ uint8 S9xGetPPU (uint16 Address)
 #ifdef DEBUGGER
 	    missing.matrix_read = 1;
 #endif
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 	case 0x2121:
 	    return (PPU.CGADD);
 	case 0x2122:
@@ -1211,7 +1211,7 @@ uint8 S9xGetPPU (uint16 Address)
 	case 0x2131:
 	case 0x2132:
 	case 0x2133:
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 
 	case 0x2134:
 	case 0x2135:
@@ -1221,16 +1221,16 @@ uint8 S9xGetPPU (uint16 Address)
 	    {
 		int32 r = (int32) PPU.MatrixA * (int32) (PPU.MatrixB >> 8);
 
-		FillRAM[0x2134] = (uint8) r;
-		FillRAM[0x2135] = (uint8)(r >> 8);
-		FillRAM[0x2136] = (uint8)(r >> 16);
+		ROM_GLOBAL[0x2134] = (uint8) r;
+		ROM_GLOBAL[0x2135] = (uint8)(r >> 8);
+		ROM_GLOBAL[0x2136] = (uint8)(r >> 16);
 		PPU.Need16x8Mulitply = FALSE;
 	    }
 #ifdef DEBUGGER
 	    missing.matrix_multiply = 1;
 #endif
 	
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 	case 0x2137:
 	    // Latch h and v counters
 #ifdef DEBUGGER
@@ -1368,7 +1368,7 @@ uint8 S9xGetPPU (uint16 Address)
 	    // NTSC/PAL and which field flags
 	    PPU.VBeamFlip = PPU.HBeamFlip = 0;
 	    
-	    return ((Settings.PAL ? 0x10 : 0) | (FillRAM[0x213f] & 0xc0));
+	    return ((Settings.PAL ? 0x10 : 0) | (ROM_GLOBAL[0x213f] & 0xc0));
 
 	case 0x2140: case 0x2141: case 0x2142: case 0x2143:
 	case 0x2144: case 0x2145: case 0x2146: case 0x2147:
@@ -1572,7 +1572,7 @@ uint8 S9xGetPPU (uint16 Address)
 		    return ((r >> 3) & 0xff);}
 	    }
 	    
-	    return (FillRAM[Address]);
+	    return (ROM_GLOBAL[Address]);
 #endif // SPCTOOL
 
 	case 0x2180:
@@ -1587,7 +1587,7 @@ uint8 S9xGetPPU (uint16 Address)
 	case 0x2182:
 	case 0x2183:
 	
-	    return (FillRAM [Address]);
+	    return (ROM_GLOBAL [Address]);
 #ifndef _BSX_151_
 	//remove azz 051817 For BSX
 	case 0x2190:
@@ -1659,7 +1659,7 @@ uint8 S9xGetPPU (uint16 Address)
 #endif
 		// XXX:
 		
-	        return (0); //FillRAM[Address]);
+	        return (0); //ROM_GLOBAL[Address]);
 	    }
 	}
 	
@@ -1670,7 +1670,7 @@ uint8 S9xGetPPU (uint16 Address)
 	if (Address < 0x3040)
 	    byte = S9xSuperFXReadReg (Address);
 	else
-	    byte = FillRAM [Address];
+	    byte = ROM_GLOBAL [Address];
 
 #ifdef CPU_SHUTDOWN
 	if (Address == 0x3030)
@@ -1679,7 +1679,7 @@ uint8 S9xGetPPU (uint16 Address)
 	if (Address == 0x3031)
 	    CLEAR_IRQ_SOURCE (GSU_IRQ_SOURCE);
 #else
-	byte = FillRAM [Address];
+	byte = ROM_GLOBAL [Address];
 
 //if (Address != 0x3030 && Address != 0x3031)
 //printf ("%04x\n", Address);
@@ -1693,7 +1693,7 @@ uint8 S9xGetPPU (uint16 Address)
 	if (Address == 0x3031)
 	{
 	    CLEAR_IRQ_SOURCE (GSU_IRQ_SOURCE);
-	    FillRAM [0x3031] = byte & 0x7f;
+	    ROM_GLOBAL [0x3031] = byte & 0x7f;
 	}
 	return (byte);
 #endif
@@ -1720,7 +1720,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 	{
 	case 0x4016:
 	    // S9xReset reading of old-style joypads
-	    if ((byte & 1) && !(FillRAM [Address] & 1))
+	    if ((byte & 1) && !(ROM_GLOBAL [Address] & 1))
 	    {
 		PPU.Joypad1ButtonReadPos = 0;
 		PPU.Joypad2ButtonReadPos = 0;
@@ -1794,14 +1794,14 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 	    CLEAR_IRQ_SOURCE (PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE);
 
 	if ((byte & 0x80) && 
-	    !(FillRAM [0x4200] & 0x80) &&
+	    !(ROM_GLOBAL [0x4200] & 0x80) &&
 	    CPUPack.CPU.V_Counter >= PPU.ScreenHeight + FIRST_VISIBLE_LINE &&
 	    CPUPack.CPU.V_Counter <= PPU.ScreenHeight + 
 		    (SNESGameFixes.alienVSpredetorFix ? 25 : 15) &&   //jyam 15->25 alien vs predetor
 // Panic Bomberman clears the NMI pending flag @ scanline 230 before enabling
 // NMIs again. The NMI routine crashes the CPU if it is called without the NMI
 // pending flag being set...
-	    (FillRAM [0x4210] & 0x80) &&
+	    (ROM_GLOBAL [0x4210] & 0x80) &&
 	    !CPUPack.CPU.NMIActive)
 	{
 	    CPUPack.CPU.Flags |= NMI_FLAG;
@@ -1817,11 +1817,11 @@ void S9xSetCPU (uint8 byte, uint16 Address)
     case 0x4203:
 	{
 	    // Multiplicand
-	    uint32 res = FillRAM[0x4202] * byte;
+	    uint32 res = ROM_GLOBAL[0x4202] * byte;
 
-	    *((uint16*)(FillRAM +0x4216)) = (uint16) res;
-		//FillRAM[0x4216] = (uint8) res;
-	    //FillRAM[0x4217] = (uint8) (res >> 8);
+	    *((uint16*)(ROM_GLOBAL +0x4216)) = (uint16) res;
+		//ROM_GLOBAL[0x4216] = (uint8) res;
+	    //ROM_GLOBAL[0x4217] = (uint8) (res >> 8);
 	    break;
 	}
     case 0x4204:
@@ -1831,16 +1831,16 @@ void S9xSetCPU (uint8 byte, uint16 Address)
     case 0x4206:
 	{
 	    // Divisor
-	    uint16 a = FillRAM[0x4204] + (FillRAM[0x4205] << 8);
+	    uint16 a = ROM_GLOBAL[0x4204] + (ROM_GLOBAL[0x4205] << 8);
 	    uint16 div = byte ? a / byte : 0xffff;
 	    uint16 rem = byte ? a % byte : a;
 
-		*((uint16*)(FillRAM +0x4214)) = (uint16) div;
-		*((uint16*)(FillRAM +0x4216)) = (uint16) rem;
-	    //FillRAM[0x4214] = (uint8)div;
-	    //FillRAM[0x4215] = div >> 8;
-	    //FillRAM[0x4216] = (uint8)rem;
-	    //FillRAM[0x4217] = rem >> 8;
+		*((uint16*)(ROM_GLOBAL +0x4214)) = (uint16) div;
+		*((uint16*)(ROM_GLOBAL +0x4216)) = (uint16) rem;
+	    //ROM_GLOBAL[0x4214] = (uint8)div;
+	    //ROM_GLOBAL[0x4215] = div >> 8;
+	    //ROM_GLOBAL[0x4216] = (uint8)rem;
+	    //ROM_GLOBAL[0x4217] = rem >> 8;
 	    break;
 	}
     case 0x4207:
@@ -1925,13 +1925,13 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 #endif
 	if (Settings.DisableHDMA)
 	    byte = 0;
-	FillRAM[0x420c] = byte;
+	ROM_GLOBAL[0x420c] = byte;
 	IPPU.HDMA = byte;
 	break;
 
     case 0x420d:
 	// Cycle speed 0 - 2.68Mhz, 1 - 3.58Mhz (banks 0x80 +)
-	if ((byte & 1) != (FillRAM [0x420d] & 1))
+	if ((byte & 1) != (ROM_GLOBAL [0x420d] & 1))
 	{
 	    if (byte & 1)
 	    {
@@ -1952,7 +1952,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 	break;
     case 0x4210:
 	// NMI ocurred flag (reset on read or write)
-	FillRAM[0x4210] = 0;
+	ROM_GLOBAL[0x4210] = 0;
 	return;
     case 0x4211:
 	// IRQ ocurred flag (reset on read or write)
@@ -2156,7 +2156,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 		S9xSetSDD1MemoryMap (Address - 0x4804, byte & 7);
 	break;
     }
-    FillRAM [Address] = byte;
+    ROM_GLOBAL [Address] = byte;
 }
 
 /**********************************************************************************************/
@@ -2193,7 +2193,7 @@ if (g_debuginfo)
 
 	case 0x4016:
 	{
-	    if (FillRAM [0x4016] & 1)
+	    if (ROM_GLOBAL [0x4016] & 1)
 	    {
 #ifndef NOT_SUPPORT_MOUSE
 			if ((!Settings.SwapJoypads &&
@@ -2224,7 +2224,7 @@ if (g_debuginfo)
 	}
 	case 0x4017:
     {
-	    if (FillRAM [0x4016] & 1)
+	    if (ROM_GLOBAL [0x4016] & 1)
 	    {
 			// MultiPlayer5 adaptor is only allowed to be plugged into port 2
 			switch (IPPU.Controller)
@@ -2258,7 +2258,7 @@ if (g_debuginfo)
 
 		if (IPPU.Controller == SNES_MULTIPLAYER5)
 		{
-			if (FillRAM [0x4201] & 0x80)
+			if (ROM_GLOBAL [0x4201] & 0x80)
 			{
 				byte = ((IPPU.Joypads[ind] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) |
 					(((IPPU.Joypads[2] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) << 1);
@@ -2303,7 +2303,7 @@ if (g_debuginfo)
 	menu_debug("r9");
 #endif	
 	
-	return (FillRAM [Address]);
+	return (ROM_GLOBAL [Address]);
     }
     else
     switch (Address)
@@ -2338,7 +2338,7 @@ if (g_debuginfo)
 	menu_debug("r11");
 #endif	
 	
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
     case 0x4207:
 #ifdef __debug_io_gb__
 if (g_debuginfo)
@@ -2374,13 +2374,13 @@ if (g_debuginfo)
 	// .. But Aero 2 waits until this register goes zero..
 	// Just keep toggling the value for now in the hope that it breaks
 	// the game out of its wait loop...
-	FillRAM [0x420b] = !FillRAM [0x420b];
+	ROM_GLOBAL [0x420b] = !ROM_GLOBAL [0x420b];
 #ifdef __debug_io_gb__
 if (g_debuginfo)
 	menu_debug("r16");
 #endif	
 	
-	return (FillRAM [0x420b]);
+	return (ROM_GLOBAL [0x420b]);
     case 0x420c:
 	// H-DMA enable
 #ifdef __debug_io_gb__
@@ -2396,7 +2396,7 @@ if (g_debuginfo)
 	menu_debug("r18");
 #endif	
 	
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
     case 0x420e:
     case 0x420f:
 	// --->>> Unknown
@@ -2405,13 +2405,13 @@ if (g_debuginfo)
 	menu_debug("r19");
 #endif	
 	
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
     case 0x4210:
 #ifdef CPU_SHUTDOWN
 	CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
 #endif	
-	byte = FillRAM[0x4210];
-	FillRAM[0x4210] = 0;
+	byte = ROM_GLOBAL[0x4210];
+	ROM_GLOBAL[0x4210] = 0;
 #ifdef __debug_io_gb__
 if (g_debuginfo)
 	menu_debug("r20");
@@ -2454,7 +2454,7 @@ if (g_debuginfo)
 	menu_debug("r23");
 #endif	
 	
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
     case 0x4218:
     case 0x4219:
     case 0x421a:
@@ -2469,7 +2469,7 @@ if (g_debuginfo)
 	menu_debug("r24");
 #endif	
 	
-	return (FillRAM [Address]);
+	return (ROM_GLOBAL [Address]);
 
     case 0x4300:
     case 0x4310:
@@ -2485,7 +2485,7 @@ if (g_debuginfo)
 	menu_debug("r25");
 #endif	
 	
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4301:
     case 0x4311:
@@ -2500,7 +2500,7 @@ if (g_debuginfo)
 	menu_debug("r26");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4302:
     case 0x4312:
@@ -2515,7 +2515,7 @@ if (g_debuginfo)
 	menu_debug("r27");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4303:
     case 0x4313:
@@ -2530,7 +2530,7 @@ if (g_debuginfo)
 	menu_debug("r28");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4304:
     case 0x4314:
@@ -2545,7 +2545,7 @@ if (g_debuginfo)
 	menu_debug("r29");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4305:
     case 0x4315:
@@ -2560,7 +2560,7 @@ if (g_debuginfo)
 	menu_debug("r30");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4306:
     case 0x4316:
@@ -2575,7 +2575,7 @@ if (g_debuginfo)
 	menu_debug("r31");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4307:
     case 0x4317:
@@ -2605,7 +2605,7 @@ if (g_debuginfo)
 	menu_debug("r33");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x4309:
     case 0x4319:
@@ -2620,7 +2620,7 @@ if (g_debuginfo)
 	menu_debug("r34");
 #endif	
     
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
 
     case 0x430A:
     case 0x431A:
@@ -2646,7 +2646,7 @@ if (g_debuginfo)
 	menu_debug("r36");
 #endif	
 	
-	return (FillRAM[Address]);
+	return (ROM_GLOBAL[Address]);
     }
     default:
 #ifdef DEBUGGER
@@ -2668,7 +2668,7 @@ if (g_debuginfo)
 	menu_debug("r37");
 #endif	
     
-    return (FillRAM[Address]);
+    return (ROM_GLOBAL[Address]);
 }
 
 void S9xResetPPU ()
@@ -2838,13 +2838,13 @@ void S9xResetPPU ()
     }
 #endif
     for (c = 0; c < 0x8000; c += 0x100)
-	memset (&FillRAM [c], c >> 8, 0x100);
+	memset (&ROM_GLOBAL [c], c >> 8, 0x100);
 
-    ZeroMemory (&FillRAM [0x2100], 0x100);
-    ZeroMemory (&FillRAM [0x4200], 0x100);
-    ZeroMemory (&FillRAM [0x4000], 0x100);
+    ZeroMemory (&ROM_GLOBAL [0x2100], 0x100);
+    ZeroMemory (&ROM_GLOBAL [0x4200], 0x100);
+    ZeroMemory (&ROM_GLOBAL [0x4000], 0x100);
     // For BS Suttehakkun 2...
-    ZeroMemory (&FillRAM [0x1000], 0x1000);
+    ZeroMemory (&ROM_GLOBAL [0x1000], 0x1000);
 
 	ResetClipWindowsFix();
 }
@@ -2945,7 +2945,7 @@ void ProcessSuperScope ()
 	PPU.VBeamPosLatched = (uint16) (y + 1);
 	PPU.HBeamPosLatched = (uint16) x;
 	PPU.HVBeamCounterLatched = TRUE;
-	FillRAM [0x213F] |= 0x40;
+	ROM_GLOBAL [0x213F] |= 0x40;
 	IPPU.Joypads [1] = scope;
     }
 }
@@ -3032,10 +3032,10 @@ void S9xUpdateJoypads ()
 		ProcessSuperScope ();
 #endif
 
-    if (FillRAM [0x4200] & 1)
+    if (ROM_GLOBAL [0x4200] & 1)
     {
 		PPU.Joypad1ButtonReadPos = 16;
-		if (FillRAM [0x4201] & 0x80)
+		if (ROM_GLOBAL [0x4201] & 0x80)
 		{
 			PPU.Joypad2ButtonReadPos = 16;
 			PPU.Joypad3ButtonReadPos = 0;
@@ -3047,38 +3047,38 @@ void S9xUpdateJoypads ()
 		}
 #if 0
 //ruka
-		*((uint16*)(FillRAM +0x4218)) = (uint16) IPPU.Joypads [0];
-		*((uint16*)(FillRAM +0x421a)) = (uint16) IPPU.Joypads [1];
-		if (FillRAM [0x4201] & 0x80)
+		*((uint16*)(ROM_GLOBAL +0x4218)) = (uint16) IPPU.Joypads [0];
+		*((uint16*)(ROM_GLOBAL +0x421a)) = (uint16) IPPU.Joypads [1];
+		if (ROM_GLOBAL [0x4201] & 0x80)
 		{
-			*((uint16*)(FillRAM +0x421c)) = (uint16) IPPU.Joypads [0];
-			*((uint16*)(FillRAM +0x421e)) = (uint16) IPPU.Joypads [2];
+			*((uint16*)(ROM_GLOBAL +0x421c)) = (uint16) IPPU.Joypads [0];
+			*((uint16*)(ROM_GLOBAL +0x421e)) = (uint16) IPPU.Joypads [2];
 		}
 		else
 		{
-			*((uint16*)(FillRAM +0x421c)) = (uint16) IPPU.Joypads [3];
-			*((uint16*)(FillRAM +0x421e)) = (uint16) IPPU.Joypads [4];
+			*((uint16*)(ROM_GLOBAL +0x421c)) = (uint16) IPPU.Joypads [3];
+			*((uint16*)(ROM_GLOBAL +0x421e)) = (uint16) IPPU.Joypads [4];
 		}
 #else
 		int ind = 0;//Settings.SwapJoypads ? 1 : 0;
 
-		FillRAM [0x4218] = (uint8) IPPU.Joypads [ind];
-		FillRAM [0x4219] = (uint8) (IPPU.Joypads [ind] >> 8);
-		FillRAM [0x421a] = (uint8) IPPU.Joypads [ind ^ 1];
-		FillRAM [0x421b] = (uint8) (IPPU.Joypads [ind ^ 1] >> 8);
-		if (FillRAM [0x4201] & 0x80)
+		ROM_GLOBAL [0x4218] = (uint8) IPPU.Joypads [ind];
+		ROM_GLOBAL [0x4219] = (uint8) (IPPU.Joypads [ind] >> 8);
+		ROM_GLOBAL [0x421a] = (uint8) IPPU.Joypads [ind ^ 1];
+		ROM_GLOBAL [0x421b] = (uint8) (IPPU.Joypads [ind ^ 1] >> 8);
+		if (ROM_GLOBAL [0x4201] & 0x80)
 		{
-			FillRAM [0x421c] = (uint8) IPPU.Joypads [ind];
-			FillRAM [0x421d] = (uint8) (IPPU.Joypads [ind] >> 8);
-			FillRAM [0x421e] = (uint8) IPPU.Joypads [2];
-			FillRAM [0x421f] = (uint8) (IPPU.Joypads [2] >> 8);
+			ROM_GLOBAL [0x421c] = (uint8) IPPU.Joypads [ind];
+			ROM_GLOBAL [0x421d] = (uint8) (IPPU.Joypads [ind] >> 8);
+			ROM_GLOBAL [0x421e] = (uint8) IPPU.Joypads [2];
+			ROM_GLOBAL [0x421f] = (uint8) (IPPU.Joypads [2] >> 8);
 		}
 		else
 		{
-			FillRAM [0x421c] = (uint8) IPPU.Joypads [3];
-			FillRAM [0x421d] = (uint8) (IPPU.Joypads [3] >> 8);
-			FillRAM [0x421e] = (uint8) IPPU.Joypads [4];
-			FillRAM [0x421f] = (uint8) (IPPU.Joypads [4] >> 8);
+			ROM_GLOBAL [0x421c] = (uint8) IPPU.Joypads [3];
+			ROM_GLOBAL [0x421d] = (uint8) (IPPU.Joypads [3] >> 8);
+			ROM_GLOBAL [0x421e] = (uint8) IPPU.Joypads [4];
+			ROM_GLOBAL [0x421f] = (uint8) (IPPU.Joypads [4] >> 8);
 		}
 #endif
     }
@@ -3090,15 +3090,15 @@ void S9xSuperFXExec ()
 #if 1
     /*if (Settings.SuperFX)*/
     {
-	if ((FillRAM [0x3000 + GSU_SFR] & FLG_G) &&
-	    (FillRAM [0x3000 + GSU_SCMR] & 0x18) == 0x18)
+	if ((ROM_GLOBAL [0x3000 + GSU_SFR] & FLG_G) &&
+	    (ROM_GLOBAL [0x3000 + GSU_SCMR] & 0x18) == 0x18)
 	{
 	    if (!Settings.WinterGold||Settings.StarfoxHack)
 		FxEmulate (~0);
 	    else
-		FxEmulate ((FillRAM [0x3000 + GSU_CLSR] & 1) ? 700 : 350);
-	    int GSUStatus = FillRAM [0x3000 + GSU_SFR] |
-			    (FillRAM [0x3000 + GSU_SFR + 1] << 8);
+		FxEmulate ((ROM_GLOBAL [0x3000 + GSU_CLSR] & 1) ? 700 : 350);
+	    int GSUStatus = ROM_GLOBAL [0x3000 + GSU_SFR] |
+			    (ROM_GLOBAL [0x3000 + GSU_SFR + 1] << 8);
 	    if ((GSUStatus & (FLG_G | FLG_IRQ)) == FLG_IRQ)
 	    {
 		// Trigger a GSU IRQ.
@@ -3107,7 +3107,7 @@ void S9xSuperFXExec ()
 	}
     }
 #else
-    uint32 tmp =  (FillRAM[0x3034] << 16) + *(uint16 *) &FillRAM [0x301e];
+    uint32 tmp =  (ROM_GLOBAL[0x3034] << 16) + *(uint16 *) &ROM_GLOBAL [0x301e];
 
 #if 0
     if (tmp == 0x018428)
@@ -3118,7 +3118,7 @@ void S9xSuperFXExec ()
 #endif
     if (tmp == -1)//0x018428) //0x01bfc3) //0x09edaf) //-1) //0x57edaf)
     {
-	while (FillRAM [0x3030] & 0x20)
+	while (ROM_GLOBAL [0x3030] & 0x20)
 	{
 	    int i;
 	    int32 vError;
@@ -3228,9 +3228,9 @@ void S9xSuperFXExec ()
     }
     else
     {
-	uint32 t = (FillRAM [0x3034] << 16) +
-		   (FillRAM [0x301f] << 8) +
-		   (FillRAM [0x301e] << 0);
+	uint32 t = (ROM_GLOBAL [0x3034] << 16) +
+		   (ROM_GLOBAL [0x301f] << 8) +
+		   (ROM_GLOBAL [0x301e] << 0);
 
 	printf ("%06x: %d\n", t, FxEmulate (2000000));
 //	FxEmulate (2000000);
@@ -3249,8 +3249,8 @@ void S9xSuperFXExec ()
 	z--;
     }
 #endif
-    FillRAM [0x3030] &= ~0x20;
-    if (FillRAM [0x3031] & 0x80)
+    ROM_GLOBAL [0x3030] &= ~0x20;
+    if (ROM_GLOBAL [0x3031] & 0x80)
     {
 	S9xSetIRQ (GSU_IRQ_SOURCE);
     }

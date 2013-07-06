@@ -785,7 +785,7 @@ bool8 S9xNPGetROMImage (uint32 len)
     printf ("CLIENT: Hi-ROM: %s, Size: %04x\n", rom_info [0] ? "Y" : "N", CalculatedSize);
 #endif
     if (CalculatedSize + 5 >= len ||
-        CalculatedSize >= CMemory::MAX_ROM_SIZE)
+        CalculatedSize >= Memory.MAX_ROM_SIZE)
     {
         S9xNPSetError ("Size error in ROM image data received from server.");
         S9xNPDisconnect ();

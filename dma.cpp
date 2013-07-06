@@ -130,13 +130,13 @@ void S9xDoDMA (uint8 Channel)
     }
     if (Settings.SDD1)
     {
-		if (d->AAddressFixed && FillRAM [0x4801] > 0)
+		if (d->AAddressFixed && ROM_GLOBAL [0x4801] > 0)
 		{
 			// Hacky support for pre-decompressed S-DD1 data
 			inc = !d->AAddressDecrement ? 1 : -1;
 			uint32 address = (((d->ABank << 16) | d->AAddress) & 0xfffff) << 4;
 			
-			address |= FillRAM [0x4804 + ((d->ABank - 0xc0) >> 4)];
+			address |= ROM_GLOBAL [0x4804 + ((d->ABank - 0xc0) >> 4)];
 
 #ifdef SDD1_DECOMP
 			if(Settings.SDD1Pack)
@@ -153,7 +153,7 @@ void S9xDoDMA (uint8 Channel)
 				{
 					uint8 *p = Memory.SDD1LoggedData;
 					bool8 found = FALSE;
-					uint8 SDD1Bank = FillRAM [0x4804 + ((d->ABank - 0xc0) >> 4)] | 0xf0;
+					uint8 SDD1Bank = ROM_GLOBAL [0x4804 + ((d->ABank - 0xc0) >> 4)] | 0xf0;
 					
 					for (uint32 i = 0; i < Memory.SDD1LoggedDataCount; i++, p += 8)
 					{
@@ -213,7 +213,7 @@ void S9xDoDMA (uint8 Channel)
 				// already.
 				uint8 *p = Memory.SDD1LoggedData;
 				bool8 found = FALSE;
-				uint8 SDD1Bank = FillRAM [0x4804 + ((d->ABank - 0xc0) >> 4)] | 0xf0;
+				uint8 SDD1Bank = ROM_GLOBAL [0x4804 + ((d->ABank - 0xc0) >> 4)] | 0xf0;
 				
 				for (uint32 i = 0; i < Memory.SDD1LoggedDataCount; i++, p += 8)
 				{
@@ -244,7 +244,7 @@ void S9xDoDMA (uint8 Channel)
 		}
 #endif
 
-		FillRAM [0x4801] = 0;
+		ROM_GLOBAL [0x4801] = 0;
     }
 
 	if (Settings.SPC7110 && (d->AAddress == 0x4800 || d->ABank == 0x50))
@@ -304,16 +304,16 @@ void S9xDoDMA (uint8 Channel)
     {
 		// Perform packed bitmap to PPU character format conversion on the
 		// data before transmitting it to V-RAM via-DMA.
-		int num_chars = 1 << ((FillRAM [0x2231] >> 2) & 7);
-		int depth = (FillRAM [0x2231] & 3) == 0 ? 8 :
-		(FillRAM [0x2231] & 3) == 1 ? 4 : 2;
+		int num_chars = 1 << ((ROM_GLOBAL [0x2231] >> 2) & 7);
+		int depth = (ROM_GLOBAL [0x2231] & 3) == 0 ? 8 :
+		(ROM_GLOBAL [0x2231] & 3) == 1 ? 4 : 2;
 		
 		int bytes_per_char = 8 * depth;
 		int bytes_per_line = depth * num_chars;
 		int char_line_bytes = bytes_per_char * num_chars;
 		uint32 addr = (d->AAddress / char_line_bytes) * char_line_bytes;
 		uint8 *base = GetBasePointer ((d->ABank << 16) + addr) + addr;
-		uint8 *buffer = &ROM [CMemory::MAX_ROM_SIZE - 0x10000];
+		uint8 *buffer = &ROM [Memory.MAX_ROM_SIZE - 0x10000];
 		uint8 *p = buffer;
 		uint32 inc = char_line_bytes - (d->AAddress % char_line_bytes);
 		uint32 char_count = inc / bytes_per_char;
@@ -470,7 +470,7 @@ void S9xDoDMA (uint8 Channel)
 		
 		if (in_sa1_dma)
 		{
-			base = &ROM [CMemory::MAX_ROM_SIZE - 0x10000];
+			base = &ROM [Memory.MAX_ROM_SIZE - 0x10000];
 			p = 0;
 		}
 		
@@ -906,13 +906,13 @@ void S9xDoDMA (uint8 Channel)
 update_address:
     // Super Punch-Out requires that the A-BUS address be updated after the
     // DMA transfer.
-    FillRAM[0x4302 + (Channel << 4)] = (uint8) d->AAddress;
-    FillRAM[0x4303 + (Channel << 4)] = d->AAddress >> 8;
+    ROM_GLOBAL[0x4302 + (Channel << 4)] = (uint8) d->AAddress;
+    ROM_GLOBAL[0x4303 + (Channel << 4)] = d->AAddress >> 8;
 	
     // Secret of the Mana requires that the DMA bytes transfer count be set to
     // zero when DMA has completed.
-    FillRAM [0x4305 + (Channel << 4)] = 0;
-    FillRAM [0x4306 + (Channel << 4)] = 0;
+    ROM_GLOBAL [0x4305 + (Channel << 4)] = 0;
+    ROM_GLOBAL [0x4306 + (Channel << 4)] = 0;
 	
     DMA[Channel].IndirectAddress = 0;
     d->TransferBytes = 0;
@@ -924,8 +924,8 @@ update_address:
 
 void S9xStartHDMA () {
 	if (Settings.DisableHDMA)	IPPU.HDMA = 0;
-  else IPPU.HDMA = FillRAM [0x420c];
-//		missing.hdma_this_frame = IPPU.HDMA = FillRAM [0x420c];
+  else IPPU.HDMA = ROM_GLOBAL [0x420c];
+//		missing.hdma_this_frame = IPPU.HDMA = ROM_GLOBAL [0x420c];
 	
 	//per anomie timing post
 	if(IPPU.HDMA!=0) {
@@ -994,15 +994,15 @@ uint8 S9xDoHDMA (uint8 byte) {
 #endif				
 					byte &= ~mask;
 					p->IndirectAddress += HDMAMemPointers [d] - HDMABasePointers [d];
-					FillRAM [0x4305 + (d << 4)] = (uint8) p->IndirectAddress;
-					FillRAM [0x4306 + (d << 4)] = p->IndirectAddress >> 8;
+					ROM_GLOBAL [0x4305 + (d << 4)] = (uint8) p->IndirectAddress;
+					ROM_GLOBAL [0x4306 + (d << 4)] = p->IndirectAddress >> 8;
 					continue;
 				}
 
 				p->Address++;
 				p->FirstLine = 1;
 				if (p->HDMAIndirectAddressing) {
-					p->IndirectBank = FillRAM [0x4307 + (d << 4)];
+					p->IndirectBank = ROM_GLOBAL [0x4307 + (d << 4)];
 					//again, no cycle charges while InDMA is set!
 					CPUPack.CPU.Cycles+=SLOW_ONE_CYCLE<<2;
 //					S9xUpdateAPUTimer();
@@ -1170,8 +1170,8 @@ void S9xResetDMA ()
     for (int c = 0x4300; c < 0x4380; c += 0x10)
     {
 		for (d = c; d < c + 12; d++)
-			FillRAM [d] = 0xff;
+			ROM_GLOBAL [d] = 0xff;
 		
-		FillRAM [c + 0xf] = 0xff;
+		ROM_GLOBAL [c + 0xf] = 0xff;
     }
 }

@@ -3414,12 +3414,12 @@ void S9xOpcode_IRQ (void)
 #endif
 #endif
 #ifdef SA1_OPCODES
-	S9xSA1SetPCBase (FillRAM [0x2207] |
-			 (FillRAM [0x2208] << 8));
+	S9xSA1SetPCBase (ROM_GLOBAL [0x2207] |
+			 (ROM_GLOBAL [0x2208] << 8));
 #else
-	if (Settings.SA1 && (FillRAM [0x2209] & 0x40))
-	    S9xSetPCBase (FillRAM [0x220e] | 
-			  (FillRAM [0x220f] << 8));
+	if (Settings.SA1 && (ROM_GLOBAL [0x2209] & 0x40))
+	    S9xSetPCBase (ROM_GLOBAL [0x220e] | 
+			  (ROM_GLOBAL [0x220f] << 8));
 	else
 	    S9xSetPCBase (S9xGetWord (0xFFEE));
 #endif
@@ -3442,12 +3442,12 @@ void S9xOpcode_IRQ (void)
 #endif
 #endif
 #ifdef SA1_OPCODES
-	S9xSA1SetPCBase (FillRAM [0x2207] |
-			 (FillRAM [0x2208] << 8));
+	S9xSA1SetPCBase (ROM_GLOBAL [0x2207] |
+			 (ROM_GLOBAL [0x2208] << 8));
 #else
-	if (Settings.SA1 && (FillRAM [0x2209] & 0x40))
-	    S9xSetPCBase (FillRAM [0x220e] | 
-			  (FillRAM [0x220f] << 8));
+	if (Settings.SA1 && (ROM_GLOBAL [0x2209] & 0x40))
+	    S9xSetPCBase (ROM_GLOBAL [0x220e] | 
+			  (ROM_GLOBAL [0x220f] << 8));
 	else
 	    S9xSetPCBase (S9xGetWord (0xFFFE));
 #endif
@@ -3482,12 +3482,12 @@ void S9xOpcode_NMI (void)
 #endif
 #endif
 #ifdef SA1_OPCODES
-	S9xSA1SetPCBase (FillRAM [0x2205] |
-			 (FillRAM [0x2206] << 8));
+	S9xSA1SetPCBase (ROM_GLOBAL [0x2205] |
+			 (ROM_GLOBAL [0x2206] << 8));
 #else
-	if (Settings.SA1 && (FillRAM [0x2209] & 0x20))
-	    S9xSetPCBase (FillRAM [0x220c] |
-			  (FillRAM [0x220d] << 8));
+	if (Settings.SA1 && (ROM_GLOBAL [0x2209] & 0x20))
+	    S9xSetPCBase (ROM_GLOBAL [0x220c] |
+			  (ROM_GLOBAL [0x220d] << 8));
 	else
 	    S9xSetPCBase (S9xGetWord (0xFFEA));
 #endif
@@ -3510,12 +3510,12 @@ void S9xOpcode_NMI (void)
 #endif
 #endif
 #ifdef SA1_OPCODES
-	S9xSA1SetPCBase (FillRAM [0x2205] |
-			 (FillRAM [0x2206] << 8));
+	S9xSA1SetPCBase (ROM_GLOBAL [0x2205] |
+			 (ROM_GLOBAL [0x2206] << 8));
 #else
-	if (Settings.SA1 && (FillRAM [0x2209] & 0x20))
-	    S9xSetPCBase (FillRAM [0x220c] |
-			  (FillRAM [0x220d] << 8));
+	if (Settings.SA1 && (ROM_GLOBAL [0x2209] & 0x20))
+	    S9xSetPCBase (ROM_GLOBAL [0x220c] |
+			  (ROM_GLOBAL [0x220d] << 8));
 	else
 	    S9xSetPCBase (S9xGetWord (0xFFFA));
 #endif

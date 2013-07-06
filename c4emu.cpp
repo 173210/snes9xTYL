@@ -84,7 +84,7 @@ void S9xInitC4 ()
 {
     // Stupid zsnes code, we can't do the logical thing without breaking
     // savestates
-//    C4RAM = &FillRAM [0x6000];
+//    C4RAM = &ROM_GLOBAL [0x6000];
     memset(C4RAM, 0, 0x2000);
 }
 
