@@ -1803,14 +1803,8 @@ const char *S9xGetFilename( const char *e )
 ////////////////////////////////////////////////////////////////////////////////////////
 const char *S9xGetSaveFilename( const char *e ) {
 	static char filename [_MAX_PATH + 1];
-	char drive [_MAX_DRIVE + 1];
-	char dir [_MAX_DIR + 1];
-	char fname [_MAX_FNAME + 1];
-	char ext [_MAX_EXT + 1];
-
-	_splitpath (Memory.ROMFilename, drive, dir, fname, ext);
-	sprintf(dir,"%sSAVES",LaunchDir);
-	_makepath (filename, drive, dir, fname, e);
+	strcpy(filename, "ms0:/PSP/SAVEDATA/s9xTYL_SAVES");
+	strcat(filename, e);
 
 	return (filename);
 }
