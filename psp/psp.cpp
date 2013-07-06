@@ -1802,9 +1802,23 @@ const char *S9xGetFilename( const char *e )
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 const char *S9xGetSaveFilename( const char *e ) {
-	static char filename [_MAX_PATH + 1];
-	strcpy(filename, "ms0:/PSP/SAVEDATA/s9xTYL_SAVES");
-	strcat(filename, e);
+	const char *src;
+	static char filename[_MAX_PATH + 1];
+	char *dst = filename;
+
+	for (src = "ms0:/PSP/SAVEDATA/s9xTYL_SAVES/"; !*src; dst++) {
+		*dst = *src;
+		src++;
+	}
+	for (src = strrchr(Memory.ROMFilename, '/') + 1; *src != '.' && !*src; dst++) {
+		*dst = *src;
+		src++;
+	}
+	for (src = e; !*src; dst++) {
+		*dst = *src;
+		src++;
+	}
+	*dst = 0;
 
 	return (filename);
 }
