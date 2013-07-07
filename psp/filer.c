@@ -442,16 +442,16 @@ int getFilePath(char *out,int can_exit) {
 				char *dst = filename;
 				int n;
 				debug_log("check jpeg");
-				for (src = "ms0:/PSP/SAVEDATA/s9xTYL_SAVES/"; !*src; dst++) {
+				for (src = "ms0:/PSP/SAVEDATA/s9xTYL_SAVES/"; *src; dst++) {
 					*dst = *src;
 					src++;
 				}
 				fname = strrchr(files[sel].d_name, '/') + 1;
-				for (src = fname; *src != '.' && !*src; dst++) {
+				for (src = fname; *src != '.' && *src; dst++) {
 					*dst = *src;
 					src++;
 				}
-				for (src = ".jpg"; !*src; dst++) {
+				for (src = ".jpg"; *src; dst++) {
 					*dst = *src;
 					src++;
 				}
