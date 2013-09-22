@@ -442,20 +442,14 @@ int getFilePath(char *out,int can_exit) {
 				char *dst = filename;
 				int n;
 				debug_log("check jpeg");
-				for (src = "ms0:/PSP/SAVEDATA/S9XTYLSAVES/"; *src; dst++) {
-					*dst = *src;
-					src++;
-				}
-				fname = strrchr(files[sel].d_name, '/') + 1;
-				for (src = fname; *src != '.' && *src; dst++) {
-					*dst = *src;
-					src++;
-				}
-				for (src = ".jpg"; *src; dst++) {
-					*dst = *src;
-					src++;
-				}
-				*dst = 0;
+				src = "ms0:/PSP/SAVEDATA/S9XTYLSAVES/";
+				while (*src) *dst++ = *src++;
+				src = files[sel].d_name;
+				while (*src != '.' && *src) *dst++ = *src++;
+				src = ".jpg";
+				while (*dst++ = *src++) ;
+
+				sceIoWrite(1, filename, strlen(filename));
 
 				for (n=0;n<nfiles_jpeg;n++){
 					if (!strcasecmp(fname,files_jpeg[n].d_name)) break;
