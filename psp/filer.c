@@ -230,7 +230,7 @@ void getDirJpeg() {
 	int fd;
 	nfiles_jpeg = 0;
 
-	fd = sceIoDopen("ms0:/PSP/SAVEDATA/s9xTYL_SAVES");
+	fd = sceIoDopen("ms0:/PSP/SAVEDATA/S9XTYLSAVES");
 	if (fd<0){
 		psp_msg(ERR_READ_MEMSTICK,MSG_DEFAULT);
 		return ;
@@ -442,7 +442,7 @@ int getFilePath(char *out,int can_exit) {
 				char *dst = filename;
 				int n;
 				debug_log("check jpeg");
-				for (src = "ms0:/PSP/SAVEDATA/s9xTYL_SAVES/"; *src; dst++) {
+				for (src = "ms0:/PSP/SAVEDATA/S9XTYLSAVES/"; *src; dst++) {
 					*dst = *src;
 					src++;
 				}

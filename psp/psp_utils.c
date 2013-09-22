@@ -567,70 +567,79 @@ void checkdirs() {
 	int fd;
 	char path[256];
 
-	fd = sceIoDopen("ms0:/PSP/SAVEDATA/s9xTYL_SAVES");
-	if (fd<0) {
-		SceUtilitySavedataParam savedata;
-		memset(&savedata, 0, sizeof(SceUtilitySavedataParam));
-
-		savedata.base.size = sizeof(SceUtilitySavedataParam);
-		savedata.base.language = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
-		savedata.base.buttonSwap = PSP_UTILITY_ACCEPT_CROSS;
-		savedata.base.graphicsThread = 0x11;
-		savedata.base.accessThread = 0x13;
-		savedata.base.fontThread = 0x12;
-		savedata.base.soundThread = 0x10;
-
-		savedata.mode = PSP_UTILITY_SAVEDATA_AUTOSAVE;
-		savedata.overwrite = 1;
-		strcpy(savedata.gameName, "s9xTYL_");	// First part of the save name, game identifier name
-		strcpy(savedata.saveName, "SAVES");	// Second part of the save name, save identifier name
-		strcpy(savedata.fileName, "DIR.SYS");	// name of the data file
-
-		// Allocate buffers used to store various parts of the save data
-		savedata.dataBuf = (void *)"DIR";
-		savedata.dataBufSize = strlen("DIR") + 1;
-		savedata.dataSize = strlen("DIR") + 1;
-
-		//memset(savedata.dataBuf, 0, 4);
-		//strcpy((char *)savedata.dataBuf,"DIR");
-
-		strcpy(savedata.sfoParam.title,"Snes9xTYL");
-		strcpy(savedata.sfoParam.savedataTitle,"Savedata");
-		strcpy(savedata.sfoParam.detail,"SRAM Savedata");
-		savedata.sfoParam.parentalLevel = 1;
-
-		savedata.icon0FileData.buf = icon0;
-		savedata.icon0FileData.bufSize = size_icon0;
-		savedata.icon0FileData.size = size_icon0;
-
-		// No icon1
-		savedata.icon1FileData.buf = NULL;
-		savedata.icon1FileData.bufSize = 0;
-		savedata.icon1FileData.size = 0;
-
-		savedata.pic1FileData.buf = pic1;
-		savedata.pic1FileData.bufSize = size_pic1;
-		savedata.pic1FileData.size = size_pic1;
-
-		// No snd0
-		savedata.snd0FileData.buf = NULL;
-		savedata.snd0FileData.bufSize = 0;
-		savedata.snd0FileData.size = 0;
-
-		savedata.focus = PSP_UTILITY_SAVEDATA_FOCUS_FIRSTEMPTY; // If saving, set inital focus to the first empty slot
-
-		sceUtilitySavedataInitStart(&savedata);
-		while (sceUtilitySavedataGetStatus() != PSP_UTILITY_DIALOG_VISIBLE) sceKernelDelayThread(4096);
-		sceUtilitySavedataUpdate(1);
-		sceUtilitySavedataShutdownStart();
+	strcpy(path, LaunchDir);
+	strcat(path, "PROFILES");
+	fd = sceIoDopen(path);
+	if (fd < 0) {
+		sceIoMkdir(path, 0777);
 	} else sceIoDclose(fd);
 
-	strcpy(path, LaunchDir);
-	strcat(path,"PROFILES");
-	fd = sceIoDopen(path);
-	if (fd<0) {
-		sceIoMkdir(path, 0777);
-	} else {sceIoDclose(fd);}
+	fd = sceIoDopen("ms0:/PSP/SAVEDATA/S9XTYLSAVES");
+	if (fd >= 0) return;
+
+
+	SceUtilitySavedataParam savedata;
+	memset(&savedata, 0, sizeof(SceUtilitySavedataParam));
+
+	savedata.base.size = sizeof(SceUtilitySavedataParam);
+	savedata.base.language = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
+	savedata.base.buttonSwap = PSP_UTILITY_ACCEPT_CROSS;
+	savedata.base.graphicsThread = 0x11;
+	savedata.base.accessThread = 0x13;
+	savedata.base.fontThread = 0x12;
+	savedata.base.soundThread = 0x10;
+
+	savedata.mode = PSP_UTILITY_SAVEDATA_AUTOSAVE;
+	savedata.overwrite = 1;
+
+	strcpy(savedata.gameName, "S9XTYL");
+	strcpy(savedata.saveName, "SAVES");
+	strcpy(savedata.fileName, "DIR.SYS");
+
+	savedata.dataBuf = (void *)"DIR";
+	savedata.dataBufSize = strlen("DIR") + 1;
+	savedata.dataSize = strlen("DIR") + 1;
+
+	strcpy(savedata.sfoParam.title, "Snes9xTYL");
+	strcpy(savedata.sfoParam.savedataTitle, "Savedata");
+	strcpy(savedata.sfoParam.detail, "SRAM Savedata");
+	savedata.sfoParam.parentalLevel = 1;
+
+	savedata.pic1FileData.buf = pic1;
+	savedata.pic1FileData.bufSize = size_pic1;
+	savedata.pic1FileData.size = size_pic1;
+
+	savedata.icon0FileData.buf = icon0;
+	savedata.icon0FileData.bufSize = size_icon0;
+	savedata.icon0FileData.size = size_icon0;
+
+	savedata.icon1FileData.buf = NULL;
+	savedata.icon1FileData.bufSize = 0;
+	savedata.icon1FileData.size = 0;
+
+	savedata.snd0FileData.buf = NULL;
+	savedata.snd0FileData.bufSize = 0;
+	savedata.snd0FileData.size = 0;
+
+	savedata.focus = PSP_UTILITY_SAVEDATA_FOCUS_FIRSTEMPTY;
+
+	sceUtilitySavedataInitStart(&savedata);
+
+	while (1) {
+
+		sceKernelDelayThread(4096);
+
+		switch (sceUtilitySavedataGetStatus()) {
+
+			case PSP_UTILITY_DIALOG_VISIBLE :
+				sceUtilitySavedataUpdate(1);
+				break;
+
+			case PSP_UTILITY_DIALOG_QUIT :
+				sceUtilitySavedataShutdownStart();
+				return;
+		}
+	}
 }
 
 
