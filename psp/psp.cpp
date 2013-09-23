@@ -2697,11 +2697,11 @@ void low_level_init(){
 	scePowerLock(0); //sleep mode cannot be triggered with this :-)
 #endif
 
-	// create dirs if needed
-	checkdirs();
-
 	//init timezone, language, ...
 	getsysparam();
+
+	// create dirs if needed
+	checkdirs();
 
 	//blitter
 	blit_init();
