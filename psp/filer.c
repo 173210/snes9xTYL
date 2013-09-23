@@ -449,8 +449,6 @@ int getFilePath(char *out,int can_exit) {
 				src = ".jpg";
 				while (*dst++ = *src++) ;
 
-				sceIoWrite(1, filename, strlen(filename));
-
 				for (n=0;n<nfiles_jpeg;n++){
 					if (!strcasecmp(fname,files_jpeg[n].d_name)) break;
 				}
