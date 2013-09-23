@@ -36,10 +36,12 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{INFO_DELETING,"Deleting...",0},
 	{INFO_EXITING,"Exiting, please wait...",0},
 	//filer
-	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  " SJIS_STAR "  " SJIS_CROSS " TO GAME  "  SJIS_STAR "  " SJIS_TRIANGLE " Par. dir.  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse",0},
-	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " Parent dir.          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
-	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " RUN " SJIS_CROSS "BACK TO GAME " SJIS_TRIANGLE " Parent dir.  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
-	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " RUN " SJIS_TRIANGLE " Parent dir.                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  " SJIS_STAR "  " SJIS_CROSS " TO GAME  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse",0},
+	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " RUN " SJIS_CROSS "BACK TO GAME " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " RUN " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+
+	{FILER_STATUS_PARDIR, "Parent dir.", 0},
 
 	{FILER_TITLE, "[" EMUNAME_VERSION "] - Choose a file", 0},
 	
@@ -417,10 +419,12 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{INFO_DELETING,"削除しています...",0},
 	{INFO_EXITING,"終了しています。しばらくお待ちください...",0},
 	//filer
-	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  " SJIS_CROSS " ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " 上へ  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " 移動",0},
-	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " 上へ          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
-	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " 実行 " SJIS_CROSS "ゲームに戻る " SJIS_TRIANGLE " 上へ  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
-	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " 実行 " SJIS_TRIANGLE " 上へ                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  " SJIS_CROSS " ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " 移動",0},
+	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " 実行 " SJIS_CROSS "ゲームに戻る " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " 実行 " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+
+	{FILER_STATUS_PARDIR, "上へ", 0},
 
 	{FILER_TITLE, "[" EMUNAME_VERSION "] - ファイル選択", 0},
 	

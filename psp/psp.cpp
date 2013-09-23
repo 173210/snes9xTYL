@@ -230,6 +230,7 @@ int os9x_usballowed;
 
 char str_tmp[256];
 char LaunchDir[256];
+char SaveDir[256];
 char romPath[256];
 char lastRom[256];
 char os9x_viewfile_path[256];
@@ -1806,9 +1807,9 @@ const char *S9xGetSaveFilename( const char *e ) {
 	static char filename[_MAX_PATH + 1];
 	char *dst = filename;
 
-	src = "ms0:/PSP/SAVEDATA/S9XTYLSAVES/";
+	src = SaveDir;
 	while(*src) *dst++ = *src++;
-	src = strrchr(Memory.ROMFilename, '/') + 1;
+	src = strrchr(Memory.ROMFilename, '/');
 	while(*src != '.' && *src) *dst++ = *src++;
 	src = e;
 	while((*dst++ = *src++)) ;

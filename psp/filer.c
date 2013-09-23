@@ -46,6 +46,7 @@ extern volatile int g_bSleep,g_bLoop;
 extern int os9x_cpuclock,os9x_usballowed;
 extern int os9x_lowbat;
 extern char LaunchDir[256];
+extern char SaveDir[256];
 extern int os9x_language;
 extern int os9x_netplay;
 extern int bg_img_mul;
@@ -185,13 +186,23 @@ char *find_file(char *pattern,char *path){
 }
 
 void getDir(const char *path) {
-	int fd, b=0;
+	int fd = 0;
+	int b = 0;
 //	char *p;
 	
 	nfiles = 0;
 			
-	if(strcmp(path,"ms0:/")){		
+	if(path[5]) {
 		strcpy(files[nfiles].d_name,"..");
+	} else if (*path == 'm') {
+		fd = sceIoDopen("ef0:/");
+		if (fd >= 0) {
+			sceIoDclose(fd);
+			strcpy(files[nfiles].d_name,"ef0:/");
+		}
+	} else strcpy(files[nfiles].d_name,"ms0:/");
+
+	if (fd >= 0) {
 		files[nfiles].d_stat.st_attr = TYPE_DIR;
 		nfiles++;
 		b=1;
@@ -230,7 +241,7 @@ void getDirJpeg() {
 	int fd;
 	nfiles_jpeg = 0;
 
-	fd = sceIoDopen("ms0:/PSP/SAVEDATA/S9XTYLSAVES");
+	fd = sceIoDopen(SaveDir);
 	if (fd<0){
 		psp_msg(ERR_READ_MEMSTICK,MSG_DEFAULT);
 		return ;
@@ -253,13 +264,25 @@ void getDirJpeg() {
 
 
 void getDirNoExt(const char *path) {
-	int fd, b=0;
+	int fd = 0;
+	int b = 0;
 //	char *p;
 
 	nfiles = 0;
 
-	if(strcmp(path,"ms0:/")){		
+	inputBoxOK(path);
+
+	if(path[5]) {
 		strcpy(files[nfiles].d_name,"..");
+	} else if (*path == 'm') {
+		fd = sceIoDopen("ef0:/");
+		if (fd >= 0) {
+			sceIoDclose(fd);
+			strcpy(files[nfiles].d_name,"ef0:/");
+		}
+	} else strcpy(files[nfiles].d_name,"ms0:/");
+
+	if (fd >= 0) {
 		files[nfiles].d_stat.st_attr = TYPE_DIR;
 		nfiles++;
 		b=1;
@@ -340,7 +363,7 @@ int getFilePath(char *out,int can_exit) {
 	int snesheight;
 	int image_loaded;
 	int current_smoothing;
-	char path[MAXPATH], oldDir[MAXPATH], *p;
+	char path[MAXPATH], oldDir[MAXPATH], tmp[255], *p;
 	int old_netplay=os9x_netplay;
 
 	snes_image=(u16*)(0x44000000+512*272*2*2);
@@ -442,8 +465,9 @@ int getFilePath(char *out,int can_exit) {
 				char *dst = filename;
 				int n;
 				debug_log("check jpeg");
-				src = "ms0:/PSP/SAVEDATA/S9XTYLSAVES/";
+				src = SaveDir;
 				while (*src) *dst++ = *src++;
+				*dst++ = '/';
 				fname = dst;
 				src = files[sel].d_name;
 				while (*src != '.' && *src) *dst++ = *src++;
@@ -469,8 +493,10 @@ int getFilePath(char *out,int can_exit) {
 			int is_square=new_pad & PSP_CTRL_SQUARE;
 			if(files[sel].d_stat.st_attr == TYPE_DIR){
 				if(!strcmp(files[sel].d_name,"..")){  up=1; }
-                else{
-					strcat(path,files[sel].d_name);
+				else {
+					if (files[sel].d_name[5])
+						strcat(path,files[sel].d_name);
+					else strcpy(path, files[sel].d_name);
 					getDir(path);
 					//init jpeg stuff
 					getDirJpeg();
@@ -542,7 +568,7 @@ int getFilePath(char *out,int can_exit) {
 		
 		if(up){
 			up=0;
-			if(strcmp(path,"ms0:/")){
+			if(path[5]){
 				p=strrchr(path,'/');
 				*p=0;
 				p=strrchr(path,'/');
@@ -590,8 +616,10 @@ int getFilePath(char *out,int can_exit) {
         else {
           mh_print(8,0,path,PATH_COL);
         }
-        if (can_exit) mh_print(4,262,psp_msg_string(FILER_STATUS_CANEXIT1),INFOBAR_COL);
-        else mh_print(4,262,psp_msg_string(FILER_STATUS_NOEXIT1),INFOBAR_COL);
+	sprintf(tmp,
+		psp_msg_string(can_exit ? FILER_STATUS_CANEXIT1 : FILER_STATUS_NOEXIT1),
+		files[0].d_name[3] == ':' ? files[0].d_name : psp_msg_string(FILER_STATUS_PARDIR));
+        mh_print(4, 262, tmp, INFOBAR_COL);
         	
 		if(nfiles > rows){
 			h = 219;
@@ -658,7 +686,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 	int retval;
 	int current_smoothing;
 	int cnt = 0;
-	char path[MAXPATH], oldDir[MAXPATH], *p;
+	char path[MAXPATH], oldDir[MAXPATH], tmp[255], *p;
 
 	filer_bg=(u16*)malloc(480*272*2);
 	if (!filer_bg) {
@@ -743,7 +771,9 @@ int getNoExtFilePath(char *out,int can_exit) {
 			if(files[sel].d_stat.st_attr == TYPE_DIR){
 				if(!strcmp(files[sel].d_name,"..")){  up=1; }
                 else{
-					strcat(path,files[sel].d_name);
+					if (files[sel].d_name[5]) {
+						strcat(path, files[sel].d_name);
+					} else strcpy(path, files[sel].d_name);
 					getDirNoExt(path);					
 					sel=0;
 					while (get_pad()) pgWaitV();	
@@ -778,7 +808,7 @@ int getNoExtFilePath(char *out,int can_exit) {
         }
 		
 		if(up){
-			if(strcmp(path,"ms0:/")){
+			if(path[5]){
 				p=strrchr(path,'/');
 				*p=0;
 				p=strrchr(path,'/');
@@ -816,8 +846,10 @@ int getNoExtFilePath(char *out,int can_exit) {
           mh_print(8,0,path,PATH_COL);
         }
         
-        if (can_exit) mh_print(8,262,psp_msg_string(FILER_STATUS_CANEXIT2),INFOBAR_COL);
-       	else mh_print(8,262,psp_msg_string(FILER_STATUS_NOEXIT2),INFOBAR_COL);
+	sprintf(tmp,
+		psp_msg_string(can_exit ? FILER_STATUS_CANEXIT2 : FILER_STATUS_NOEXIT2),
+		files[0].d_name[3] == ':' ? files[0].d_name : psp_msg_string(FILER_STATUS_PARDIR));
+        mh_print(8, 262, tmp, INFOBAR_COL);
 
 		// スクロールバー
 		if(nfiles > rows){

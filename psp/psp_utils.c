@@ -564,18 +564,28 @@ else {fclose(f);return -3;}
 #include "savedata_res.h"
 
 void checkdirs() { 
-	int fd;
+	int i;
 	char path[256];
 
 	strcpy(path, LaunchDir);
 	strcat(path, "PROFILES");
-	fd = sceIoDopen(path);
-	if (fd < 0) {
+	i = sceIoDopen(path);
+	if (i < 0) {
 		sceIoMkdir(path, 0777);
-	} else sceIoDclose(fd);
+	} else sceIoDclose(i);
 
-	fd = sceIoDopen("ms0:/PSP/SAVEDATA/S9XTYLSAVES");
-	if (fd >= 0) return;
+	strcpy(SaveDir, "ms0:/PSP/SAVEDATA/S9XTYLSAVES");
+
+	i = sceIoDopen(SaveDir);
+	if (i < 0) {
+		*SaveDir = 'e';
+		*(SaveDir + 1) = 'f';
+		sceIoDopen(SaveDir);
+	}
+        if (i >= 0) {
+		sceIoDclose(i);
+		return;
+	}
 
 
 	SceUtilitySavedataParam savedata;
@@ -637,6 +647,16 @@ void checkdirs() {
 
 			case PSP_UTILITY_DIALOG_QUIT :
 				sceUtilitySavedataShutdownStart();
+
+				i = sceIoDopen(SaveDir);
+				if (i >= 0) {
+					sceIoDclose(i);
+					return;
+				}
+
+				*SaveDir = 'm';
+				*(SaveDir + 1) = 's';
+
 				return;
 		}
 	}
