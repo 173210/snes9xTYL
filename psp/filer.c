@@ -272,8 +272,6 @@ void getDirNoExt(const char *path) {
 
 	nfiles = 0;
 
-	inputBoxOK(path);
-
 	if(path[5]) {
 		strcpy(files[nfiles].d_name,"..");
 	} else if (*path == 'm') {
