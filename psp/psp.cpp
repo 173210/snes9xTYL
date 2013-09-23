@@ -1811,7 +1811,7 @@ const char *S9xGetSaveFilename( const char *e ) {
 	src = strrchr(Memory.ROMFilename, '/') + 1;
 	while(*src != '.' && *src) *dst++ = *src++;
 	src = e;
-	while(*dst++ = *src++) ;
+	while((*dst++ = *src++)) ;
 
 	return (filename);
 }

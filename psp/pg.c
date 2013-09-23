@@ -1834,23 +1834,16 @@ void image_put_clip(int x0,int y0,IMAGE* img,int fade,int add,int xsrc,int ysrc,
 	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
 	unsigned char* src = img->pixels;
 	unsigned short* src16 = img->pixels;
-	unsigned short pal[256];
 	s32 r,g,b,fadeR,fadeG,fadeB,aR,aG,aB;
-	int i,pix;
+	int pix;
 	fadeB=(fade>>0)&0xFF;
 	fadeG=(fade>>8)&0xFF;
 	fadeR=(fade>>16)&0xFF;
 	aB=(add>>0)&0xFF;
 	aG=(add>>8)&0xFF;
 	aR=(add>>16)&0xFF;
-	
-	if (img->bit==8) {	
-		for(i=0;i<img->n_palette;i++){
-	  	r=(s32)(img->palette[i].r)-fadeR+aR;if (r<0) r=0;if (r>255) r=255;
-	  	g=(s32)(img->palette[i].g)-fadeG+aG;if (g<0) g=0;if (g>255) g=255;
-	  	b=(s32)(img->palette[i].b)-fadeB+aB;if (b<0) b=0;if (b>255) b=255;
-			pal[i] = RGB(r,g,b);
-		}	
+
+	if (img->bit==8) {
 		int x,y;
 		src+=xsrc+(ysrc)*img->width;
 		for(y=0;y<h;y++) {
@@ -1862,12 +1855,12 @@ void image_put_clip(int x0,int y0,IMAGE* img,int fade,int add,int xsrc,int ysrc,
 			src+=(img->width-x);
 		}
 	}
-	if (img->bit==24){		
+	if (img->bit==24){
 		int x,y;
 		src+=(xsrc+(ysrc)*img->width)*3;
 		for(y=0;y<h;y++) {
-			for(x=0;x<w;x++) {												
-				r=*src++;g=*src++;b=*src++;				
+			for(x=0;x<w;x++) {
+				r=*src++;g=*src++;b=*src++;
 				if ( ((r<<16)|(g<<8)|b)!=transp_col ) {
 					r+=aR-fadeR;g+=aG-fadeG;b+=aB-fadeB;
 					if (r<0) r=0;if (r>255) r=255;

@@ -444,13 +444,14 @@ int getFilePath(char *out,int can_exit) {
 				debug_log("check jpeg");
 				src = "ms0:/PSP/SAVEDATA/S9XTYLSAVES/";
 				while (*src) *dst++ = *src++;
+				fname = dst;
 				src = files[sel].d_name;
 				while (*src != '.' && *src) *dst++ = *src++;
 				src = ".jpg";
-				while (*dst++ = *src++) ;
+				while ((*dst++ = *src++)) ;
 
 				for (n=0;n<nfiles_jpeg;n++){
-					if (!strcasecmp(fname,files_jpeg[n].d_name)) break;
+					if (!strcasecmp(fname, files_jpeg[n].d_name)) break;
 				}
 				if (n<nfiles_jpeg)
 					image_loaded=os9x_loadsnap(filename,snes_image,&snesheight);

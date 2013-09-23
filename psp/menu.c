@@ -3232,7 +3232,6 @@ int menu_credits(char *mode) {
 
 int menu_versioninfos(char *mode) {
 	int to_exit=0;
-	int oldmode;
 	int retval=0;
 
 	if (mode) {mode[0]=0;return 0;}
@@ -3240,7 +3239,6 @@ int menu_versioninfos(char *mode) {
 	menu_panel_pos=479;
 	menu_cnt2=0;
 
-	oldmode=os9x_apuenabled;
 	for (;;) {
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
@@ -3560,7 +3558,7 @@ void show_bg(u16 *src){
 }
 
 void menu_drawFrame(int selected) {
-	int i,sel,x,y,/*j,*/yold,col;
+	int i,sel,x,y,/*j,*/col;
 
 	if (g_bSleep) {
 #ifdef ME_SOUND
@@ -3675,7 +3673,6 @@ void menu_drawFrame(int selected) {
 					msgBoxLinesRawPosLimit(280,190,200,67,psp_msg_string(menu_xmb_entries[i].help_id));
 				}
 
-				yold=y;
 				y+=20;
 			}else{
 				//if (y>=130) {j=1;break;}
@@ -3691,16 +3688,10 @@ void menu_drawFrame(int selected) {
 					}
 				}
 
-				yold=y;
 				y+=12;
 			}
 		}
 	}
-
-	/*if (j) {//bottom is hidden
-		col=(col<<5)+(10<<10)|(10<<0);
-		mh_print(x-20,100+yold,SJIS_DOWN " ",col);
-	}*/
 }
 
 void menu_inputName(char *name) {
