@@ -10,5 +10,12 @@ To build with adhoc, type "make adhoc"
 To build the me version
 --------------------------
 To build without homehook and adhoc, type "make me"
-To build with homehook, type "make home"
+To build with homehook, type "make mehome"
 To build with homehook and adhoc, type "make mehomeadhoc"
+
+About each versions
+--------------------------
+The user version works on user mode so it can work on HBL.
+The me version use media engine so it can run faster.
+Homehook enables to open menu by pushing home button.
+Adhoc enables to play a match on Wi-Fi.
