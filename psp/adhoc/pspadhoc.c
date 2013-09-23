@@ -630,7 +630,6 @@ int adhocRecv(void *buffer, unsigned int *length)
 {
 	int err=0;
 	int pdpStatLength=20;
-	unsigned int pdpRecvLength=0;
 	unsigned short port=0;
 	unsigned char mac[6];
 	pdpStatStruct pspStat;
@@ -645,7 +644,7 @@ int adhocRecv(void *buffer, unsigned int *length)
 
 	if (pspStat.rcvdData > 0)
 	{		
-		pdpRecvLength = pspStat.rcvdData;
+		pspStat.rcvdData;
 		err = sceNetAdhocPdpRecv(pdpId,
 					mac,
 					&port,

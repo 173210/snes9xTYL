@@ -629,11 +629,6 @@ void checkdirs() {
 
 	strcpy(savedata.gameName, "S9XTYL");
 	strcpy(savedata.saveName, "SAVES");
-	strcpy(savedata.fileName, "DIR.SYS");
-
-	savedata.dataBuf = (void *)"DIR";
-	savedata.dataBufSize = strlen("DIR") + 1;
-	savedata.dataSize = strlen("DIR") + 1;
 
 	strcpy(savedata.sfoParam.title, "Snes9xTYL");
 	strcpy(savedata.sfoParam.savedataTitle, "Savedata");
