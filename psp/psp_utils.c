@@ -565,27 +565,52 @@ else {fclose(f);return -3;}
 
 void checkdirs() { 
 	int i;
-	char path[256];
+	const char *src;
+	char *dst;
 
-	strcpy(path, LaunchDir);
-	strcat(path, "PROFILES");
-	i = sceIoDopen(path);
-	if (i < 0) {
-		sceIoMkdir(path, 0777);
-	} else sceIoDclose(i);
+	src = LaunchDir;
+	dst = SaveDir;
+	while(*src) *dst++ = *src++;
 
-	strcpy(SaveDir, "ms0:/PSP/SAVEDATA/S9XTYLSAVES");
-
+	strcpy(dst, "PROFILES");
 	i = sceIoDopen(SaveDir);
 	if (i < 0) {
-		*SaveDir = 'e';
-		*(SaveDir + 1) = 'f';
-		sceIoDopen(SaveDir);
+		sceIoMkdir(SaveDir, 0777);
+	} else sceIoDclose(i);
+
+	strcpy(dst, "SAVES");
+	i = sceIoDopen(SaveDir);
+	if (i < 0) {
+		strcpy(SaveDir, "ms0:/PSP/SAVEDATA/S9XTYLSAVES");
+
+		i = sceIoDopen(SaveDir);
+		if (i < 0) {
+			*SaveDir = 'e';
+			*(SaveDir + 1) = 'f';
+			sceIoDopen(SaveDir);
+		}
 	}
         if (i >= 0) {
 		sceIoDclose(i);
 		return;
 	}
+
+	psp_msg(ASK_SAVEDIR, MSG_DEFAULT);
+	while (1) {
+		i = get_pad();
+		if (i) while (get_pad()) pgWaitV();
+		if (i & PSP_CTRL_CIRCLE) {
+			src = LaunchDir;
+			dst = SaveDir;
+			while (*src) *dst++ = *src++;
+			strcpy(dst, "SAVES");
+			sceIoMkdir(SaveDir, 0777);
+			return;
+		}
+		if (i & PSP_CTRL_CROSS)
+			break;
+	}
+
 
 
 	SceUtilitySavedataParam savedata;

@@ -21,6 +21,7 @@
 
 #define ASK_EXIT 0x1000
 #define ASK_DELETE 0x1001
+#define ASK_SAVEDIR 0x1002
 
 #define INFO_USB_ON 0x2000
 #define INFO_USB_OFF 0x2001

@@ -30,6 +30,10 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	//confirm
 	{ASK_EXIT,"Exit Snes9XTYL ?",-2},
 	{ASK_DELETE,"Delete file ?",-2},
+	{ASK_SAVEDIR,"The save directory is not found.\n"
+		"To make the directory in the directory where this emulator is, Press " SJIS_CIRCLE  "\n"
+		"To make the directory in SAVEDATA directory, Press " SJIS_CROSS "\n",
+		0},
 	//info
 	{INFO_USB_ON,"USB activated",30},
 	{INFO_USB_OFF,"USB disabled",30},
@@ -413,6 +417,10 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	//confirm
 	{ASK_EXIT,"Snes9XTYLを終了しますか?",-2},
 	{ASK_DELETE,"ファイルを削除しますか?",-2},
+	{ASK_SAVEDIR,"セーブディレクトリが見つかりません。\n"
+		"このエミュレーターがあるディレクトリに作成するには" SJIS_CIRCLE "ボタンを押してください。\n"
+		"SAVEDATAディレクトリに作成するには" SJIS_CROSS "ボタンを押してください。\n",
+		0},
 	//info
 	{INFO_USB_ON,"USBが有効化されました",30},
 	{INFO_USB_OFF,"USBが無効化されました",30},
