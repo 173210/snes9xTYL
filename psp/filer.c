@@ -492,11 +492,10 @@ int getFilePath(char *out,int can_exit) {
 		if(new_pad & (PSP_CTRL_CIRCLE|PSP_CTRL_SQUARE)){
 			int is_square=new_pad & PSP_CTRL_SQUARE;
 			if(files[sel].d_stat.st_attr == TYPE_DIR){
-				if(!strcmp(files[sel].d_name,"..")){  up=1; }
+				if(!strcmp(files[sel].d_name,"..") || files[sel].d_name[3] == ':')
+					{  up=1; }
 				else {
-					if (files[sel].d_name[5])
-						strcat(path,files[sel].d_name);
-					else strcpy(path, files[sel].d_name);
+					strcat(path,files[sel].d_name);
 					getDir(path);
 					//init jpeg stuff
 					getDirJpeg();
@@ -577,6 +576,11 @@ int getFilePath(char *out,int can_exit) {
 				strcat(oldDir,"/");
 				*p=0;
 				reload_entries=1;				
+			} else if (files[0].d_name[3] == ':') {
+				strcpy(oldDir, path);
+				strcpy(path, files[0].d_name);
+				getDirNoExt(path);
+				sel = top = 0;
 			}
 		}
 		if (reload_entries) {
@@ -769,11 +773,10 @@ int getNoExtFilePath(char *out,int can_exit) {
         				        
 		if(new_pad & PSP_CTRL_CIRCLE){
 			if(files[sel].d_stat.st_attr == TYPE_DIR){
-				if(!strcmp(files[sel].d_name,"..")){  up=1; }
+				if(!strcmp(files[sel].d_name,"..") || files[sel].d_name[3] == ':')
+					{  up=1; }
                 else{
-					if (files[sel].d_name[5]) {
-						strcat(path, files[sel].d_name);
-					} else strcpy(path, files[sel].d_name);
+					strcat(path, files[sel].d_name);
 					getDirNoExt(path);					
 					sel=0;
 					while (get_pad()) pgWaitV();	
@@ -826,6 +829,11 @@ int getNoExtFilePath(char *out,int can_exit) {
 						break;
 					}
 				}
+			} else if (files[0].d_name[3] == ':') {
+				strcpy(oldDir, path);
+				strcpy(path, files[0].d_name);
+				getDirNoExt(path);
+				sel = top = 0;
 			}
 			up=0;
 		}
