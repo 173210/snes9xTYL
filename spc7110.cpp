@@ -217,6 +217,9 @@ static void SetSPC7110SRAMMap (uint8);
 
 void S9xInitSPC7110 (void)
 {
+	if (s7emu.decomp.decomp_buffer == NULL)
+		s7emu.decomp.decomp_buffer =
+			(uint8_t *)malloc(s7emu.decomp.decomp_buffer_size * sizeof(uint8_t));
 	s7emu.power();
 	memset(RTCData.reg, 0, 20);
 }
