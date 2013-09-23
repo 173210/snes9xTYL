@@ -27,6 +27,9 @@
 #define printf pspDebugScreenPrintf
 #define printf2(a) msgBoxLines(a,0)
 
+extern int os9x_btn_positive_code;
+extern int os9x_btn_negative_code;
+
 ////////////////////////////////////////////////////////////////////
 // system entries
 
@@ -465,7 +468,7 @@ int adhocSelect(void)
 						DownList();
 					}
 
-					if(m_PspPad.Buttons & PSP_CTRL_CROSS)
+					if(m_PspPad.Buttons & os9x_btn_positive_code)
 					{
 						if(GetPspEntry(mac, name) > 0)
 						{
@@ -474,7 +477,7 @@ int adhocSelect(void)
 						}
 					}
 
-					if(m_PspPad.Buttons & PSP_CTRL_TRIANGLE)
+					if(m_PspPad.Buttons & os9x_btn_negative_code)
 						return -1;
 				}		
 				if(matchChanged)
@@ -501,7 +504,7 @@ int adhocSelect(void)
 
 				if(m_PspPad.Buttons != oldButtons)
 				{
-					if(m_PspPad.Buttons & PSP_CTRL_CIRCLE)
+					if(m_PspPad.Buttons & os9x_btn_negative_code)
 					{
 						sceNetAdhocMatchingCancelTarget(matchingId, mac);
 						currentState = PSP_LISTING;
@@ -539,12 +542,12 @@ int adhocSelect(void)
 
 				if(m_PspPad.Buttons != oldButtons)
 				{
-					if(m_PspPad.Buttons & PSP_CTRL_CIRCLE)
+					if(m_PspPad.Buttons & os9x_btn_negative_code)
 					{
 						sceNetAdhocMatchingCancelTarget(matchingId, mac);
 						currentState = PSP_LISTING;
 					}
-					if(m_PspPad.Buttons & PSP_CTRL_CROSS)
+					if(m_PspPad.Buttons & os9x_btn_positive_code)
 					{
 						sceNetAdhocMatchingSelectTarget(matchingId, mac, 0, 0);
 						currentState = PSP_WAIT_EST;
@@ -630,7 +633,6 @@ int adhocRecv(void *buffer, unsigned int *length)
 {
 	int err=0;
 	int pdpStatLength=20;
-	unsigned short port=0;
 	unsigned char mac[6];
 	pdpStatStruct pspStat;
 
@@ -643,11 +645,10 @@ int adhocRecv(void *buffer, unsigned int *length)
 	}
 
 	if (pspStat.rcvdData > 0)
-	{		
-		pspStat.rcvdData;
+	{
 		err = sceNetAdhocPdpRecv(pdpId,
 					mac,
-					&port,
+					NULL,
 					buffer,
 					(void *)&length,
 					0,	// 0 in lumines

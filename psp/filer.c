@@ -49,6 +49,8 @@ extern char LaunchDir[256];
 extern char SaveDir[256];
 extern int os9x_language;
 extern int os9x_netplay;
+extern int os9x_btn_positive_code;
+extern int os9x_btn_negative_code;
 extern int bg_img_mul;
 
 extern int os9x_savesnap();
@@ -489,7 +491,7 @@ int getFilePath(char *out,int can_exit) {
 		show_usbinfo();
 
 
-		if(new_pad & (PSP_CTRL_CIRCLE|PSP_CTRL_SQUARE)){
+		if(new_pad & (os9x_btn_positive_code|PSP_CTRL_SQUARE)){
 			int is_square=new_pad & PSP_CTRL_SQUARE;
 			if(files[sel].d_stat.st_attr == TYPE_DIR){
 				if(!strcmp(files[sel].d_name,"..") || files[sel].d_name[3] == ':')
@@ -515,7 +517,7 @@ int getFilePath(char *out,int can_exit) {
 						break;
 			 }
 			}		
-        else if(new_pad & PSP_CTRL_CROSS)   { if (can_exit) {retval= 0;break;} }
+        else if(new_pad & os9x_btn_negative_code)   { if (can_exit) {retval= 0;break;} }
         else if(new_pad & PSP_CTRL_TRIANGLE){ up=1;     }
         else if(new_pad & PSP_CTRL_UP)      { sel--;image_loaded=2;os9x_beep1();    }
         else if(new_pad & PSP_CTRL_DOWN)    { sel++;image_loaded=2;os9x_beep1();    }
@@ -771,7 +773,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 		 	old_pad=new_pad;
 		}
         				        
-		if(new_pad & PSP_CTRL_CIRCLE){
+		if(new_pad & os9x_btn_positive_code){
 			if(files[sel].d_stat.st_attr == TYPE_DIR){
 				if(!strcmp(files[sel].d_name,"..") || files[sel].d_name[3] == ':')
 					{  up=1; }
@@ -789,7 +791,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 						break;
 			 }
 			}		
-        else if(new_pad & PSP_CTRL_CROSS)   { if (can_exit) {retval= 0;break;} }
+        else if(new_pad & os9x_btn_negative_code)   { if (can_exit) {retval= 0;break;} }
         else if(new_pad & PSP_CTRL_TRIANGLE){ up=1;os9x_beep1();}
         else if(new_pad & PSP_CTRL_UP)      { sel--;os9x_beep1();}
         else if(new_pad & PSP_CTRL_DOWN)    { sel++;os9x_beep1();}

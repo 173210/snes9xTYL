@@ -11,6 +11,12 @@
 #define TEXT_COLOR  (12<<10)|(31<<5)|31
 #define TEXT_COLOR_OK  (4<<10)|(29<<5)|4
 #define TEXT_COLOR_CANCEL  (10<<10)|(6<<5)|29
+
+extern int os9x_btn_positive_code;
+extern int os9x_btn_negative_code;
+extern const char *os9x_btn_positive_str;
+extern const char *os9x_btn_negative_str;
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // Message box
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -270,16 +276,17 @@ int inputBox(const char *msg) {
 	char str[l+32];
 	sprintf(str,"%s\n\n                    ", msg);
 	y=msgBoxLinesRaw(str,-1);
-	mh_printCenter(y,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
-	sprintf(str,"         " SJIS_CROSS " %s", psp_msg_string(CANCEL));
+	sprintf(str,"%s OK             ", os9x_btn_positive_str);
+	mh_printCenter(y,str,TEXT_COLOR_OK);
+	sprintf(str,"         %s %s", os9x_btn_negative_str, psp_msg_string(CANCEL));
 	mh_printCenter(y,str,TEXT_COLOR_CANCEL);
 	pgScreenFlipV();
 	while (get_pad()) pgWaitV();
 	while (1){
 		pad=get_pad();
 		if (pad) while (get_pad()) pgWaitV();
-		if (pad&PSP_CTRL_CIRCLE) return 1;
-		if (pad&PSP_CTRL_CROSS) return 0;
+		if (pad&os9x_btn_positive_code) return 1;
+		if (pad&os9x_btn_negative_code) return 0;
 	}
 }
 
@@ -301,8 +308,8 @@ int inputBoxOK(const char *msg) {
 	while (1){
 		pad=get_pad();
 		if (pad) while (get_pad()) pgWaitV();
-		if (pad&PSP_CTRL_CIRCLE) return 1;
-		if (pad&PSP_CTRL_CROSS) return 0;
+		if (pad&os9x_btn_positive_code) return 1;
+		if (pad&os9x_btn_negative_code) return 0;
 	}
 }
 
@@ -405,20 +412,21 @@ int InputCodeBox(const char *msg,const char *fmt,char *code) {
 		//display it
 		i = msgBoxLinesRaw(msgCodeBox,l);
 
-		mh_printCenter(i,SJIS_CIRCLE " OK             ",TEXT_COLOR_OK);
-		sprintf(msgCodeBox,"             " SJIS_CROSS " %s", psp_msg_string(CANCEL));
+		sprintf(msgCodeBox, "%s OK             ", os9x_btn_positive_str);
+		mh_printCenter(i, msgCodeBox, TEXT_COLOR_OK);
+		sprintf(msgCodeBox,"             %s %s", os9x_btn_negative_str, psp_msg_string(CANCEL));
 		mh_printCenter(i,msgCodeBox,TEXT_COLOR_CANCEL);
 
 		pgScreenFlipV();
 
 		//wait for user input & handle it
 
-		if (new_pad&PSP_CTRL_CIRCLE) {
+		if (new_pad&os9x_btn_positive_code) {
 			strcpy(code,newCode);
 			return 0;
 		}
 		//code cancelled
-		if (new_pad&PSP_CTRL_CROSS) return 1;
+		if (new_pad&os9x_btn_negative_code) return 1;
 		//move right
 		if (new_pad&PSP_CTRL_RIGHT) {
 			if (sel<selmax-1) {sel++;os9x_beep1();}

@@ -727,6 +727,19 @@ void getsysparam(){
 	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE,&os9x_language)==(int)PSP_SYSTEMPARAM_RETVAL_FAIL)
 		//get language
 			os9x_language=PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
+	sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_UNKNOWN, &iVal);
+		//get button swap
+	if (iVal) {
+		os9x_btn_positive_code = PSP_CTRL_CROSS;
+		os9x_btn_negative_code = PSP_CTRL_CIRCLE;
+		os9x_btn_positive_str = SJIS_CROSS;
+		os9x_btn_negative_str = SJIS_CIRCLE;
+	} else {
+		os9x_btn_positive_code = PSP_CTRL_CIRCLE;
+		os9x_btn_negative_code = PSP_CTRL_CROSS;
+		os9x_btn_positive_str = SJIS_CIRCLE;
+		os9x_btn_negative_str = SJIS_CROSS;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

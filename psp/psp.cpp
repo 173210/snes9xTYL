@@ -237,9 +237,13 @@ char os9x_viewfile_path[256];
 
 char os9x_nickname[256];
 int os9x_timezone,os9x_daylsavings;
-int os9x_language=PSP_SYSTEMPARAM_LANGUAGE_ENGLISH; //need to be initialized for early error messages! (before calling getsysparam
+int os9x_language=PSP_SYSTEMPARAM_LANGUAGE_ENGLISH; //need to be initialized for early error messages! (before calling getsysparam)
 int os9x_menumusic,os9x_menufx,os9x_menupadbeep;
 int os9x_autostart,os9x_osk;
+int os9x_btn_positive_code;
+int os9x_btn_negative_code;
+const char *os9x_btn_positive_str;
+const char *os9x_btn_negative_str;
 
 IMAGE* bg_img;
 int bg_img_mul;
@@ -3029,7 +3033,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 		if (!intro_message) {
 			strcpy(str_tmp,psp_msg_string(SCROLL_STATUS_1));
 			mh_print(479-mh_length(str_tmp),262,(char*)str_tmp,31|(31<<5)|(31<<10));
-			sprintf(str_tmp,SJIS_CROSS "       SELECT       ");
+			sprintf(str_tmp, "%s       SELECT       ", os9x_btn_negative_str);
 			mh_print(479-mh_length(str_tmp),262,(char*)str_tmp,20|(31<<5)|(18<<10));
 		}
 
@@ -3261,12 +3265,12 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 						}
 					}
 				} else {
-					if (pad_val&PSP_CTRL_CROSS) { //exit
+					if (pad_val&os9x_btn_negative_code) { //exit
 						exit_message=1;
 						break;
 					}	else if (pad_val&PSP_CTRL_SELECT) { //minihelp
 						psp_msg(SCROLL_HELP, MSG_DEFAULT);
-						while (!(get_pad()&PSP_CTRL_CROSS));
+						while (!(get_pad()&os9x_btn_negative_code));
 						while (get_pad());
 						break;
 					} else if (pad_val&PSP_CTRL_TRIANGLE) { //search from position
@@ -3285,7 +3289,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 							if (!found) psp_msg(SCROLL_STRNOTFOUND, MSG_DEFAULT);
 						}
 						break;
-					}	else if ((pad_val&PSP_CTRL_CIRCLE)&&found) { //search again from position & loop if needed
+					}	else if ((pad_val&os9x_btn_positive_code)&&found) { //search again from position & loop if needed
 						psp_msg(SCROLL_SEARCHING, MSG_DEFAULT);
 						i=pos/10+2;
 						if (i>=lines) i=0;

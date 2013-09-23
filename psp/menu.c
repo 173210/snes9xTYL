@@ -89,6 +89,10 @@ extern int os9x_speedlimit,os9x_sndfreq,os9x_showfps,os9x_showpass,os9x_getnewfi
 extern int os9x_lowbat,os9x_autosavetimer,os9x_menumusic,os9x_menufx,os9x_menupadbeep;
 extern int os9x_autostart;
 extern int os9x_osk;
+extern int os9x_btn_positive_code;
+extern int os9x_btn_negative_code;
+extern const char *os9x_btn_positive_str;
+extern const char *os9x_btn_negative_str;
 extern char LaunchDir[256];
 extern char romPath[256];
 extern char lastRom[256];
@@ -279,7 +283,7 @@ int menu_screencalibrate(char *mode){
 				os9x_screenLeft=os9x_screenTop=os9x_screenWidth=os9x_screenHeight=0;
 				menu_modified=1;
 			}
-			else if (paddata.Buttons & PSP_CTRL_CROSS) exit_calib=1;
+			else if (paddata.Buttons & os9x_btn_negative_code) exit_calib=1;
 
 			if (os9x_screenWidth<-128) {os9x_screenWidth=-128;}
 			if (os9x_screenWidth>128) {os9x_screenWidth=128;}
@@ -674,7 +678,7 @@ int show_debugmenu(char *mode) {
 		 	old_pad=new_pad;
 		}
 
-		if(new_pad & PSP_CTRL_CIRCLE){
+		if(new_pad & os9x_btn_positive_code){
 			if (os9xpsp_debugmenu[sel].menu_func)
 				if ((*os9xpsp_debugmenu[sel].menu_func)(0)) {retval=0;break;}
 		} else if(new_pad & PSP_CTRL_TRIANGLE)   {
@@ -690,7 +694,7 @@ int show_debugmenu(char *mode) {
 						inputBoxOK(help_data_en[os9xpsp_debugmenu[sel].help_index]);
 				}
 			}
-		} else if(new_pad & PSP_CTRL_CROSS)   { retval= 0;break; }
+		} else if(new_pad & os9x_btn_negative_code)   { retval= 0;break; }
     else if(new_pad & PSP_CTRL_UP)      { sel--;os9x_beep1();    }
     else if(new_pad & PSP_CTRL_DOWN)    { sel++;os9x_beep1();    }
     else if(new_pad & PSP_CTRL_LTRIGGER)      { sel-=10;if (sel<0) sel=0;os9x_beep1();    }
@@ -915,7 +919,7 @@ int show_inputsmenu(char *mode) {
 		 	old_pad=new_pad;
 		}
 
-		if ((sel>0)&&(new_pad & PSP_CTRL_CIRCLE)){
+		if ((sel>0)&&(new_pad & os9x_btn_positive_code)){
 			//if (os9xpsp_inputsmenu[sel].menu_func)
 			//	if ((*os9xpsp_inputsmenu[sel].menu_func)()) {retval=0;break;}
 			char st[64];
@@ -977,7 +981,7 @@ int show_inputsmenu(char *mode) {
 			//else if (paddata.Buttons & PSP_CTRL_NOTE) *(os9xpsp_inputsmenu[sel].value_int)=PSP_NOTE;
 			os9xpsp_inputsmenu[sel].value_index=*(os9xpsp_inputsmenu[sel].value_int);
 		}
-    else if(new_pad & PSP_CTRL_CROSS)   {
+    else if(new_pad & os9x_btn_negative_code)   {
 #ifdef HOME_HOOK // [Shoey]
       retval = 0;
       break;
@@ -1570,17 +1574,18 @@ int menu_clockspeed(char *mode) {
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-	    if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+	    if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
 
-	    } else if (new_pad&PSP_CTRL_CIRCLE) {
+	    } else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -1628,16 +1633,17 @@ int menu_clockspeed(char *mode) {
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);\
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    \
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);\
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);    \
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);\
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);    \
         \
     if (to_exit) {\
     	if (menu_panel_pos>=479) return 0;\
     } else {\
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {\
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {\
     		os9x_beep1();\
     		to_exit=1;\
     		menu_cnt2=0;\
-    	} else if (new_pad&(PSP_CTRL_CIRCLE)) {\
+    	} else if (new_pad&(os9x_btn_positive_code)) {\
     		os9x_beep1();\
     		to_exit=1;\
     		menu_cnt2=0;\
@@ -1719,16 +1725,17 @@ int menu_videomode(char *mode) {
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -1783,16 +1790,17 @@ int menu_engine(char *mode) {
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -1851,16 +1859,17 @@ int menu_soundmode(char *mode) {
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	}else if (new_pad&PSP_CTRL_CIRCLE) {
+    	}else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -1903,16 +1912,17 @@ int menu_soundfreq(char *mode){
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -1966,16 +1976,17 @@ int menu_gamma(char *mode){
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -2034,16 +2045,17 @@ int menu_fskip(char *mode){
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_TRIANGLE,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,160,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,160,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -2094,16 +2106,17 @@ int menu_emulinput(char *mode){
     mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -2155,16 +2168,17 @@ int menu_menumusic(char *mode) {
 		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
 		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
 		} else {
-			if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+			if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
 				os9x_beep1();
 				to_exit=1;
 				menu_cnt2=0;
-			} else if (new_pad&(PSP_CTRL_CIRCLE)) {
+			} else if (new_pad&(os9x_btn_positive_code)) {
 				os9x_beep1();
 				to_exit=1;
 				menu_cnt2=0;
@@ -2217,16 +2231,17 @@ int menu_osk(char *mode) {
 		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
 		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
 		} else {
-			if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+			if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
 				os9x_beep1();
 				to_exit=1;
 				menu_cnt2=0;
-			} else if (new_pad&(PSP_CTRL_CIRCLE)) {
+			} else if (new_pad&(os9x_btn_positive_code)) {
 				os9x_beep1();
 				to_exit=1;
 				menu_cnt2=0;
@@ -2283,16 +2298,17 @@ int menu_autosavetimer(char *mode){
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -2456,7 +2472,7 @@ int menu_loadstate(char *mode) {
 			}
 		}
 
-		if (new_pad&PSP_CTRL_CROSS) {
+		if (new_pad&os9x_btn_negative_code) {
     	os9x_beep1();
     	retval=0;
     	break;
@@ -2474,7 +2490,7 @@ int menu_loadstate(char *mode) {
     if (new_pad&PSP_CTRL_DOWN) {
     	if (state_slot<5) state_slot+=5;
     }
-    if (new_pad&PSP_CTRL_CIRCLE) {
+    if (new_pad&os9x_btn_positive_code) {
     	if (slot_occupied_[state_slot]) {
     		slot_occupied=1;
     		if (loadstate()) {
@@ -2636,7 +2652,7 @@ int menu_savestate(char *mode) {
 			}
 		}
 
-		if (new_pad&PSP_CTRL_CROSS) {
+		if (new_pad&os9x_btn_negative_code) {
     	os9x_beep1();
     	retval=0;
     	break;
@@ -2654,7 +2670,7 @@ int menu_savestate(char *mode) {
     if (new_pad&PSP_CTRL_DOWN) {
     	if (state_slot<5) state_slot+=5;
     }
-    if (new_pad&PSP_CTRL_CIRCLE) {
+    if (new_pad&os9x_btn_positive_code) {
     	slot_occupied=slot_occupied_[state_slot];
     	if (savestate()) {
     		retval=1;
@@ -2812,7 +2828,7 @@ int menu_deletestate(char *mode) {
 			}
 		}
 
-		if (new_pad&PSP_CTRL_CROSS) {
+		if (new_pad&os9x_btn_negative_code) {
     	os9x_beep1();
     	retval=0;
     	break;
@@ -2830,7 +2846,7 @@ int menu_deletestate(char *mode) {
     if (new_pad&PSP_CTRL_DOWN) {
     	if (state_slot<5) state_slot+=5;
     }
-    if (new_pad&PSP_CTRL_CIRCLE) {
+    if (new_pad&os9x_btn_positive_code) {
     	slot_occupied=slot_occupied_[state_slot];
     	if (deletestate()) {
     		retval=0;
@@ -3005,7 +3021,7 @@ int menu_disablecode(char *mode) {
 			if (sel<Cheat.num_cheats-1) {sel++;os9x_beep1();}
 		}
 
-		if (new_pad&PSP_CTRL_CIRCLE) {
+		if (new_pad&os9x_btn_positive_code) {
 			S9xDisableCheat(sel);
 			cheats_modified=1;
     	os9x_beep1();
@@ -3013,7 +3029,7 @@ int menu_disablecode(char *mode) {
     	break;
     }
 
-		if (new_pad&PSP_CTRL_CROSS) {
+		if (new_pad&os9x_btn_negative_code) {
     	os9x_beep1();
     	retval=0;
     	break;
@@ -3057,7 +3073,7 @@ int menu_enablecode(char *mode) {
 			if (sel<Cheat.num_cheats-1) {sel++;os9x_beep1();}
 		}
 
-		if (new_pad&PSP_CTRL_CIRCLE) {
+		if (new_pad&os9x_btn_positive_code) {
 			S9xEnableCheat(sel);
 			cheats_modified=1;
     	os9x_beep1();
@@ -3065,7 +3081,7 @@ int menu_enablecode(char *mode) {
     	break;
     }
 
-		if (new_pad&PSP_CTRL_CROSS) {
+		if (new_pad&os9x_btn_negative_code) {
     	os9x_beep1();
     	retval=0;
     	break;
@@ -3108,7 +3124,7 @@ int menu_removecode(char *mode) {
 			if (sel<Cheat.num_cheats-1) {sel++;os9x_beep1();}
 		}
 
-		if (new_pad&PSP_CTRL_CIRCLE) {
+		if (new_pad&os9x_btn_positive_code) {
 			S9xDeleteCheat(sel);
 			cheats_modified=1;
     	os9x_beep1();
@@ -3116,7 +3132,7 @@ int menu_removecode(char *mode) {
     	break;
     }
 
-		if (new_pad&PSP_CTRL_CROSS) {
+		if (new_pad&os9x_btn_negative_code) {
     	os9x_beep1();
     	retval=0;
     	break;
@@ -3211,7 +3227,7 @@ int menu_credits(char *mode) {
     if (to_exit) {
     	if (menu_panel_pos>=479) break;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
@@ -3254,7 +3270,7 @@ int menu_versioninfos(char *mode) {
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
 		} else {
-			if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+			if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
 				os9x_beep1();
 				to_exit=1;
 				menu_cnt2=0;
@@ -3291,16 +3307,17 @@ int menu_fpslimit(char *mode) {
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	}	else if (new_pad&PSP_CTRL_CIRCLE) {
+    	}	else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -3356,16 +3373,17 @@ int menu_apuratio(char *mode) {
     mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
     } else {
-    	if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+    	if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
     		os9x_beep1();
     		to_exit=1;
     		menu_cnt2=0;
-    	} else if (new_pad&PSP_CTRL_CIRCLE) {
+    	} else if (new_pad&os9x_btn_positive_code) {
 	    	os9x_beep1();
 	    	to_exit=1;
 	    	menu_cnt2=0;
@@ -3421,16 +3439,17 @@ int menu_swapbg(char *mode) {
 		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_MISC_SWAPBG_RAND),PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
 		mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
-		mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_LEFT " " SJIS_CROSS "              " SJIS_CIRCLE,PANEL_BUTTONCMD_COL);
+		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
+		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
 		} else {
-		if (new_pad&(PSP_CTRL_CROSS|PSP_CTRL_LEFT)) {
+		if (new_pad&(os9x_btn_negative_code|PSP_CTRL_LEFT)) {
 			os9x_beep1();
 			to_exit=1;
 			menu_cnt2=0;
-		} else if (new_pad&PSP_CTRL_CIRCLE) {
+		} else if (new_pad&os9x_btn_positive_code) {
 			os9x_beep1();
 			if (bg_img) {
 				free(bg_img->pixels);
@@ -3997,10 +4016,10 @@ int root_menu(void) {
 						menu_stopmusic();
 						menu_startmusic();
 					}
-				} else if (new_pad & PSP_CTRL_CROSS){
+				} else if (new_pad & os9x_btn_negative_code){
 					os9x_beep1();
 					retval=0;break;
-				} else if (new_pad & PSP_CTRL_CIRCLE){
+				} else if (new_pad & os9x_btn_positive_code){
 					os9x_beep1();
 					selected=1;
 					//wait for button release
@@ -4120,7 +4139,7 @@ int root_menu(void) {
 						psp_msg(MENU_NOT_IMPLEMENTED,MSG_DEFAULT);
 						for (;;) {
 							new_pad=get_pad();
-							if (new_pad&PSP_CTRL_CROSS) break;
+							if (new_pad&os9x_btn_negative_code) break;
 						}
 					}
 				}

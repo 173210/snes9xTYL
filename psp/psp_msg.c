@@ -1,6 +1,11 @@
 #include "psp.h"
 
 extern int os9x_language;
+extern const char *os9x_btn_positive_str;
+extern const char *os9x_btn_negative_str;
+
+#define MSG_BTN_POSITIVE "\x81\x0B"
+#define MSG_BTN_NEGATIVE "\x81\x0E"
 
 #define MSG_TOTAL_ENTRIES 288
 typedef struct {
@@ -40,10 +45,10 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{INFO_DELETING,"Deleting...",0},
 	{INFO_EXITING,"Exiting, please wait...",0},
 	//filer
-	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  " SJIS_STAR "  " SJIS_CROSS " TO GAME  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse",0},
-	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
-	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " RUN " SJIS_CROSS "BACK TO GAME " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
-	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " RUN " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_CANEXIT1,MSG_BTN_POSITIVE " RUN " SJIS_SQUARE " RUN default settings  " SJIS_STAR "  " MSG_BTN_NEGATIVE " TO GAME  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse",0},
+	{FILER_STATUS_NOEXIT1,MSG_BTN_POSITIVE " RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_CANEXIT2,MSG_BTN_POSITIVE " RUN " MSG_BTN_NEGATIVE "BACK TO GAME " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
+	{FILER_STATUS_NOEXIT2,MSG_BTN_POSITIVE " RUN " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",0},
 
 	{FILER_STATUS_PARDIR, "Parent dir.", 0},
 
@@ -73,7 +78,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{FILE_IPS_APPLYING,"Found IPS patch : %s\nSize is : %dKo\nApplying ....",0},
 	{FILE_IPS_PATCHSUCCESS,"IPS Patch applied successfully",0},
 	
-	{MENU_STATUS_GENERIC_MSG1,"Press " SJIS_CROSS " to return",0},
+	{MENU_STATUS_GENERIC_MSG1,"Press " MSG_BTN_NEGATIVE " to return",0},
 	{MENU_STATUS_GENERIC_NEEDRELOAD,"Changes may require a RELOAD to take effect",0},
 	{MENU_STATUS_GENERIC_NEEDRESET,"Changes may require a RESET to take effect",0},
 	{MENU_STATUS_GENERIC_FREERAM,"Free RAM : %dKo",0},
@@ -188,7 +193,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 				SJIS_TRIANGLE " Cancel\n",0},
 #endif
 
-	{MENU_STATUS_CONTROLS_INPUT,SJIS_CIRCLE " Detect mode   " SJIS_STAR "  " SJIS_CROSS " Menu  ",0},
+	{MENU_STATUS_CONTROLS_INPUT,MSG_BTN_POSITIVE " Detect mode   " SJIS_STAR "  " MSG_BTN_NEGATIVE " Menu  ",0},
 	{MENU_STATUS_CONTROLS_INPUT_0,SJIS_STAR "  " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value  " SJIS_STAR "  SELECT default profiles",0},
 	{MENU_STATUS_CONTROLS_INPUT_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
 	{MENU_STATUS_CONTROLS_INPUT_HELP_1,SJIS_STAR "     " SJIS_TRIANGLE "   Help      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",0},
@@ -238,7 +243,7 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO,"   auto change below set value",0},
 	{MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED,"   fixed",0},
 
-	{MENU_STATUS_VIDEO_SCRCALIB,"PAD : SCREEN POSITION  " SJIS_STAR "  ANALOG STICK : SCREEN SIZE  " SJIS_STAR "  " SJIS_TRIANGLE " default  " SJIS_STAR "  " SJIS_CROSS " Exit",0},
+	{MENU_STATUS_VIDEO_SCRCALIB,"PAD : SCREEN POSITION  " SJIS_STAR "  ANALOG STICK : SCREEN SIZE  " SJIS_STAR "  " SJIS_TRIANGLE " default  " SJIS_STAR "  " MSG_BTN_NEGATIVE " Exit",0},
 
 	// SOUND OPTIONS
 	{MENU_ICONS_SOUND,"SOUND",0},
@@ -277,8 +282,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
 	{MENU_MISC_OSK_OFFICIAL,"Official",0},
 
-	{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " Main Menu   ",0},
-	{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " Main Menu   ",0},
+	{MENU_STATUS_MISC_HACKDEBUG,MSG_BTN_NEGATIVE " Main Menu   ",0},
+	{MENU_STATUS_MISC_HACKDEBUG_FUNC,MSG_BTN_POSITIVE " OK     " SJIS_STAR "    " MSG_BTN_NEGATIVE " Main Menu   ",0},
 	{MENU_STATUS_MISC_HACKDEBUG_0,SJIS_STAR "    " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
 
 	{MENU_STATUS_MISC_HACKDEBUG_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " Help       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value"},
@@ -357,9 +362,9 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{SCROLL_TITLE,"   ,   to move -  ,  for fast mode",0},
 	{SCROLL_STATUS_0,"Line %d/%d  -  Page %d/%d",0},
 	{SCROLL_STATUS_1,"   exit,        help  ",0},
-	{SCROLL_HELP,"Snes9xTYL - fileviewer\n\n" SJIS_TRIANGLE " Find, then " SJIS_CIRCLE " Find next, " SJIS_SQUARE " Find previous\n" \
-						SJIS_UP "," SJIS_DOWN " scroll text, L,R scroll faster\n" SJIS_CROSS " exit\n\nLast position is keeped if same file is reopened.\nHowever it will be reset if another file is opened.\n\n" \
-						"Press " SJIS_CROSS,0},
+	{SCROLL_HELP,"Snes9xTYL - fileviewer\n\n" SJIS_TRIANGLE " Find, then " MSG_BTN_POSITIVE " Find next, " SJIS_SQUARE " Find previous\n" \
+						SJIS_UP "," SJIS_DOWN " scroll text, L,R scroll faster\n" MSG_BTN_NEGATIVE " exit\n\nLast position is keeped if same file is reopened.\nHowever it will be reset if another file is opened.\n\n" \
+						"Press " MSG_BTN_NEGATIVE,0},
 	{SCROLL_SEARCHING,"Searching...",0},
 	{SCROLL_STRNOTFOUND,"String not found!",30},
 	{SCROLL_DISCLAIMER,"Disclaimer",0},
@@ -427,10 +432,10 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{INFO_DELETING,"削除しています...",0},
 	{INFO_EXITING,"終了しています。しばらくお待ちください...",0},
 	//filer
-	{FILER_STATUS_CANEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  " SJIS_CROSS " ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " 移動",0},
-	{FILER_STATUS_NOEXIT1,SJIS_CIRCLE " 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
-	{FILER_STATUS_CANEXIT2,SJIS_CIRCLE " 実行 " SJIS_CROSS "ゲームに戻る " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
-	{FILER_STATUS_NOEXIT2,SJIS_CIRCLE " 実行 " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_CANEXIT1,MSG_BTN_POSITIVE " 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  " MSG_BTN_NEGATIVE " ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " 移動",0},
+	{FILER_STATUS_NOEXIT1,MSG_BTN_POSITIVE " 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_CANEXIT2,MSG_BTN_POSITIVE " 実行 " MSG_BTN_NEGATIVE "ゲームに戻る " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
+	{FILER_STATUS_NOEXIT2,MSG_BTN_POSITIVE " 実行 " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",0},
 
 	{FILER_STATUS_PARDIR, "上へ", 0},
 
@@ -460,7 +465,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{FILE_IPS_APPLYING,"IPSパッチが見つかりました : %s\nサイズ : %dKo\n適用しています....",0},
 	{FILE_IPS_PATCHSUCCESS,"IPSパッチの適用に成功しました",0},
 
-	{MENU_STATUS_GENERIC_MSG1,"戻るには" SJIS_CROSS "を押してください",0},
+	{MENU_STATUS_GENERIC_MSG1,"戻るには" MSG_BTN_NEGATIVE "を押してください",0},
 	{MENU_STATUS_GENERIC_NEEDRELOAD,"変更を適用するには再読み込みが必要かもしれません",0},
 	{MENU_STATUS_GENERIC_NEEDRESET,"変更を適用するにはリセットが必要かもしれません",0},
 	{MENU_STATUS_GENERIC_FREERAM,"空きメモリ : %dKo",0},
@@ -575,7 +580,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 				SJIS_TRIANGLE " キャンセル\n",0},
 #endif
 
-	{MENU_STATUS_CONTROLS_INPUT,SJIS_CIRCLE " 検出モード   " SJIS_STAR "  " SJIS_CROSS " メニュー  ",0},
+	{MENU_STATUS_CONTROLS_INPUT,MSG_BTN_POSITIVE " 検出モード   " SJIS_STAR "  " MSG_BTN_NEGATIVE " メニュー  ",0},
 	{MENU_STATUS_CONTROLS_INPUT_0,SJIS_STAR "  " SJIS_UP "," SJIS_DOWN " 選択 " SJIS_LEFT "," SJIS_RIGHT " 値を変更  " SJIS_STAR "  SELECT 標準設定",0},
 	{MENU_STATUS_CONTROLS_INPUT_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " ヘルプ       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " 選択 " SJIS_LEFT "," SJIS_RIGHT " 値を変更",0},
 	{MENU_STATUS_CONTROLS_INPUT_HELP_1,SJIS_STAR "     " SJIS_TRIANGLE "   ヘルプ      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " 選択 " SJIS_LEFT "," SJIS_RIGHT " 値を変更",0},
@@ -625,7 +630,7 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO,"   設定値以下で自動的に変更",0},
 	{MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED,"   固定",0},
 
-	{MENU_STATUS_VIDEO_SCRCALIB,"十\字ボタン : 画面位置  " SJIS_STAR "  アナログスティック : 画面サイズ  " SJIS_STAR "  " SJIS_TRIANGLE " 標準  " SJIS_STAR "  " SJIS_CROSS " 終了",0},
+	{MENU_STATUS_VIDEO_SCRCALIB,"十\字ボタン : 画面位置  " SJIS_STAR "  アナログスティック : 画面サイズ  " SJIS_STAR "  " SJIS_TRIANGLE " 標準  " SJIS_STAR "  " MSG_BTN_NEGATIVE " 終了",0},
 
 	// SOUND OPTIONS
 	{MENU_ICONS_SOUND,"音声",0},
@@ -664,8 +669,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_MISC_OSK_DANZEFF,"Danzeff",0},
 	{MENU_MISC_OSK_OFFICIAL,"公式",0},
 
-	{MENU_STATUS_MISC_HACKDEBUG,SJIS_CROSS " メインメニュー   ",0},
-	{MENU_STATUS_MISC_HACKDEBUG_FUNC,SJIS_CIRCLE " OK     " SJIS_STAR "    " SJIS_CROSS " メインメニュー   ",0},
+	{MENU_STATUS_MISC_HACKDEBUG,MSG_BTN_NEGATIVE " メインメニュー   ",0},
+	{MENU_STATUS_MISC_HACKDEBUG_FUNC,MSG_BTN_POSITIVE " OK     " SJIS_STAR "    " MSG_BTN_NEGATIVE " メインメニュー   ",0},
 	{MENU_STATUS_MISC_HACKDEBUG_0,SJIS_STAR "    " SJIS_UP "," SJIS_DOWN " 選択 " SJIS_LEFT "," SJIS_RIGHT " 値を変更"},
 	{MENU_STATUS_MISC_HACKDEBUG_HELP_0,SJIS_STAR "      " SJIS_TRIANGLE " ヘルプ       " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " 選択 " SJIS_LEFT "," SJIS_RIGHT " 値を変更"},
 	{MENU_STATUS_MISC_HACKDEBUG_HELP_1,SJIS_STAR "     " SJIS_TRIANGLE "   ヘルプ      " SJIS_STAR "      " SJIS_UP "," SJIS_DOWN " 選択 " SJIS_LEFT "," SJIS_RIGHT " 値を変更"},
@@ -708,8 +713,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	// Adhoc
 	{ADHOC_CONNECTING,"接続しています...\n",0},
 	{ADHOC_SELECTORRETURN,"接続するサーバーを選ぶか," SJIS_TRIANGLE "ボタンで戻ってください。",0},
-	{ADHOC_WAITING,"%sが接続を承認するのを待っています。\nキャンセルするには" SJIS_CIRCLE "ボタンを押してください。\n",0},
-	{ADHOC_REQUESTED,"%sが接続を要求しています。\n接続を承認するには" SJIS_CROSS "ボタンを,キャンセルするには" SJIS_CIRCLE "ボタンを押してください。\n",0},
+	{ADHOC_WAITING,"%sが接続を承認するのを待っています。\nキャンセルするには" MSG_BTN_POSITIVE "ボタンを押してください。\n",0},
+	{ADHOC_REQUESTED,"%sが接続を要求しています。\n接続を承認するには" MSG_BTN_NEGATIVE "ボタンを,キャンセルするには" MSG_BTN_POSITIVE "ボタンを押してください。\n",0},
 	{ADHOC_CONNECTED,"接続しました",0},
 	{ADHOC_STATE,"  接続状況 %d/1\n",0},
 	{ADHOC_UNKNOWNCOMMAND,"不明なコマンド %02X です。",0},
@@ -743,9 +748,9 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{SCROLL_TITLE,"   ,    移動   -  ,  高速         ",0},
 	{SCROLL_STATUS_0,"%d/%d行目  -  %d/%dページ",0},
 	{SCROLL_STATUS_1,"   終了,        ヘルプ",0},
-	{SCROLL_HELP,"Snes9xTYL - ファイルビューワー\n\n" SJIS_TRIANGLE "ボタンで検索し,その後" SJIS_CIRCLE "ボタンで次を検索," SJIS_SQUARE "ボタンで前を検索します。\n" \
-			SJIS_UP "," SJIS_DOWN "ボタンで文章をスクロールし, L,Rボタンでより早くスクロールします。\n" SJIS_CROSS "で終了します。\n\n最後の位置は同じファイルが開かれれば維持されます。\nしかしほかのファイルを開くと元に戻ります。\n\n" \
-			SJIS_CROSS "ボタンを押してください",0},
+	{SCROLL_HELP,"Snes9xTYL - ファイルビューワー\n\n" SJIS_TRIANGLE "ボタンで検索し,その後" MSG_BTN_POSITIVE "ボタンで次を検索," SJIS_SQUARE "ボタンで前を検索します。\n" \
+			SJIS_UP "," SJIS_DOWN "ボタンで文章をスクロールし, L,Rボタンでより早くスクロールします。\n" MSG_BTN_NEGATIVE "で終了します。\n\n最後の位置は同じファイルが開かれれば維持されます。\nしかしほかのファイルを開くと元に戻ります。\n\n" \
+			MSG_BTN_NEGATIVE "ボタンを押してください",0},
 	{SCROLL_SEARCHING,"検索しています...",0},
 	{SCROLL_STRNOTFOUND,"文字列は見つかりませんでした",30},
 	{SCROLL_DISCLAIMER,"免責事項",0},
@@ -793,18 +798,31 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 //		comments : return the asked string in current language
 ////////////////////////////////////////////////////////////////////////////////////////
 char *psp_msg_string(int num) {
+	char *p;
+	char *src = (char *)"unknown string";
 	int msg_num=0;
 	if (os9x_language == PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
 		while (msg_num<MSG_TOTAL_ENTRIES) {
-			if (num==s9xTYL_msg_ja[msg_num].msg_id) return s9xTYL_msg_ja[msg_num].msg;
+			if (num==s9xTYL_msg_ja[msg_num].msg_id) src = (char *)s9xTYL_msg_ja[msg_num].msg;
 			msg_num++;
 		}
 	else
 		while (msg_num<MSG_TOTAL_ENTRIES) {
-			if (num==s9xTYL_msg_en[msg_num].msg_id) return s9xTYL_msg_en[msg_num].msg;
+			if (num==s9xTYL_msg_en[msg_num].msg_id) src = (char *)s9xTYL_msg_en[msg_num].msg;
 			msg_num++;
 		}
-	return "unknown string";//NULL;
+
+	for (p = src; *p; p++)
+		switch(*p) {
+			case 0x0B:
+				*p = os9x_btn_positive_str[1];
+				break;
+			case 0x0E:
+				*p = os9x_btn_negative_str[1];
+				break;
+		}
+
+	return src;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -816,19 +834,38 @@ char *psp_msg_string(int num) {
 //							 len allow display length value and special dialog selection
 //							 ("yes/no" box or "ok" box).
 ////////////////////////////////////////////////////////////////////////////////////////
-int psp_msg(int num,int len) {	
+int psp_msg(int num,int len) {
+	char *p = (char *)"unknown string";
 	int msg_num=0;
 
 	if (os9x_language == PSP_SYSTEMPARAM_LANGUAGE_JAPANESE)
 		while (msg_num<MSG_TOTAL_ENTRIES) {
-			if (num==s9xTYL_msg_ja[msg_num].msg_id) break;
+			if (num==s9xTYL_msg_ja[msg_num].msg_id) {
+				p = (char *)s9xTYL_msg_ja[msg_num].msg;
+				break;
+			}
 			msg_num++;
 		}
 	else
 		while (msg_num<MSG_TOTAL_ENTRIES) {
-			if (num==s9xTYL_msg_en[msg_num].msg_id) break;
+			if (num==s9xTYL_msg_en[msg_num].msg_id) {
+				p = (char *)s9xTYL_msg_en[msg_num].msg;
+				break;
+			}
 			msg_num++;
 		}
+
+	while (*p) {
+		switch(*p) {
+			case 0x0B:
+				*p = os9x_btn_positive_str[1];
+				break;
+			case 0x0E:
+				*p = os9x_btn_negative_str[1];
+				break;
+			}
+		p++;
+	}
 
 	if (msg_num==MSG_TOTAL_ENTRIES) return 0;
 
