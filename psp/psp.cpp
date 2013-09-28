@@ -1807,6 +1807,7 @@ const char *S9xGetFilename( const char *e )
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 const char *S9xGetSaveFilename( const char *e ) {
+	const char *p;
 	const char *src;
 	static char filename[_MAX_PATH + 1];
 	char *dst = filename;
@@ -1814,7 +1815,8 @@ const char *S9xGetSaveFilename( const char *e ) {
 	src = SaveDir;
 	while(*src) *dst++ = *src++;
 	src = strrchr(Memory.ROMFilename, '/');
-	while(*src != '.' && *src) *dst++ = *src++;
+	p = strrchr(src, '.');
+	while(src < p) *dst++ = *src++;
 	src = e;
 	while((*dst++ = *src++)) ;
 

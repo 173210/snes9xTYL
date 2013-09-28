@@ -461,6 +461,7 @@ int getFilePath(char *out,int can_exit) {
     	if ((files[sel].d_stat.st_attr == TYPE_FILE)&&(jpeg_files[sel])) {
 				char filename [MAXPATH + 1];
 				char *fname;
+				const char *p;
 				const char *src;
 				char *dst = filename;
 				int n;
@@ -470,8 +471,9 @@ int getFilePath(char *out,int can_exit) {
 				*dst++ = '/';
 				fname = dst;
 				src = files[sel].d_name;
-				while (*src != '.' && *src) *dst++ = *src++;
-				src = ".jpg";
+				p = strrchr(files[sel].d_name, '.');
+				while (src <= p) *dst++ = *src++;
+				src = "jpg";
 				while ((*dst++ = *src++)) ;
 
 				for (n=0;n<nfiles_jpeg;n++){
