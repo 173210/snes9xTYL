@@ -1977,7 +1977,7 @@ int menu_gamma(char *mode){
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2046,7 +2046,7 @@ int menu_fskip(char *mode){
     mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_TRIANGLE,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,160,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,160,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2299,7 +2299,7 @@ int menu_autosavetimer(char *mode){
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3308,7 +3308,7 @@ int menu_fpslimit(char *mode) {
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3374,7 +3374,7 @@ int menu_apuratio(char *mode) {
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3440,7 +3440,7 @@ int menu_swapbg(char *mode) {
 		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
 		mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
 		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
