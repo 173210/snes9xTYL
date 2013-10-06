@@ -100,6 +100,8 @@ extern char LastPath[256];
 extern char str_tmp[256];
 extern int os9x_inputs[32],os9x_inputs_analog,os9x_fpslimit,os9x_apu_ratio;
 int exit_menu,menu_modified,cheats_modified;
+int cheats_first = 0;
+int cheats_nextpage_available = 0;
 int menu_music;
 int menu_musiclen;
 char *menu_musicdata;
@@ -2994,159 +2996,123 @@ int menu_addGFcode(char *mode) {
 	return retval;
 }
 
-int menu_disablecode(char *mode) {
-	int retval=0,i,sel=0,cpt=0;
+int menu_selcode() {
+	int i, sel = 0, cpt=0;
+	int cheats_cur;
+	int cheats_dispnum;
+	const char *cheats_prevmsg_str = psp_msg_string(MENU_CHEATS_PREVPAGE);
+	int cheats_prevmsg_len = strlen(cheats_prevmsg_str);
 
-	if (mode) {mode[0]=0;return 0;}
-
-	if (!(Cheat.num_cheats)) return retval;
+	if (!Cheat.num_cheats) return -1;
 
 	for (;;) {
 		menu_basic(1);
 		cpt++;
 
-		pgFillBoxHalfer(280,13,479,18+Cheat.num_cheats*10+3);
-		for (i=0;i<Cheat.num_cheats;i++) {
-			if (i==sel) sprintf(str_tmp,"%c%s:%06X -> %02X",((cpt>>2)&1?'>':' '),Cheat.c[i].name,Cheat.c[i].address,Cheat.c[i].byte);
-			else sprintf(str_tmp,"%s:%06X -> %02X",Cheat.c[i].name,Cheat.c[i].address,Cheat.c[i].byte);
+		cheats_nextpage_available = Cheat.num_cheats - cheats_first > 15;
+		cheats_cur = cheats_first;
+		cheats_dispnum = cheats_nextpage_available ? 15 : Cheat.num_cheats - cheats_first;
 
-			if (Cheat.c[i].enabled) mh_print(290,18+i*10,str_tmp,CHEATS_ACTIVE_COL);
-			else mh_print(290,18+i*10,str_tmp,CHEATS_DISABLED_COL);
+		pgFillBoxHalfer(280, 13, 479, 28 + cheats_dispnum * 10 + 3);
+
+		mh_print(290, 18, cheats_prevmsg_str, cheats_first ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
+		mh_print(290 + cheats_prevmsg_len * 5, 18, " " SJIS_STAR, CHEATS_ACTIVE_COL);
+		mh_print(290 + (cheats_prevmsg_len + 4) * 5, 18, psp_msg_string(MENU_CHEATS_NEXTPAGE),
+		cheats_nextpage_available ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
+		for (i = 0; i < cheats_dispnum; i++) {
+			if (i == sel)
+				sprintf(str_tmp,"%c%s:%06X -> %02X",
+					(cpt >> 2) & 1 ? '>' : ' ',
+					Cheat.c[cheats_cur].name,
+					Cheat.c[cheats_cur].address,
+					Cheat.c[cheats_cur].byte);
+			else
+				sprintf(str_tmp,"%s:%06X -> %02X",
+					Cheat.c[cheats_cur].name,
+					Cheat.c[cheats_cur].address,
+					Cheat.c[cheats_cur].byte);
+
+			mh_print(290, 28+i*10, str_tmp, Cheat.c[cheats_cur].enabled ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
+			cheats_cur++;
 		}
 
-		if (new_pad&PSP_CTRL_UP) {
-			if (sel) {sel--;os9x_beep1();}
-		}
-		if (new_pad&PSP_CTRL_DOWN) {
-			if (sel<Cheat.num_cheats-1) {sel++;os9x_beep1();}
-		}
-
-		if (new_pad&os9x_btn_positive_code) {
-			S9xDisableCheat(sel);
-			cheats_modified=1;
-    	os9x_beep1();
-    	retval=0;
-    	break;
-    }
-
-		if (new_pad&os9x_btn_negative_code) {
-    	os9x_beep1();
-    	retval=0;
-    	break;
-    } else if (new_pad & PSP_CTRL_SELECT) {
-					if (os9x_menumusic) {
-						menu_stopmusic();
-						menu_startmusic();
-					}
-			 }  SNAPSHOT_CODE()
+		if (new_pad & PSP_CTRL_UP) {
+			if (sel) {
+				sel--;
+				os9x_beep1();
+			}
+		} else if (new_pad & PSP_CTRL_DOWN) {
+			if (sel < Cheat.num_cheats - 1) {
+				sel++;
+				os9x_beep1();
+			}
+		} else	if (new_pad & PSP_CTRL_RTRIGGER){
+			if (cheats_nextpage_available) cheats_first += 15;
+		} else if (new_pad & PSP_CTRL_LTRIGGER){
+			if (cheats_first) cheats_first -= 15;
+		} else if (new_pad & os9x_btn_positive_code) {
+			cheats_modified = 1;
+			os9x_beep1();
+			return cheats_first + sel;
+		} else if (new_pad&os9x_btn_negative_code) {
+			os9x_beep1();
+			return -1;
+		} else if (new_pad & PSP_CTRL_SELECT) {
+			if (os9x_menumusic) {
+				menu_stopmusic();
+				menu_startmusic();
+			}
+		}  SNAPSHOT_CODE()
 		//swap screen
 		pgScreenFlipV2();
 	}
 
-	return retval;
+	return -1;
+}
+
+int menu_disablecode(char *mode) {
+	if (mode) {
+		mode[0] = 0;
+		return 0;
+	}
+	if (!Cheat.num_cheats) return 0;
+
+	int sel = menu_selcode();
+	if (sel < 0) return 0;
+
+	S9xDisableCheat(sel);
+
+	return 0;
 }
 
 int menu_enablecode(char *mode) {
-	int retval=0,i,sel=0,cpt=0;
-
-	if (mode) {mode[0]=0;return 0;}
-
-	if (!(Cheat.num_cheats)) return retval;
-
-	for (;;) {
-		menu_basic(1);
-		cpt++;
-
-		pgFillBoxHalfer(280,13,479,18+Cheat.num_cheats*10+3);
-		for (i=0;i<Cheat.num_cheats;i++) {
-			if (i==sel) sprintf(str_tmp,"%c%s:%06X -> %02X",((cpt>>2)&1?'>':' '),Cheat.c[i].name,Cheat.c[i].address,Cheat.c[i].byte);
-			else sprintf(str_tmp,"%s:%06X -> %02X",Cheat.c[i].name,Cheat.c[i].address,Cheat.c[i].byte);
-
-			if (Cheat.c[i].enabled) mh_print(290,18+i*10,str_tmp,CHEATS_ACTIVE_COL);
-			else mh_print(290,18+i*10,str_tmp,CHEATS_DISABLED_COL);
-		}
-
-		if (new_pad&PSP_CTRL_UP) {
-			if (sel) {sel--;os9x_beep1();}
-		}
-		if (new_pad&PSP_CTRL_DOWN) {
-			if (sel<Cheat.num_cheats-1) {sel++;os9x_beep1();}
-		}
-
-		if (new_pad&os9x_btn_positive_code) {
-			S9xEnableCheat(sel);
-			cheats_modified=1;
-    	os9x_beep1();
-    	retval=0;
-    	break;
-    }
-
-		if (new_pad&os9x_btn_negative_code) {
-    	os9x_beep1();
-    	retval=0;
-    	break;
-    } else if (new_pad & PSP_CTRL_SELECT) {
-					if (os9x_menumusic) {
-						menu_stopmusic();
-						menu_startmusic();
-					}
-			 }  SNAPSHOT_CODE()
-		//swap screen
-		pgScreenFlipV2();
+	if (mode) {
+		mode[0] = 0;
+		return 0;
 	}
-	return retval;
+	if (!Cheat.num_cheats) return 0;
+
+	int sel = menu_selcode();
+	if (sel < 0) return 0;
+
+	S9xEnableCheat(sel);
+
+	return 0;
 }
 
 int menu_removecode(char *mode) {
-	int retval=0,i,sel=0,cpt=0;
-
-	if (mode) {mode[0]=0;return 0;}
-
-	if (!(Cheat.num_cheats)) return retval;
-
-	for (;;) {
-		menu_basic(1);
-		cpt++;
-
-		pgFillBoxHalfer(280,13,479,18+Cheat.num_cheats*10+3);
-		for (i=0;i<Cheat.num_cheats;i++) {
-			if (i==sel) sprintf(str_tmp,"%c%s:%06X -> %02X",((cpt>>2)&1?'>':' '),Cheat.c[i].name,Cheat.c[i].address,Cheat.c[i].byte);
-			else sprintf(str_tmp,"%s:%06X -> %02X",Cheat.c[i].name,Cheat.c[i].address,Cheat.c[i].byte);
-
-			if (Cheat.c[i].enabled) mh_print(290,18+i*10,str_tmp,CHEATS_ACTIVE_COL);
-			else mh_print(290,18+i*10,str_tmp,CHEATS_DISABLED_COL);
-		}
-
-		if (new_pad&PSP_CTRL_UP) {
-			if (sel) {sel--;os9x_beep1();}
-		}
-		if (new_pad&PSP_CTRL_DOWN) {
-			if (sel<Cheat.num_cheats-1) {sel++;os9x_beep1();}
-		}
-
-		if (new_pad&os9x_btn_positive_code) {
-			S9xDeleteCheat(sel);
-			cheats_modified=1;
-    	os9x_beep1();
-    	retval=0;
-    	break;
-    }
-
-		if (new_pad&os9x_btn_negative_code) {
-    	os9x_beep1();
-    	retval=0;
-    	break;
-    } else if (new_pad & PSP_CTRL_SELECT) {
-					if (os9x_menumusic) {
-						menu_stopmusic();
-						menu_startmusic();
-					}
-			 }  SNAPSHOT_CODE()
-		//swap screen
-		pgScreenFlipV2();
+	if (mode) {
+		mode[0] = 0;
+		return 0;
 	}
+	if (!Cheat.num_cheats) return 0;
 
-	return retval;
+	int sel = menu_selcode();
+	if (sel < 0) return 0;
+
+	S9xDeleteCheat(sel);
+
+	return 0;
 }
 
 int menu_disableallcodes(char *mode) {
@@ -3875,6 +3841,8 @@ int root_menu(void) {
 	int retval;
 	int selected=0;
 	int i;
+	const char *cheats_prevmsg_str = psp_msg_string(MENU_CHEATS_PREVPAGE);
+	int cheats_prevmsg_len = strlen(cheats_prevmsg_str);
 
 	//pgFillAllvram(0);
 	//wait for no input
@@ -3989,14 +3957,28 @@ int root_menu(void) {
 
 		if (!menu_scrolling) {
 
-			if (Cheat.num_cheats&&(menu_current_xmb_index==MENU_XMB_CHEATS)) { //cheats menu, scrolling off => drawcode list
+			if (Cheat.num_cheats && menu_current_xmb_index == MENU_XMB_CHEATS) {
+				//cheats menu, scrolling off => drawcode list
+				int cheats_cur = cheats_first;
+				cheats_nextpage_available = Cheat.num_cheats - cheats_first > 15;
+				int cheats_dispnum = cheats_nextpage_available ? 15 : Cheat.num_cheats - cheats_first;
+
 				menu_alertmsg(psp_msg_string(MENU_STATUS_GENERIC_NEEDRELOAD));
 
-				pgFillBoxHalfer(280,13,479,18+Cheat.num_cheats*10+3);
-				for (i=0;i<Cheat.num_cheats;i++) {
-					sprintf(str_tmp,"%s:%06X -> %02X",Cheat.c[i].name,Cheat.c[i].address,Cheat.c[i].byte);
-					if (Cheat.c[i].enabled) mh_print(290,18+i*10,str_tmp,CHEATS_ACTIVE_COL);
-					else mh_print(290,18+i*10,str_tmp,CHEATS_DISABLED_COL);
+
+				pgFillBoxHalfer(280, 13, 479, 28 + cheats_dispnum * 10 + 3);
+
+				mh_print(290, 18, cheats_prevmsg_str, cheats_first ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
+				mh_print(290 + cheats_prevmsg_len * 5, 18, " " SJIS_STAR, CHEATS_ACTIVE_COL);
+				mh_print(290 + (cheats_prevmsg_len + 4) * 5, 18, psp_msg_string(MENU_CHEATS_NEXTPAGE),
+					cheats_nextpage_available ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
+				for (i = 0; i < cheats_dispnum; i++) {
+					sprintf(str_tmp,"%s:%06X -> %02X",
+						Cheat.c[cheats_cur].name,
+						Cheat.c[cheats_cur].address,
+						Cheat.c[cheats_cur].byte);
+					mh_print(290, 28+i*10, str_tmp, Cheat.c[cheats_cur].enabled ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
+					cheats_cur++;
 				}
 			}
 
@@ -4041,19 +4023,23 @@ int root_menu(void) {
 					if (menu_current_xmb_index>=MENU_XMB_ICONS_NB) menu_current_xmb_index=0;
 					os9x_beep1();
 					menu_cnt2=0;*/
+					if (menu_current_xmb_index == MENU_XMB_CHEATS)
+						if (cheats_nextpage_available) cheats_first += 15;
 #ifndef FW3X
-					os9x_usballowed=!os9x_usballowed;
-        	if (os9x_usballowed) {
-        		psp_msg(INFO_USB_ON,MSG_DEFAULT);
-        		initUSBdrivers();
-        	}
-        	else {
-        		psp_msg(INFO_USB_OFF,MSG_DEFAULT);
-        		endUSBdrivers();
-        	}
+					else {
+						os9x_usballowed=!os9x_usballowed;
+        					if (os9x_usballowed) {
+        						psp_msg(INFO_USB_ON,MSG_DEFAULT);
+        						initUSBdrivers();
+        					} else {
+        						psp_msg(INFO_USB_OFF,MSG_DEFAULT);
+        						endUSBdrivers();
+        					}
+					}
 #endif
-        	menu_modified=1;
 				} else if (new_pad & PSP_CTRL_LTRIGGER){
+					if (menu_current_xmb_index == MENU_XMB_CHEATS)
+						if (cheats_first) cheats_first -= 15;
 					/*menu_current_xmb_index--;
 					if (menu_current_xmb_index<0) menu_current_xmb_index=MENU_XMB_ICONS_NB-1;
 					os9x_beep1();

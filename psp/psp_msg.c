@@ -7,7 +7,7 @@ extern const char *os9x_btn_negative_str;
 #define MSG_BTN_POSITIVE "\x81\x0B"
 #define MSG_BTN_NEGATIVE "\x81\x0E"
 
-#define MSG_TOTAL_ENTRIES 288
+#define MSG_TOTAL_ENTRIES 304
 typedef struct {
 	int msg_id;
 	char *msg;
@@ -118,6 +118,8 @@ t_err_entry s9xTYL_msg_en[MSG_TOTAL_ENTRIES]= {
 	{MENU_CHEATS_ENTERRAW,"Enter a RAW code\nFormat is ADDRESS - NEW VALUE",0},
 	{MENU_CHEATS_CONFIRMREMALL,"Remove all codes ?",-2},
 	{MENU_CHEATS_ENTERNAME,"Enter Name",0},
+	{MENU_CHEATS_PREVPAGE,"L - Prev. Page",0},
+	{MENU_CHEATS_NEXTPAGE,"R - Next Page",0},
 
 	{MENU_STATE_CONFIRMLOAD,"Current game progress will be lost.\nContinue ?",-2},
 	{MENU_STATE_CONFIRMDELETE,"Delete current state ?",-2},
@@ -505,6 +507,8 @@ t_err_entry s9xTYL_msg_ja[MSG_TOTAL_ENTRIES]= {
 	{MENU_CHEATS_ENTERRAW,"RAWコードを入力してください\n書式 : アドレス - 新しい値",0},
 	{MENU_CHEATS_ENTERNAME,"名前を入力してください",0},
 	{MENU_CHEATS_CONFIRMREMALL,"すべてのコードを削除しますか?",-2},
+	{MENU_CHEATS_PREVPAGE,"L - 前のページ",0},
+	{MENU_CHEATS_NEXTPAGE,"R - 次のページ",0},
 
 	{MENU_STATE_CONFIRMLOAD,"現在のゲーム進行が失われます。\n続行しますか?",-2},
 	{MENU_STATE_CONFIRMDELETE,"このステートセーブを削除しますか?",-2},
