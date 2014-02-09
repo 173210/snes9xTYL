@@ -29,6 +29,8 @@
 
 extern int os9x_btn_positive_code;
 extern int os9x_btn_negative_code;
+const char *os9x_btn_positive_str;
+const char *os9x_btn_negative_str;
 
 ////////////////////////////////////////////////////////////////////
 // system entries
@@ -168,7 +170,7 @@ int adhocInit(char *MatchingData)
         // wait a little before polling again
         sceKernelDelayThread(50*1000); // 50ms
     }
-    psp_msg(ADHOC_CONNECTING, MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[ADHOC_CONNECTING], 0);
 
 
 	sceWlanGetEtherAddr(mac);
@@ -337,7 +339,7 @@ int adhocReconnect(char *ssid)
         }
         if (state > stateLast)
         {
-        	sprintf(temp,psp_msg_string(ADHOC_STATE), state);
+		sprintf(temp, s9xTYL_msg[ADHOC_STATE], state);
             printf2(temp);
             stateLast = state;
         }
@@ -362,7 +364,7 @@ int adhocReconnect(char *ssid)
 	g_NetAdhocctlConnect = true;
 	
     stateLast = -1;
-    psp_msg(ADHOC_CONNECTING, MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[ADHOC_CONNECTING], 0);
     while (1)
     {
         int state;
@@ -376,7 +378,7 @@ int adhocReconnect(char *ssid)
         }
         if (state > stateLast)
         {
-        	sprintf(temp,psp_msg_string(ADHOC_STATE), state);
+		sprintf(temp, s9xTYL_msg[ADHOC_STATE], state);
             printf2(temp);
             stateLast = state;
         }
@@ -448,7 +450,7 @@ int adhocSelect(void)
 				//pspDebugScreenInit();
 				//pspDebugScreenPrintf("Select a server to connect to, or triangle to return\n\n\n");
 				pgFillAllvram(0);pgScreenFrame(2,0);
-				mh_print(0,0,psp_msg_string(ADHOC_SELECTORRETURN),0xFFFF);
+				mh_print(0, 0, s9xTYL_msg[ADHOC_SELECTORRETURN], 0xFFFF);
 				
 				DisplayPspList();
 				
@@ -498,7 +500,7 @@ int adhocSelect(void)
 				
 				sceNetEtherNtostr(mac, tempStr);
 				//printf("Waiting for %s to accept the connection\nTo cancel press O\n", tempStr);
-				sprintf(str,psp_msg_string(ADHOC_WAITING), tempStr);
+				sprintf(str, s9xTYL_msg[ADHOC_WAITING], tempStr, os9x_btn_negative_str);
 				mh_print(0,0,str,0xFFFF);
 				pgScreenFlipV();
 
@@ -536,7 +538,7 @@ int adhocSelect(void)
 				pgFillAllvram(0);pgScreenFrame(2,0);
 				
 				sceNetEtherNtostr(mac, tempStr);
-				sprintf(str,psp_msg_string(ADHOC_REQUESTED), tempStr);
+				sprintf(str, s9xTYL_msg[ADHOC_REQUESTED], tempStr, os9x_btn_positive_str, os9x_btn_negative_str);
 				mh_print(0,0,str,0xFFFF);
 				pgScreenFlipV();
 
@@ -608,7 +610,7 @@ int adhocSelect(void)
 	//pspDebugScreenInit();
 	//pspDebugScreenPrintf("Connected\n");
 	pgFillAllvram(0);pgScreenFrame(2,0);
-	mh_print(0,0,psp_msg_string(ADHOC_CONNECTED),0xFFFF);
+	mh_print(0, 0, s9xTYL_msg[ADHOC_CONNECTED], 0xFFFF);
 	pgScreenFlipV();
 
 	return 0;

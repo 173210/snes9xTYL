@@ -277,7 +277,7 @@ int load_rom_settings(int game_crc32){
 	}
 	fread(&l,1,4,f);
 	if (l<((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
-		psp_msg(SETTINGS_IGNORED, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[SETTINGS_IGNORED], 20);
 		fclose(f);
 		return -2;
 	}
@@ -341,7 +341,7 @@ else {fclose(f);check_settings();return -3;}
 	check_settings();
 	
 	rom_name[63]=0;	
-	sprintf(tmp_str,psp_msg_string(SETTINGS_FOUND),rom_name);
+	sprintf(tmp_str, s9xTYL_msg[SETTINGS_FOUND], rom_name);
 	msgBoxLines(tmp_str,30);
 	
 	
@@ -409,7 +409,7 @@ int load_buffer_settings(char *buffer){
 	memcpy(&l,buffer,4);
 	buffer_ofs+=4;
 	if (l!=((VERSION_MAJOR<<16)|VERSION_MINOR)){
-		psp_msg(SETTINGS_DIFF, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[SETTINGS_DIFF], 20);
 		return -2;
 	}
 		
@@ -516,7 +516,7 @@ int load_settings(void){
 	}
 	fread(&l,1,4,f);
 	if (l<((VERSION_MAJOR_COMP<<16)|VERSION_MINOR_COMP)){
-		psp_msg(SETTINGS_IGNORED, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[SETTINGS_IGNORED], 20);
 		fclose(f);
 		return -2;
 	}
@@ -595,7 +595,7 @@ void checkdirs() {
 		return;
 	}
 
-	psp_msg(ASK_SAVEDIR, MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[ASK_SAVEDIR], 0);
 	while (1) {
 		i = get_pad();
 		if (i) while (get_pad()) pgWaitV();
@@ -967,7 +967,7 @@ void net_send_state() {
 	filename=(char*)S9xGetSaveFilename (".znt");
 	//send file
 	if (psp_net_send_file(filename)) {
-		psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ADHOC_NETWORKERR_1], 60);
 		os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 	}
 	//reset netplay related
@@ -978,7 +978,7 @@ void net_send_state() {
 	os9x_updatepadcpt=0;os9x_padfirstcall=1;
 	//load received state
 	if (!os9x_load(".znt")) {
-		psp_msg(ADHOC_CANNOTFIND, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ADHOC_CANNOTFIND], 60);
 	}
 	remove(filename);
 	//send a sync packet
@@ -992,7 +992,7 @@ void net_flush_net(int to_send) {
 	unsigned int length;
 	pkt_send[0]=to_send;
 	adhocSend(pkt_send, NET_PKT_LEN);
-	psp_msg(ADHOC_FLUSHING, MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[ADHOC_FLUSHING], 10);
 	do {
 		length=NET_PKT_LEN;
 	} while (adhocRecvBlocked(pkt_recv, &length,RECV_MAX_RETRY)>0);
@@ -1021,7 +1021,7 @@ int net_waitpause_state(int show_menu){
 			}
 		}
 		if ((in_emu==1)&&os9x_netplay&&os9x_getnewfile) {
-			psp_msg(ADHOC_CLOSING, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[ADHOC_CLOSING], 60);
 #ifdef USE_ADHOC
 			os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 #else
@@ -1032,12 +1032,12 @@ int net_waitpause_state(int show_menu){
 
 #ifdef USE_ADHOC
 	if (os9x_netplay) {
-		psp_msg(ADHOC_WAITING_OTHER, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ADHOC_WAITING_OTHER], 10);
 
 		//filename																																			
 		filename=(char*)S9xGetSaveFilename (".znt");
 		if ((ret=psp_net_recv_file(filename))<0) {
-			psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[ADHOC_NETWORKERR_1], 60);
 			os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 			after_pause();
 			return ret;
@@ -1052,7 +1052,7 @@ int net_waitpause_state(int show_menu){
 
 		//load received state
 		if (!os9x_load(".znt")) {
-			psp_msg(ADHOC_CANNOTFIND, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[ADHOC_CANNOTFIND], 60);
 		}
 		remove(filename);
 
@@ -1083,7 +1083,7 @@ void net_send_settings() {
 	fclose(f);
 
 	if (psp_net_send_file(filename)) {
-		psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ADHOC_NETWORKERR_1], 60);
 		os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 	} else {
 		//reset netplay related
@@ -1111,11 +1111,11 @@ void net_receive_settings() {
 
 	sprintf(filename,"%stmp.ini",LaunchDir);
 
-	psp_msg(ADHOC_WAITING_OTHER, MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[ADHOC_WAITING_OTHER], 10);
 
 	//filename																																									
 	if ((ret=psp_net_recv_file(filename))<0) {
-		psp_msg(ADHOC_NETWORKERR_1, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ADHOC_NETWORKERR_1], 60);
 		os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 	} else {
 		//reset netplay related
@@ -1147,7 +1147,7 @@ void check_battery() {
 		int oldvalue=os9x_lowbat;
 		os9x_lowbat=scePowerIsLowBattery();
 		if ((os9x_lowbat)&&(!oldvalue)) {
-			psp_msg(BAT_ISLOW, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[BAT_ISLOW], 60 * 3);
 			pgFillAllvram(0);
 			//reset timer for synchro stuff
 		} else if ((!os9x_lowbat)&&(oldvalue)) {
@@ -1188,19 +1188,19 @@ int initUSBdrivers(void) {
 	if (state & PSP_USB_ACTIVATED) return 0;
 	int retVal = sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
 	if (retVal != 0) {
-		sprintf(str_tmp,psp_msg_string(ERR_USB_STARTING_USBBUS), retVal);
+		sprintf(str_tmp, s9xTYL_msg[ERR_USB_STARTING_USBBUS], retVal);
 			msgBoxLines(str_tmp,60);
 			return -1;
 	}
 	retVal = sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
 	if (retVal != 0) {
-		sprintf(str_tmp,psp_msg_string(ERR_USB_STARTING_USBMASS),retVal);
+		sprintf(str_tmp, s9xTYL_msg[ERR_USB_STARTING_USBMASS], retVal);
 		msgBoxLines(str_tmp,60);
 		return -2;
 	}
 	retVal = sceUsbstorBootSetCapacity(0x800000);
 	if (retVal != 0) {
-		sprintf(str_tmp,psp_msg_string(ERR_USB_SETTING_CAPACITY),retVal);
+		sprintf(str_tmp, s9xTYL_msg[ERR_USB_SETTING_CAPACITY], retVal);
 		msgBoxLines(str_tmp,60);
 		return -3;
 	}

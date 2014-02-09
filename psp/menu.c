@@ -152,7 +152,7 @@ void menu_inputName(char *name);
 void show_batteryinfo(void);
 void show_usbinfo(void);
 
-void menu_alertmsg(char *msg) {
+void menu_alertmsg(const char *msg) {
 	int x,cx,co1,co1b,co2,co2b,co3,co3b;
 	if (!msg) return;
 	pgFillBoxHalfer(13,13,13+5+mh_length(msg)+5,13+5+20+5);
@@ -240,7 +240,7 @@ int menu_screencalibrate(char *mode){
 				guDrawBuffer(snes_image,256,os9x_snesheight-16,256,480,272);
 				break;
 		}
-		sprintf(st,psp_msg_string(MENU_STATUS_VIDEO_SCRCALIB));
+		sprintf(st, s9xTYL_msg[MENU_STATUS_VIDEO_SCRCALIB], os9x_btn_negative_str);
 		mh_print(8-1,262-1,st,(8<<10)|(8<<5)|(16<<0));
 		mh_print(8,262,st,(29<<10)|(29<<5)|(31<<0));
 
@@ -306,7 +306,7 @@ int menu_screencalibrate(char *mode){
 int menu_exitemu(char *mode){
 	if (mode) {mode[0]=0;return 0;}
 
-	if (!(psp_msg(ASK_EXIT,MSG_DEFAULT))) return 0;
+	if (!inputBox(s9xTYL_msg[ASK_EXIT])) return 0;
 	StopSoundThread();
 	S9xExit();
 	return 1;
@@ -316,8 +316,8 @@ int loadstate(){
   char ext[10];
 
   if (slot_occupied) {
-  	if (!psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) return 0;
-  	psp_msg(MENU_STATE_ISLOADING,MSG_DEFAULT);
+  	if (!inputBox(s9xTYL_msg[MENU_STATE_CONFIRMLOAD])) return 0;
+  	msgBoxLines(s9xTYL_msg[MENU_STATE_ISLOADING], 10);
   	if (state_slot==10) strcpy(ext,".zat");
   	else {
   		strcpy(ext,".za0");
@@ -326,7 +326,7 @@ int loadstate(){
   	os9x_load(ext);
   	return 1;
   }
-  psp_msg(MENU_STATE_NOSTATE,MSG_DEFAULT);
+  msgBoxLines(s9xTYL_msg[MENU_STATE_NOSTATE], 10);
   return 0;
 }
 
@@ -334,8 +334,8 @@ int deletestate(){
   char ext[10];
 
   if (slot_occupied) {
-  	if (!psp_msg(MENU_STATE_CONFIRMDELETE,MSG_DEFAULT)) return 0;
-  	psp_msg(MENU_STATE_ISDELETING,MSG_DEFAULT);
+  	if (!inputBox(s9xTYL_msg[MENU_STATE_CONFIRMDELETE])) return 0;
+  	msgBoxLines(s9xTYL_msg[MENU_STATE_ISDELETING], 10);
   	if (state_slot==10) strcpy(ext,".zat");
   	else {
   		strcpy(ext,".za0");
@@ -344,17 +344,17 @@ int deletestate(){
   	os9x_remove(ext);
   	return 1;
   }
-  psp_msg(MENU_STATE_NOSTATE,MSG_DEFAULT);
+  msgBoxLines(s9xTYL_msg[MENU_STATE_NOSTATE], 10);
   return 0;
 }
 
 int savestate(){
 	char ext[10];
 	if (os9x_lowbat)
-		if(!psp_msg(MENU_STATE_WARNING_LOWBAT, MSG_DEFAULT)) return 0;
+		if(!inputBox(s9xTYL_msg[MENU_STATE_WARNING_LOWBAT])) return 0;
 	if (slot_occupied)
-  		if (!psp_msg(MENU_STATE_CONFIRMSAVE,MSG_DEFAULT)) return 0;
-	psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
+  		if (!inputBox(s9xTYL_msg[MENU_STATE_CONFIRMSAVE])) return 0;
+	msgBoxLines(s9xTYL_msg[MENU_STATE_ISSAVING], 10);
 	if (state_slot==10) strcpy(ext,".zat");
 	else {
   		strcpy(ext,".za0");
@@ -366,7 +366,7 @@ int savestate(){
 
 int menu_reset(char *mode){
 	if (mode) {mode[0]=0;return 0;}
-	if (!psp_msg(MENU_GAME_CONFIRMRESET,MSG_DEFAULT)) return 0;
+	if (!inputBox(s9xTYL_msg[MENU_GAME_CONFIRMRESET])) return 0;
 	if (!os9x_lowbat) os9x_savesram();
   S9xReset();
   return 1;
@@ -380,7 +380,7 @@ int menu_browser(char *mode){
 
 int menu_snapshot(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
-	psp_msg(MENU_MISC_SAVINGJPEG,MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[MENU_MISC_SAVINGJPEG], 10);
 	if (!os9x_lowbat) os9x_savesnap();
 	return 0;
 }
@@ -391,8 +391,8 @@ int menu_importstate(char *mode) {
 
 	if (getNoExtFilePath(statefilename,1)==1) {
 		debug_log(statefilename);
-		if (!psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) return 0;
-		psp_msg(MENU_STATE_ISIMPORTING,MSG_DEFAULT);
+		if (!inputBox(s9xTYL_msg[MENU_STATE_CONFIRMLOAD])) return 0;
+		msgBoxLines(s9xTYL_msg[MENU_STATE_ISIMPORTING], 10);
 		return os9x_loadfname(statefilename);
 	}
 	return 0;
@@ -401,10 +401,10 @@ int menu_importstate(char *mode) {
 int menu_exportS9Xstate(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 
-  if (os9x_lowbat) return 1;
-  psp_msg(MENU_STATE_ISEXPORTINGS9X,MSG_DEFAULT);
-  os9x_S9Xsave(".000");
-  return 0;
+	if (os9x_lowbat) return 1;
+	msgBoxLines(s9xTYL_msg[MENU_STATE_ISEXPORTINGS9X], 10);
+	os9x_S9Xsave(".000");
+	return 0;
 }
 
 
@@ -439,7 +439,7 @@ int menu_viewfile(char *mode) {
 				txtdata=(char*)malloc(fsize+2);
 				if (!txtdata) {
 					fclose(f);
-					psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
+					msgBoxLines(s9xTYL_msg[ERR_OUT_OF_MEM], 60);
 					return 0;
 				}
 				fread(txtdata,1,fsize,f);
@@ -491,7 +491,7 @@ int menu_viewfile(char *mode) {
 					char *newtxtdata;
 					newtxtdata=(char*)malloc(fsize+2+newlines);
 					if (!newtxtdata) {
-						psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
+						msgBoxLines(s9xTYL_msg[ERR_OUT_OF_MEM], 60);
 						return 0;
 					}
 					memcpy(newtxtdata,txtdata,fsize+2);
@@ -503,7 +503,7 @@ int menu_viewfile(char *mode) {
 				msg_lines=(char**)malloc(lines*sizeof(char*));
 				if (!msg_lines) {
 					free(txtdata);
-					psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
+					msgBoxLines(s9xTYL_msg[ERR_OUT_OF_MEM], 60);
 					return 0;
 				}
 				msg_lines[0]=msg_lines[1]=NULL;
@@ -579,7 +579,7 @@ int menu_viewfile(char *mode) {
 int menu_savedefaultsetting(char *mode){
 	if (mode) {mode[0]=0;return 0;}
 
-	psp_msg(MENU_GAME_SAVINGDEFAULTSETTINGS,MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[MENU_GAME_SAVINGDEFAULTSETTINGS], 30);
 	if (!os9x_lowbat) save_rom_settings(0,"default");
 	return 0;
 }
@@ -603,25 +603,25 @@ extern int os9x_SA1_exec;
 #define DEBUGMENU_ITEMS 20
 
 menu_time_t os9xpsp_debugmenu[DEBUGMENU_ITEMS]={
-	{"Show rendering passes : ",10,NULL,&os9x_showpass,2,{0,1},0,{"Off","On"}},
+	{"Show rendering passes : ", HELP_SHOWPASS, NULL, &os9x_showpass, 2, {0, 1}, 0, {"Off", "On"}},
 	{"--------",-1,NULL,NULL,0,{0},0,{NULL}},
-	{"Speed hacks : ",11,NULL,&os9x_applyhacks,2,{0,1},0,{"Off","On"}},
+	{"Speed hacks : ", HELP_APPLYHACKS, NULL, &os9x_applyhacks, 2, {0, 1}, 0, {"Off", "On"}},
 	{"--------",-1,NULL,NULL,0,{0},0,{NULL}},
-	{"Ignore Fixed Colour : ",12,NULL,&os9x_ignore_fixcol,2,{0,1},0,{"Off","On"}},
-	{"Ignore Windows clipping : ",13,NULL,&os9x_ignore_winclip,2,{0,1},0,{"Off","On"}},
-	{"Ignore Add/Sub modes : ",14,NULL,&os9x_ignore_addsub,2,{0,1},0,{"Off","On"}},
-	{"Ignore Palette writes : ",15,NULL,&os9x_ignore_palwrite,2,{0,1},0,{"Off","On"}},
+	{"Ignore Fixed Colour : ", HELP_IGNORE_FIXCOL, NULL, &os9x_ignore_fixcol, 2, {0, 1}, 0, {"Off", "On"}},
+	{"Ignore Windows clipping : ", HELP_IGNORE_WINCLIP, NULL, &os9x_ignore_winclip, 2, {0, 1}, 0, {"Off", "On"}},
+	{"Ignore Add/Sub modes : ", HELP_IGNORE_ADDSUB, NULL, &os9x_ignore_addsub, 2, {0, 1}, 0, {"Off", "On"}},
+	{"Ignore Palette writes : ", HELP_IGNORE_PALWRITE, NULL, &os9x_ignore_palwrite, 2, {0, 1}, 0, {"Off", "On"}},
 	{"Simple Palette writes : ",-1,NULL,&os9x_fix_hires,2,{0,1},0,{"Off","On"}},
-	{"Old PSP accel.: ",12,NULL,&os9x_old_accel,2,{0,1},0,{"Off","On"}},
+	{"Old PSP accel.: ", -1, NULL, &os9x_old_accel, 2, {0, 1}, 0, {"Off", "On"}},
 	{"--------",-1,NULL,NULL,0,{0},0,{NULL}},
-	{"No Transparency : ",22,NULL,&os9x_easy,2,{0,1},0,{"Off","On"}},
-	{"Fast sprites : ",23,NULL,&os9x_fastsprite,2,{0,1},0,{"Off","On"}},
+	{"No Transparency : ", HELP_EASY, NULL, &os9x_easy, 2, {0, 1}, 0,{"Off", "On"}},
+	{"Fast sprites : ", HELP_FASTSPRITE, NULL, &os9x_fastsprite, 2, {0, 1}, 0, {"Off", "On"}},
 	{"--------",-1,NULL,NULL,0,{0},0,{NULL}},
-	{"OBJ : ",17,NULL,&os9x_OBJ,2,{0,1},0,{"Off","On"}},
-	{"BG0 : ",18,NULL,&os9x_BG0,2,{0,1},0,{"Off","On"}},
-	{"BG1 : ",19,NULL,&os9x_BG1,2,{0,1},0,{"Off","On"}},
-	{"BG2 : ",20,NULL,&os9x_BG2,2,{0,1},0,{"Off","On"}},
-	{"BG3 : ",21,NULL,&os9x_BG3,2,{0,1},0,{"Off","On"}},
+	{"OBJ : ", HELP_OBJ, NULL, &os9x_OBJ, 2, {0, 1}, 0, {"Off", "On"}},
+	{"BG0 : ", HELP_BG0, NULL, &os9x_BG0, 2, {0, 1}, 0, {"Off", "On"}},
+	{"BG1 : ", HELP_BG1, NULL, &os9x_BG1, 2, {0, 1}, 0, {"Off", "On"}},
+	{"BG2 : ", HELP_BG2, NULL, &os9x_BG2, 2, {0, 1}, 0, {"Off", "On"}},
+	{"BG3 : ", HELP_BG3, NULL, &os9x_BG3, 2, {0, 1}, 0, {"Off", "On"}},
 	{"SA1 Option : ",-1,NULL,&os9x_SA1_exec,9,{1,2,3,4,5,6,7,8,9},1,{"1","2","3","4","5","6","7","8","9"}}
 };
 
@@ -629,6 +629,7 @@ menu_time_t os9xpsp_debugmenu[DEBUGMENU_ITEMS]={
 int show_debugmenu(char *mode) {
 	//int counter=0;
 	unsigned long color=RGB_WHITE;
+	static const char **help_data;
 	static int sel=0;
 	int rows=28,x, y, h, i,j,top=0;
 	int cpt;
@@ -661,7 +662,15 @@ int show_debugmenu(char *mode) {
     }
 	}
 
-
+	switch (os9x_language) {
+		case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
+			i = HELP_JA;
+			break;
+		default:
+			i = HELP_EN;
+			break;
+	}
+	help_data = help_data_ml[i];
 
 	old_pad=0;
 	cpt=0;
@@ -684,18 +693,8 @@ int show_debugmenu(char *mode) {
 			if (os9xpsp_debugmenu[sel].menu_func)
 				if ((*os9xpsp_debugmenu[sel].menu_func)(0)) {retval=0;break;}
 		} else if(new_pad & PSP_CTRL_TRIANGLE)   {
-			if (os9xpsp_debugmenu[sel].help_index>=0) {
-				switch (os9x_language) {
-					case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
-						inputBoxOK(help_data_ja[os9xpsp_debugmenu[sel].help_index]);
-						break;
-					case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
-						inputBoxOK(help_data_fr[os9xpsp_debugmenu[sel].help_index]);
-						break;
-					default:
-						inputBoxOK(help_data_en[os9xpsp_debugmenu[sel].help_index]);
-				}
-			}
+			if (os9xpsp_debugmenu[sel].help_index>=0)
+				inputBoxOK(help_data[os9xpsp_debugmenu[sel].help_index]);
 		} else if(new_pad & os9x_btn_negative_code)   { retval= 0;break; }
     else if(new_pad & PSP_CTRL_UP)      { sel--;os9x_beep1();    }
     else if(new_pad & PSP_CTRL_DOWN)    { sel++;os9x_beep1();    }
@@ -729,29 +728,34 @@ int show_debugmenu(char *mode) {
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Main menu \5,\7 to select ,\6,\b to change value");
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
-    mh_print(0,0,psp_msg_string(MENU_TITLE_MISC_HACKDEBUG),TITLE_COL);
+    mh_print(0, 0, s9xTYL_msg[MENU_TITLE_MISC_HACKDEBUG], TITLE_COL);
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Return game \5,\7 to select ,\6,\b to change value");
     {
     	char status_bar[100];
-    	if (os9xpsp_debugmenu[sel].menu_func) strcpy(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_FUNC));
-    	else strcpy(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG));
+    	if (os9xpsp_debugmenu[sel].menu_func)
+		sprintf(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG_FUNC], os9x_btn_positive_str, os9x_btn_negative_str);
+    	else sprintf(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG], os9x_btn_negative_str);
     	if (os9xpsp_debugmenu[sel].help_index>=0) {
     		switch ((cpt>>3)&7) {
 			case 0:
     			case 7:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_0));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG_HELP_0]);
+				break;
 			case 1:
     			case 6:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_1));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG_HELP_1]);
+				break;
     			case 2:
 			case 5:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_2));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG_HELP_2]);
+				break;
     			case 3:
 			case 4:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_HELP_3));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG_HELP_3]);
+				break;
     		}
     	}
-    	else strcat(status_bar,psp_msg_string(MENU_STATUS_MISC_HACKDEBUG_0));
+    	else strcat(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG_0]);
     	mh_print(8,262,  status_bar,INFOBAR_COL);
 		}
 
@@ -931,7 +935,7 @@ int show_inputsmenu(char *mode) {
 			// wait for no button pressed
 			while (get_pad()) pgWaitV();
 			//message asking a button press
-			sprintf(st,psp_msg_string(MENU_CONTROLS_INPUT_PRESS),os9xpsp_inputsmenu[sel].label);
+			sprintf(st, s9xTYL_msg[MENU_CONTROLS_INPUT_PRESS], os9xpsp_inputsmenu[sel].label);
 			msgBoxLines(st,0);
 			//wait for a press
 			while (1) {
@@ -990,7 +994,7 @@ int show_inputsmenu(char *mode) {
 #else
       //check menu access button
     	if (inputs_MENU==PSP_BUTTONS_TOTAL) {
-    		psp_msg(MENU_CONTROLS_INPUT_NOFORMENU,MSG_DEFAULT);
+    		msgBoxLines(s9xTYL_msg[MENU_CONTROLS_INPUT_NOFORMENU], 30);
     	}
       else {
         retval= 0;
@@ -1032,7 +1036,7 @@ int show_inputsmenu(char *mode) {
     }
     else if(new_pad & PSP_CTRL_SELECT) { //default profile
     	SceCtrlData paddata;
-    	psp_msg(MENU_CONTROLS_INPUT_DEFAULT,MSG_DEFAULT);
+    	msgBoxLines(s9xTYL_msg[MENU_CONTROLS_INPUT_DEFAULT], 0);
     	// wait for no button pressed
 			while (get_pad()) pgWaitV();
 			//wait for a press
@@ -1127,31 +1131,35 @@ int show_inputsmenu(char *mode) {
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Main menu \5,\7 to select ,\6,\b to change value");
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
-    mh_print(0,0,psp_msg_string(MENU_TITLE_CONTROLS_INPUT),TITLE_COL);
+    mh_print(0, 0, s9xTYL_msg[MENU_TITLE_CONTROLS_INPUT], TITLE_COL);
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Return game \5,\7 to select ,\6,\b to change value");
     //mh_print(8,262,SJIS_CIRCLE " OK " SJIS_CROSS " Back to Game       " SJIS_STAR "       " SJIS_TRIANGLE " Help        " SJIS_STAR "       " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",INFOBAR_COL);
     {
     	char status_bar[100];
     	/*if (os9xpsp_debugmenu[sel].menu_func) strcpy(status_bar,SJIS_CIRCLE " OK ");
     	else strcpy(status_bar,"");*/
-    	strcpy(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT));
+    	sprintf(status_bar, s9xTYL_msg[MENU_STATUS_CONTROLS_INPUT], os9x_btn_positive_str, os9x_btn_negative_str);
     	if (os9xpsp_inputsmenu[sel].help_index>=0) {
     		switch ((cpt>>3)&7) {
 			case 0:
     			case 7:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_0));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_CONTROLS_INPUT_HELP_0]);
+				break;
     			case 1:
 			case 6:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_1));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_CONTROLS_INPUT_HELP_1]);
+				break;
     			case 2:
 			case 5:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_2));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_CONTROLS_INPUT_HELP_2]);
+				break;
     			case 3:
 			case 4:
-    				strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_HELP_3));break;
+    				strcat(status_bar, s9xTYL_msg[MENU_STATUS_CONTROLS_INPUT_HELP_3]);
+				break;
     		}
     	}
-    	else strcat(status_bar,psp_msg_string(MENU_STATUS_CONTROLS_INPUT_0));
+    	else strcat(status_bar, s9xTYL_msg[MENU_STATUS_CONTROLS_INPUT_0]);
     	mh_print(8,262,  status_bar,INFOBAR_COL);
 		}
 
@@ -1245,13 +1253,14 @@ void show_batteryinfo(void){
 			//if exists battery, gather infos
 			char bat_time[16];
 	  	int batteryLifeTime = scePowerGetBatteryLifeTime();
-	  	if (batteryLifeTime > 0) sprintf(bat_time,psp_msg_string(MENU_TITLE_GENERIC_BAT_TIME),batteryLifeTime/60, batteryLifeTime-(batteryLifeTime/60*60));
+	  	if (batteryLifeTime > 0)
+			sprintf(bat_time, s9xTYL_msg[MENU_TITLE_GENERIC_BAT_TIME], batteryLifeTime / 60, batteryLifeTime - (batteryLifeTime / 60 * 60));
 		  else bat_time[0]=0;
-	   	sprintf(bat_info,psp_msg_string(MENU_TITLE_GENERIC_BAT),
-		   		tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min,
-	   			(scePowerIsPowerOnline()?psp_msg_string(MENU_TITLE_GENERIC_BAT_PLG):""),
-	   			(scePowerIsBatteryCharging()?psp_msg_string(MENU_TITLE_GENERIC_BAT_CHRG):""),
-		   		(scePowerIsLowBattery()?psp_msg_string(MENU_TITLE_GENERIC_BAT_LOW):""),
+	   	sprintf(bat_info, s9xTYL_msg[MENU_TITLE_GENERIC_BAT],
+		   		tsys->tm_hour, (tsys->tm_sec&1?':':' '), tsys->tm_min,
+	   			(scePowerIsPowerOnline() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_PLG] : ""),
+	   			(scePowerIsBatteryCharging() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_CHRG] : ""),
+		   		(scePowerIsLowBattery() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_LOW] : ""),
 		   		scePowerGetBatteryLifePercent(),
 		   		bat_time,
 		  		scePowerGetBatteryTemp());
@@ -1385,14 +1394,14 @@ void menu_startmusic(){
 		if (strlen(OSPC_GameTitle())) strcpy(menu_music_gametitle,OSPC_GameTitle());
 		else strncpy(menu_music_gametitle,str_tmp,33);
 		if (strlen(OSPC_SongName())) strcpy(menu_music_songname,OSPC_SongName());
-		else strcpy(menu_music_songname,psp_msg_string(MENU_MISC_BGMUSIC_UNKNOWN));
+		else strcpy(menu_music_songname, s9xTYL_msg[MENU_MISC_BGMUSIC_UNKNOWN]);
 		if (strlen(OSPC_Author())) strcpy(menu_music_author,OSPC_Author());
-		else strcpy(menu_music_author,psp_msg_string(MENU_MISC_BGMUSIC_UNKNOWN));
+		else strcpy(menu_music_author, s9xTYL_msg[MENU_MISC_BGMUSIC_UNKNOWN]);
 
-		menu_music_panel_size=mh_length(menu_music_gametitle)+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_GAMETITLE))+10;
-		l=mh_length(menu_music_songname)+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_TITLE))+10;
+		menu_music_panel_size = mh_length(menu_music_gametitle) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE]) + 10;
+		l = mh_length(menu_music_songname) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE]) + 10;
 		if (l>menu_music_panel_size) menu_music_panel_size=l;
-		l=mh_length(menu_music_author)+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_AUTHOR))+10;
+		l = mh_length(menu_music_author) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR]) + 10;
 		if (l>menu_music_panel_size) menu_music_panel_size=l;
 
 		menu_music_panel_pos=-menu_music_panel_size;
@@ -1484,14 +1493,15 @@ void menu_basic(int selected) {
 
 	//add the 'X to return' message at bottom
 	if (selected > -2) {
-		mh_printCenter(262,psp_msg_string(MENU_STATUS_GENERIC_MSG1),INFOBAR_COL);
+		sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], os9x_btn_negative_str);
+		mh_printCenter(262, str_tmp, INFOBAR_COL);
 
 		{
-			sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_FREERAM),menu_free_ram);
+			sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_FREERAM], menu_free_ram);
 			mh_print(480-mh_length(str_tmp),262,str_tmp,INFOBAR_COL);
 		}
 		if (menu_music) {
-			sprintf(str_tmp,psp_msg_string(MENU_STATUS_GENERIC_CHANGEMUSIC));
+			sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_CHANGEMUSIC]);
 			mh_print(13,262,str_tmp,INFOBAR_COL);
 		}
 	}
@@ -1543,12 +1553,12 @@ void menu_basic(int selected) {
 	    pgDrawFrame(menu_music_panel_pos+2,271-33,menu_music_panel_pos+2,271,24|(24<<5)|(24<<10));
 	    pgDrawFrame(menu_music_panel_pos+3,271-34,menu_music_panel_pos+3,271,31|(31<<5)|(31<<10));
 
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-30,psp_msg_string(MENU_MISC_BGMUSIC_GAMETITLE),PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_GAMETITLE)),271-30,menu_music_gametitle,PANEL_BUTTONCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-20,psp_msg_string(MENU_MISC_BGMUSIC_TITLE),PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_TITLE)),271-20,menu_music_songname,PANEL_BUTTONCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5,271-10,psp_msg_string(MENU_MISC_BGMUSIC_AUTHOR),PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5+mh_length(psp_msg_string(MENU_MISC_BGMUSIC_AUTHOR)),271-10,menu_music_author,PANEL_BUTTONCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 30, s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE], PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE]), 271-30, menu_music_gametitle, PANEL_BUTTONCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 20, s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE], PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE]), 271 - 20, menu_music_songname, PANEL_BUTTONCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 10, s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR], PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR]), 271 - 10, menu_music_author, PANEL_BUTTONCMD_COL);
 	  }
 	  //check music
 	  if (OSPC_IsFinished()) {
@@ -1573,9 +1583,9 @@ int menu_clockspeed(char *mode) {
 
     sprintf(str_tmp,"%dMHz",new_value);
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -1623,19 +1633,21 @@ int menu_clockspeed(char *mode) {
 	int retval=0;\
 	int to_exit=0;\
 	int new_value=label;\
-	if (mode) {sprintf(mode,"%s",(label?psp_msg_string(MENU_YES):psp_msg_string(MENU_NO)));return 0;}\
+	if (mode) { \
+		strcpy(mode, s9xTYL_msg[label ? MENU_YES : MENU_NO]); \
+		return 0; \
+	} \
 	menu_panel_pos=479;\
 	menu_cnt2=0;\
 	for (;;) {		\
 		menu_basic(2+to_exit);\
 		if (!g_bLoop) {retval=1;break;} \
-		\
-    sprintf(str_tmp,"%s",(new_value?psp_msg_string(MENU_YES):psp_msg_string(MENU_NO)));\
-    mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));\
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);\
+\
+	mh_printLimit(menu_panel_pos + 5, 104, 479, 272, s9xTYL_msg[new_value ? MENU_YES : MENU_NO], 31 | (24 << 5)|(24 << 10)); \
+	mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL); \
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    \
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);\
-    sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);\
+	mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL); \
+	sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);\
     mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);    \
         \
     if (to_exit) {\
@@ -1698,12 +1710,24 @@ int menu_videomode(char *mode) {
 	int new_value=os9x_render;
 	if (mode) {
 			switch (os9x_render) {
-			case 0:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_1_1));break;
-			case 1:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_ZOOM_FIT));break;
-			case 2:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_ZOOM_4_3RD));break;
-			case 3:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_ZOOM_WIDE));break;
-			case 4:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN));break;
-			case 5:sprintf(mode,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN_CLIPPED));break;
+			case 0:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_MODE_1_1]);
+				break;
+			case 1:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_MODE_ZOOM_FIT]);
+				break;
+			case 2:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_MODE_ZOOM_4_3RD]);
+				break;
+			case 3:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_MODE_ZOOM_WIDE]);
+				break;
+			case 4:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_MODE_FULLSCREEN]);
+				break;
+			case 5:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_MODE_FULLSCREEN_CLIPPED]);
+				break;
 		}
 		return 0;
 	}
@@ -1715,18 +1739,30 @@ int menu_videomode(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 
 		switch (new_value) {
-			case 0:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_1_1));break;
-			case 1:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_ZOOM_FIT));break;
-			case 2:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_ZOOM_4_3RD));break;
-			case 3:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_ZOOM_WIDE));break;
-			case 4:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN));break;
-			case 5:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_MODE_FULLSCREEN_CLIPPED));break;
+			case 0:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_MODE_1_1]);
+				break;
+			case 1:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_MODE_ZOOM_FIT]);
+				break;
+			case 2:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_MODE_ZOOM_4_3RD]);
+				break;
+			case 3:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_MODE_ZOOM_WIDE]);
+				break;
+			case 4:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_MODE_FULLSCREEN]);
+				break;
+			case 5:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_MODE_FULLSCREEN_CLIPPED]);
+				break;
 		}
 
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -1765,11 +1801,21 @@ int menu_engine(char *mode) {
 	int new_value=os9x_softrendering;
 	if (mode) {
 		switch (os9x_softrendering) {
-			case 0:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_APPROX));break;
-			case 1:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCUR));break;
-			case 2:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL));break;
-			case 3:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_ACCUR));break;
-			case 4:sprintf(mode,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_APPROX));break;
+			case 0:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_ENGINE_APPROX]);
+				break;
+			case 1:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCUR]);
+				break;
+			case 2:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCEL]);
+				break;
+			case 3:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCEL_ACCUR]);
+				break;
+			case 4:
+				sprintf(mode, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCEL_APPROX]);
+				break;
 		}
 		return 0;
 	}
@@ -1781,17 +1827,27 @@ int menu_engine(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 
 		switch (new_value) {
-			case 0:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_APPROX));break;
-			case 1:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCUR));break;
-			case 2:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL));break;
-			case 3:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_ACCUR));break;
-			case 4:sprintf(str_tmp,psp_msg_string(MENU_VIDEO_ENGINE_ACCEL_APPROX));break;
+			case 0:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_ENGINE_APPROX]);
+				break;
+			case 1:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCUR]);
+				break;
+			case 2:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCEL]);
+				break;
+			case 3:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCEL_ACCUR]);
+				break;
+			case 4:
+				sprintf(str_tmp, s9xTYL_msg[MENU_VIDEO_ENGINE_ACCEL_APPROX]);
+				break;
 		}
 
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -1832,9 +1888,15 @@ int menu_soundmode(char *mode) {
 
 	if (mode) {
 		switch (os9x_apuenabled) {
-			case 0:sprintf(mode,psp_msg_string(MENU_SOUND_MODE_NOTEMUL));break;
-			case 1:sprintf(mode,psp_msg_string(MENU_SOUND_MODE_EMULOFF));break;
-			case 2:sprintf(mode,psp_msg_string(MENU_SOUND_MODE_EMULON));break;
+			case 0:
+				sprintf(mode, s9xTYL_msg[MENU_SOUND_MODE_NOTEMUL]);
+				break;
+			case 1:
+				sprintf(mode, s9xTYL_msg[MENU_SOUND_MODE_EMULOFF]);
+				break;
+			case 2:
+				sprintf(mode, s9xTYL_msg[MENU_SOUND_MODE_EMULON]);
+				break;
 		}
 		return 0;
 	}
@@ -1848,19 +1910,25 @@ int menu_soundmode(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 
 		if ( ((!oldmode)&&new_value) || (oldmode&&(!new_value)) ) {
-			menu_alertmsg(psp_msg_string(MENU_STATUS_GENERIC_NEEDRESET));
+			menu_alertmsg(s9xTYL_msg[MENU_STATUS_GENERIC_NEEDRESET]);
 		}
 
 		switch (new_value) {
-			case 0:sprintf(str_tmp,psp_msg_string(MENU_SOUND_MODE_NOTEMUL));break;
-			case 1:sprintf(str_tmp,psp_msg_string(MENU_SOUND_MODE_EMULOFF));break;
-			case 2:sprintf(str_tmp,psp_msg_string(MENU_SOUND_MODE_EMULON));break;
+			case 0:
+				sprintf(str_tmp, s9xTYL_msg[MENU_SOUND_MODE_NOTEMUL]);
+				break;
+			case 1:
+				sprintf(str_tmp, s9xTYL_msg[MENU_SOUND_MODE_EMULOFF]);
+				break;
+			case 2:
+				sprintf(str_tmp, s9xTYL_msg[MENU_SOUND_MODE_EMULON]);
+				break;
 		}
 
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -1911,9 +1979,9 @@ int menu_soundfreq(char *mode){
 
 		sprintf(str_tmp,"%dHz",new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -1973,11 +2041,11 @@ int menu_gamma(char *mode){
 
 		sprintf(str_tmp,"%d",new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -2027,7 +2095,8 @@ int menu_fskip(char *mode){
 	}
 
 	if (mode) {
-		if (autofskip) sprintf(mode,psp_msg_string(MENU_VIDEO_FSKIP_MODE_AUTO),os9x_autofskip_MaxSkipFrames);
+		if (autofskip)
+			sprintf(mode, s9xTYL_msg[MENU_VIDEO_FSKIP_MODE_AUTO], os9x_autofskip_MaxSkipFrames);
 		else sprintf(mode,"%d",os9x_fskipvalue);
 		return 0;
 	}
@@ -2040,13 +2109,13 @@ int menu_fskip(char *mode){
 
 		sprintf(str_tmp,"%d",new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(autofskip?MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED:MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[autofskip ? MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED : MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_SQUARE,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_TRIANGLE,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,160,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 160, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,160,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -2093,7 +2162,7 @@ int menu_emulinput(char *mode){
 	int new_value=os9x_padindex;
 
 	if (mode) {
-		sprintf(mode,psp_msg_string(MENU_CONTROLS_INPUT),new_value);
+		sprintf(mode, s9xTYL_msg[MENU_CONTROLS_INPUT], new_value);
 		return 0;
 	}
 
@@ -2103,11 +2172,11 @@ int menu_emulinput(char *mode){
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
 
-		sprintf(str_tmp,psp_msg_string(MENU_CONTROLS_INPUT),new_value);
+		sprintf(str_tmp, s9xTYL_msg[MENU_CONTROLS_INPUT], new_value);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5,140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -2146,9 +2215,9 @@ int menu_autosaveUpdSRAM(char *mode){
 
 int menu_menumusic(char *mode) {
 	if (mode) {
-		if (!os9x_menumusic) strcpy(mode,psp_msg_string(MENU_NO));
-		else if (os9x_menumusic==1) strcpy(mode,psp_msg_string(MENU_MISC_BGMUSIC_RAND));
-		else strcpy(mode,psp_msg_string(MENU_MISC_BGMUSIC_ORDER));
+		if (!os9x_menumusic) strcpy(mode, s9xTYL_msg[MENU_NO]);
+		else if (os9x_menumusic==1) strcpy(mode, s9xTYL_msg[MENU_MISC_BGMUSIC_RAND]);
+		else strcpy(mode, s9xTYL_msg[MENU_MISC_BGMUSIC_ORDER]);
 		return 0;
 	}
 
@@ -2162,14 +2231,14 @@ int menu_menumusic(char *mode) {
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
 
-		if (!new_value) strcpy(str_tmp,psp_msg_string(MENU_NO));
-		else if (new_value==1) strcpy(str_tmp,psp_msg_string(MENU_MISC_BGMUSIC_RAND));
-		else strcpy(str_tmp,psp_msg_string(MENU_MISC_BGMUSIC_ORDER));
+		if (!new_value) strcpy(str_tmp, s9xTYL_msg[MENU_NO]);
+		else if (new_value==1) strcpy(str_tmp, s9xTYL_msg[MENU_MISC_BGMUSIC_RAND]);
+		else strcpy(str_tmp, s9xTYL_msg[MENU_MISC_BGMUSIC_ORDER]);
 
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
 		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
 		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -2222,17 +2291,20 @@ int menu_osk(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_osk;
-	if (mode) {strcpy(mode,(os9x_osk?psp_msg_string(MENU_MISC_OSK_DANZEFF):psp_msg_string(MENU_MISC_OSK_OFFICIAL)));return 0;}
+	if (mode) {
+		strcpy(mode, s9xTYL_msg[os9x_osk ? MENU_MISC_OSK_DANZEFF : MENU_MISC_OSK_OFFICIAL]);
+		return 0;
+	}
 	menu_panel_pos=479;
 	menu_cnt2=0;
 	for (;;) {
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
 
-		mh_printLimit(menu_panel_pos+5,104,479,272,new_value?psp_msg_string(MENU_MISC_OSK_DANZEFF):psp_msg_string(MENU_MISC_OSK_OFFICIAL),((31)|(24<<5)|(24<<10)));
-		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 104, 479, 272, s9xTYL_msg[new_value ? MENU_MISC_OSK_DANZEFF : MENU_MISC_OSK_OFFICIAL], 31 | (24 << 5) | (24 << 10));
+		mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
 		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
 		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -2281,8 +2353,8 @@ int menu_autosavetimer(char *mode){
 	int to_exit=0;
 	int new_value=os9x_autosavetimer;
 	if (mode) {
-		if (os9x_autosavetimer) sprintf(mode,psp_msg_string(MENU_STATE_AUTOSAVETIMER),os9x_autosavetimer);
-		else sprintf(mode,psp_msg_string(MENU_STATE_AUTOSAVETIMER_OFF));
+		if (os9x_autosavetimer) sprintf(mode, s9xTYL_msg[MENU_STATE_AUTOSAVETIMER], os9x_autosavetimer);
+		else sprintf(mode, s9xTYL_msg[MENU_STATE_AUTOSAVETIMER_OFF]);
 		return 0;
 	}
 
@@ -2292,14 +2364,14 @@ int menu_autosavetimer(char *mode){
 		menu_basic(2+to_exit);
 		if (!g_bLoop) {retval=1;break;}
 
-		if (new_value) sprintf(str_tmp,psp_msg_string(MENU_STATE_AUTOSAVETIMER),new_value);
-		else sprintf(str_tmp,psp_msg_string(MENU_STATE_AUTOSAVETIMER_OFF));
+		if (new_value) sprintf(str_tmp, s9xTYL_msg[MENU_STATE_AUTOSAVETIMER], new_value);
+		else sprintf(str_tmp, s9xTYL_msg[MENU_STATE_AUTOSAVETIMER_OFF]);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -2343,7 +2415,7 @@ int menu_loadstate(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 
 	menu_cnt2=0;
-	psp_msg(MENU_STATE_SCANNING,MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[MENU_STATE_SCANNING], 0);
 	for (i=0;i<10;i++) {
 		if (i==10) strcpy(ext,".zat");
   	else {
@@ -2367,7 +2439,7 @@ int menu_loadstate(char *mode) {
 		menu_basic(-1);
 		if (!g_bLoop) {retval=1;break;}
 
-		mh_print_light((480-22*5)/2,14,psp_msg_string(MENU_STATE_CHOOSELOAD),31|(31<<5)|(31<<10),menu_current_smoothing);
+		mh_print_light((480 - 22 * 5) / 2, 14, s9xTYL_msg[MENU_STATE_CHOOSELOAD], 31 | (31 << 5) | (31 << 10), menu_current_smoothing);
 
 		//now draw each slot
 		if (state_slot<5) px=40;
@@ -2418,8 +2490,8 @@ int menu_loadstate(char *mode) {
 		  			mh_print(px+8+(96-mh_length(str_tmp+j+1))/2,py+os9x_snesheight*3/8+20+4,str_tmp+j+1,col2);
 		  		} else mh_print(px+8+(96-mh_length(str_tmp))/2,py+os9x_snesheight*3/8+10+4,str_tmp,col2);
 		  	} else {
-		  		sprintf(str_tmp,psp_msg_string(MENU_STATE_FREESLOT));
-		  		mh_print(px+8+(96-mh_length(str_tmp))/2,py+os9x_snesheight*3/8+10+4,str_tmp,col2);
+		  		const char *str = s9xTYL_msg[MENU_STATE_FREESLOT];
+		  		mh_print(px + 8 + (96 - mh_length(str)) / 2, py + os9x_snesheight * 3 / 8 + 10 + 4, str, col2);
 		  	}
 		  	px+=96+12;
 		  }	else {
@@ -2467,8 +2539,8 @@ int menu_loadstate(char *mode) {
 		  			mh_print(px+8+(64-mh_length(str_tmp+j+1))/2,py+os9x_snesheight/4+20+4,str_tmp+j+1,col2);
 		  		} else mh_print(px+8+(64-mh_length(str_tmp))/2,py+os9x_snesheight/4+10+4,str_tmp,col2);
 		  	} else {
-		  		sprintf(str_tmp,psp_msg_string(MENU_STATE_FREESLOT));
-		  		mh_print(px+8+(64-mh_length(str_tmp))/2,py+os9x_snesheight/4+10+4,str_tmp,col2);
+		  		const char *str = s9xTYL_msg[MENU_STATE_FREESLOT];
+		  		mh_print(px + 8 + (64 - mh_length(str)) / 2, py + os9x_snesheight / 4 + 10 + 4, str, col2);
 		  	}
 		  	px+=64+12;
 			}
@@ -2522,7 +2594,7 @@ int menu_savestate(char *mode) {
 
 	menu_cnt2=0;
 
-	psp_msg(MENU_STATE_SCANNING,MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[MENU_STATE_SCANNING], 0);
 
 	for (i=0;i<10;i++) {
 		if (i==10) strcpy(ext,".zat");
@@ -2547,7 +2619,7 @@ int menu_savestate(char *mode) {
 		menu_basic(-1);
 		if (!g_bLoop) {retval=1;break;}
 
-		mh_print_light((480-22*5)/2,14,psp_msg_string(MENU_STATE_CHOOSESAVE),31|(31<<5)|(31<<10),menu_current_smoothing);
+		mh_print_light((480 - 22 * 5) / 2, 14, s9xTYL_msg[MENU_STATE_CHOOSESAVE], 31 | (31 << 5) |(31 << 10), menu_current_smoothing);
 
 		//now draw each slot
 		if (state_slot<5) px=40;
@@ -2598,8 +2670,8 @@ int menu_savestate(char *mode) {
 		  			mh_print(px+8+(96-mh_length(str_tmp+j+1))/2,py+os9x_snesheight*3/8+20+4,str_tmp+j+1,col2);
 		  		} else mh_print(px+8+(96-mh_length(str_tmp))/2,py+os9x_snesheight*3/8+10+4,str_tmp,col2);
 		  	} else {
-		  		sprintf(str_tmp,psp_msg_string(MENU_STATE_FREESLOT));
-		  		mh_print(px+8+(96-mh_length(str_tmp))/2,py+os9x_snesheight*3/8+10+4,str_tmp,col2);
+		  		const char *str = s9xTYL_msg[MENU_STATE_FREESLOT];
+		  		mh_print(px + 8 + (96 - mh_length(str)) / 2, py + os9x_snesheight * 3 / 8 + 10 + 4, str, col2);
 		  	}
 		  	px+=96+12;
 		  }	else {
@@ -2647,8 +2719,8 @@ int menu_savestate(char *mode) {
 		  			mh_print(px+8+(64-mh_length(str_tmp+j+1))/2,py+os9x_snesheight/4+20+4,str_tmp+j+1,col2);
 		  		} else mh_print(px+8+(64-mh_length(str_tmp))/2,py+os9x_snesheight/4+10+4,str_tmp,col2);
 		  	} else {
-		  		sprintf(str_tmp,psp_msg_string(MENU_STATE_FREESLOT));
-		  		mh_print(px+8+(64-mh_length(str_tmp))/2,py+os9x_snesheight/4+10+4,str_tmp,col2);
+		  		const char *str = s9xTYL_msg[MENU_STATE_FREESLOT];
+		  		mh_print(px + 8 + (64 - mh_length(str)) / 2, py + os9x_snesheight / 4 + 10 + 4, str, col2);
 		  	}
 		  	px+=64+12;
 			}
@@ -2699,7 +2771,7 @@ int menu_deletestate(char *mode) {
 
 	menu_cnt2=0;
 
-	psp_msg(MENU_STATE_SCANNING,MSG_DEFAULT);
+	msgBoxLines(s9xTYL_msg[MENU_STATE_SCANNING], 0);
 
 	for (i=0;i<10;i++) {
 		if (i==10) strcpy(ext,".zat");
@@ -2723,7 +2795,7 @@ int menu_deletestate(char *mode) {
 	for (;;) {
 		menu_basic(-1);
 
-		mh_print_light((480-22*5)/2,14,psp_msg_string(MENU_STATE_CHOOSEDEL),31|(31<<5)|(31<<10),menu_current_smoothing);
+		mh_print_light((480 - 22 * 5) / 2, 14, s9xTYL_msg[MENU_STATE_CHOOSEDEL], 31 | (31 << 5) | (31 << 10), menu_current_smoothing);
 
 		//now draw each slot
 		if (state_slot<5) px=40;
@@ -2774,8 +2846,8 @@ int menu_deletestate(char *mode) {
 		  			mh_print(px+8+(96-mh_length(str_tmp+j+1))/2,py+os9x_snesheight*3/8+20+4,str_tmp+j+1,col2);
 		  		} else mh_print(px+8+(96-mh_length(str_tmp))/2,py+os9x_snesheight*3/8+10+4,str_tmp,col2);
 		  	} else {
-		  		sprintf(str_tmp,psp_msg_string(MENU_STATE_FREESLOT));
-		  		mh_print(px+8+(96-mh_length(str_tmp))/2,py+os9x_snesheight*3/8+10+4,str_tmp,col2);
+		  		const char *str = s9xTYL_msg[MENU_STATE_FREESLOT];
+		  		mh_print(px + 8 + (96 - mh_length(str)) / 2, py + os9x_snesheight * 3 / 8 + 10 + 4, str, col2);
 		  	}
 		  	px+=96+12;
 		  }	else {
@@ -2823,8 +2895,8 @@ int menu_deletestate(char *mode) {
 		  			mh_print(px+8+(64-mh_length(str_tmp+j+1))/2,py+os9x_snesheight/4+20+4,str_tmp+j+1,col2);
 		  		} else mh_print(px+8+(64-mh_length(str_tmp))/2,py+os9x_snesheight/4+10+4,str_tmp,col2);
 		  	} else {
-		  		sprintf(str_tmp,psp_msg_string(MENU_STATE_FREESLOT));
-		  		mh_print(px+8+(64-mh_length(str_tmp))/2,py+os9x_snesheight/4+10+4,str_tmp,col2);
+		  		const char *str = s9xTYL_msg[MENU_STATE_FREESLOT];
+		  		mh_print(px + 8 + (64 - mh_length(str)) / 2, py + os9x_snesheight / 4 + 10 + 4, str, col2);
 		  	}
 		  	px+=64+12;
 			}
@@ -2876,14 +2948,14 @@ int menu_addRAWcode(char *mode) {
 	//wait for no input
 	while (get_pad()) pgWaitV();
 	sprintf(my_code,"00000000");
-	retval=InputCodeBox(psp_msg_string(MENU_CHEATS_ENTERRAW),"%X%X%X%X%X%X - %X%X",my_code);
+	retval = InputCodeBox(s9xTYL_msg[MENU_CHEATS_ENTERRAW], "%X%X%X%X%X%X - %X%X", my_code);
 	if (!retval) {
 		sscanf (my_code, "%x", &data);
 		uint32 address = data >> 8;
     uint8 byte = (uint8) data;
 		cheats_modified=1;
 		if (S9xAddCheat(1,1,address,byte)) {
-			psp_msg(ERR_ADD_CODE,MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[ERR_ADD_CODE], 60);
 		} else {
 			sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 			menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -2906,7 +2978,7 @@ int menu_addGGcode(char *mode) {
 	//wait for no input
 	while (get_pad()) pgWaitV();
 	sprintf(my_code,"00000000");
-	retval=InputCodeBox(psp_msg_string(MENU_CHEATS_ENTERGG),"%X%X%X%X-%X%X%X%X",my_code);
+	retval = InputCodeBox(s9xTYL_msg[MENU_CHEATS_ENTERGG], "%X%X%X%X-%X%X%X%X", my_code);
 
 	if (!retval) {
 		memcpy(ggcode,my_code,4);
@@ -2918,7 +2990,7 @@ int menu_addGGcode(char *mode) {
 			//add code to list
 			cheats_modified=1;
 			if (S9xAddCheat(1,1,address,byte)) {
-				psp_msg(ERR_ADD_CODE,MSG_DEFAULT);
+				msgBoxLines(s9xTYL_msg[ERR_ADD_CODE], 60);
 			} else {
 				sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 				menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -2941,7 +3013,7 @@ int menu_addPARcode(char *mode) {
 	//wait for no input
 	while (get_pad()) pgWaitV();
 	sprintf(my_code,"00000000");
-	retval=InputCodeBox(psp_msg_string(MENU_CHEATS_ENTERPAR),"%X%X%X%X%X%X%X%X",my_code);
+	retval = InputCodeBox(s9xTYL_msg[MENU_CHEATS_ENTERPAR], "%X%X%X%X%X%X%X%X", my_code);
 
 	if (!retval) {
 		const char *res_str=S9xProActionReplayToRaw(my_code,&address,&byte);
@@ -2950,7 +3022,7 @@ int menu_addPARcode(char *mode) {
 			//add code to list
 			cheats_modified=1;
 			if (S9xAddCheat(1,1,address,byte)) {
-				psp_msg(ERR_ADD_CODE,MSG_DEFAULT);
+				msgBoxLines(s9xTYL_msg[ERR_ADD_CODE], 60);
 			} else {
 				sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 				menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -2973,7 +3045,7 @@ int menu_addGFcode(char *mode) {
 	//wait for no input
 	while (get_pad()) pgWaitV();
 	sprintf(my_code,"00000000000000");
-	retval=InputCodeBox(psp_msg_string(MENU_CHEATS_ENTERGF),"%X%X%X%X%X%X%X%X%X%X%X%X%X%X",my_code);
+	retval = InputCodeBox(s9xTYL_msg[MENU_CHEATS_ENTERGF], "%X%X%X%X%X%X%X%X%X%X%X%X%X%X", my_code);
 
 	if (!retval) {
 		const char *res_str=S9xGoldFingerToRaw(my_code,&address,&sram,&num_bytes,bytes);
@@ -2983,7 +3055,8 @@ int menu_addGFcode(char *mode) {
 			cheats_modified=1;
 			for (c = 0; c < num_bytes; c++) {
 			  if (S9xAddCheat (1, 1, address + c, bytes [c])) {
-			  	psp_msg(ERR_ADD_CODE,MSG_DEFAULT); break;
+				msgBoxLines(s9xTYL_msg[ERR_ADD_CODE], 60);
+				break;
 				} else {
 					sprintf(Cheat.c[Cheat.num_cheats-1].name,"cht%d",Cheat.num_cheats);
 					menu_inputName(Cheat.c[Cheat.num_cheats-1].name);
@@ -3000,7 +3073,7 @@ int menu_selcode() {
 	int i, sel = 0, cpt=0;
 	int cheats_cur;
 	int cheats_dispnum;
-	const char *cheats_prevmsg_str = psp_msg_string(MENU_CHEATS_PREVPAGE);
+	const char *cheats_prevmsg_str = s9xTYL_msg[MENU_CHEATS_PREVPAGE];
 	int cheats_prevmsg_len = strlen(cheats_prevmsg_str);
 
 	if (!Cheat.num_cheats) return -1;
@@ -3017,7 +3090,7 @@ int menu_selcode() {
 
 		mh_print(290, 18, cheats_prevmsg_str, cheats_first ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
 		mh_print(290 + cheats_prevmsg_len * 5, 18, " " SJIS_STAR, CHEATS_ACTIVE_COL);
-		mh_print(290 + (cheats_prevmsg_len + 4) * 5, 18, psp_msg_string(MENU_CHEATS_NEXTPAGE),
+		mh_print(290 + (cheats_prevmsg_len + 4) * 5, 18, s9xTYL_msg[MENU_CHEATS_NEXTPAGE],
 		cheats_nextpage_available ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
 		for (i = 0; i < cheats_dispnum; i++) {
 			if (i == sel)
@@ -3139,7 +3212,8 @@ int menu_removeallcodes(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 
 	if (!(Cheat.num_cheats)) return 0;
-	if (!psp_msg(MENU_CHEATS_CONFIRMREMALL,MSG_DEFAULT)) return 0;
+	if (!inputBox(s9xTYL_msg[MENU_CHEATS_CONFIRMREMALL]))
+		return 0;
 	cheats_modified=1;
 	S9xDeleteCheats();
 	return 0;
@@ -3226,9 +3300,9 @@ int menu_versioninfos(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 
 		mh_printLimit(menu_panel_pos+5,104,479,272,EMUNAME_VERSION,CODE_COL);
-		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_TIMESTAMP),__TIMESTAMP__);
+		sprintf(str_tmp, s9xTYL_msg[MENU_ABOUT_VERSION_TIMESTAMP], __TIMESTAMP__);
 		mh_printLimit(menu_panel_pos+5,104+15,479,272,str_tmp,GFX_COL);
-		sprintf(str_tmp,psp_msg_string(MENU_ABOUT_VERSION_GCCVER),__VERSION__);
+		sprintf(str_tmp, s9xTYL_msg[MENU_ABOUT_VERSION_GCCVER], __VERSION__);
 		mh_printLimit(menu_panel_pos+5,104+30,479,272,str_tmp,GREETINGS0_COL);
 		sprintf(str_tmp,"CRC32 : 0x%X",g_ROMCRC32);
 		mh_printLimit(menu_panel_pos+5,104+45,479,272,str_tmp,GREETINGS0_COL);
@@ -3255,7 +3329,7 @@ int menu_fpslimit(char *mode) {
 	int new_value=os9x_fpslimit;
 	if (mode) {
 		if (os9x_fpslimit) sprintf(mode,"%dfps",os9x_fpslimit);
-		else sprintf(mode,psp_msg_string(MENU_VIDEO_SLIMITVALUE_AUTO));
+		else strcpy(mode, s9xTYL_msg[MENU_VIDEO_SLIMITVALUE_AUTO]);
 		return 0;
 	}
 
@@ -3266,13 +3340,13 @@ int menu_fpslimit(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 
 		if (new_value) sprintf(str_tmp,"%dfps",new_value);
-		else sprintf(str_tmp,psp_msg_string(MENU_VIDEO_SLIMITVALUE_AUTO));
+		else strcpy(str_tmp, s9xTYL_msg[MENU_VIDEO_SLIMITVALUE_AUTO]);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE_WITH_FAST),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE_WITH_FAST], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -3334,11 +3408,11 @@ int menu_apuratio(char *mode) {
 		sprintf(str_tmp,"%.2f%%",(float)new_value*100.0f/256.0f);
 
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-    mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE_WITH_FAST),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE_WITH_FAST], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_DEFAULT_VALUE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
     mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -3382,7 +3456,7 @@ int menu_apuratio(char *mode) {
 int menu_swapbg(char *mode) {
 	if (mode) {
 		if (bg_img) sprintf(mode,"%d",bg_img_num + 1);
-		else strcpy(mode,psp_msg_string(MENU_MUSIC_SWAPBG_NODATA));
+		else strcpy(mode, s9xTYL_msg[MENU_MUSIC_SWAPBG_NODATA]);
 		return 0;
 	}
 	if (!bg_img) return 0;
@@ -3400,11 +3474,11 @@ int menu_swapbg(char *mode) {
 
 		sprintf(str_tmp,"%d",new_value + 1);
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
-		mh_printLimit(menu_panel_pos+5,130,479,272,psp_msg_string(MENU_CHANGE_VALUE_WITH_FAST),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE_WITH_FAST], PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos+5,140,479,272,psp_msg_string(MENU_MISC_SWAPBG_RAND),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_MISC_SWAPBG_RAND], PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos+5,150,479,272,psp_msg_string(MENU_CANCEL_VALIDATE),PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
 		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
 		mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
@@ -3592,7 +3666,7 @@ void menu_drawFrame(int selected) {
 						} else image_put_transp_light(x,14,icons[sel],0,0,icons_col[sel],menu_current_smoothing_icon);
 					}
 
-					mh_print(x+5,74,psp_msg_string(menu_xmb_icons[sel].label_id),31|(31<<5)|(31<<10));
+					mh_print(x + 5, 74, s9xTYL_msg[menu_xmb_icons[sel].label_id], 31 | (31 << 5) | (31 << 10));
 
 					pgDrawFrame(x,70,x+60,70,30|(30<<5)|(30<<10));
 					pgDrawFrame(x,71,x+60,71,20|(15<<5)|(15<<10));
@@ -3645,17 +3719,17 @@ void menu_drawFrame(int selected) {
 					//check func type : submenu or value
 					menu_xmb_entries[i].menu_func(str_tmp);
 					if (str_tmp[0]) {//a value has to be shown
-						mh_print_light(x,100+y+4,psp_msg_string(menu_xmb_entries[i].label_id),31|(31<<5)|(31<<10),menu_current_smoothing);
+						mh_print_light(x, 100 + y + 4, s9xTYL_msg[menu_xmb_entries[i].label_id], 31 | (31 << 5)| (31 << 10), menu_current_smoothing);
 						mh_print(x+156,100+y+4,str_tmp,31|(31<<5)|(31<<10));
 						pgDrawFrame(x,100+y+4+12,x+156+mh_length(str_tmp),100+y+4+12,(28|(28<<5)|(28<<10)));
 						pgDrawFrame(x+1,100+y+4+13,x+157+mh_length(str_tmp),100+y+4+13,(12|(12<<5)|(12<<10)));
 					} else {
-						mh_print_light(x,100+y+4,psp_msg_string(menu_xmb_entries[i].label_id),31|(31<<5)|(24<<10),menu_current_smoothing);
+						mh_print_light(x, 100 + y + 4, s9xTYL_msg[menu_xmb_entries[i].label_id], 31 | (31 << 5) | (24 << 10), menu_current_smoothing);
 					}
 				}
 				//check for help to display
 				if (menu_xmb_entries[i].help_id) { //help label available
-					msgBoxLinesRawPosLimit(280,190,200,67,psp_msg_string(menu_xmb_entries[i].help_id));
+					msgBoxLinesRawPosLimit(280, 190, 200, 67, s9xTYL_msg[menu_xmb_entries[i].help_id]);
 				}
 
 				y+=20;
@@ -3666,10 +3740,10 @@ void menu_drawFrame(int selected) {
 					//check func type : submenu or value
 					menu_xmb_entries[i].menu_func(str_tmp);
 					if (str_tmp[0]) {//a value has to be shown
-						mh_print(x,100+y,psp_msg_string(menu_xmb_entries[i].label_id),20|(20<<5)|(20<<10));
+						mh_print(x, 100 + y, s9xTYL_msg[menu_xmb_entries[i].label_id], 20 | (20 << 5) | (20 << 10));
 						mh_print(x+156,100+y,str_tmp,20|(20<<5)|(20<<10));
 					} else {
-						mh_print(x,100+y,psp_msg_string(menu_xmb_entries[i].label_id),20|(20<<5)|(12<<10));
+						mh_print(x, 100 + y, s9xTYL_msg[menu_xmb_entries[i].label_id], 20 | (20 << 5) | (12 << 10));
 					}
 				}
 
@@ -3691,7 +3765,7 @@ void menu_inputName(char *name) {
 	if (os9x_osk)
 	{
 		if (!danzeff_isinitialized()) {
-			psp_msg(ERR_INIT_OSK,MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[ERR_INIT_OSK], 20);
 		} else {
 			danzeff_moveTo(20,20);
 			exit_osk=0;
@@ -3731,7 +3805,7 @@ void menu_inputName(char *name) {
 		SceUtilityOskData data[1];
 		SceUtilityOskParams osk;
 
-		unsigned char *src = (unsigned char *)psp_msg_string(MENU_CHEATS_ENTERNAME);
+		unsigned const char *src = (unsigned const char *)s9xTYL_msg[MENU_CHEATS_ENTERNAME];
 		for (i = 0; *src; i++) {
 			if ((0x80 < *src && *src < 0xA0) || (0xDF < *src && *src < 0xF0)) {
 				k = *src++;
@@ -3792,12 +3866,12 @@ void menu_inputName(char *name) {
 
 			switch(sceUtilityOskGetStatus()) {
 				case PSP_UTILITY_DIALOG_INIT :
-					j=mh_length(psp_msg_string(INIT_OSK));
+					j = mh_length(s9xTYL_msg[INIT_OSK]);
 					i=(480-j)/2;
 					pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
   					pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
 					pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
-					mh_print(i,130,psp_msg_string(INIT_OSK),31|(28<<5)|(24<<10));
+					mh_print(i, 130, s9xTYL_msg[INIT_OSK], 31 | (28 << 5) | (24 << 10));
 					break;
 				case PSP_UTILITY_DIALOG_VISIBLE :
 					sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
@@ -3841,7 +3915,7 @@ int root_menu(void) {
 	int retval;
 	int selected=0;
 	int i;
-	const char *cheats_prevmsg_str = psp_msg_string(MENU_CHEATS_PREVPAGE);
+	const char *cheats_prevmsg_str = s9xTYL_msg[MENU_CHEATS_PREVPAGE];
 	int cheats_prevmsg_len = strlen(cheats_prevmsg_str);
 
 	//pgFillAllvram(0);
@@ -3854,7 +3928,7 @@ int root_menu(void) {
 
 	menu_bg=(u16*)malloc(480*272*2);
 	if (!menu_bg) {
-		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_OUT_OF_MEM], 60);
 		return -1;
 	}
 	menu_buildbg();
@@ -3963,14 +4037,14 @@ int root_menu(void) {
 				cheats_nextpage_available = Cheat.num_cheats - cheats_first > 15;
 				int cheats_dispnum = cheats_nextpage_available ? 15 : Cheat.num_cheats - cheats_first;
 
-				menu_alertmsg(psp_msg_string(MENU_STATUS_GENERIC_NEEDRELOAD));
+				menu_alertmsg(s9xTYL_msg[MENU_STATUS_GENERIC_NEEDRELOAD]);
 
 
 				pgFillBoxHalfer(280, 13, 479, 28 + cheats_dispnum * 10 + 3);
 
 				mh_print(290, 18, cheats_prevmsg_str, cheats_first ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
 				mh_print(290 + cheats_prevmsg_len * 5, 18, " " SJIS_STAR, CHEATS_ACTIVE_COL);
-				mh_print(290 + (cheats_prevmsg_len + 4) * 5, 18, psp_msg_string(MENU_CHEATS_NEXTPAGE),
+				mh_print(290 + (cheats_prevmsg_len + 4) * 5, 18, s9xTYL_msg[MENU_CHEATS_NEXTPAGE],
 					cheats_nextpage_available ? CHEATS_ACTIVE_COL : CHEATS_DISABLED_COL);
 				for (i = 0; i < cheats_dispnum; i++) {
 					sprintf(str_tmp,"%s:%06X -> %02X",
@@ -3989,7 +4063,10 @@ int root_menu(void) {
 #ifdef HOME_HOOK
         if( readHomeButton() > 0 )
         {
-			if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {StopSoundThread();S9xExit();;}
+		if (inputBox(s9xTYL_msg[ASK_EXIT])) {
+			StopSoundThread();
+			S9xExit();
+		}
         }
 #endif
 				//process input
@@ -4029,10 +4106,10 @@ int root_menu(void) {
 					else {
 						os9x_usballowed=!os9x_usballowed;
         					if (os9x_usballowed) {
-        						psp_msg(INFO_USB_ON,MSG_DEFAULT);
+        						msgBoxLines(s9xTYL_msg[INFO_USB_ON], 30);
         						initUSBdrivers();
         					} else {
-        						psp_msg(INFO_USB_OFF,MSG_DEFAULT);
+        						msgBoxLines(s9xTYL_msg[INFO_USB_OFF], 30);
         						endUSBdrivers();
         					}
 					}
@@ -4098,13 +4175,13 @@ int root_menu(void) {
 				uint16 *src,*dst;
 				src=(u16 *)pgGetVramAddr(0,0);
 				//add the 'X to return' message at bottom
-				mh_printCenter(262,psp_msg_string(MENU_STATUS_GENERIC_MSG1),INFOBAR_COL);
+				mh_printCenter(262, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], INFOBAR_COL);
 				pgScreenFlipV2();
 				//and initiate new screen
 				dst=(u16 *)pgGetVramAddr(0,0);
 				memcpy(dst,src,LINESIZE*272*2);
 				//add the 'X to return' message at bottom
-				mh_printCenter(262,psp_msg_string(MENU_STATUS_GENERIC_MSG1),INFOBAR_COL);
+				mh_printCenter(262, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], INFOBAR_COL);
 
 
 				//call the sub-function
@@ -4114,20 +4191,10 @@ int root_menu(void) {
 						if (menu_xmb_entries[i].menu_id==menu_current_xmb_index_entry[menu_current_xmb_index]) break;
 					}
 				}
-				if (i<MENU_XMB_ENTRIES_NB) {
-					if (menu_xmb_entries[i].menu_func) {
-						retval=menu_xmb_entries[i].menu_func(0);
-						if (os9x_menumusic&&(!menu_music)) menu_startmusic();
-						if ((!os9x_menumusic)&&menu_music) menu_stopmusic();
-					}
-					else {
-						retval=0;
-						psp_msg(MENU_NOT_IMPLEMENTED,MSG_DEFAULT);
-						for (;;) {
-							new_pad=get_pad();
-							if (new_pad&os9x_btn_negative_code) break;
-						}
-					}
+				if (i < MENU_XMB_ENTRIES_NB) {
+					retval=menu_xmb_entries[i].menu_func(0);
+					if (os9x_menumusic&&(!menu_music)) menu_startmusic();
+					if ((!os9x_menumusic)&&menu_music) menu_stopmusic();
 				}
 				//wait for release
 				while (get_pad()) pgWaitV();

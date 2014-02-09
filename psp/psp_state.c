@@ -99,7 +99,7 @@ int os9x_loadfname(const char *fname) {
 	ext=strrchr(fname,'.');
 	if (strlen(ext)==4) {
 		if (!strcasecmp(ext,".srm")) {
-			psp_msg(FOUND_SRAM, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[FOUND_SRAM], 60);
 			Memory.LoadSRAM( (char*)fname );
 			return 1;
 		}

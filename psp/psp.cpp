@@ -624,9 +624,10 @@ void update_pad(){
 							os9x_netsynclost=NET_SYNCLOST_TS; //ask for a reset
 							break;
 						default: //unknown command, probably something went wrong in network link
-							{char st[64];
-								sprintf(st,psp_msg_string(ADHOC_UNKNOWNCOMMAND),pkt_recv[0]);
-								msgBoxLines(st,60);
+							{
+								char str[64];
+								sprintf(str, s9xTYL_msg[ADHOC_UNKNOWNCOMMAND], pkt_recv[0]);
+								msgBoxLines(str, 60);
 								//os9x_netplay=0;
 								//os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 							}
@@ -635,7 +636,7 @@ void update_pad(){
 				//handle here special stuff : reset, resync, ....
 				if (os9x_netplay) {//if connection still available
 					if (os9x_netsynclost>=NET_SYNCLOST_TS) {
-						psp_msg(ADHOC_SYNCLOST_SERVER, MSG_DEFAULT);
+						msgBoxLines(s9xTYL_msg[ADHOC_SYNCLOST_SERVER], 20);
 						net_flush_net(1);
 						before_pause();
 						set_cpu_clock();
@@ -721,9 +722,10 @@ void update_pad(){
 							net_receive_settings();
 							break;
 						default: //unknown command, probably something went wrong in network link
-							{char st[64];
-								sprintf(st,psp_msg_string(ADHOC_UNKNOWNCOMMAND),pkt_recv[0]);
-								msgBoxLines(st,60);
+							{
+								char str[64];
+								sprintf(str, s9xTYL_msg[ADHOC_UNKNOWNCOMMAND], pkt_recv[0]);
+								msgBoxLines(str, 60);
 								//os9x_netplay=0;
 								//os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 							}
@@ -732,7 +734,7 @@ void update_pad(){
 				//handle here special stuff : reset, resync, ....
 				if (os9x_netplay) {//if connection still available
 					if (os9x_netsynclost>=NET_SYNCLOST_TS) {
-						psp_msg(ADHOC_SYNCLOST_CLIENT, MSG_DEFAULT);
+						msgBoxLines(s9xTYL_msg[ADHOC_SYNCLOST_CLIENT], 20);
 						pkt_send[0]=3;
 						adhocSend(pkt_send,NET_PKT_LEN);
 					}
@@ -2170,7 +2172,7 @@ void S9xProcessEvents( bool8 block ) {
 			}
 		}
 		if ((in_emu==1)&&os9x_netplay&&os9x_getnewfile) {
-			psp_msg(ADHOC_CLOSING, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[ADHOC_CLOSING], 60);
 #ifdef USE_ADHOC
 			os9x_netplay=0;adhocTerm();os9x_adhoc_active=0;
 #else
@@ -2186,26 +2188,40 @@ void S9xProcessEvents( bool8 block ) {
 		after_pause();
 	}
 	if ((os9x_specialaction&OS9X_GFXENGINE)&& (!(os9x_specialaction_old&OS9X_GFXENGINE))) {
+		const char *str = NULL;
+
 		os9x_softrendering++;
 		if (os9x_softrendering==5) os9x_softrendering=0;
 		//invalidate all cache
 		ZeroMemory (IPPU.TileCached [TILE_2BIT], MAX_2BIT_TILES<<1);
-  	ZeroMemory (IPPU.TileCached [TILE_4BIT], MAX_4BIT_TILES<<1);
-  	ZeroMemory (IPPU.TileCached [TILE_8BIT], MAX_8BIT_TILES<<1);
-  	tile_askforreset(-1);
-  	//
+  		ZeroMemory (IPPU.TileCached [TILE_4BIT], MAX_4BIT_TILES<<1);
+  		ZeroMemory (IPPU.TileCached [TILE_8BIT], MAX_8BIT_TILES<<1);
+  		tile_askforreset(-1);
+
 		switch (os9x_softrendering) {
-			case 0:psp_msg(VIDEO_ENGINE_APPROX, MSG_DEFAULT); break;
-			case 1:psp_msg(VIDEO_ENGINE_ACCUR, MSG_DEFAULT); break;
-			case 2:psp_msg(VIDEO_ENGINE_ACCEL, MSG_DEFAULT); break;
-			case 3:psp_msg(VIDEO_ENGINE_ACCEL_ACCUR, MSG_DEFAULT); break;
-			case 4:psp_msg(VIDEO_ENGINE_ACCEL_APPROX, MSG_DEFAULT); break;
+			case 0:
+				str = s9xTYL_msg[VIDEO_ENGINE_APPROX];
+				break;
+			case 1:
+				str = s9xTYL_msg[VIDEO_ENGINE_ACCUR];
+				break;
+			case 2:
+				str = s9xTYL_msg[VIDEO_ENGINE_ACCEL];
+				break;
+			case 3:
+				str = s9xTYL_msg[VIDEO_ENGINE_ACCEL_ACCUR];
+				break;
+			case 4:
+				str = s9xTYL_msg[VIDEO_ENGINE_ACCEL_APPROX];
+				break;
 		}
+		msgBoxLines(str, 30);
 		//reset timer for synchro stuff
 		next1.tv_sec = next1.tv_usec = 0;
   }
 	if ((os9x_specialaction&OS9X_FRAMESKIP_DOWN)&& (!(os9x_specialaction_old&OS9X_FRAMESKIP_DOWN))) {
-		char st[64];
+		const char *str;
+
 		if (os9x_fskipvalue) os9x_fskipvalue--;
 		else os9x_fskipvalue=AUTO_FSKIP;
 
@@ -2213,29 +2229,40 @@ void S9xProcessEvents( bool8 block ) {
 			Settings.SkipFrames=AUTO_FRAMERATE;
 			os9x_autofskip_SkipFrames=0;
 			os9x_speedlimit=1;
-			strcpy(st,psp_msg_string(VIDEO_FSKIP_AUTO));
+
+			str = s9xTYL_msg[VIDEO_FSKIP_AUTO];
 		} else {
+			char _str[64];
+
 			Settings.SkipFrames=os9x_fskipvalue;
-			sprintf(st,psp_msg_string(VIDEO_FSKIP_MANUAL),os9x_fskipvalue);
+
+			sprintf(_str, s9xTYL_msg[VIDEO_FSKIP_MANUAL], os9x_fskipvalue);
+			str = _str;
 		}
-		msgBoxLines(st,10);
+		msgBoxLines(str,10);
 		//reset timer for synchro stuff
 		next1.tv_sec = next1.tv_usec = 0;
 	}
 	if ((os9x_specialaction&OS9X_FRAMESKIP_UP) && (!(os9x_specialaction_old&OS9X_FRAMESKIP_UP))) {
-		char st[64];
+		const char *str;
+
 		if (os9x_fskipvalue<AUTO_FSKIP) os9x_fskipvalue++;
 		else os9x_fskipvalue=0;
 		if (os9x_fskipvalue==AUTO_FSKIP) {
 			Settings.SkipFrames=AUTO_FRAMERATE;
 			os9x_speedlimit=1;
 			os9x_autofskip_SkipFrames=0;
-			strcpy(st,psp_msg_string(VIDEO_FSKIP_AUTO));
+
+			str = s9xTYL_msg[VIDEO_FSKIP_AUTO];
 		} else {
+			char _str[64];
+
 			Settings.SkipFrames=os9x_fskipvalue;
-			sprintf(st,psp_msg_string(VIDEO_FSKIP_MANUAL),os9x_fskipvalue);
+
+			sprintf(_str, s9xTYL_msg[VIDEO_FSKIP_MANUAL], os9x_fskipvalue);
+			str = _str;
 		}
-		msgBoxLines(st,10);
+		msgBoxLines(str,10);
 		//reset timer for synchro stuff
 		next1.tv_sec = next1.tv_usec = 0;
 	}
@@ -2255,9 +2282,9 @@ void S9xProcessEvents( bool8 block ) {
 
 		switch (os9x_lowbat) {
 			case 1:
-				if(!psp_msg(MENU_STATE_WARNING_LOWBAT, MSG_DEFAULT)) break;
+				if(!inputBox(s9xTYL_msg[MENU_STATE_WARNING_LOWBAT])) break;
 			default:
-				psp_msg(MENU_STATE_ISSAVING,MSG_DEFAULT);
+				msgBoxLines(s9xTYL_msg[MENU_STATE_ISSAVING], 10);
 				os9x_save(".zat");
 		}
 
@@ -2277,11 +2304,11 @@ void S9xProcessEvents( bool8 block ) {
 		before_pause();
 
 		if (sceIoGetstat(S9xGetSaveFilename(".zat"),&stat)>=0) {
-			if (psp_msg(MENU_STATE_CONFIRMLOAD,MSG_DEFAULT)) {
-				psp_msg(MENU_STATE_ISLOADING,MSG_DEFAULT);
+			if (inputBox(s9xTYL_msg[MENU_STATE_CONFIRMLOAD])) {
+				msgBoxLines(s9xTYL_msg[MENU_STATE_ISLOADING], 10);
 				os9x_load(".zat");
 			}
-		} else psp_msg(MENU_STATE_NOSTATE,MSG_DEFAULT);
+		} else msgBoxLines(s9xTYL_msg[MENU_STATE_NOSTATE], 10);
 
 		if ((in_emu==1)&&os9x_netplay) {		//net unpause
 			set_cpu_clock();
@@ -2299,7 +2326,7 @@ void S9xProcessEvents( bool8 block ) {
 		if ( diff>=60*os9x_autosavetimer ) {
 			os9x_autosavetimer_tv=now;
 			if (!os9x_lowbat) {
-				psp_msg(LOADSAVE_AUTOSAVETIMER, MSG_DEFAULT);
+				msgBoxLines(s9xTYL_msg[LOADSAVE_AUTOSAVETIMER], 0);
 				os9x_save(".zat");
 				//reset timer for synchro stuff
 				next1.tv_sec = next1.tv_usec = 0;
@@ -2372,7 +2399,7 @@ bool8 S9xOpenSnapshotFile (const char *fname, bool8 read_only, STREAM *file) {
 	if (ext&&(strlen(ext)==4)) {
 		if ((ext[1]=='z')&&(ext[2]=='a')) {
 			if (os9x_externstate_mode) {
-				psp_msg(LOADSAVE_EXPORTS9XSTATE, MSG_DEFAULT);
+				msgBoxLines(s9xTYL_msg[LOADSAVE_EXPORTS9XSTATE], 0);
 				os9x_externstate_mode=0;
 			}
 		}
@@ -2656,7 +2683,7 @@ int main(int argc,char **argv) {
 		//printf("Net driver load error\n");
 		//pgWaitVn(60*2);
     //return 0;
-    psp_msg(ADHOC_DRIVERLOADERR, MSG_DEFAULT);
+    msgBoxLines(s9xTYL_msg[ADHOC_DRIVERLOAD_ERR], 60 * 2);
   }
 #endif
 #ifdef ME_SOUND
@@ -2706,6 +2733,9 @@ void low_level_init(){
 	//init timezone, language, ...
 	getsysparam();
 
+	// psp_msg
+	psp_msg_init();
+
 	// create dirs if needed
 	checkdirs();
 
@@ -2746,7 +2776,7 @@ void low_level_init(){
 void low_level_deinit(){
 	blit_shutdown();
 
-	msgBoxLines(psp_msg_string(INFO_EXITING),0);
+	msgBoxLines(s9xTYL_msg[INFO_EXITING], 0);
 
 	for (int i=0;i<6;i++) {
 		sceAudioChRelease(snd_beep1_handle[i]);
@@ -2784,7 +2814,7 @@ int scroll_message_input(char *name,int limit) {
 //	danzeff_load16(LaunchDir);
 	if (os9x_osk) {
 		if (!danzeff_isinitialized()) {
-			psp_msg(ERR_INIT_OSK, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[ERR_INIT_OSK], 20);
 			return 0;
 		} else {
 			danzeff_moveTo(20,20);
@@ -2855,7 +2885,7 @@ int scroll_message_input(char *name,int limit) {
 		struct Vertex *vertices,*vertices_ptr;
 		u16 *scr_bg=(u16*)(0x44000000+(512*272*2)*2);
 
-		unsigned char *src = (unsigned char *)psp_msg_string(SCROLL_OSK_DESC);
+		unsigned const char *src = (unsigned const char *)s9xTYL_msg[SCROLL_OSK_DESC];
 		for (i = 0; *src; i++) {
 			if ((0x80 < *src && *src < 0xA0) || (0xDF < *src && *src < 0xF0)) {
 				k = *src++;
@@ -2932,12 +2962,12 @@ int scroll_message_input(char *name,int limit) {
 
 			switch(sceUtilityOskGetStatus()) {
 			case PSP_UTILITY_DIALOG_INIT :
-				j=mh_length(psp_msg_string(INIT_OSK));
+				j=mh_length(s9xTYL_msg[INIT_OSK]);
 				i=(480-j)/2;
 				pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
   				pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
 				pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
-				mh_print(i,130,psp_msg_string(INIT_OSK),31|(28<<5)|(24<<10));
+				mh_print(i, 130, s9xTYL_msg[INIT_OSK], 31 | (28 << 5) | (24 << 10));
 				break;
 			case PSP_UTILITY_DIALOG_VISIBLE :
 				sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
@@ -2982,7 +3012,7 @@ int scroll_message_input(char *name,int limit) {
 //	danzeff_free();
 }
 
-int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,char *title) {
+int scroll_message(char **msg_lines, int lines, int start_pos, int intro_message, const char *title) {
 		int i,j,l,pos,end_pos,oldpos,fakedpos,col1,savedf;
 		u16 *scr_bg,*src,*dst,*srctxt,*srctxt2;
 		struct Vertex* vertices,*vertices_ptr;
@@ -3027,13 +3057,13 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 
 
 		mh_print(0,0,title,31|(31<<5)|(31<<10));
-		strcpy(str_tmp,psp_msg_string(SCROLL_TITLE));
+		strcpy(str_tmp, s9xTYL_msg[SCROLL_TITLE]);
 		mh_print(479-mh_length(str_tmp),0,(char*)str_tmp,31|(31<<5)|(31<<10));
 		sprintf(str_tmp,"  " SJIS_UP "  " SJIS_DOWN "           L R              ");
 		mh_print(479-mh_length(str_tmp),0,(char*)str_tmp,20|(31<<5)|(18<<10));
 
 		if (!intro_message) {
-			strcpy(str_tmp,psp_msg_string(SCROLL_STATUS_1));
+			strcpy(str_tmp, s9xTYL_msg[SCROLL_STATUS_1]);
 			mh_print(479-mh_length(str_tmp),262,(char*)str_tmp,31|(31<<5)|(31<<10));
 			sprintf(str_tmp, "%s       SELECT       ", os9x_btn_negative_str);
 			mh_print(479-mh_length(str_tmp),262,(char*)str_tmp,20|(31<<5)|(18<<10));
@@ -3180,7 +3210,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 
 
   		//memset(pgGetVramAddr(0,272-10),0,512*10*2);
-		  sprintf(str_tmp,psp_msg_string(SCROLL_STATUS_0),pos/10+26,lines,(pos/10+26)/27,lines/27);
+		  sprintf(str_tmp, s9xTYL_msg[SCROLL_STATUS_0], pos / 10 + 26, lines, (pos / 10 + 26) / 27, lines / 27);
 		  mh_print(0,272-10,str_tmp,((31)|(28<<5)|(31<<10)));
 
   		sceDisplayWaitVblankStart();
@@ -3271,7 +3301,9 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 						exit_message=1;
 						break;
 					}	else if (pad_val&PSP_CTRL_SELECT) { //minihelp
-						psp_msg(SCROLL_HELP, MSG_DEFAULT);
+						sprintf(str_tmp, s9xTYL_msg[SCROLL_HELP],
+							os9x_btn_positive_str, os9x_btn_negative_str, os9x_btn_negative_str);
+						msgBoxLines(str_tmp, 0);
 						while (!(get_pad()&os9x_btn_negative_code));
 						while (get_pad());
 						break;
@@ -3279,7 +3311,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 						if (scroll_message_input(tofind,31)) {
 							found=0;
 							if (tofind[0]) {
-								psp_msg(SCROLL_SEARCHING, MSG_DEFAULT);
+								msgBoxLines(s9xTYL_msg[SCROLL_SEARCHING], 0);
 								strcpy(tofind,strupr(tofind));
 								j=pos/10-1;
 								if (j<0) j=0;
@@ -3288,11 +3320,11 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 										if (strstr(strupr(msg_lines[i]),tofind)) {found=i;pos=(i-2)*10;if (pos<0) pos=0;break;}
 									}
 							}
-							if (!found) psp_msg(SCROLL_STRNOTFOUND, MSG_DEFAULT);
+							if (!found) msgBoxLines(s9xTYL_msg[SCROLL_STRNOTFOUND], 30);
 						}
 						break;
 					}	else if ((pad_val&os9x_btn_positive_code)&&found) { //search again from position & loop if needed
-						psp_msg(SCROLL_SEARCHING, MSG_DEFAULT);
+						msgBoxLines(s9xTYL_msg[SCROLL_SEARCHING], 0);
 						i=pos/10+2;
 						if (i>=lines) i=0;
 						j=i; //just to be safe, should not be needed
@@ -3306,7 +3338,7 @@ int scroll_message(char **msg_lines,int lines,int start_pos,int intro_message,ch
 						}
 						break;
 					}	else if ((pad_val&PSP_CTRL_SQUARE)&&found) { //search again from position & loop if needed
-						psp_msg(SCROLL_SEARCHING, MSG_DEFAULT);
+						msgBoxLines(s9xTYL_msg[SCROLL_SEARCHING], 0);
 						i=pos/10+2;
 						if (i>=lines) i=0;
 						j=i; //just to be safe, should not be needed
@@ -3380,7 +3412,7 @@ void show_message() {
 		//free decrypted raw message
 		free(decrypted_message);
 
-		scroll_message(msg_lines,lines,0,1,psp_msg_string(SCROLL_DISCLAIMER));
+		scroll_message(msg_lines, lines, 0, 1, s9xTYL_msg[SCROLL_DISCLAIMER]);
 
 		//free 'linified' message
 		for (i=0;i<lines;i++) if (msg_lines[i]) free(msg_lines[i]);
@@ -3544,7 +3576,7 @@ int init_snes_rom() {
   ///////////////////
   ///////////////////
   if (  !Memory.Init() ) {
-  	psp_msg(ERR_INIT_SNES, MSG_DEFAULT);
+  	msgBoxLines(s9xTYL_msg[ERR_INIT_SNES], 2 * 60);
 		return -1;
 	}
 	S9xInitSound( Settings.SoundPlaybackRate, Settings.Stereo, Settings.SoundBufferSize );
@@ -3556,7 +3588,7 @@ int init_snes_rom() {
 	pgCopyScreen();
 
 	if ( !Memory.LoadROM( rom_filename ) ){
-		psp_msg(ERR_LOADING_ROM, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_LOADING_ROM], 60 * 2);
 		return -1;
 	} else {
 		Memory.LoadSRAM( (char*)S9xGetSaveFilename( ".SRM" ) );
@@ -3564,17 +3596,17 @@ int init_snes_rom() {
 		if (!bypass_rom_settings) {
 			if (int ret=load_rom_settings(Memory.ROMCRC32)) {
 				if (ret==-3) {
-					psp_msg(SETTINGS_NOTCOMPLETE, MSG_DEFAULT);
+					msgBoxLines(s9xTYL_msg[SETTINGS_NOTCOMPLETE], 60 * 3);
 				}
 				else {
-					psp_msg(SETTINGS_NOTFOUND, MSG_DEFAULT);
+					msgBoxLines(s9xTYL_msg[SETTINGS_NOTFOUND], 10);
 					if (load_rom_settings(0)) {
 						if (!os9x_lowbat) save_rom_settings(0,"default");
 					}
 				}
 			}
 		} else {
-			psp_msg(SETTINGS_FORCING_DEFAULT, MSG_DEFAULT);
+			msgBoxLines(s9xTYL_msg[SETTINGS_FORCING_DEFAULT], 10);
 			if (load_rom_settings(0)) {
 					if (!os9x_lowbat) save_rom_settings(0,"default");
 			}
@@ -3589,7 +3621,7 @@ int init_snes_rom() {
 					os9x_adhoc_active=0;
 				}
 				if (psp_initadhocgame()) { //try to initiate a adhoc game
-					psp_msg(ADHOC_INIT_ERR, MSG_DEFAULT);
+					msgBoxLines(s9xTYL_msg[ADHOC_INIT_ERR], 60);
 					adhocTerm();  //unavailable, no netplay
 					os9x_adhoc_active=0;
 					os9x_netplay=0;
@@ -3619,7 +3651,7 @@ int init_snes_rom() {
 
 	S9xInitDisplay();
 	if ( !S9xGraphicsInit() ){
-		psp_msg(ERR_INIT_GFX, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_INIT_GFX], 60 * 2);
 		return -1;
 	}
 
@@ -3732,7 +3764,7 @@ void me_apu_debug(int flag)
 		StopSoundThread();
 //		Settings.Paused = TRUE;
 
-			psp_msg(APU_DEBUGGING, MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[APU_DEBUGGING], 10);
 
 //		pgFillAllvram(0);
 //		Settings.Paused = false;
@@ -3806,7 +3838,7 @@ int user_main(SceSize args, void* argp) {
 
 	welcome_message();
 
-	filer_init(psp_msg_string(FILER_TITLE), romPath);
+	filer_init(s9xTYL_msg[FILER_TITLE], romPath);
 
 	sprintf(os9x_viewfile_path,"%sFAQS/",LaunchDir);
 
@@ -3864,7 +3896,7 @@ int user_main(SceSize args, void* argp) {
 
 					in_emu=2;
 					//play spc, blocking
-					psp_msg(BGMUSIC_PLAYING, MSG_DEFAULT);
+					msgBoxLines(s9xTYL_msg[BGMUSIC_PLAYING], 0);
 					OSPC_Play(rom_filename,0,MAXVOLUME);
 					blit_reinit();
 					set_cpu_clock();

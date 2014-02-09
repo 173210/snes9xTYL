@@ -278,7 +278,7 @@ int inputBox(const char *msg) {
 	y=msgBoxLinesRaw(str,-1);
 	sprintf(str,"%s OK             ", os9x_btn_positive_str);
 	mh_printCenter(y,str,TEXT_COLOR_OK);
-	sprintf(str,"         %s %s", os9x_btn_negative_str, psp_msg_string(CANCEL));
+	sprintf(str,"         %s %s", os9x_btn_negative_str, s9xTYL_msg[CANCEL]);
 	mh_printCenter(y,str,TEXT_COLOR_CANCEL);
 	pgScreenFlipV();
 	while (get_pad()) pgWaitV();
@@ -299,7 +299,7 @@ int inputBoxOK(const char *msg) {
 	char str[l+32];
 	int y;
 	strcpy(str,msg);
-	strcat(str,psp_msg_string(INPUTBOX_OK));
+	strcat(str,s9xTYL_msg[INPUTBOX_OK]);
 	y=msgBoxLinesRaw(str,-1);
 	sprintf(str,SJIS_CIRCLE "," SJIS_CROSS "      ");
 	mh_printCenter(y,str,TEXT_COLOR_OK);
@@ -414,7 +414,7 @@ int InputCodeBox(const char *msg,const char *fmt,char *code) {
 
 		sprintf(msgCodeBox, "%s OK             ", os9x_btn_positive_str);
 		mh_printCenter(i, msgCodeBox, TEXT_COLOR_OK);
-		sprintf(msgCodeBox,"             %s %s", os9x_btn_negative_str, psp_msg_string(CANCEL));
+		sprintf(msgCodeBox,"             %s %s", os9x_btn_negative_str, s9xTYL_msg[CANCEL]);
 		mh_printCenter(i,msgCodeBox,TEXT_COLOR_CANCEL);
 
 		pgScreenFlipV();

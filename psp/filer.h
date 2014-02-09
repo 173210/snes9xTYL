@@ -12,7 +12,7 @@ int getExtId(const char *szFilePath);
 int searchFile(const char *path, const char *name);
 int getFilePath(char *out,int can_exit);
 int getNoExtFilePath(char *out,int can_exit);
-int filer_init(char*msg,char*path);
+int filer_init(const char *msg, const char *path);
 
 // —LŒø‚ÈŠg’£Žq
 enum {    

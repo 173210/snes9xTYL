@@ -51,6 +51,8 @@ extern int os9x_language;
 extern int os9x_netplay;
 extern int os9x_btn_positive_code;
 extern int os9x_btn_negative_code;
+extern const char *os9x_btn_positive_str;
+extern const char *os9x_btn_negative_str;
 extern int bg_img_mul;
 
 extern int os9x_savesnap();
@@ -174,7 +176,7 @@ char *find_file(char *pattern,char *path){
 	int fd,found;	
 	fd = sceIoDopen(path);
 	if (fd<0) {
-		psp_msg(ERR_READ_MEMSTICK,MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_READ_MEMSTICK], 60);
 		return NULL;
 	}
 	found=0;	
@@ -212,7 +214,7 @@ void getDir(const char *path) {
 		
 	fd = sceIoDopen(path);
 	if (fd<0){
-		psp_msg(ERR_READ_MEMSTICK,MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_READ_MEMSTICK], 60);
 		return ;
 	}
 	
@@ -245,7 +247,7 @@ void getDirJpeg() {
 
 	fd = sceIoDopen(SaveDir);
 	if (fd<0){
-		psp_msg(ERR_READ_MEMSTICK,MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_READ_MEMSTICK], 60);
 		return ;
 	}
 
@@ -290,7 +292,7 @@ void getDirNoExt(const char *path) {
 		
 	fd = sceIoDopen(path);
 	if (fd<0){
-		psp_msg(ERR_READ_MEMSTICK,MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_READ_MEMSTICK], 60);
 		return ;
 	}
 	
@@ -335,11 +337,11 @@ void filer_buildbg(int detailed) {
 	
 	if (detailed) {			
 		pgFillBoxHalfer(300,180,479,272-13);
-		mh_print(310,190,psp_msg_string(FILER_HELP_WINDOW1),INFOBAR_COL2);
-		mh_print(310,200,psp_msg_string(FILER_HELP_WINDOW2),INFOBAR_COL2);
-		mh_print(310,215,psp_msg_string(FILER_HELP_WINDOW3),INFOBAR_COL3);
-		mh_print(310,230,psp_msg_string(FILER_HELP_WINDOW4),INFOBAR_COL4);
-		mh_print(310,245,psp_msg_string(FILER_HELP_WINDOW5),INFOBAR_COL4);
+		mh_print(310, 190, s9xTYL_msg[FILER_HELP_WINDOW1], INFOBAR_COL2);
+		mh_print(310, 200, s9xTYL_msg[FILER_HELP_WINDOW2], INFOBAR_COL2);
+		mh_print(310, 215, s9xTYL_msg[FILER_HELP_WINDOW3], INFOBAR_COL3);
+		mh_print(310, 230, s9xTYL_msg[FILER_HELP_WINDOW4], INFOBAR_COL4);
+		mh_print(310, 245, s9xTYL_msg[FILER_HELP_WINDOW5], INFOBAR_COL4);
 	}
 		
 	dst=filer_bg;
@@ -370,7 +372,7 @@ int getFilePath(char *out,int can_exit) {
 
 	filer_bg=(u16*)malloc(480*272*2);
 	if (!filer_bg) {
-		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_OUT_OF_MEM], 60);
 		return -1;
 	}
 
@@ -526,22 +528,22 @@ int getFilePath(char *out,int can_exit) {
 #ifdef HOME_HOOK
         if( readHomeButton() > 0 )
         {
-        		if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {
+        		if (inputBox(s9xTYL_msg[ASK_EXIT])) {
         			S9xExit();
         		}
         }
 #else
         else if(new_pad & PSP_CTRL_LTRIGGER) {
         	if (new_pad & PSP_CTRL_RTRIGGER) {
-        		if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {
+        		if (inputBox(s9xTYL_msg[ASK_EXIT])) {
         			S9xExit();
         		}
         	}
         }
 #endif
         else if(new_pad & PSP_CTRL_SELECT){ 
-        		if (psp_msg(ASK_DELETE,MSG_DEFAULT)) {
-  						psp_msg(INFO_DELETING,MSG_DEFAULT);
+        		if (inputBox(s9xTYL_msg[ASK_DELETE])) {
+  						msgBoxLines(s9xTYL_msg[INFO_DELETING], 0);
   						strcpy(out, path);
 							strcat(out, files[sel].d_name);
 							strcpy(LastPath,path);
@@ -557,11 +559,11 @@ int getFilePath(char *out,int can_exit) {
 #ifndef FW3X
         	os9x_usballowed=!os9x_usballowed;
         	if (os9x_usballowed) {
-        		psp_msg(INFO_USB_ON,MSG_DEFAULT);
+        		msgBoxLines(s9xTYL_msg[INFO_USB_ON], 30);
         		initUSBdrivers();
         	}
         	else {
-        		psp_msg(INFO_USB_OFF,MSG_DEFAULT);
+        		msgBoxLines(s9xTYL_msg[INFO_USB_OFF], 30);
         		endUSBdrivers();
         	}
 #endif
@@ -622,9 +624,14 @@ int getFilePath(char *out,int can_exit) {
         else {
           mh_print(8,0,path,PATH_COL);
         }
-	sprintf(tmp,
-		psp_msg_string(can_exit ? FILER_STATUS_CANEXIT1 : FILER_STATUS_NOEXIT1),
-		files[0].d_name[3] == ':' ? files[0].d_name : psp_msg_string(FILER_STATUS_PARDIR));
+	if (can_exit)
+		sprintf(tmp,
+			s9xTYL_msg[FILER_STATUS_CANEXIT1], os9x_btn_positive_str, os9x_btn_negative_str,
+				files[0].d_name[3] == ':' ? files[0].d_name : s9xTYL_msg[FILER_STATUS_PARDIR]);
+	else
+		sprintf(tmp,
+			s9xTYL_msg[FILER_STATUS_NOEXIT1], os9x_btn_positive_str,
+				files[0].d_name[3] == ':' ? files[0].d_name : s9xTYL_msg[FILER_STATUS_PARDIR]);
         mh_print(4, 262, tmp, INFOBAR_COL);
         	
 		if(nfiles > rows){
@@ -696,7 +703,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 
 	filer_bg=(u16*)malloc(480*272*2);
 	if (!filer_bg) {
-		psp_msg(ERR_OUT_OF_MEM,MSG_DEFAULT);
+		msgBoxLines(s9xTYL_msg[ERR_OUT_OF_MEM], 60);
 		return -1;
 	}
 	filer_buildbg(0);
@@ -799,7 +806,7 @@ int getNoExtFilePath(char *out,int can_exit) {
         else if(new_pad & PSP_CTRL_RIGHT)   { sel+=10;if(sel >= nfiles) sel=nfiles-1;os9x_beep1();}
         else if(new_pad & PSP_CTRL_LTRIGGER) {
         	if (new_pad & PSP_CTRL_RTRIGGER) {
-        		if (psp_msg(ASK_EXIT,MSG_DEFAULT)) {
+        		if (inputBox(s9xTYL_msg[ASK_EXIT])) {
         			S9xExit();
         		}
         	}
@@ -855,10 +862,15 @@ int getNoExtFilePath(char *out,int can_exit) {
         else {
           mh_print(8,0,path,PATH_COL);
         }
-        
-	sprintf(tmp,
-		psp_msg_string(can_exit ? FILER_STATUS_CANEXIT2 : FILER_STATUS_NOEXIT2),
-		files[0].d_name[3] == ':' ? files[0].d_name : psp_msg_string(FILER_STATUS_PARDIR));
+
+	if (can_exit)
+		sprintf(tmp,
+			s9xTYL_msg[FILER_STATUS_CANEXIT2], os9x_btn_positive_str, os9x_btn_negative_str,
+			files[0].d_name[3] == ':' ? files[0].d_name : s9xTYL_msg[FILER_STATUS_PARDIR]);
+	else
+		sprintf(tmp,
+			s9xTYL_msg[FILER_STATUS_NOEXIT2], os9x_btn_positive_str,
+			files[0].d_name[3] == ':' ? files[0].d_name : s9xTYL_msg[FILER_STATUS_PARDIR]);
         mh_print(8, 262, tmp, INFOBAR_COL);
 
 		// スクロールバー
@@ -899,7 +911,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 }
 
 
-int filer_init(char*msg,char*path)
+int filer_init(const char *msg, const char *path)
 {
     strcpy(FilerMsg,msg);            
     strcpy(LastPath,path);
