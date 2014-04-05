@@ -2,7 +2,9 @@
 
 enum {
 	HELP_EN,
-	HELP_JA
+	HELP_JA,
+
+	HELP_LANG_TOTAL
 };
 
 enum {
@@ -12,16 +14,18 @@ enum {
 	HELP_IGNORE_WINCLIP,
 	HELP_IGNORE_ADDSUB,
 	HELP_IGNORE_PALWRITE,
-	HELP_EASY,
-	HELP_FASTSPRITE,
 	HELP_OBJ,
 	HELP_BG0,
 	HELP_BG1,
 	HELP_BG2,
-	HELP_BG3
+	HELP_BG3,
+	HELP_EASY,
+	HELP_FASTSPRITE,
+
+	HELP_TOTAL_ENTRIES
 };
 
-static const char *help_data_ml[][] = {
+static const char *help_data_ml[HELP_LANG_TOTAL][HELP_TOTAL_ENTRIES] = {
 	[HELP_EN] = {
 	//english
 		[HELP_SHOWPASS] = "Show how much call to rendering function was needed to compute the screen\nThe lowest, the fastest. This is usefull to check the impact of hacks (below)\n",
@@ -36,7 +40,7 @@ static const char *help_data_ml[][] = {
 		[HELP_BG2] = "BG2 On/Off.\nUse this to disactivate(Off) BACKGROUND 2 drawing.",
 		[HELP_BG3] = "BG3 On/Off.\nUse this to disactivate(Off) BACKGROUND 3 drawing.",
 		[HELP_EASY] = "No Transparency.\nUse this to force no transparency rendering.\nGFX may be altered (pixels being opaque instead of transparent, ...)",
-		[HELP_FASTSPRITE] = "Fast sprites.\nUse this to disactivate intra-sprites priorities handling.\nGFX may be altered",
+		[HELP_FASTSPRITE] = "Fast sprites.\nUse this to disactivate intra-sprites priorities handling.\nGFX may be altered"
 	},
 	[HELP_JA] = {
 	//japanese
@@ -52,6 +56,6 @@ static const char *help_data_ml[][] = {
 		[HELP_BG2] = "背景2のオン/オフです。\n背景2の描画を無効化(オフ)にするために使います。",
 		[HELP_BG3] = "背景3のオン/オフです。\n背景3の描画を無効化(オフ)にするために使います。",
 		[HELP_EASY] = "透過をさせません。\n透過描画を強制的になくすために使います。\nCGが変化する可能\性があります。(ピクセルが透過の代わりにくすむなど)",
-		[HELP_FASTSPRITE] = "高速スプライト\n内臓スプライトの優先操作を無効にするために使います。\nCGが変化する可能\性があります。",
+		[HELP_FASTSPRITE] = "高速スプライト\n内臓スプライトの優先操作を無効にするために使います。\nCGが変化する可能\性があります。"
 	}
 };

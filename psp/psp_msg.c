@@ -350,7 +350,7 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[SCROLL_STATUS_0] = "Line %d/%d  -  Page %d/%d",
 		[SCROLL_STATUS_1] = "   exit,        help  ",
 		[SCROLL_HELP] = "Snes9xTYL - fileviewer\n\n"
-			SJIS_TRIANGLE " Find, then %s Find next, " SJIS_SQUARE " Find previous\n" 
+			SJIS_TRIANGLE " Find, then %s Find next, " SJIS_SQUARE " Find previous\n"
 			SJIS_UP "," SJIS_DOWN " scroll text, L,R scroll faster\n%s exit\n\n"
 			"Last position is keeped if same file is reopened.\nHowever it will be reset if another file is opened.\n\n"
 			"Press %s",
