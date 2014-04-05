@@ -1030,6 +1030,7 @@ again:
 			char str[64];
 			sprintf(str, s9xTYL_msg[LOADING_ROM], FileSize >> 10);
 			msgBoxLines(str,0);
+			msgBoxLines(str,0);  // this is to avoid flickering due to progressbar flipping the screen
 
 			while (current_pos>0) {
 	    	psp_showProgressBar(current_pos,FileSize);
