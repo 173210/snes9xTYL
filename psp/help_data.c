@@ -21,7 +21,7 @@ enum {
 	HELP_BG3
 };
 
-static const char *help_data_ml[][] = {
+static const char *help_data_ml[][13] = {
 	[HELP_EN] = {
 	//english
 		[HELP_SHOWPASS] = "Show how much call to rendering function was needed to compute the screen\nThe lowest, the fastest. This is usefull to check the impact of hacks (below)\n",
@@ -36,7 +36,7 @@ static const char *help_data_ml[][] = {
 		[HELP_BG2] = "BG2 On/Off.\nUse this to disactivate(Off) BACKGROUND 2 drawing.",
 		[HELP_BG3] = "BG3 On/Off.\nUse this to disactivate(Off) BACKGROUND 3 drawing.",
 		[HELP_EASY] = "No Transparency.\nUse this to force no transparency rendering.\nGFX may be altered (pixels being opaque instead of transparent, ...)",
-		[HELP_FASTSPRITE] = "Fast sprites.\nUse this to disactivate intra-sprites priorities handling.\nGFX may be altered",
+		[HELP_FASTSPRITE] = "Fast sprites.\nUse this to disactivate intra-sprites priorities handling.\nGFX may be altered"
 	},
 	[HELP_JA] = {
 	//japanese
