@@ -4175,13 +4175,15 @@ int root_menu(void) {
 				uint16 *src,*dst;
 				src=(u16 *)pgGetVramAddr(0,0);
 				//add the 'X to return' message at bottom
-				mh_printCenter(262, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], INFOBAR_COL);
+                                sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], os9x_btn_negative_str);
+                                mh_printCenter(262, str_tmp, INFOBAR_COL);
 				pgScreenFlipV2();
 				//and initiate new screen
 				dst=(u16 *)pgGetVramAddr(0,0);
 				memcpy(dst,src,LINESIZE*272*2);
 				//add the 'X to return' message at bottom
-				mh_printCenter(262, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], INFOBAR_COL);
+                                sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], os9x_btn_negative_str);
+                                mh_printCenter(262, str_tmp, INFOBAR_COL);
 
 
 				//call the sub-function
