@@ -1,4 +1,4 @@
-#include "danzeff.h"
+﻿#include "danzeff.h"
 
 // headerfiles needed for the GU version
 #ifdef DANZEFF_SCEGU

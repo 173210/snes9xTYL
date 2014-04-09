@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
  *
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
@@ -3118,12 +3118,12 @@ void CMemory::ApplyROMFixes ()
 	strncmp (ROMId, "APB", 3) == 0 ||
 	((strncmp (ROMName, "Parlor", 6) == 0 || 
           strcmp (ROMName, "HEIWA Parlor!Mini8") == 0 ||
-	  strncmp (ROMName, "SANKYO Fever! ̨��ް!", 21) == 0) &&
+	  strncmp (ROMName, "SANKYO Fever! Ì¨°ÊÞ°!", 21) == 0) &&
 	 strcmp (CompanyId, "A0") == 0) ||
 	strcmp (ROMName, "DARK KINGDOM") == 0 ||
 	strcmp (ROMName, "ZAN3 SFC") == 0 ||
 	strcmp (ROMName, "HIOUDEN") == 0 ||
-	strcmp (ROMName, "�ݼɳ�") == 0 ||
+	strcmp (ROMName, "ÃÝ¼É³À") == 0 ||
 	strcmp (ROMName, "FORTUNE QUEST") == 0 ||
 	strcmp (ROMName, "FISHING TO BASSING") == 0 ||
 	strncmp (ROMName, "TokyoDome '95Battle 7", 21) == 0 ||
@@ -3212,7 +3212,7 @@ void CMemory::ApplyROMFixes ()
     
     Settings.APURAMInitialValue = 0xff;
 
-    if (strcmp (ROMName, "���Ը�Ҷ���ݾ�") == 0 ||
+    if (strcmp (ROMName, "·­³Ô¸¥Ò¶ÞÐÃÝ¾²") == 0 ||
     	strcmp (ROMName, "KENTOUOU WORLDCHAMPIO") == 0 ||
     	strcmp (ROMName, "TKO SUPERCHAMPIONSHIP") == 0 ||
     	strcmp (ROMName, "TKO SUPER CHAMPIONSHI") == 0 ||
@@ -3411,7 +3411,7 @@ void CMemory::ApplyROMFixes ()
     }
 
     // Additional game fixes by sanmaiwashi ...
-    if (strcmp (ROMName, "SFX ŲĶ������ɶ��� 1") == 0) 
+    if (strcmp (ROMName, "SFX Å²Ä¶ÞÝÀÞÑÓÉ¶ÞÀØ 1") == 0) 
     {
 	bytes0x2000 [0xb18] = 0x4c;
 	bytes0x2000 [0xb19] = 0x4b;
@@ -3435,7 +3435,7 @@ void CMemory::ApplyROMFixes ()
     }
 
     if (strncmp (ROMName, "SWORD WORLD SFC", 15) == 0 ||
-        strcmp (ROMName, "SFC ���ײ�ް") == 0)
+        strcmp (ROMName, "SFC ¶ÒÝ×²ÀÞ°") == 0)
     {
 	(IAPUuncached.OneCycle) = 15;
 	SNESGameFixes.NeedInit0x2137 = TRUE;
@@ -3444,7 +3444,7 @@ void CMemory::ApplyROMFixes ()
     if (strncmp (ROMName, "SHIEN THE BLADE CHASE", 21) == 0)
 	SNESGameFixes.Old_Read0x4200 = TRUE;
 
-    if (strcmp (ROMName, "�޼�� ���ޭ��޲����") == 0)
+    if (strcmp (ROMName, "ºÞ¼Þ× ¶²¼Þ­³ÀÞ²¹¯¾Ý") == 0)
 	SNESGameFixes.NeedInit0x2137 = TRUE;
 
     if (strcmp (ROMName, "UMIHARAKAWASE") == 0)
@@ -3465,8 +3465,8 @@ void CMemory::ApplyROMFixes ()
 	    Map [0x408 + c] = ROM - 0x8000;
     }
 
-    if (strcmp (ROMName, "���̧߰н�") == 0 || 
-	strcmp (ROMName, "���̧߰н� 2") == 0 ||
+    if (strcmp (ROMName, "½°Êß°Ì§Ð½À") == 0 || 
+	strcmp (ROMName, "½°Êß°Ì§Ð½À 2") == 0 ||
 	strcmp (ROMName, "ZENKI TENCHIMEIDOU") == 0 ||
 	strcmp (ROMName, "GANBA LEAGUE") == 0)
     {
@@ -3484,10 +3484,10 @@ void CMemory::ApplyROMFixes ()
     if (strcmp (ROMName, "goemon 4") == 0)
 	SNESGameFixes.SRAMInitialValue = 0x00;
 
-    if (strcmp (ROMName, "PACHISLO �ݷ��") == 0)
+    if (strcmp (ROMName, "PACHISLO ¹Ý·­³") == 0)
 	SNESGameFixes._0x213E_ReturnValue = 1;
 
-    if (strcmp (ROMName, "�� ϰ�ެ� ĳʲ���") == 0)
+    if (strcmp (ROMName, "»Þ Ï°¼Þ¬Ý Ä³Ê²ÃÞÝ") == 0)
 	SNESGameFixes.TouhaidenControllerFix = TRUE;
 
     if (strcmp (ROMName, "DRAGON KNIGHT 4") == 0)

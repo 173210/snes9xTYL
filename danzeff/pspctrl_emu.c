@@ -1,4 +1,4 @@
-#include "pspctrl_emu.h"
+﻿#include "pspctrl_emu.h"
 
 #ifdef PSP
 SceCtrlData getCtrlFromJoystick(SDL_Joystick* joystick)

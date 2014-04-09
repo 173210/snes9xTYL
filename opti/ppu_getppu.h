@@ -1,4 +1,4 @@
-static uint8 GetPPU_RAM (uint16 Address) {
+﻿static uint8 GetPPU_RAM (uint16 Address) {
 	return (ROM_GLOBAL[Address]);
 }
 

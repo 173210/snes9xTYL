@@ -1,4 +1,4 @@
------ Dev Stuff
+﻿----- Dev Stuff
 All included files are licensed under the BSD license, see LICENSE in PSPSDK root for details.
 
 

@@ -1,4 +1,4 @@
-#ifndef __PROFILER_H__
+﻿#ifndef __PROFILER_H__
 #define __PROFILER_H__
 
 #include <sys/time.h>

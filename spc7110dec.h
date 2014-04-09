@@ -1,4 +1,4 @@
-/*****
+﻿/*****
  * SPC7110 emulator - version 0.03 (2008-08-10)
  * Copyright (c) 2008, byuu and neviksti
  *

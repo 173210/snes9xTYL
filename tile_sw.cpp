@@ -1,4 +1,4 @@
-#include "snes9x.h"
+﻿#include "snes9x.h"
 
 #include "memmap.h"
 #include "ppu.h"

@@ -1,4 +1,4 @@
-#ifndef __icon_misc__
+﻿#ifndef __icon_misc__
 #define __icon_misc__
 
 static unsigned char icon_misc[] __attribute__((aligned(16))) = {
