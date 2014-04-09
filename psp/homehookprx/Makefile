@@ -1,4 +1,4 @@
-TARGET = homehook
+﻿TARGET = homehook
 OBJS = main.o sceCtrl_driver.o
 
 INCDIR =

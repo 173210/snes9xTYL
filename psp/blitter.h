@@ -1,4 +1,4 @@
-#ifndef _blit_h_
+﻿#ifndef _blit_h_
 #define _blit_h_
 
 

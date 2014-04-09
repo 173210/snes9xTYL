@@ -1,4 +1,4 @@
-TARGET = snes9xTYL
+﻿TARGET = snes9xTYL
 
 ifdef ME_ACTIVE
 EMUNAME_VERSION = Snes9xTYLmecm 0.4.2 Mod

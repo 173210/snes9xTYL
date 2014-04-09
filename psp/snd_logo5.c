@@ -1,4 +1,4 @@
-#ifndef __snd_logo5__
+﻿#ifndef __snd_logo5__
 #define __snd_logo5__
 
 static unsigned int size_snd_logo5 = 66120;

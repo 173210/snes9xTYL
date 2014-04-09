@@ -1,4 +1,4 @@
-typedef struct {int utf8;int sjis;} t_utf8_sjis_xlate;
+﻿typedef struct {int utf8;int sjis;} t_utf8_sjis_xlate;
 static int sjis_xlate_entries=7335;
 static t_utf8_sjis_xlate sjis_xlate[]={{0xe38080,0x8140},
 {0xe38081,0x8141},

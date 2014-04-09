@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
  
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
@@ -213,27 +213,27 @@ extern SAPUEVENTS  *  const stAPUEvents_p;
 //extern volatile int32 *  const Uncache_APU_Cycles_p;
 //extern uint8 * const Uncache_APU_OutPorts_p;
 //extern volatile bool8 *  const Uncache_IAPU_APUExecuting_p;
-//1@’P‘Ì
+//1Â@â€™Pâ€˜ÃŒ
 //#define Uncache_APU_Cycles (*Uncache_APU_Cycles_p)
 //#define Uncache_APU_OutPorts Uncache_APU_OutPorts_p
 //#define IAPU_APUExecuting (*Uncache_IAPU_APUExecuting_p)
-//2@\‘¢‘Ì
+//2Â@Â\â€˜Â¢â€˜ÃŒ
 //#define Uncache_APU_Cycles (((SAPUEVENTS*)UNCACHE_PTR(&stAPUEvents))->APU_Cycles)
 //#define Uncache_APU_OutPorts (((SAPUEVENTS*)UNCACHE_PTR(&stAPUEvents))->APU_OutPorts)
 //#define IAPU_APUExecuting (((SAPUEVENTS*)UNCACHE_PTR(&stAPUEvents))->APUExecuting)
-//2.5@\‘¢‘Ì
+//2.5Â@Â\â€˜Â¢â€˜ÃŒ
 #define Uncache_APU_Cycles (stAPUEvents_p->APU_Cycles)
 #define Uncache_APU_OutPorts (stAPUEvents_p->APU_OutPorts)
 #define IAPU_APUExecuting (stAPUEvents_p->APUExecuting)
-//3 ƒXƒNƒ‰ƒbƒ`ƒpƒbƒh‚Å‚«‚È‚¢
+//3 Æ’XÆ’NÆ’â€°Æ’bÆ’`Æ’pÆ’bÆ’hâ€šÃ…â€šÂ«â€šÃˆâ€šÂ¢
 //#define Uncache_APU_Cycles (*(int32*)UNCACHE_PTR(0x10400))
 //#define Uncache_APU_OutPorts ((uint8*)UNCACHE_PTR(0x10404))
 //#define IAPU_APUExecuting (*(int32*)UNCACHE_PTR(0x10408))
-//–ˆ‰ñ‚Å–³‚­Aˆê’èŠúŠÔ‚²‚Æ‚ÉIAPU_APUExecutingXV‚·‚é
+//â€“Ë†â€°Ã±â€šÃ…â€“Â³â€šÂ­ÂAË†Ãªâ€™Ã¨Å ÃºÅ Ã”â€šÂ²â€šÃ†â€šÃ‰IAPU_APUExecutingÂXÂVâ€šÂ·â€šÃ©
 #if 1
 #define FAST_IAPU_APUEXECUTING_CHECK
 #endif
-//#define IAPU_APUExecuting IAPUuncached.APUExecuting //•s‹ï‡‚Ì‰Â”\«‚ ‚è
+//#define IAPU_APUExecuting IAPUuncached.APUExecuting //â€¢sâ€¹Ã¯Ââ€¡â€šÃŒâ€°Ã‚â€\ÂÂ«â€šÂ â€šÃ¨
 #else
 #define Uncache_APU_Cycles APUPack.APU.Cycles
 #define Uncache_APU_OutPorts APUPack.APU.OutPorts

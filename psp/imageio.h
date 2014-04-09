@@ -1,4 +1,4 @@
-#ifndef _IMAGEIO_H_
+﻿#ifndef _IMAGEIO_H_
 #define _IMAGEIO_H_
 
 #include <stdio.h>

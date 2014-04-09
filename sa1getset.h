@@ -1,4 +1,4 @@
-INLINE uint8 S9xSA1GetByte (uint32 address)
+﻿INLINE uint8 S9xSA1GetByte (uint32 address)
 {
     uint8 *GetAddress = SA1Pack_SA1.Map [(address >> MEMMAP_SHIFT) & MEMMAP_MASK];
     if (GetAddress >= (uint8 *) CMemory::MAP_LAST)

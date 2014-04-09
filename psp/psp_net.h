@@ -1,4 +1,4 @@
-#ifndef __psp_adhoc_h__
+﻿#ifndef __psp_adhoc_h__
 #define __psp_adhoc_h__
 
 int psp_initadhocgame(void);

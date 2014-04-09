@@ -1,4 +1,4 @@
- #define PASSWORD_XORED "watashihaos9xpspdesu."
+ï»¿ #define PASSWORD_XORED "watashihaos9xpspdesu."
 
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
@@ -1149,7 +1149,7 @@ void me_StartSound (){
 	
 	me_sound_t *p=(me_sound_t *)((int)(&me_sound_data)|0x40000000);
 
-	//ƒTƒEƒ“ƒhƒoƒOŽb’è3
+	//Æ’TÆ’EÆ’â€œÆ’hÆ’oÆ’OÅ½bâ€™Ã¨3
 	sceKernelDcacheWritebackInvalidateAll();
 	CallME(me_data, (int)(&me_Dummy),0, -1, 0, 0, 0); // all we want is the ME to inv its dcache
 
@@ -3975,7 +3975,7 @@ int user_main(SceSize args, void* argp) {
 
 }
 /////////////////////////////////////////////////////////////////////
-// ƒJƒEƒ“ƒ^ŽÀ‘Ô
+// Æ’JÆ’EÆ’â€œÆ’^Å½Ã€â€˜Ã”
 
 uint32 g_nCount;
 clock_t g_ulStart;

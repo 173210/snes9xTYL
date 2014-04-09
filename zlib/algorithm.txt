@@ -1,4 +1,4 @@
-1. Compression algorithm (deflate)
+﻿1. Compression algorithm (deflate)
 
 The deflation algorithm used by gzip (also zip and zlib) is a variation of
 LZ77 (Lempel-Ziv 1977, see reference below). It finds duplicated strings in

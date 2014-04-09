@@ -1,4 +1,4 @@
-#ifndef __snd_beep1__
+﻿#ifndef __snd_beep1__
 #define __snd_beep1__
 
 static unsigned char snd_beep1[] __attribute__((aligned(16))) = {

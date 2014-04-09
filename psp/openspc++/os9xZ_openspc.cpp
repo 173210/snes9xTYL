@@ -1,4 +1,4 @@
-#include "snes9x.h"
+﻿#include "snes9x.h"
 
 #include "psp/openspc++/os9xZ_openspc.h"
 #include "psp/openspc++/openspc.h"

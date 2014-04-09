@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
  *
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
@@ -783,7 +783,7 @@ void ComputeClipWindowsFix ()
 		{
 			if(pClip->Count[w]==0)
 			{
-				//�N���b�v�S�̂�
+				//ƒNƒŠƒbƒv‘S‘Ì‚Ö
 				if(pClipFix->GroupCount[w]!=0)
 				{
 					int cf=pClipFix->GroupCount[w];
@@ -793,7 +793,7 @@ void ComputeClipWindowsFix ()
 					}
 					else
 					{
-						//�V���ɍ쐬
+						//V‚½‚Éì¬
 						copyed=true;
 						pClipFix->Count[w][cf]=1;
 						pClipFix->Start[w][cf]=startY;//pClipFix->End[w][cf-1];
@@ -822,7 +822,7 @@ void ComputeClipWindowsFix ()
 			}
 			else
 			{
-				//�ǉ�
+				//’Ç‰Á
 				copyed=true;
 
 				pClipFix->Count[w][cf]=pClip->Count[w];
@@ -865,7 +865,7 @@ void CreateClipWindowsFix ()
 		endY = PPU.ScreenHeight - 1;
 
 
-	//�V���ɍ쐬
+	//V‚½‚Éì¬
 	for (int w = 5; w >= 0; w--)
 	{
 		IPPU.ClipFix [0].Count[w][0]=1;
