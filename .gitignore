@@ -19,3 +19,6 @@
 #Misc
 log
 timestamp.h
+/nbproject
+/nbproject/private/
+
