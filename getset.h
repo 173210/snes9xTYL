@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
  *
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and

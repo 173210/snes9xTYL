@@ -1,4 +1,4 @@
-﻿
+
 #include <pspdebug.h>
 #include <pspdisplay.h>
 #include <pspiofilemgr.h>

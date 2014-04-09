@@ -1,4 +1,4 @@
-﻿/* unzip.h -- IO for uncompress .zip files using zlib 
+/* unzip.h -- IO for uncompress .zip files using zlib 
    Version 0.15 beta, Mar 19th, 1998,
 
    Copyright (C) 1998 Gilles Vollant

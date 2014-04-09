@@ -1,4 +1,4 @@
-﻿#ifndef __savedata_res__
+#ifndef __savedata_res__
 #define __savedata_res__
 
 static unsigned int size_icon0 = 10634;

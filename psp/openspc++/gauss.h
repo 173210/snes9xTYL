@@ -1,4 +1,4 @@
-﻿#ifndef GAUSS_H
+#ifndef GAUSS_H
 #define GAUSS_H
 
 //#include "TapWave.h"

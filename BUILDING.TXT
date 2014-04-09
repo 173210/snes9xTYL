@@ -1,4 +1,4 @@
-﻿BUILDING
+BUILDING
 ============================
 
 To build the user version

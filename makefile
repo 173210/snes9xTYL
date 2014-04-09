@@ -1,4 +1,4 @@
-﻿all: timestamp me
+all: timestamp me
 
 clean:
 	make -f makefile_multi clean_snes

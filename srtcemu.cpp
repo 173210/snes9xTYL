@@ -1,4 +1,4 @@
-﻿/*****
+/*****
  * S-RTC emulation code
  * Copyright (c) byuu
  *****/

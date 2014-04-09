@@ -1,4 +1,4 @@
-﻿//#define DEBUG_TILE
+//#define DEBUG_TILE
 
 /*
  * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.

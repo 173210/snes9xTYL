@@ -1,4 +1,4 @@
-﻿#include "psp.h"
+#include "psp.h"
 //#include <pspkernel.h>
 //#include <string.h>
 #include "me.h"

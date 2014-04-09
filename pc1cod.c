@@ -1,4 +1,4 @@
-﻿/* File PC1COD.c */
+/* File PC1COD.c */
 /* written in Borland Turbo C 2.0 on PC */
 /* PC1 Cipher Algorithm ( Pukall Cipher 1 ) */
 /* By Alexander PUKALL 1991 */

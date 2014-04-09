@@ -1,4 +1,4 @@
-﻿#include "psp.h"
+#include "psp.h"
 
 #include "tile_psp.h"
 

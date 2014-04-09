@@ -1,4 +1,4 @@
-ï»¿#ifndef FILER_H
+#ifndef FILER_H
 #define FILER_H
 
 #ifdef __cplusplus
@@ -14,7 +14,7 @@ int getFilePath(char *out,int can_exit);
 int getNoExtFilePath(char *out,int can_exit);
 int filer_init(const char *msg, const char *path);
 
-// â€”LÅ’Ã¸â€šÃˆÅ gâ€™Â£Å½q
+// —LŒø‚ÈŠg’£Žq
 enum {    
   EXT_SMC,
   EXT_SFC,

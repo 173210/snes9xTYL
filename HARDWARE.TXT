@@ -1,4 +1,4 @@
-﻿This document gives a brief description of the known hardware features of the
+This document gives a brief description of the known hardware features of the
 SNES giving you some idea what SNES emulation authors are up against.
 
 Quick Overview

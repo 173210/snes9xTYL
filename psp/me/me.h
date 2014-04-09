@@ -1,4 +1,4 @@
-﻿#ifndef me_h
+#ifndef me_h
 #define me_h
 
 struct me_struct

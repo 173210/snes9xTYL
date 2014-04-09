@@ -1,4 +1,4 @@
-﻿#ifndef me_csc_h
+#ifndef me_csc_h
 #define me_csc_h
 
 void me_csc

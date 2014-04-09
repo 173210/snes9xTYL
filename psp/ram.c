@@ -1,4 +1,4 @@
-﻿/* RAM simple check functions source */
+/* RAM simple check functions source */
 
 
 // *** INCLUDES ***

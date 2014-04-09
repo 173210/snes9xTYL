@@ -1,4 +1,4 @@
-﻿#ifndef __icon_pad__
+#ifndef __icon_pad__
 #define __icon_pad__
 
 static unsigned char icon_pad[] __attribute__((aligned(16))) = {

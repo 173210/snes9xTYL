@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
  
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
@@ -100,7 +100,7 @@ extern int NoiseFreq [32];
 #ifdef ME_SOUND
 SAPUEVENTS __attribute__((aligned(64))) stAPUEvents2;
 SAPUEVENTS  *  const __attribute__((aligned(64))) stAPUEvents_p=(SAPUEVENTS*)UNCACHE_PTR(&stAPUEvents);
-//SAPUEVENTS  *  const __attribute__((aligned(64))) stAPUEvents_p=(SAPUEVENTS*)UNCACHE_PTR(0x10000+sizeof (struct SCPUPACK));//ï¿½Å‚ï¿½ï¿½È‚ï¿½
+//SAPUEVENTS  *  const __attribute__((aligned(64))) stAPUEvents_p=(SAPUEVENTS*)UNCACHE_PTR(0x10000+sizeof (struct SCPUPACK));//�ł��Ȃ�
 
 int32 __attribute__((aligned(64))) Uncache_APU_Cycles_value;
 //volatile int32 __attribute__((aligned(64))) *   const Uncache_APU_Cycles_p=(int*)UNCACHE_PTR(&Uncache_APU_Cycles_value);

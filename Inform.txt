@@ -1,4 +1,4 @@
-﻿This Snes Emulator "snes9xTYL" is maintained by :
+This Snes Emulator "snes9xTYL" is maintained by :
 yoyofr
 laxer3a
 

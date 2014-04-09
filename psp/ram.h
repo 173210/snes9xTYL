@@ -1,4 +1,4 @@
-﻿#ifndef RAM_INCLUDED
+#ifndef RAM_INCLUDED
 #define RAM_INCLUDED
 
 /* RAM simple check functions header */

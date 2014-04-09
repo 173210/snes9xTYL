@@ -1,4 +1,4 @@
-﻿1.39
+1.39
 - Added SDD-1 unknown graphics data logging at the dumper's request. A bit late
   but might help with Street Fighter 2 Alpha's data dumping. Creates a 
   romname.dat file in the freeze file folder.

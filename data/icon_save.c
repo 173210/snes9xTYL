@@ -1,4 +1,4 @@
-﻿#ifndef __icon_save__
+#ifndef __icon_save__
 #define __icon_save__
 
 static unsigned char icon_save[] __attribute__((aligned(16))) = {

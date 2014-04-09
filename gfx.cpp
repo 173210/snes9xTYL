@@ -1,4 +1,4 @@
-﻿#define PSP_GU_RENDER_MIN_UPDATED_LINES 4
+#define PSP_GU_RENDER_MIN_UPDATED_LINES 4
 /*
  * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
  *

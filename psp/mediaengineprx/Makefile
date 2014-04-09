@@ -1,4 +1,4 @@
-﻿TARGET = mediaengine
+TARGET = mediaengine
 OBJS = me_stub.o main.o sceMeCore_driver.o sceSysreg_driver371.o
 
 INCDIR =

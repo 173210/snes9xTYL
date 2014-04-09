@@ -1,4 +1,4 @@
-﻿#ifndef __psp_state_snap_h__
+#ifndef __psp_state_snap_h__
 #define __psp_state_snap_h__
 
 

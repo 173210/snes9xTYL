@@ -1,4 +1,4 @@
-﻿Next release(s) :
+Next release(s) :
 - generic combo/macros => button assignment
 - more cheats feature
 - improved netplay experience

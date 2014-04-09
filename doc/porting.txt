@@ -1,4 +1,4 @@
-﻿                   How to Port Snes9x to a New Platform
+                   How to Port Snes9x to a New Platform
                    ====================================
 
 Version: 1.01

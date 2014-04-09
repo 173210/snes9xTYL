@@ -1,4 +1,4 @@
-﻿#ifndef INCLUDED_LIB_PSPCTRL_EMU_H 
+#ifndef INCLUDED_LIB_PSPCTRL_EMU_H 
 #define INCLUDED_LIB_PSPCTRL_EMU_H
 
 #include <SDL/SDL.h>

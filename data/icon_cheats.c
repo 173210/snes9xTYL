@@ -1,4 +1,4 @@
-﻿#ifndef __icon_cheats__
+#ifndef __icon_cheats__
 #define __icon_cheats__
 
 static unsigned char icon_cheats[] __attribute__((aligned(16))) = {

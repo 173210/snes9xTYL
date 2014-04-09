@@ -1,4 +1,4 @@
-﻿#ifndef __icon_sound__
+#ifndef __icon_sound__
 #define __icon_sound__
 
 static unsigned char icon_sound[] __attribute__((aligned(16))) = {

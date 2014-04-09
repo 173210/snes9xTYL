@@ -1,4 +1,4 @@
-﻿#ifndef __icon_about__
+#ifndef __icon_about__
 #define __icon_about__
 
 static unsigned char icon_about[] __attribute__((aligned(16))) = {

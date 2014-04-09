@@ -1,4 +1,4 @@
-﻿#ifndef __selectorMenu_h__
+#ifndef __selectorMenu_h__
 #define __selectorMenu_h__
 
 int AddPsp(const unsigned char *mac, const char *name, int length);

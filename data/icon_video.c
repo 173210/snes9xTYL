@@ -1,4 +1,4 @@
-﻿#ifndef __icon_video__
+#ifndef __icon_video__
 #define __icon_video__
 
 static unsigned char icon_video[] __attribute__((aligned(16))) = {

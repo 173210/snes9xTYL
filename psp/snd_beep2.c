@@ -1,4 +1,4 @@
-﻿#ifndef __snd_beep2__
+#ifndef __snd_beep2__
 #define __snd_beep2__
 
 static unsigned int size_snd_beep2 = 63460;

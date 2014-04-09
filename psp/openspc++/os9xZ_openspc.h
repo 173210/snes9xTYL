@@ -1,4 +1,4 @@
-﻿#ifndef __os9xgp_openspc_h__
+#ifndef __os9xgp_openspc_h__
 #define __os9xgp_openspc_h__
 
 

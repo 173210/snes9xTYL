@@ -1,4 +1,4 @@
-﻿#ifndef csc_h
+#ifndef csc_h
 #define csc_h
 
 struct csc_struct

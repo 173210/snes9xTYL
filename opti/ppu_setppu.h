@@ -1,4 +1,4 @@
-﻿static void SetPPU_2100 (uint8 Byte, uint16 Address)
+static void SetPPU_2100 (uint8 Byte, uint16 Address)
 {
 	// Brightness and screen blank bit
 	if (Byte != ROM_GLOBAL [0x2100])
