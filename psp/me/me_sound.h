@@ -1,4 +1,4 @@
-#ifndef me_sound_h
+﻿#ifndef me_sound_h
 #define me_sound_h
 
 void me_sound

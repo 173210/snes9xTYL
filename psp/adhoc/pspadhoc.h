@@ -1,4 +1,4 @@
-#ifndef __pspadhoc_h__
+﻿#ifndef __pspadhoc_h__
 #define __pspadhoc_h__
 
 int adhocLoadDrivers(SceModuleInfo* modInfoPtr);

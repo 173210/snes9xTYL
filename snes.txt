@@ -1,4 +1,4 @@
-[FIX] psp accelerated rendering fixed
+﻿[FIX] psp accelerated rendering fixed
 [FIX] fixed crashing bug with mosaic effects & psp accelerated modes
 [FIX] fixed sleep/resume freeze
 [NEW] snes BRR decoding in mips assembly (sample decoding, sounds better in man games)
@@ -70,7 +70,7 @@ next features:
 
 
 ----------------------
-regarder quels bgs/objs sont concern�s par l'appel a screenupdate
+regarder quels bgs/objs sont concernés par l'appel a screenupdate
 si un bg ne change pas (scroll identique, pas de chgt de prop add/sub, ...)
 ne pas le mettre a jour de suite.
 

@@ -1,4 +1,4 @@
-#include <pspsdk.h>
+﻿#include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspsysevent.h>
 #include <string.h>

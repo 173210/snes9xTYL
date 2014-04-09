@@ -1,4 +1,4 @@
-#include <malloc.h>
+﻿#include <malloc.h>
 #include "mem64.h"
 
 void *malloc_64(int size)

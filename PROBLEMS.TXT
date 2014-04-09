@@ -1,4 +1,4 @@
-o FIXED: Aladdin: Mode 7 tile 0 corruption. bug in my delay-by-one-word read
+﻿o FIXED: Aladdin: Mode 7 tile 0 corruption. bug in my delay-by-one-word read
   V-RAM code.
 o FIXED: Missing sprites on Captain Commando (all negative x coords) - only
   on asm version, but now...
