@@ -1,4 +1,4 @@
-#ifndef __PSP_H__
+ï»¿#ifndef __PSP_H__
 #define __PSP_H__
 
 #ifdef __cplusplus
@@ -155,15 +155,15 @@ extern volatile int *mixsample_flag,*emulapu_flag;
 
 
 
-#define SJIS_SQUARE " "
-#define SJIS_CROSS "~"
-#define SJIS_CIRCLE "›"
-#define SJIS_TRIANGLE "¢"
-#define SJIS_RIGHT "¨"
-#define SJIS_LEFT "©"
-#define SJIS_UP "ª"
-#define SJIS_DOWN "«"
-#define SJIS_STAR "š"
+#define SJIS_SQUARE "ÂÂ "
+#define SJIS_CROSS "Â~"
+#define SJIS_CIRCLE "Ââ€º"
+#define SJIS_TRIANGLE "ÂÂ¢"
+#define SJIS_RIGHT "ÂÂ¨"
+#define SJIS_LEFT "ÂÂ©"
+#define SJIS_UP "ÂÂª"
+#define SJIS_DOWN "ÂÂ«"
+#define SJIS_STAR "ÂÅ¡"
 
 
 #define printf pspDebugScreenPrintf

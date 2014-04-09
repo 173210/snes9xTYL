@@ -1,4 +1,4 @@
-/*** mapping table between sjis and unicode ***/
+ï»¿/*** mapping table between sjis and unicode ***/
 // sjis: LE, unicode: BE Why?
 
 #ifndef __CPLTBL_H__
@@ -7927,7 +7927,7 @@ static const unsigned short map[TOTAL_TBL][2] = {
 { 0x49FC, 0xFA2D},
 { 0x4AFC, 0x9E19},
 { 0x4BFC, 0x9ED1},
-// ƒ†[ƒU’è‹`@•ÏX‚µ‚½‚çƒe[ƒuƒ‹‚Ì”‚ğ•ÏX‚·‚é‚±‚Æ
+// Æ’â€ Â[Æ’Uâ€™Ã¨â€¹`Â@â€¢ÃÂXâ€šÂµâ€šÂ½â€šÃ§Æ’eÂ[Æ’uÆ’â€¹â€šÃŒÂâ€â€šÃ°â€¢ÃÂXâ€šÂ·â€šÃ©â€šÂ±â€šÃ†
 { 0x2e, 0x2009}, // thinsp
 { 0x4081, 0x2002}, // ensp
 };

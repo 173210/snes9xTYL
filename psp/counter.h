@@ -1,4 +1,4 @@
-#ifndef __COUNTER_H__
+﻿#ifndef __COUNTER_H__
 #define __COUNTER_H__
 
 #ifdef __cplusplus

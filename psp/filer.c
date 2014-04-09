@@ -1,4 +1,4 @@
-//#include "main.h"
+ï»¿//#include "main.h"
 #include "snes9x.h"
 #include "psp.h"
 #include "filer.h"
@@ -77,7 +77,7 @@ struct timeval filer_next,filer_cur;
 extern void show_bg(u16 *bg);
 
 ////////////////////////////////////////////////////////////////////////
-// ƒNƒCƒbƒNƒ\[ƒg
+// Æ’NÆ’CÆ’bÆ’NÆ’\Â[Æ’g
 void SJISCopy(struct SceIoDirent *a, char *file)
 {
 	char ca;
@@ -141,7 +141,7 @@ void sort(SceIoDirent *a, int left, int right) {
 	}
 }
 
-// Šg’£ŽqŠÇ——p
+// Å gâ€™Â£Å½qÅ Ã‡â€”Ââ€”p
 const struct {
 	char *szExt;
 	int nExtId;
@@ -873,7 +873,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 			files[0].d_name[3] == ':' ? files[0].d_name : s9xTYL_msg[FILER_STATUS_PARDIR]);
         mh_print(8, 262, tmp, INFOBAR_COL);
 
-		// ƒXƒNƒ[ƒ‹ƒo[
+		// Æ’XÆ’NÆ’ÂÂ[Æ’â€¹Æ’oÂ[
 		if(nfiles > rows){
 			h = 219;
 			pgDrawFrame(461,25,462,243,(0xd<<0)|(0xd<<5)|(0x17<<10));
