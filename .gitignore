@@ -17,8 +17,6 @@
 *.a
 
 #Misc
-.gitignore
-.gitignore~
 log
 timestamp.h
-/nbproject
+/nbproject/private/
