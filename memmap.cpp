@@ -58,7 +58,7 @@ extern const char *S9xGetSaveFilename( const char *e );
 #include "display.h"
 
 extern "C" {
-#ifdef __PSP__
+#ifdef __psp__
 #include <kubridge.h>
 #endif
 
@@ -248,7 +248,7 @@ bool8 CMemory::Init ()
 //DEBUGS("9d");	
 	//try to use storage instead of heap mem
 
-#ifdef __PSP__
+#ifdef __psp__
 	if(kuKernelGetModel() > 0) {
 		MAX_ROM_SIZE = 0x1000000;
 		//ROM_HANDLER = sceKernelAllocPartitionMemory(
@@ -295,7 +295,7 @@ bool8 CMemory::Init ()
 	!IPPU.TileCache [TILE_8BIT] || !IPPU.TileCached [TILE_2BIT] ||
 	!IPPU.TileCached [TILE_4BIT] ||	!IPPU.TileCached [TILE_8BIT])
     {
-#ifdef __PSP__
+#ifdef __psp__
 	msgBoxLines(s9xTYL_msg[ERR_CANNOT_ALLOC_MEM], 30);
 	pgwaitPress();
 #else
@@ -350,7 +350,7 @@ void CMemory::Deinit ()
 /*    if (RAM)
     {free ((uint8*)RAM);RAM = NULL;}   */   
     if (ROM_GLOBAL) {
-#ifdef __PSP__
+#ifdef __psp__
         if(kuKernelGetModel() > 0)
 	{ROM_GLOBAL = ROM = NULL;}
         else
@@ -631,7 +631,7 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 
     	DeInterleavedRom(Tales);
 
-#ifdef __PSP__
+#ifdef __psp__
 		msgBoxLines(s9xTYL_msg[CONV_DONE], 30);
 #else
 		S9xMessage(0,0,"conversion done");
@@ -647,7 +647,7 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 		{
 		    if (retry_count == 0)
 		    {
-#ifdef __PSP__
+#ifdef __psp__
 				msgBoxLines(s9xTYL_msg[ROM_LIED], 30);
 #else
 				S9xMessage(0,0,"ROM lied about its type! Trying again.");
@@ -835,7 +835,7 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 
     	DeInterleavedRom(Tales);
 
-#ifdef __PSP__
+#ifdef __psp__
 		msgBoxLines(s9xTYL_msg[CONV_DONE], 30);
 #else
 		S9xMessage(0,0,"conversion done");
@@ -851,7 +851,7 @@ if (!Settings.ForceHiROM && !Settings.ForceLoROM &&
 		{
 		    if (retry_count == 0)
 		    {
-#ifdef __PSP__
+#ifdef __psp__
 				msgBoxLines(s9xTYL_msg[ROM_LIED], 30);
 #else
 				S9xMessage(0,0,"ROM lied about its type! Trying again.");
@@ -1063,7 +1063,7 @@ again:
 	    if ((uint32)(ptr - ROM) < MAX_ROM_SIZE + 0x200 && (isdigit (ext [0]) && ext [1] == 0 && ext [0] < '9')) {
 				more = TRUE;
 				ext [0]++;
-#if defined(__WIN32__)||defined(__GP32__)||defined(__PSP__)
+#if defined(__WIN32__)||defined(__GP32__)||defined(__psp__)
                 memmove (&ext [1], &ext [0], 4);
                 ext [0] = '.';
 #endif
@@ -1079,7 +1079,7 @@ again:
 	    {
 		more = TRUE;
 		name [len - 1]++;
-#if defined(__WIN32__)||defined(__GP32__)||defined(__PSP__)
+#if defined(__WIN32__)||defined(__GP32__)||defined(__psp__)
                 memmove (&ext [1], &ext [0], 4);
                 ext [0] = '.';
 #endif
@@ -1746,7 +1746,7 @@ void CMemory::InitROM (bool8 Interleaved)
 
     ApplyROMFixes ();
 
-#ifdef __PSP__
+#ifdef __psp__
     sprintf (String, "\"%s\" [%s] %s, %s\n%s: %s, %s: %s, TV: %s, S-RAM: %s",
 	     ROMName,
 	     (ROMChecksum + ROMComplementChecksum != 0xffff ||
@@ -1885,7 +1885,7 @@ bool8 CMemory::LoadSRAM (char *filename)
 				if (len - size == 512)
 					memmove(SRAM, SRAM + 512, size);
 
-#ifdef __PSP__
+#ifdef __psp__
 				msgBoxLines(s9xTYL_msg[SRAM_NOTFOUND], 30);
 #else
 				S9xMessage(S9X_INFO, S9X_ROM_INFO, "The SRAM file wasn't found: BS-X.srm was read instead.");
@@ -1895,7 +1895,7 @@ bool8 CMemory::LoadSRAM (char *filename)
 			}
 			else
 			{
-#ifdef __PSP__
+#ifdef __psp__
 				msgBoxLines(s9xTYL_msg[SRAM_BSX_NOTFOUND], 30);
 #else
 				S9xMessage(S9X_INFO, S9X_ROM_INFO, "The SRAM file wasn't found, BS-X.srm wasn't found either.");
@@ -2976,7 +2976,7 @@ const char *CMemory::StaticRAMSize ()
     static char tmp [20];
 
     if (Memory.SRAMSize > 16)
-#ifdef __PSP__
+#ifdef __psp__
 	return s9xTYL_msg[CORRUPT];
 #else
 	return ("Corrupt");
@@ -2990,7 +2990,7 @@ const char *CMemory::Size ()
     static char tmp [20];
 
     if (ROMSize < 7 || ROMSize - 7 > 23)
-#ifdef __PSP__
+#ifdef __psp__
 	return s9xTYL_msg[CORRUPT];
 #else
 	return ("Corrupt");
@@ -3011,7 +3011,7 @@ const char *CMemory::KartContents ()
 	"ROM", "ROM+RAM", "ROM+RAM+BAT"
     };
     if (ROMType == 0)
-#ifdef __PSP__
+#ifdef __psp__
 	return s9xTYL_msg[ROM_ONLY];
 #else
 	return ("ROM only");

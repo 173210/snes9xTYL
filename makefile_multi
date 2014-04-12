@@ -10,46 +10,42 @@ INCDIR = psp psp/me psp/openspc++ psp/adhoc zlib danzeff
 
 
 
-CFLAGS= -O2 -G0 -Wall -pipe \
-	-DFW3X -DPSP -D__PSP__ -DEMUNAME_VERSION="\"$(EMUNAME_VERSION)\"" #-DPSP_FW_VERSION=360 -DBUILD_PRX=1 \
-	#-mno-fp-exceptions -mno-check-zero-division -ffast-math
-	#-mgp32 -mlong32 -fstrict-aliasing \
-	#-frename-registers -fschedule-insns2 -fomit-frame-pointer -fforce-addr \
-	#-funroll-loops -fdelete-null-pointer-checks
-	#-march=allegrex
+CFLAGS = -O2 -G0 -Wall -pipe \
+	-DFW3X -DEMUNAME_VERSION="\"$(EMUNAME_VERSION)\""
 
 ifndef ME_ACTIVE
 USE_USER_LIBS = 1
 endif
 
+BUILD_PRX = 1
+
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS) -c
 
-LIBDIR = 
-LDFLAGS =
-#USE_PSPSDK_LIBC=1
-LIBS = -lpng -lm -lpspaudio -lpspgu -lpsppower -ljpeg -lpsputility -lstdc++ -lpspwlan -lpspgum_vfpu  -lpspvfpu -lpspgu -lpspusb -lpspusbstor -lpspkubridge
-#-lpspgum -lpspgu 
+LIBS = -ljpeg -lpng -lm -lstdc++ \
+	-lpspaudio -lpsppower -lpsputility -lpspwlan -lpspkubridge \
+	-lpspgum_vfpu -lpspvfpu -lpspgu \
+	-lpspusb -lpspusbstor
 
 
 EXTRA_TARGETS = EBOOT.PBP
-EXTRA_CLEAN =
 
 # use my own target - thx to zelurker for pointing this to me in neocdpsp ;-)
 PSP_EBOOT_TITLE = $(EMUNAME_VERSION)
 PSP_EBOOT_ICON = data/icon0.png
  
 # Object files
-PSP_OBJECTS=apu.o apudebug.o c4.o c4emu.o cheats.o cheats2.o clip.o cpu.o cpuexec_opti.o cpuops.o data.o\
-debug.o dma.o dsp1.o fxdbg.o fxemu.o fxinst.o gfx_mode7.o gfx.o gfx_org.o gfx_psp.o gfx_psp_fix.o globals.o loadzip.o memmap.o\
-ppu.o sa1.o sa1cpu.o sdd1.o sdd1emu.o snapshot.o snes9x.o spc700.o srtc.o soundux.o\
-tile.o tile_org.o tile_sw.o tile_psp.o unzip.o\
-spc7110.o
-#sound_mips.o snaporig.o 
+PSP_OBJECTS = apu.o apudebug.o c4.o c4emu.o cheats.o cheats2.o clip.o \
+	cpu.o cpuexec_opti.o cpuops.o data.o debug.o dma.o dsp1.o \
+	fxdbg.o fxemu.o fxinst.o gfx_mode7.o gfx.o gfx_org.o gfx_psp.o gfx_psp_fix.o \
+	globals.o loadzip.o memmap.o ppu.o sa1.o sa1cpu.o sdd1.o sdd1emu.o \
+	snapshot.o snes9x.o spc700.o spc7110.o srtc.o soundux.o \
+	tile.o tile_org.o tile_sw.o tile_psp.o unzip.o
+	#sound_mips.o snaporig.o 
 
-PLATFORMOBJ   = psp/psp.o psp/psp_ui.o psp/config.o psp/psplib.o psp/pg.o psp/psp_msg.o \
-	psp/filer.o psp/menu.o psp/imageio.o psp/blitter.o psp/decrypt.o psp/img_jpeg.o psp/ram.o  \
-	psp/menu_fx.o psp/me/mem64.o
+PLATFORMOBJ = psp/blitter.o psp/config.o psp/decrypt.o psp/filer.o \
+	psp/imageio.o psp/img_jpeg.o psp/menu.o psp/menu_fx.o psp/me/mem64.o \
+	psp/psp.o psp/psp_ui.o psp/psplib.o psp/pg.o psp/psp_msg.o psp/ram.o
 
 MEOBJ =	psp/MediaEngine.o psp/mediaengineprx/me.o
 
@@ -65,36 +61,32 @@ ZLIBOBJ = zlib/adler32.o zlib/compress.o zlib/crc32.o zlib/gzio.o \
 
 DANZOBJ = danzeff/danzeff.o
 
-OBJS= $(PLATFORMOBJ) $(PSP_OBJECTS) $(ZLIBOBJ) $(SPCOBJ) $(DANZOBJ)
+OBJS = $(PLATFORMOBJ) $(PSP_OBJECTS) $(ZLIBOBJ) $(SPCOBJ) $(DANZOBJ)
 
 ifdef ME_ACTIVE
-INCDIR+= psp/mediaengineprx
-OBJS+= $(MEOBJ)
-CFLAGS+= -DME_SOUND
+INCDIR += psp/mediaengineprx
+OBJS += $(MEOBJ)
+CFLAGS += -DME_SOUND
 endif
 
 ifdef HOME_HOOK_ON
-INCDIR+= psp/homehookprx
-OBJS+= $(HOMEHOOKOBJ)
-CFLAGS+= -DHOME_HOOK
+INCDIR += psp/homehookprx
+OBJS += $(HOMEHOOKOBJ)
+CFLAGS += -DHOME_HOOK
 endif
 
 ifdef USE_ADHOC
-LIBS+= -lpspnet_adhoc -lpspnet_adhocctl -lpspnet_adhocmatching
-OBJS+= $(NETOBJ)
+LIBS += -lpspnet_adhoc -lpspnet_adhocctl -lpspnet_adhocmatching
+OBJS += $(NETOBJ)
 endif
 
-CFLAGS+= -DNOKERNEL
+CFLAGS += -DNOKERNEL
 
 # Rules to make libraries
 
 
-PSPSDK=$(shell psp-config --pspsdk-path)
+PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
 
-# Dependecies
-tile_psp.o: tile_psp.h
-gfx_psp.o: tile_psp.h
-clean_snes:
-	rm -f $(MEOBJ) $(PSP_OBJECTS) $(PLATFORMOBJ) $(ZLIBOBJ) $(SPCOBJ) $(NETOBJ) $(DANZOBJ) $(HOMEHOOKOBJ) EBOOT.PBP PARAM.SFO snes9xTYL.elf
-
+clean:
+OBJS += $(MEOBJ) $(NETOBJ) $(HOMEHOOKOBJ)

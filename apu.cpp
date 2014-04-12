@@ -834,7 +834,7 @@ uint8 S9xGetAPUDSP ()
 
 bool8 S9xInitAPU ()
 {
-#ifdef PSP
+#ifdef __psp__
 	uint8 *apu_ram;
 #ifdef ME_SOUND
 	uint8 *apu_vars;
@@ -913,7 +913,7 @@ bool8 S9xInitAPU ()
     (IAPUuncached.RAM) = (uint8 *) malloc (0x10000);
     (IAPUuncached.ShadowRAM) = (uint8 *) malloc (0x10000);
     (IAPUuncached.CachedSamples) = (uint8 *) malloc (0x40000);
-#endif // PSP
+#endif // __psp__
     
     if (!(IAPUuncached.RAM) /*|| !(IAPUuncached.ShadowRAM) || !(IAPUuncached.CachedSamples)*/){
 			S9xDeinitAPU ();

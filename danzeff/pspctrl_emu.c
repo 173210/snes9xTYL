@@ -1,6 +1,6 @@
 #include "pspctrl_emu.h"
 
-#ifdef PSP
+#ifdef __psp__
 SceCtrlData getCtrlFromJoystick(SDL_Joystick* joystick)
 {
 	SceCtrlData newData;
@@ -36,7 +36,7 @@ SceCtrlData getCtrlFromJoystick(SDL_Joystick* joystick)
 	
 	return newData;
 }
-#else //not psp
+#else //not __psp__
 
 //This has been configured according to my smartjoy adaptor in linux, YMMV.
 //You could set this up to work from a keyboard if you wanted!

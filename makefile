@@ -1,25 +1,14 @@
-all: timestamp me
-
-clean:
-	make -f makefile_multi clean_snes
-
-user: timestamp
+user:
 	make -f makefile_multi
-
-home: timestamp
+home:
 	make -f makefile_multi HOME_HOOK_ON=1
-
-adhoc: timestamp
+adhoc:
 	make -f makefile_multi USE_ADHOC=1
-mehome: timestamp
+mehome:
 	make -f makefile_multi ME_ACTIVE=1 HOME_HOOK_ON=1
-
 me:
 	make -f makefile_multi ME_ACTIVE=1
-
-mehomeadhoc: timestamp
+mehomeadhoc:
 	make -f makefile_multi ME_ACTIVE=1 HOME_HOOK_ON=1 USE_ADHOC=1
-
-timestamp:
-	sh make_timestamp
-	
+clean:
+	make -f makefile_multi clean

@@ -1,4 +1,0 @@
-#!/bin/sh
-
-VERSION=`grep EMUNAME_VERSION.*me psp/psp.h|cut -d'"' -f2`
-echo $VERSION

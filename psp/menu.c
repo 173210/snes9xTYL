@@ -3300,7 +3300,7 @@ int menu_versioninfos(char *mode) {
 		if (!g_bLoop) {retval=1;break;}
 
 		mh_printLimit(menu_panel_pos+5,104,479,272,EMUNAME_VERSION,CODE_COL);
-		sprintf(str_tmp, s9xTYL_msg[MENU_ABOUT_VERSION_TIMESTAMP], __TIMESTAMP__);
+		sprintf(str_tmp, s9xTYL_msg[MENU_ABOUT_VERSION_TIMESTAMP], __DATE__);
 		mh_printLimit(menu_panel_pos+5,104+15,479,272,str_tmp,GFX_COL);
 		sprintf(str_tmp, s9xTYL_msg[MENU_ABOUT_VERSION_GCCVER], __VERSION__);
 		mh_printLimit(menu_panel_pos+5,104+30,479,272,str_tmp,GREETINGS0_COL);

@@ -58,7 +58,7 @@
 #define SDD1_DECOMP
 extern int g_debuginfo;
 
-#ifdef __PSP__
+#ifdef __psp__
 //	#define __GP32_APUCACHE__
 	#define CHECK_SOUND()
 
@@ -118,7 +118,7 @@ extern int g_debuginfo;
 
 
 
-#ifdef __PSP__
+#ifdef __psp__
 			
 	/*#include <stdio.h>
 	#include <stdlib.h>
@@ -150,7 +150,7 @@ extern int g_debuginfo;
 	#endif
 
 
-#endif//end __PSP__
+#endif//end __psp__
 
 #define PIXEL_FORMAT BGR555
 //#define PIXEL_FORMAT BGR444
@@ -253,7 +253,7 @@ EXTERN_C void S9xGenerateSound ();
 
 #else
 
-	#if defined(__GP32__)||defined(__PSP__)
+	#if defined(__GP32__)||defined(__psp__)
 		#define LSB_FIRST
 		#define STATIC static
 		#define FASTCALL 

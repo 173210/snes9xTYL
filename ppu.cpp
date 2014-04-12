@@ -48,7 +48,7 @@
 #include "gfx.h"
 #include "display.h"
 #include "sa1.h"
-#if not (defined(__os9x__)||defined(__PSP__))
+#if not (defined(__os9x__)||defined(__psp__))
 #include "netplay.h"
 #endif
 #include "sdd1.h"

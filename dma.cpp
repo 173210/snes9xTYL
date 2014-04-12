@@ -278,7 +278,7 @@ void S9xDoDMA (uint8 Channel)
 		}
 		else
 		{
-#ifdef PSP
+#ifdef __psp__
 #if 0
 			spc7110_dma=(uint8 *) malloc (sizeof (uint8) * d->TransferBytes);
 #endif
@@ -895,7 +895,7 @@ void S9xDoDMA (uint8 Channel)
 	if(Settings.SPC7110&&spc7110_dma)
 	{
 		if(spc7110_dma/*&&s7_wrap*/) {
-#ifdef PSP
+#ifdef __psp__
 		        free (spc7110_dma);
 #else			
 			delete [] spc7110_dma;
