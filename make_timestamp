@@ -1,3 +1,0 @@
-echo "#ifndef __TIMESTAMP__" > timestamp.h
-echo "#define __TIMESTAMP__ \"`date -u +%F`\"" >> timestamp.h
-echo "#endif" >> timestamp.h
