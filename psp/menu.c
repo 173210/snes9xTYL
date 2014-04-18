@@ -1268,7 +1268,7 @@ void show_batteryinfo(void){
 			sprintf(bat_info,"%02d%c%02d",tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min);
 		}
 
-		menu_free_ram=ramAvailable()/1024;
+		menu_free_ram=sceKernelTotalFreeMemSize()/1024;
   }
   update_infos++;
   mh_print(479-strlen(bat_info)*5,0,bat_info,(22<<0)|(31<<5)|(22<<10));
@@ -4017,7 +4017,7 @@ int root_menu(void) {
 
 	if (os9x_menumusic) menu_startmusic();
 
-	menu_free_ram=ramAvailable()/1024;
+	menu_free_ram=sceKernelTotalFreeMemSize()/1024;
 
 	menu_scrolling=0;
 	retval=0;

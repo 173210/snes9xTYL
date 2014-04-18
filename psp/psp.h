@@ -13,7 +13,7 @@ extern int os9x_apu_ratio;
 #define RELEASE
 
 #ifdef RELEASE
-#define info(a,b,c) 
+#define info(a,b,c)
 #else
 #define PROFILE
 #define info(a,b,c)  pgPrintBG(a,b,(31<<10)|(31<<5)|31,c);
@@ -130,7 +130,6 @@ extern int os9x_hack;
 #include "psp_ui.h"
 #include "psplib.h"
 #include "profiler.h"
-#include "psp/ram.h"
 #include "psp/me/mem64.h"
 
 #include "psp/psp_msg.h"
@@ -183,7 +182,7 @@ time_t GetCurrentTime();
 
 typedef struct {
 	unsigned char *buffer[4];
-	int buffer_ready;	
+	int buffer_ready;
 	int buffer_idx;
 	int sample_count;
 	int freqratio;
@@ -191,7 +190,7 @@ typedef struct {
 	int *os9x_apuenabled_ptr;
 	int *os9x_paused_ptr;
 	int exit;
-	
+
 	// Me Mode7 Stuff.
 	int mode7LineFlag[512]; // Support up to 512 lines.
     int enableMode7;
