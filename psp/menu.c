@@ -134,7 +134,6 @@ extern struct SCheatData Cheat;
 int state_slot=0;
 int slot_occupied;
 int menu_cnt,menu_cnt2,menu_cnt3,pad_cnt,pad_cnt_acc,menu_panel_pos,menu_scrolling;
-int menu_free_ram;
 u16 *menu_bg;
 int menu_music_panel_pos,menu_music_panel_mode,menu_music_panel_size;
 char menu_music_songname[33],menu_music_gametitle[33],menu_music_author[33];
@@ -1267,8 +1266,6 @@ void show_batteryinfo(void){
 		} else {
 			sprintf(bat_info,"%02d%c%02d",tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min);
 		}
-
-		menu_free_ram=ramAvailable()/1024;
   }
   update_infos++;
   mh_print(479-strlen(bat_info)*5,0,bat_info,(22<<0)|(31<<5)|(22<<10));
@@ -1496,10 +1493,6 @@ void menu_basic(int selected) {
 		sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], os9x_btn_negative_str);
 		mh_printCenter(262, str_tmp, INFOBAR_COL);
 
-		{
-			sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_FREERAM], menu_free_ram);
-			mh_print(480-mh_length(str_tmp),262,str_tmp,INFOBAR_COL);
-		}
 		if (menu_music) {
 			sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_CHANGEMUSIC]);
 			mh_print(13,262,str_tmp,INFOBAR_COL);
@@ -4016,8 +4009,6 @@ int root_menu(void) {
 	fx_init();
 
 	if (os9x_menumusic) menu_startmusic();
-
-	menu_free_ram=ramAvailable()/1024;
 
 	menu_scrolling=0;
 	retval=0;

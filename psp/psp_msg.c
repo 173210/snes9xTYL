@@ -66,7 +66,6 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[MENU_STATUS_GENERIC_MSG1] = "Press %s to return",
 		[MENU_STATUS_GENERIC_NEEDRELOAD] = "Changes may require a RELOAD to take effect",
 		[MENU_STATUS_GENERIC_NEEDRESET] = "Changes may require a RESET to take effect",
-		[MENU_STATUS_GENERIC_FREERAM] = "Free RAM : %dKo",
 		[MENU_STATUS_GENERIC_CHANGEMUSIC] = "SELECT to change music",
 
 		[MENU_TITLE_GENERIC_BAT] = "%02d%c%02d Bat.:%s%s%s%02d%%%s Tmp.%d℃",
@@ -455,7 +454,6 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[MENU_STATUS_GENERIC_MSG1] = "戻るには%sを押してください",
 		[MENU_STATUS_GENERIC_NEEDRELOAD] = "変更を適用するには再読み込みが必要かもしれません",
 		[MENU_STATUS_GENERIC_NEEDRESET] = "変更を適用するにはリセットが必要かもしれません",
-		[MENU_STATUS_GENERIC_FREERAM] = "空きメモリ : %dKo",
 		[MENU_STATUS_GENERIC_CHANGEMUSIC] = "音楽を変えるにはSELECTボタンを、",
 
 		[MENU_TITLE_GENERIC_BAT] = "%02d%c%02d 電池:%s%s%s残り%02d%%%s 温度.%d℃",

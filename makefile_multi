@@ -45,7 +45,7 @@ PSP_OBJECTS = apu.o apudebug.o c4.o c4emu.o cheats.o cheats2.o clip.o \
 
 PLATFORMOBJ = psp/blitter.o psp/config.o psp/decrypt.o psp/filer.o \
 	psp/imageio.o psp/img_jpeg.o psp/menu.o psp/menu_fx.o psp/me/mem64.o \
-	psp/psp.o psp/psp_ui.o psp/psplib.o psp/pg.o psp/psp_msg.o psp/ram.o
+	psp/psp.o psp/psp_ui.o psp/psplib.o psp/pg.o psp/psp_msg.o
 
 MEOBJ =	psp/MediaEngine.o psp/mediaengineprx/me.o
 
