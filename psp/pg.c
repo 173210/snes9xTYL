@@ -5,7 +5,7 @@
 #include "pg.h"
 
 #include "font.c"
-#include "fontNaga10.c"
+#include "fontNaga12.c"
 #include "imageio.h"
 #include <math.h>
 
@@ -437,7 +437,7 @@ void Draw_Char_Hankaku(int x,int y,unsigned char c,int col,unsigned short *vbuff
 	unsigned char  *fnt;
 	unsigned char  pt;
 	unsigned char ch;
-	unsigned char buffer[12*7];
+	unsigned char buffer[14*8];
 	int x1,y1;	
 	int rr,vv,bb,r,v,b;
 	int tot;
@@ -454,19 +454,19 @@ void Draw_Char_Hankaku(int x,int y,unsigned char c,int col,unsigned short *vbuff
 	else
 		ch -= 0x40;
 
-	fnt = (unsigned char *)&hankaku_font10[ch*10];
+	fnt = (unsigned char *)&hankaku_font12[ch*12];
 	
 	if (vbuff) vr=&vbuff[y*pitch+x];
 	else {vr = (unsigned short *)pgGetVramAddr(x,y);	pitch=LINESIZE;}
 
-	memset(buffer,0,12*7);
+	memset(buffer,0,14*8);
 	
 	// draw
 	//vr = (unsigned short *)pgGetVramAddr(x,y);
-	for(y1=0;y1<10;y1++) {
+	for(y1=0;y1<12;y1++) {
 		pt = *fnt++;
-		for(x1=0;x1<5;x1++) {
-			if (pt & 1) buffer[(y1+1)*7+x1+1] = 1;
+		for(x1=0;x1<6;x1++) {
+			if (pt & 1) buffer[(y1+1)*8+x1+1] = 1;
 			pt = pt >> 1;
 		}		
 	}
@@ -476,15 +476,15 @@ void Draw_Char_Hankaku(int x,int y,unsigned char c,int col,unsigned short *vbuff
 	b=(col>>10)&31;
 	
 	if (pg_init_with_bg) {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<5;x1++) {		
-			if (buffer[(y1+1)*7+(x1+1)])
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<6;x1++) {		
+			if (buffer[(y1+1)*8+(x1+1)])
 				vr[y1*pitch + x1]=col;
 		}
 	} else {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<5;x1++) {		
-			ANTIALIAS_CODE(x1,y1,7)
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<6;x1++) {		
+			ANTIALIAS_CODE(x1,y1,8)
 			
 			rr=r*tot/ANTIALIAS_FACTOR;
 			vv=v*tot/ANTIALIAS_FACTOR;
@@ -504,7 +504,7 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 	unsigned char  *fnt;
 	unsigned char  pt;
 	unsigned char ch;
-	unsigned char buffer[12*7];
+	unsigned char buffer[14*8];
 	int x1,y1;	
 	int rr,vv,bb,r,v,b,col;
 	int tot;
@@ -521,36 +521,36 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 	else
 		ch -= 0x40;
 
-	fnt = (unsigned char *)&hankaku_font10[ch*10];
+	fnt = (unsigned char *)&hankaku_font12[ch*12];
 
 	if (vbuff) vr=&vbuff[y*pitch+x];
 	else {vr = (unsigned short *)pgGetVramAddr(x,y);	pitch=LINESIZE;}
-	memset(buffer,0,12*7);
+	memset(buffer,0,14*8);
 	
 	// draw
 	//vr = (unsigned short *)pgGetVramAddr(x,y);
-	for(y1=0;y1<10;y1++) {
+	for(y1=0;y1<12;y1++) {
 		pt = *fnt++;
-		for(x1=0;x1<5;x1++) {
-			if (pt & 1) buffer[(y1+1)*7+x1+1] = 1;
+		for(x1=0;x1<6;x1++) {
+			if (pt & 1) buffer[(y1+1)*8+x1+1] = 1;
 			pt = pt >> 1;
 		}		
 	}
 	
 	
 	if (pg_init_with_bg) {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<5;x1++) {		
-			if (buffer[(y1+1)*7+(x1+1)]) {
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<6;x1++) {		
+			if (buffer[(y1+1)*8+(x1+1)]) {
 				col=vr[y1*pitch + x1];
 				vr[y1*pitch + x1]=(((col>>11)&0xf)<<10)|(((col>>6)&0xf)<<5)|(((col>>1)&0xf)<<0);
 			}
 		}
 	} else {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<5;x1++) {
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<6;x1++) {
 			
-			ANTIALIAS_CODE(x1,y1,7)
+			ANTIALIAS_CODE(x1,y1,8)
 			
 			if (tot) {			
 				col=vr[y1*pitch + x1];
@@ -567,7 +567,7 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 
 // by kwn
 //void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col) {
-//	// ELISA100.FNTÇ…ë∂ç›ÇµÇ»Ç¢ï∂éö
+//	// ELISA100.FNT„Å´Â≠òÂú®„Åó„Å™„ÅÑÊñáÂ≠ó
 //	unsigned short font404[] = {
 //		0xA2AF, 11,
 //		0xA2C2, 8,
@@ -598,11 +598,11 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 //	unsigned short code;
 //	int i, j;
 //
-//	// SJISÉRÅ[ÉhÇÃê∂ê¨
+//	// SJIS„Ç≥„Éº„Éâ„ÅÆÁîüÊàê
 //	code = u;
 //	code = (code<<8) + d;
 //
-//	// SJISÇ©ÇÁEUCÇ…ïœä∑
+//	// SJIS„Åã„ÇâEUC„Å´Â§âÊèõ
 //	if(code >= 0xE000) code-=0x4000;
 //	code = ((((code>>8)&0xFF)-0x81)<<9) + (code&0x00FF);
 //	if((code & 0x00FF) >= 0x80) code--;
@@ -610,7 +610,7 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 //	else code-=0x40;
 //	code += 0x2121 + 0x8080;
 //
-//	// EUCÇ©ÇÁåbóúçπÉtÉHÉìÉgÇÃî‘çÜÇê∂ê¨
+//	// EUC„Åã„ÇâÊÅµÊ¢®Ê≤ô„Éï„Ç©„É≥„Éà„ÅÆÁï™Âè∑„ÇíÁîüÊàê
 //	n = (((code>>8)&0xFF)-0xA1)*(0xFF-0xA1)
 //		+ (code&0xFF)-0xA1;
 //	j=0;
@@ -643,7 +643,7 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 
 
 void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsigned short *vbuff,int pitch,int init_with_bg) {
-	// ELISA100.FNTÇ…ë∂ç›ÇµÇ»Ç¢ï∂éö
+	// ELISA100.FNT„Å´Â≠òÂú®„Åó„Å™„ÅÑÊñáÂ≠ó
 	unsigned short font404[] = {
 		0xA2AF, 11,
 		0xA2C2, 8,
@@ -674,15 +674,15 @@ void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsig
 	unsigned short code;
 	int j;
 
-	unsigned char buffer[12*12];
+	unsigned char buffer[14*14];
 	int rr,vv,bb,r,v,b;
 	int tot;
 
-	// SJISÉRÅ[ÉhÇÃê∂ê¨
+	// SJIS„Ç≥„Éº„Éâ„ÅÆÁîüÊàê
 	code = u;
 	code = (code<<8) + d;
 
-	// SJISÇ©ÇÁEUCÇ…ïœä∑
+	// SJIS„Åã„ÇâEUC„Å´Â§âÊèõ
 	if(code >= 0xE000) code-=0x4000;
 	code = ((((code>>8)&0xFF)-0x81)<<9) + (code&0x00FF);
 	if((code & 0x00FF) >= 0x80) code--;
@@ -690,7 +690,7 @@ void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsig
 	else code-=0x40;
 	code += 0x2121 + 0x8080;
 
-	// EUCÇ©ÇÁåbóúçπÉtÉHÉìÉgÇÃî‘çÜÇê∂ê¨
+	// EUC„Åã„ÇâÊÅµÊ¢®Ê≤ô„Éï„Ç©„É≥„Éà„ÅÆÁï™Âè∑„ÇíÁîüÊàê
 	n = (((code>>8)&0xFF)-0xA1)*(0xFF-0xA1)
 		+ (code&0xFF)-0xA1;
 	j=0;
@@ -705,17 +705,17 @@ void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsig
 		}
 		j+=2;
 	}
-	fnt = (unsigned short *)&zenkaku_font10[n*10];
+	fnt = (unsigned short *)&zenkaku_font12[n*12];
 
 	// draw
 	if (vbuff) vr=&vbuff[y*pitch+x];
 	else {vr = (unsigned short *)pgGetVramAddr(x,y);	pitch=LINESIZE;}
-	memset(buffer,0,12*12);		
+	memset(buffer,0,14*14);		
 	
-	for(y1=0;y1<10;y1++) {
+	for(y1=0;y1<12;y1++) {
 		pt = *fnt++;
-		for(x1=0;x1<10;x1++) {
-			if (pt & 1)	buffer[(y1+1)*12+x1+1] = 1;		
+		for(x1=0;x1<12;x1++) {
+			if (pt & 1)	buffer[(y1+1)*14+x1+1] = 1;		
 			pt = pt >> 1;
 		}		
 	}
@@ -725,15 +725,15 @@ void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsig
 	b=(col>>10)&31;
 		
 	if (pg_init_with_bg) {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<10;x1++) {		
-			if (buffer[(y1+1)*12+(x1+1)])
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<12;x1++) {		
+			if (buffer[(y1+1)*14+(x1+1)])
 				vr[y1*pitch + x1]=col;
 		}
 	} else {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<10;x1++) {		
-			ANTIALIAS_CODE(x1,y1,12)
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<12;x1++) {		
+			ANTIALIAS_CODE(x1,y1,14)
 			
 			rr=r*tot/ANTIALIAS_FACTOR;
 			vv=v*tot/ANTIALIAS_FACTOR;
@@ -747,7 +747,7 @@ void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsig
 }
 
 void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsigned short *vbuff,int pitch,int init_with_bg) {
-	// ELISA100.FNTÇ…ë∂ç›ÇµÇ»Ç¢ï∂éö
+	// ELISA100.FNT„Å´Â≠òÂú®„Åó„Å™„ÅÑÊñáÂ≠ó
 	unsigned short font404[] = {
 		0xA2AF, 11,
 		0xA2C2, 8,
@@ -778,15 +778,15 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 	unsigned short code;
 	int j;
 	
-	unsigned char buffer[12*12];	
+	unsigned char buffer[14*14];	
 	int rr,vv,bb,r,v,b,col;
 	int tot;
 
-	// SJISÉRÅ[ÉhÇÃê∂ê¨
+	// SJIS„Ç≥„Éº„Éâ„ÅÆÁîüÊàê
 	code = u;
 	code = (code<<8) + d;
 
-	// SJISÇ©ÇÁEUCÇ…ïœä∑
+	// SJIS„Åã„ÇâEUC„Å´Â§âÊèõ
 	if(code >= 0xE000) code-=0x4000;
 	code = ((((code>>8)&0xFF)-0x81)<<9) + (code&0x00FF);
 	if((code & 0x00FF) >= 0x80) code--;
@@ -794,7 +794,7 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 	else code-=0x40;
 	code += 0x2121 + 0x8080;
 
-	// EUCÇ©ÇÁåbóúçπÉtÉHÉìÉgÇÃî‘çÜÇê∂ê¨
+	// EUC„Åã„ÇâÊÅµÊ¢®Ê≤ô„Éï„Ç©„É≥„Éà„ÅÆÁï™Âè∑„ÇíÁîüÊàê
 	n = (((code>>8)&0xFF)-0xA1)*(0xFF-0xA1)
 		+ (code&0xFF)-0xA1;
 	j=0;
@@ -809,31 +809,31 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 		}
 		j+=2;
 	}
-	fnt = (unsigned short *)&zenkaku_font10[n*10];
+	fnt = (unsigned short *)&zenkaku_font12[n*12];
 
 	// draw
 	if (vbuff) vr=&vbuff[y*pitch+x];
 	else {vr = (unsigned short *)pgGetVramAddr(x,y);	pitch=LINESIZE;}
-	memset(buffer,0,12*12);
+	memset(buffer,0,14*14);
 	
-	for(y1=0;y1<10;y1++) {
+	for(y1=0;y1<12;y1++) {
 		pt = *fnt++;
-		for(x1=0;x1<10;x1++) {
-			if (pt & 1)	buffer[(y1+1)*12+x1+1] = 1;		
+		for(x1=0;x1<12;x1++) {
+			if (pt & 1)	buffer[(y1+1)*14+x1+1] = 1;		
 			pt = pt >> 1;
 		}		
 	}
 	
 	if (pg_init_with_bg) {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<10;x1++) {		
-			if (buffer[(y1+1)*12+(x1+1)])
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<12;x1++) {		
+			if (buffer[(y1+1)*14+(x1+1)])
 				vr[y1*pitch + x1]=0;
 		}
 	} else {
-		for (y1=0;y1<10;y1++)
-		for (x1=0;x1<10;x1++) {		
-			ANTIALIAS_CODE(x1,y1,12)
+		for (y1=0;y1<12;y1++)
+		for (x1=0;x1<12;x1++) {		
+			ANTIALIAS_CODE(x1,y1,14)
 			
 			if (tot) {			
 				col=vr[y1*LINESIZE + x1];
@@ -849,19 +849,19 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 }
 
 void mh_print_light(int x,int y,const char *str,int col,int smoothing) {
-	unsigned short *scr=(unsigned short *)pgGetVramAddr(x-5,y-5);
-	unsigned short buffer[480*20],buffer2[480*20];
+	unsigned short *scr=(unsigned short *)pgGetVramAddr(x-6,y-6);
+	unsigned short buffer[480*24],buffer2[480*24];
 	int len;
 	int j,px,py,r,g,b,col1,col2,col3,col4,col0;
 	
-	memset(buffer,0,480*20*2);
-	memset(buffer2,0,480*20*2);
-	len=mh_print_buff(5,5,480,272,str,col,buffer,480);
-	len=len-5+10;
+	memset(buffer,0,480*24*2);
+	memset(buffer2,0,480*24*2);
+	len=mh_print_buff(6,6,480,272,str,col,buffer,480);
+	len=len-6+12;
 	
 	
 	for (j=smoothing;j;j--) {
-		for (py=1;py<19;py++) {
+		for (py=1;py<23;py++) {
 			for (px=1;px<len-1;px++) {
 				col0=buffer[py*480+px];
 				col1=buffer[py*480+px+1];
@@ -878,14 +878,14 @@ void mh_print_light(int x,int y,const char *str,int col,int smoothing) {
 				buffer2[py*480+px]=r|g|b;
 			}
 		}
-		for (py=0;py<20;py++) memcpy(&buffer[py*480],&buffer2[py*480],len*2);
+		for (py=0;py<24;py++) memcpy(&buffer[py*480],&buffer2[py*480],len*2);
 	}
 	
 	/*pg_shadow=0;
 	mh_print(x,y,str,col);
 	pg_shadow=1;*/
 															
-	for (py=0;py<20;py++)
+	for (py=0;py<24;py++)
 		for (px=0;px<len-1;px++) if (buffer[py*480+px]) {
 			col0=scr[LINESIZE*py+px];
 			if (!col0) scr[LINESIZE*py+px]=buffer[py*480+px];
@@ -931,21 +931,21 @@ int mh_print_buff(int x,int y,int Mx,int My,const char *str,int col,unsigned sho
 	while(*str != 0) {
 		ch = *str++;		 
 		if (bef!=0) {
-			if ((x+10<=Mx)&&(y+10<=My)&&(x>=0)&&(y>=0)) {
+			if ((x+12<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
 				if (pg_shadow) Draw_Char_Zenkaku_shadow(x+1,y+1,bef,ch,vbuff,pitch,pg_init_with_bg);
 				Draw_Char_Zenkaku(x,y,bef,ch,col,vbuff,pitch,pg_init_with_bg);
 			}
-			x+=10;
+			x+=12;
 			bef=0;
 		} else {
 			if (((ch>=0x80) && (ch<0xa0)) || (ch>=0xe0)) {
 				bef = ch;
 			} else {
-				if ((x+5<=Mx)&&(y+10<=My)&&(x>=0)&&(y>=0)) {
+				if ((x+6<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
 					if (pg_shadow) Draw_Char_Hankaku_shadow(x+1,y+1,ch,vbuff,pitch,pg_init_with_bg);
 					Draw_Char_Hankaku(x,y,ch,col,vbuff,pitch,pg_init_with_bg);
 				}
-				x+=5;
+				x+=6;
 			}
 		}
 	}
@@ -958,21 +958,21 @@ int mh_print_buffVert(int x,int y,int Mx,int My,const char *str,int col,unsigned
 	while(*str != 0) {
 		ch = *str++;		 
 		if (bef!=0) {
-			if ((x+10<=Mx)&&(y+10<=My)&&(x>=0)&&(y>=0)) {
+			if ((x+12<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
 				if (pg_shadow) Draw_Char_Zenkaku_shadow(x+1,y+1,bef,ch,vbuff,pitch,pg_init_with_bg);
 				Draw_Char_Zenkaku(x,y,bef,ch,col,vbuff,pitch,pg_init_with_bg);
 			}
-			y+=9;
+			y+=11;
 			bef=0;
 		} else {
 			if (((ch>=0x80) && (ch<0xa0)) || (ch>=0xe0)) {
 				bef = ch;
 			} else {
-				if ((x+5<=Mx)&&(y+10<=My)&&(x>=0)&&(y>=0)) {
+				if ((x+6<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
 					if (pg_shadow) Draw_Char_Hankaku_shadow(x+1,y+1,ch,vbuff,pitch,pg_init_with_bg);
 					Draw_Char_Hankaku(x,y,ch,col,vbuff,pitch,pg_init_with_bg);
 				}
-				y+=9;
+				y+=11;
 			}
 		}
 	}
@@ -998,13 +998,13 @@ int mh_length(const char *str) {
 	while(*str != 0) {
 		ch = *str++;
 		if (bef!=0) {		
-			len+=10;
+			len+=12;
 			bef=0;
 		} else {
 			if (((ch>=0x80) && (ch<0xa0)) || (ch>=0xe0)) {
 				bef = ch;
 			} else {			
-				len+=5;
+				len+=6;
 			}
 		}
 	}
@@ -1020,7 +1020,7 @@ int mh_trimlength(const char *str) {
 		ch = *str++;
 		pos++;
 		if (bef!=0) {		
-			len+=10;
+			len+=12;
 			if (len>480) return old_pos;
 			old_pos=pos;
 			bef=0;
@@ -1028,7 +1028,7 @@ int mh_trimlength(const char *str) {
 			if (((ch>=0x80) && (ch<0xa0)) || (ch>=0xe0)) {
 				bef = ch;
 			} else {			
-				len+=5;
+				len+=6;
 				if (len>480) return old_pos;
 				old_pos=pos;
 			}
@@ -1174,7 +1174,7 @@ void pgBitBltSt(unsigned long x,unsigned long y,unsigned long h,unsigned long *d
 	}
 }
 
-//ÇøÇÂÇ¢ëÅÇ¢x1 - LCK
+//?ÂÇö???x1 - LCK
 void pgBitBltN1(unsigned long x,unsigned long y,unsigned long *d)
 {
 	unsigned long *v0;		//pointer to vram
@@ -1192,7 +1192,7 @@ void pgBitBltN1(unsigned long x,unsigned long y,unsigned long *d)
 	}
 }
 
-//Ç†ÇÒÇ‹ÇËïœÇÌÇÁÇ»Ç¢x1.5 -LCK
+//??ÂÇë?ÊõÑ??ÂÅ¥?x1.5 -LCK
 void pgBitBltN15(unsigned long x,unsigned long y,unsigned long *d)
 {
 	unsigned short *vptr0;		//pointer to vram
@@ -1230,7 +1230,7 @@ void pgBitBltN15(unsigned long x,unsigned long y,unsigned long *d)
 	}
 }
 
-//ÇÊÇ≠ÇÌÇ©ÇÒÇ»Ç¢x2 - LCK
+//???ÂÅê?ÂÅ¥?x2 - LCK
 void pgBitBltN2(unsigned long x,unsigned long y,unsigned long h,unsigned long *d)
 {
 	unsigned long *v0;		//pointer to vram
