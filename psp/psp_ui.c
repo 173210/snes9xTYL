@@ -35,8 +35,8 @@ void msgBox(const char *msg,int delay_vblank) {
 	}
 	len*=8;
 
-	pgFillBox(240-len/2-20-1,136-10-1,240+len/2+20+1,136+18+1,BOX_COLOR);
-	pgDrawFrame(240-len/2-20,136-10,240+len/2+20,136+18,FRAME_COLOR);
+	pgFillBox(240-len/2-20-1,136-12-1,240+len/2+20+1,136+18+1,BOX_COLOR);
+	pgDrawFrame(240-len/2-20,136-12,240+len/2+20,136+18,FRAME_COLOR);
 
 	pgPrintCenter(17,TEXT_COLOR,str);
 
@@ -78,11 +78,11 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 	if (width<(len-j)) width=len-j;
 	if (!width) width=strlen(msg);
 	
-	y=(272-lines*10)/2;
-	x=(480-width*5)/2;
+	y=(272-lines*12)/2;
+	x=(480-width*6)/2;
 	
-	pgFillBox(x-10-1,y-5-1,x+width*5+10+1,y+lines*10+5,BOX_COLOR);
-	pgDrawFrame(x-10,y-5,x+width*5+10,y+lines*10+5-1,FRAME_COLOR);
+	pgFillBox(x-12-1,y-6-1,x+width*6+12+1,y+lines*12+6,BOX_COLOR);
+	pgDrawFrame(x-12,y-6,x+width*6+12,y+lines*12+6-1,FRAME_COLOR);
 	
 	len=0;
 	for (i=0;i<lines;i++){
@@ -99,7 +99,7 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 		str[j]=0;
 		mh_printCenter(y,str,TEXT_COLOR);
 		ret=y;
-		y+=10;
+		y+=12;
 	}
 
 
@@ -138,11 +138,11 @@ int msgBoxLinesRaw(const char *msg,int rev_line) {
 	if (width<(len-j)) width=len-j;
 	if (!width) width=strlen(msg);
 
-	y=(272-lines*10)/2;
-	x=(480-width*5)/2;
+	y=(272-lines*12)/2;
+	x=(480-width*6)/2;
 
-	pgFillBox(x-10-1,y-5-1,x+width*5+10+1,y+lines*10+5,BOX_COLOR);
-	pgDrawFrame(x-10,y-5,x+width*5+10,y+lines*10+5-1,FRAME_COLOR);
+	pgFillBox(x-12-1,y-6-1,x+width*6+12+1,y+lines*12+6,BOX_COLOR);
+	pgDrawFrame(x-12,y-6,x+width*6+12,y+lines*12+6-1,FRAME_COLOR);
 
 	len=0;
 	for (i=0;i<lines;i++){
@@ -160,13 +160,13 @@ int msgBoxLinesRaw(const char *msg,int rev_line) {
 		if (i==rev_line) {
 			width=mh_length(str);
 			x=(480-width)>>1;
-			pgFillBox(x-1,y-1,x+width+1,y+10-1,0);
-			pgDrawFrame(x-1,y-1,x+width+1,y+10-1,7<<10);
+			pgFillBox(x-1,y-1,x+width+1,y+12-1,0);
+			pgDrawFrame(x-1,y-1,x+width+1,y+12-1,7<<10);
 			mh_printCenter(y,str,28<<5);
 		}
 		else mh_printCenter(y,str,TEXT_COLOR);
 		ret=y;
-		y+=10;
+		y+=12;
 	}
 	return ret;
 }
@@ -221,8 +221,8 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 		}
 		if (msg[len]=='\n') len++;
 		str[j]=0;
-		mh_printLimit(x+5,y+5,x0+w-10,y0+h-10,str,TEXT_COLOR);
-		y+=10;
+		mh_printLimit(x+6,y+6,x0+w-12,y0+h-12,str,TEXT_COLOR);
+		y+=12;
 	}
 }
 
