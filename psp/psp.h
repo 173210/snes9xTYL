@@ -130,7 +130,6 @@ extern int os9x_hack;
 #include "psp_ui.h"
 #include "psplib.h"
 #include "profiler.h"
-#include "psp/ram.h"
 #include "psp/me/mem64.h"
 
 #include "psp/psp_msg.h"
