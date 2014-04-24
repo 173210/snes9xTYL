@@ -240,8 +240,8 @@ int menu_screencalibrate(char *mode){
 				break;
 		}
 		sprintf(st, s9xTYL_msg[MENU_STATUS_VIDEO_SCRCALIB], os9x_btn_negative_str);
-		mh_print(8-1,262-1,st,(8<<10)|(8<<5)|(16<<0));
-		mh_print(8,262,st,(29<<10)|(29<<5)|(31<<0));
+		mh_print(8-1,260-1,st,(8<<10)|(8<<5)|(16<<0));
+		mh_print(8,260,st,(29<<10)|(29<<5)|(31<<0));
 
 		//wait for a press
 
@@ -665,6 +665,12 @@ int show_debugmenu(char *mode) {
 		case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
 			i = HELP_JA;
 			break;
+		case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_SIMPLIFIED:
+			i = HELP_CH;
+			break;
+		case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_TRADITIONAL:
+			i = HELP_CH;
+			break;
 		default:
 			i = HELP_EN;
 			break;
@@ -755,7 +761,7 @@ int show_debugmenu(char *mode) {
     		}
     	}
     	else strcat(status_bar, s9xTYL_msg[MENU_STATUS_MISC_HACKDEBUG_0]);
-    	mh_print(8,262,  status_bar,INFOBAR_COL);
+    	mh_print(8,260,  status_bar,INFOBAR_COL);
 		}
 
 		if(DEBUGMENU_ITEMS > rows){
@@ -1132,7 +1138,7 @@ int show_inputsmenu(char *mode) {
     //pgPrint(1,0,TITLE_COL,"[" EMUNAME_VERSION "] - Menu");
     mh_print(0, 0, s9xTYL_msg[MENU_TITLE_CONTROLS_INPUT], TITLE_COL);
     //pgPrint(1,33,INFOBAR_COL,"\1 OK \2 Return game \5,\7 to select ,\6,\b to change value");
-    //mh_print(8,262,SJIS_CIRCLE " OK " SJIS_CROSS " Back to Game       " SJIS_STAR "       " SJIS_TRIANGLE " Help        " SJIS_STAR "       " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",INFOBAR_COL);
+    //mh_print(8,260,SJIS_CIRCLE " OK " SJIS_CROSS " Back to Game       " SJIS_STAR "       " SJIS_TRIANGLE " Help        " SJIS_STAR "       " SJIS_UP "," SJIS_DOWN " Select " SJIS_LEFT "," SJIS_RIGHT " Change value",INFOBAR_COL);
     {
     	char status_bar[100];
     	/*if (os9xpsp_debugmenu[sel].menu_func) strcpy(status_bar,SJIS_CIRCLE " OK ");
@@ -1159,7 +1165,7 @@ int show_inputsmenu(char *mode) {
     		}
     	}
     	else strcat(status_bar, s9xTYL_msg[MENU_STATUS_CONTROLS_INPUT_0]);
-    	mh_print(8,262,  status_bar,INFOBAR_COL);
+    	mh_print(8,260,  status_bar,INFOBAR_COL);
 		}
 
 
@@ -1268,7 +1274,7 @@ void show_batteryinfo(void){
 		}
   }
   update_infos++;
-  mh_print(479-strlen(bat_info)*5,0,bat_info,(22<<0)|(31<<5)|(22<<10));
+  mh_print(479-strlen(bat_info)*6,0,bat_info,(22<<0)|(31<<5)|(22<<10));
 }
 
 void show_usbinfo(void){
@@ -1396,9 +1402,9 @@ void menu_startmusic(){
 		else strcpy(menu_music_author, s9xTYL_msg[MENU_MISC_BGMUSIC_UNKNOWN]);
 
 		menu_music_panel_size = mh_length(menu_music_gametitle) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE]) + 10;
-		l = mh_length(menu_music_songname) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE]) + 10;
+		l = mh_length(menu_music_songname) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE]) + 12;
 		if (l>menu_music_panel_size) menu_music_panel_size=l;
-		l = mh_length(menu_music_author) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR]) + 10;
+		l = mh_length(menu_music_author) + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR]) + 12;
 		if (l>menu_music_panel_size) menu_music_panel_size=l;
 
 		menu_music_panel_pos=-menu_music_panel_size;
@@ -1423,15 +1429,15 @@ int menu_buildbg() {
 
 	dst=menu_bg;
 	show_background(bg_img_mul,(os9x_lowbat?0x600000:0));
-	pgDrawFrame(0,10,479,10,(4<<10)|(8<<5)|8);
-	pgDrawFrame(0,11,479,12,(30<<10)|(30<<5)|30);
-	pgDrawFrame(0,13,479,13,(4<<10)|(8<<5)|8);
-	pgDrawFrame(0,272-14,479,272-14,(4<<10)|(2<<5)|4);
-	pgDrawFrame(0,272-13,479,272-12,(30<<10)|(30<<5)|30);
-	pgDrawFrame(0,272-11,479,272-11,(4<<10)|(2<<5)|4);
+	pgDrawFrame(0,12,479,12,(4<<10)|(8<<5)|8);
+	pgDrawFrame(0,13,479,14,(30<<10)|(30<<5)|30);
+	pgDrawFrame(0,15,479,15,(4<<10)|(8<<5)|8);
+	pgDrawFrame(0,272-16,479,272-16,(4<<10)|(2<<5)|4);
+	pgDrawFrame(0,272-15,479,272-14,(30<<10)|(30<<5)|30);
+	pgDrawFrame(0,272-13,479,272-13,(4<<10)|(2<<5)|4);
 
-	pgFillBoxHalfer(0,0,479,9);
-	pgFillBoxHalfer(0,272-10,479,271);
+	pgFillBoxHalfer(0,0,479,11);
+	pgFillBoxHalfer(0,272-12,479,271);
 	mh_print(0,0," " EMUNAME_VERSION,(31<<0)|(30<<5)|(20<<10));
 
 	for (i=0;i<272;i++) {
@@ -1491,11 +1497,11 @@ void menu_basic(int selected) {
 	//add the 'X to return' message at bottom
 	if (selected > -2) {
 		sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], os9x_btn_negative_str);
-		mh_printCenter(262, str_tmp, INFOBAR_COL);
+		mh_printCenter(260, str_tmp, INFOBAR_COL);
 
 		if (menu_music) {
 			sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_CHANGEMUSIC]);
-			mh_print(13,262,str_tmp,INFOBAR_COL);
+			mh_print(13,260,str_tmp,INFOBAR_COL);
 		}
 	}
 
@@ -1537,21 +1543,21 @@ void menu_basic(int selected) {
 	  		if (menu_music_panel_pos>0) menu_music_panel_pos=round( (menu_music_panel_size)*cos(3.14159*menu_cnt3/40)*cos(3.14159*menu_cnt3/40)*cos(3.14159*menu_cnt3/40) );
 	  		if (menu_music_panel_pos<=0) {menu_music_panel_pos=0;menu_music_panel_mode=0;}
 	  	}
-	    pgFillBoxHalfer(0,271-31,menu_music_panel_pos,271);
+	    pgFillBoxHalfer(0,271-37,menu_music_panel_pos,271);
 
-	    pgDrawFrame(0,271-34,menu_music_panel_pos+3,271-34,31|(31<<5)|(31<<10));
-	    pgDrawFrame(0,271-33,menu_music_panel_pos+2,271-33,24|(24<<5)|(24<<10));
-	    pgDrawFrame(0,271-32,menu_music_panel_pos+1,271-32,12|(12<<5)|(12<<10));
-	    pgDrawFrame(menu_music_panel_pos+1,271-32,menu_music_panel_pos+1,271,12|(12<<5)|(12<<10));
-	    pgDrawFrame(menu_music_panel_pos+2,271-33,menu_music_panel_pos+2,271,24|(24<<5)|(24<<10));
-	    pgDrawFrame(menu_music_panel_pos+3,271-34,menu_music_panel_pos+3,271,31|(31<<5)|(31<<10));
+	    pgDrawFrame(0,271-40,menu_music_panel_pos+3,271-40,31|(31<<5)|(31<<10));
+	    pgDrawFrame(0,271-39,menu_music_panel_pos+2,271-39,24|(24<<5)|(24<<10));
+	    pgDrawFrame(0,271-38,menu_music_panel_pos+1,271-38,12|(12<<5)|(12<<10));
+	    pgDrawFrame(menu_music_panel_pos+1,271-38,menu_music_panel_pos+1,271,12|(12<<5)|(12<<10));
+	    pgDrawFrame(menu_music_panel_pos+2,271-39,menu_music_panel_pos+2,271,24|(24<<5)|(24<<10));
+	    pgDrawFrame(menu_music_panel_pos+3,271-40,menu_music_panel_pos+3,271,31|(31<<5)|(31<<10));
 
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 30, s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE], PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE]), 271-30, menu_music_gametitle, PANEL_BUTTONCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 20, s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE], PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE]), 271 - 20, menu_music_songname, PANEL_BUTTONCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 10, s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR], PANEL_TEXTCMD_COL);
-	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR]), 271 - 10, menu_music_author, PANEL_BUTTONCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 36, s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE], PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_GAMETITLE]), 271-36, menu_music_gametitle, PANEL_BUTTONCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 24, s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE], PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_TITLE]), 271 - 24, menu_music_songname, PANEL_BUTTONCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5, 271 - 12, s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR], PANEL_TEXTCMD_COL);
+	    mh_print(menu_music_panel_pos-menu_music_panel_size+5 + mh_length(s9xTYL_msg[MENU_MISC_BGMUSIC_AUTHOR]), 271 - 12, menu_music_author, PANEL_BUTTONCMD_COL);
 	  }
 	  //check music
 	  if (OSPC_IsFinished()) {
@@ -1578,9 +1584,9 @@ int menu_clockspeed(char *mode) {
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1639,9 +1645,9 @@ int menu_clockspeed(char *mode) {
 	mh_printLimit(menu_panel_pos + 5, 104, 479, 272, s9xTYL_msg[new_value ? MENU_YES : MENU_NO], 31 | (24 << 5)|(24 << 10)); \
 	mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL); \
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);    \
-	mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL); \
+	mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL); \
 	sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);\
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);    \
+    mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);    \
         \
     if (to_exit) {\
     	if (menu_panel_pos>=479) return 0;\
@@ -1755,9 +1761,9 @@ int menu_videomode(char *mode) {
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1840,9 +1846,9 @@ int menu_engine(char *mode) {
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1921,9 +1927,9 @@ int menu_soundmode(char *mode) {
     mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -1974,9 +1980,9 @@ int menu_soundfreq(char *mode){
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2036,11 +2042,11 @@ int menu_gamma(char *mode){
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos+5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 142, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5, 154, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,154,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2104,13 +2110,13 @@ int menu_fskip(char *mode){
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[autofskip ? MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED : MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO], PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_SQUARE,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,150,479,272,SJIS_TRIANGLE,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 160, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[autofskip ? MENU_VIDEO_FSKIP_CHANGEAUTO_FIXED : MENU_VIDEO_FSKIP_CHANGEAUTO_AUTO], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,SJIS_SQUARE,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 154, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,154,479,272,SJIS_TRIANGLE,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 166, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,160,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,166,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2169,9 +2175,9 @@ int menu_emulinput(char *mode){
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5,140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5,142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2231,9 +2237,9 @@ int menu_menumusic(char *mode) {
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
 		mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
 		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
@@ -2297,9 +2303,9 @@ int menu_osk(char *mode) {
 		mh_printLimit(menu_panel_pos + 5, 104, 479, 272, s9xTYL_msg[new_value ? MENU_MISC_OSK_DANZEFF : MENU_MISC_OSK_OFFICIAL], 31 | (24 << 5) | (24 << 10));
 		mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
 		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-		mh_printLimit(menu_panel_pos+5,140,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,142,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
@@ -2362,11 +2368,11 @@ int menu_autosavetimer(char *mode){
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 154, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,154,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -2432,14 +2438,14 @@ int menu_loadstate(char *mode) {
 		menu_basic(-1);
 		if (!g_bLoop) {retval=1;break;}
 
-		mh_print_light((480 - 22 * 5) / 2, 14, s9xTYL_msg[MENU_STATE_CHOOSELOAD], 31 | (31 << 5) | (31 << 10), menu_current_smoothing);
+		mh_print_light((480 - 22 * 5) / 2, 16, s9xTYL_msg[MENU_STATE_CHOOSELOAD], 31 | (31 << 5) | (31 << 10), menu_current_smoothing);
 
 		//now draw each slot
 		if (state_slot<5) px=40;
 		else px=56;
 		py=30;
 		for (i=0;i<10;i++) {
-			py=19+(i/5)*118;
+			py=21+(i/5)*118;
 			if (i==5) {
 				if (state_slot>=5) px=40;
 				else px=56;
@@ -2612,14 +2618,14 @@ int menu_savestate(char *mode) {
 		menu_basic(-1);
 		if (!g_bLoop) {retval=1;break;}
 
-		mh_print_light((480 - 22 * 5) / 2, 14, s9xTYL_msg[MENU_STATE_CHOOSESAVE], 31 | (31 << 5) |(31 << 10), menu_current_smoothing);
+		mh_print_light((480 - 22 * 5) / 2, 16, s9xTYL_msg[MENU_STATE_CHOOSESAVE], 31 | (31 << 5) |(31 << 10), menu_current_smoothing);
 
 		//now draw each slot
 		if (state_slot<5) px=40;
 		else px=56;
 		py=30;
 		for (i=0;i<10;i++) {
-			py=19+(i/5)*118;
+			py=21+(i/5)*118;
 			if (i==5) {
 				if (state_slot>=5) px=40;
 				else px=56;
@@ -2788,14 +2794,14 @@ int menu_deletestate(char *mode) {
 	for (;;) {
 		menu_basic(-1);
 
-		mh_print_light((480 - 22 * 5) / 2, 14, s9xTYL_msg[MENU_STATE_CHOOSEDEL], 31 | (31 << 5) | (31 << 10), menu_current_smoothing);
+		mh_print_light((480 - 22 * 5) / 2, 16, s9xTYL_msg[MENU_STATE_CHOOSEDEL], 31 | (31 << 5) | (31 << 10), menu_current_smoothing);
 
 		//now draw each slot
 		if (state_slot<5) px=40;
 		else px=56;
 		py=30;
 		for (i=0;i<10;i++) {
-			py=19+(i/5)*118;
+			py=21+(i/5)*118;
 			if (i==5) {
 				if (state_slot>=5) px=40;
 				else px=56;
@@ -3337,11 +3343,11 @@ int menu_fpslimit(char *mode) {
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE_WITH_FAST], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 154, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,154,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3403,11 +3409,11 @@ int menu_apuratio(char *mode) {
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
     mh_printLimit(menu_panel_pos+5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE_WITH_FAST], PANEL_TEXTCMD_COL);
     mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
-    mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-    mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[MENU_DEFAULT_VALUE], PANEL_TEXTCMD_COL);
+    mh_printLimit(menu_panel_pos+5,142,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos + 5, 154, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
     sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-    mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+    mh_printLimit(menu_panel_pos+5,154,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
     if (to_exit) {
     	if (menu_panel_pos>=479) return 0;
@@ -3469,11 +3475,11 @@ int menu_swapbg(char *mode) {
 		mh_printLimit(menu_panel_pos+5,104,479,272,str_tmp,((31)|(24<<5)|(24<<10)));
 		mh_printLimit(menu_panel_pos + 5, 130, 479, 272, s9xTYL_msg[MENU_CHANGE_VALUE_WITH_FAST], PANEL_TEXTCMD_COL);
 		mh_printLimit(menu_panel_pos+5,130,479,272,SJIS_UP " " SJIS_DOWN "                L,R",PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos + 5, 140, 479, 272, s9xTYL_msg[MENU_MISC_SWAPBG_RAND], PANEL_TEXTCMD_COL);
-		mh_printLimit(menu_panel_pos+5,140,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
-		mh_printLimit(menu_panel_pos + 5, 150, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 142, 479, 272, s9xTYL_msg[MENU_MISC_SWAPBG_RAND], PANEL_TEXTCMD_COL);
+		mh_printLimit(menu_panel_pos+5,142,479,272,SJIS_TRIANGLE ,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos + 5, 154, 479, 272, s9xTYL_msg[MENU_CANCEL_VALIDATE], PANEL_TEXTCMD_COL);
 		sprintf(str_tmp, SJIS_LEFT " %s              %s", os9x_btn_negative_str, os9x_btn_positive_str);
-		mh_printLimit(menu_panel_pos+5,150,479,272,str_tmp,PANEL_BUTTONCMD_COL);
+		mh_printLimit(menu_panel_pos+5,154,479,272,str_tmp,PANEL_BUTTONCMD_COL);
 
 		if (to_exit) {
 			if (menu_panel_pos>=479) return 0;
@@ -3722,7 +3728,7 @@ void menu_drawFrame(int selected) {
 				}
 				//check for help to display
 				if (menu_xmb_entries[i].help_id) { //help label available
-					msgBoxLinesRawPosLimit(280, 190, 200, 67, s9xTYL_msg[menu_xmb_entries[i].help_id]);
+					msgBoxLinesRawPosLimit(280, 188, 200, 67, s9xTYL_msg[menu_xmb_entries[i].help_id]);
 				}
 
 				y+=20;
@@ -4167,14 +4173,14 @@ int root_menu(void) {
 				src=(u16 *)pgGetVramAddr(0,0);
 				//add the 'X to return' message at bottom
 				sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], os9x_btn_negative_str);
-				mh_printCenter(262, str_tmp, INFOBAR_COL);
+				mh_printCenter(260, str_tmp, INFOBAR_COL);
 				pgScreenFlipV2();
 				//and initiate new screen
 				dst=(u16 *)pgGetVramAddr(0,0);
 				memcpy(dst,src,LINESIZE*272*2);
 				//add the 'X to return' message at bottom
 				sprintf(str_tmp, s9xTYL_msg[MENU_STATUS_GENERIC_MSG1], os9x_btn_negative_str);
-				mh_printCenter(262, str_tmp, INFOBAR_COL);
+				mh_printCenter(260, str_tmp, INFOBAR_COL);
 
 
 				//call the sub-function
