@@ -77,7 +77,7 @@ struct timeval filer_next,filer_cur;
 extern void show_bg(u16 *bg);
 
 ////////////////////////////////////////////////////////////////////////
-// ÉNÉCÉbÉNÉ\Å[Ég
+// „ÇØ„Ç§„ÉÉ„ÇØ„ÇΩ„Éº„Éà
 void SJISCopy(struct SceIoDirent *a, char *file)
 {
 	char ca;
@@ -141,7 +141,7 @@ void sort(SceIoDirent *a, int left, int right) {
 	}
 }
 
-// ägí£éqä«óùóp
+// Êã°ÂºµÂ≠êÁÆ°ÁêÜÁî®
 const struct {
 	char *szExt;
 	int nExtId;
@@ -326,17 +326,17 @@ void filer_buildbg(int detailed) {
 		show_background(bg_img_mul,(os9x_lowbat?0x600000:0)|(os9x_netplay?100:0));	
 		if (os9x_netplay) pgPrint4(4,4,28|(4<<5)|(16<<10),31|(28<<5)|(30<<10),"NETPLAY");			
 	} else show_background(bg_img_mul,(os9x_lowbat?0x600000:0));	
-	pgDrawFrame(0,10,479,10,(8<<10)|(8<<5)|8);
-	pgDrawFrame(0,11,479,11,(30<<10)|(30<<5)|30);
 	pgDrawFrame(0,12,479,12,(8<<10)|(8<<5)|8);
+	pgDrawFrame(0,13,479,13,(30<<10)|(30<<5)|30);
+	pgDrawFrame(0,14,479,14,(8<<10)|(8<<5)|8);
+	pgDrawFrame(0,272-15,479,272-15,(8<<10)|(8<<5)|8);
+	pgDrawFrame(0,272-14,479,272-14,(30<<10)|(30<<5)|30);
 	pgDrawFrame(0,272-13,479,272-13,(8<<10)|(8<<5)|8);
-	pgDrawFrame(0,272-12,479,272-12,(30<<10)|(30<<5)|30);
-	pgDrawFrame(0,272-11,479,272-11,(8<<10)|(8<<5)|8);
-	pgFillBoxHalfer(0,0,479,9);
-	pgFillBoxHalfer(0,272-10,479,271);	
+	pgFillBoxHalfer(0,0,479,11);
+	pgFillBoxHalfer(0,272-12,479,271);	
 	
 	if (detailed) {			
-		pgFillBoxHalfer(300,180,479,272-13);
+		pgFillBoxHalfer(300,180,479,272-15);
 		mh_print(310, 190, s9xTYL_msg[FILER_HELP_WINDOW1], INFOBAR_COL2);
 		mh_print(310, 200, s9xTYL_msg[FILER_HELP_WINDOW2], INFOBAR_COL2);
 		mh_print(310, 215, s9xTYL_msg[FILER_HELP_WINDOW3], INFOBAR_COL3);
@@ -359,7 +359,7 @@ int getFilePath(char *out,int can_exit) {
 	unsigned long color=RGB_WHITE;
 	static int sel=0;
 	int reload_entries=0;
-	int rows=24, top=0, x, y, h, i, /*len,*/ bMsg=0, up=0,pad_cnt=0,nopress=0,pad_cnt_acc=0;
+	int rows=20, top=0, x, y, h, i, /*len,*/ bMsg=0, up=0,pad_cnt=0,nopress=0,pad_cnt_acc=0;
 	int retval;
 	u16 *snes_image;
 	int snesheight;
@@ -632,7 +632,7 @@ int getFilePath(char *out,int can_exit) {
 		sprintf(tmp,
 			s9xTYL_msg[FILER_STATUS_NOEXIT1], os9x_btn_positive_str,
 				files[0].d_name[3] == ':' ? files[0].d_name : s9xTYL_msg[FILER_STATUS_PARDIR]);
-        mh_print(4, 262, tmp, INFOBAR_COL);
+        mh_print(4, 260, tmp, INFOBAR_COL);
         	
 		if(nfiles > rows){
 			h = 219;
@@ -654,7 +654,7 @@ int getFilePath(char *out,int can_exit) {
 			}
 			if ((color==SEL_COL)||(color==SELDIR_COL)) mh_printSel_light(x,y,files[top+i].d_name,color,current_smoothing);//pgPrintSel(x, y, color, files[top+i].d_name);		
 			else mh_print(x, y, files[top+i].d_name,color);//pgPrint(x, y, color, files[top+i].d_name);
-			y+=1*10;
+			y+=1*12;
 		}
 		
 		if (image_loaded==1) { //jpeg already loaded
@@ -695,7 +695,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 	static int cpt_lowbat=0;
 	unsigned long color=RGB_WHITE;
 	static int sel=0;
-	int rows=24, top=0, x, y, h, i, /*len,*/ bMsg=0, up=0,pad_cnt=5,pad_cnt_acc=0;
+	int rows=20, top=0, x, y, h, i, /*len,*/ bMsg=0, up=0,pad_cnt=5,pad_cnt_acc=0;
 	int retval;
 	int current_smoothing;
 	int cnt = 0;
@@ -871,9 +871,9 @@ int getNoExtFilePath(char *out,int can_exit) {
 		sprintf(tmp,
 			s9xTYL_msg[FILER_STATUS_NOEXIT2], os9x_btn_positive_str,
 			files[0].d_name[3] == ':' ? files[0].d_name : s9xTYL_msg[FILER_STATUS_PARDIR]);
-        mh_print(8, 262, tmp, INFOBAR_COL);
+        mh_print(8, 260, tmp, INFOBAR_COL);
 
-		// ÉXÉNÉçÅ[ÉãÉoÅ[
+		// „Çπ„ÇØ„É≠„Éº„É´„Éê„Éº
 		if(nfiles > rows){
 			h = 219;
 			pgDrawFrame(461,25,462,243,(0xd<<0)|(0xd<<5)|(0x17<<10));
@@ -895,7 +895,7 @@ int getNoExtFilePath(char *out,int can_exit) {
 			}
 			if ((color==SEL_COL)||(color==SELDIR_COL)) mh_printSel_light(x,y,files[top+i].d_name,color,current_smoothing);//pgPrintSel(x, y, color, files[top+i].d_name);		
 			else mh_print(x, y, files[top+i].d_name,color);//pgPrint(x, y, color, files[top+i].d_name);
-			y+=1*10;
+			y+=1*12;
 		}
 				
 		pgScreenFlipV2();
