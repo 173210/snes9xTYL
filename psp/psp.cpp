@@ -399,7 +399,7 @@ void ErrorExit(const char* msg)
 	FILE* f;
 	char tmp_str[256];
 	sprintf(tmp_str,"%serorr.txt",LaunchDir);
-	f = fopen(tmp_str,"wb");			
+	f = fopen(tmp_str,"wb");
 	if (!f){
 		//("cannot save settings");
 	}
@@ -413,13 +413,13 @@ void FileLog(char* msg)
 	char tmp_str[256];
 //	sprintf(tmp_str,"%serorr.txt",LaunchDir);
 	sprintf(tmp_str,"%serorr.txt","ms0:/PSP/GAME380/snes9xTYL/");
-	f = fopen(tmp_str,"ab");			
+	f = fopen(tmp_str,"ab");
 	if (!f){
 		//("cannot save settings");
 	}
 	fwrite(msg,1,strlen(msg),f);
 	fclose(f);
-    
+
 }
 void FileDump(char* filename,void* data,int len)
 {
@@ -427,13 +427,13 @@ void FileDump(char* filename,void* data,int len)
 	char tmp_str[256];
 //	sprintf(tmp_str,"%serorr.txt",LaunchDir);
 	sprintf(tmp_str,"%s%s","ms0:/PSP/GAME380/snes9xTYL/",filename);
-	f = fopen(tmp_str,"w");			
+	f = fopen(tmp_str,"w");
 	if (!f){
 		//("cannot save settings");
 	}
 	fwrite(data,1,len,f);
 	fclose(f);
-    
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // Read inputs
@@ -1018,7 +1018,7 @@ int me_MixSound(me_sound_t *p){
 	}
 
 	APURegisters.PC = IAPU.PC - IAPU.RAM;
-	S9xAPUPackStatus ();	
+	S9xAPUPackStatus ();
 	memcpy((void*)UNCACHE_PTR(&APUPack),&APUPack,sizeof(struct SAPUPACK));
 	memcpy((void*)UNCACHE_PTR(IAPU.RAM),(void*)NORMAL_PTR(IAPU.RAM),0x10000);
 	memcpy((void*)UNCACHE_PTR(&SoundData),&SoundData,sizeof(SSoundData));
@@ -1045,7 +1045,7 @@ int me_MixSound(me_sound_t *p){
 		//if(*p->os9x_paused_ptr){me_sleep(p->os9x_paused_ptr);continue;}
 		if(me_resumeing)continue;
 		//if(stSoundStatus.mute_sound)
-		//	sprintf(me_debug_str,"stSoundStatus.mute_sound:%d\n",stSoundStatus.mute_sound);	
+		//	sprintf(me_debug_str,"stSoundStatus.mute_sound:%d\n",stSoundStatus.mute_sound);
 
 		//check if reset or load snapshot occured
 		if (apu_init_after_load) {
@@ -1124,7 +1124,7 @@ int me_MixSound(me_sound_t *p){
 
 	}
 	APURegisters.PC = IAPU.PC - IAPU.RAM;
-	S9xAPUPackStatus ();	
+	S9xAPUPackStatus ();
 	memcpy((void*)UNCACHE_PTR(&APUPack),&APUPack,sizeof(struct SAPUPACK));
 	memcpy((void*)UNCACHE_PTR(IAPU.RAM),(void*)NORMAL_PTR(IAPU.RAM),0x10000);
 	memcpy((void*)UNCACHE_PTR(&SoundData),&SoundData,sizeof(SSoundData));
@@ -1146,7 +1146,7 @@ void me_StartSound (){
 	memcpy((void*)UNCACHE_PTR(&APUPack),&APUPack,sizeof(struct SAPUPACK));
 	memcpy((void*)UNCACHE_PTR(IAPU.RAM),(void*)NORMAL_PTR(IAPU.RAM),0x10000);
 	memcpy((void*)UNCACHE_PTR(&SoundData),&SoundData,sizeof(SSoundData));
-	
+
 	me_sound_t *p=(me_sound_t *)((int)(&me_sound_data)|0x40000000);
 
 	//サウンドバグ暫定3
@@ -1190,8 +1190,8 @@ char* hexFormat(char* buf,void* debug_dump,int size)
 			{
 				buf[id++]=' ';
 				col++;
-			}		
-		
+			}
+
 	}
 	buf[id++]=0;
 	return buf;
@@ -1326,7 +1326,7 @@ return;
 	fprintf (f, "Uncache_APU_OutPorts:%d\n",*(int*)Uncache_APU_OutPorts);
 	fprintf (f, "IAPU_APUExecuting:%d\n",IAPU_APUExecuting);
 
-	
+
 	fprintf (f, "*************SoundData*******************\n");
 	fprintf (f, "master_volume_left:%d\n",SoundData.master_volume_left);
 	fprintf (f, "master_volume_right:%d\n",SoundData.master_volume_right);
@@ -1386,7 +1386,7 @@ return;
     fprintf (f, "loop:%d\n\n",SoundData.channels[b].loop);
 
 	o(0);o(1);o(2);o(3);o(4);o(5);o(6);o(7);
-#undef o 
+#undef o
 #endif
 #if 0
 	fclose(f);
@@ -1422,7 +1422,7 @@ int S9xProcessSound (SceSize ,void *) {
 	IAPU.PC+=(IAPU.RAM)-(IAPUuncached.RAM);
 #endif
 #ifdef ME_SOUND
-	//sceKernelDcacheWritebackInvalidateAll();  
+	//sceKernelDcacheWritebackInvalidateAll();
 	me_StartSound();
 	me_sound_t *p=(me_sound_t *)((int)(&me_sound_data)|0x40000000);
 	//sceKernelDelayThread(1000);
@@ -1667,7 +1667,7 @@ uint32 S9xReadJoypad( int which1 ) {
 	if (os9x_netplay) {
 		if (which1<5) val=os9x_netsnespad[0][which1];
 		else val=0;
-	} else 
+	} else
 //#endif
 	{
 		if ( which1 == os9x_padindex) val=os9x_snespad;
@@ -2576,9 +2576,6 @@ void MyExceptionHandler(PspDebugRegBlock *regs)
 #endif
 
 
-
-void intro_anim();
-
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -2693,7 +2690,7 @@ int main(int argc,char **argv) {
 	// create user thread, tweek stack size here if necessary
 #ifdef ME_SOUND
 //me_stopproc();
-#endif			
+#endif
 	//user_main(0,NULL);
   //user thread for network
 	SceUID g_mainthread = sceKernelCreateThread("User Mode Thread", user_main,
@@ -3781,7 +3778,7 @@ void me_apu_debug(int flag)
 //		if (os9x_apuenabled==2)	S9xSetSoundMute( false );
 //		else S9xSetSoundMute( true );
 			apu_init_after_load|=4;
-		
+
 			//InitSoundThread();
 
 		if (g_sndthread!=-1) {ErrorExit( "Thread Exist" );return;}
@@ -3925,7 +3922,7 @@ int user_main(SceSize args, void* argp) {
 		}
 /*				char szBuf[16];
 				sprintf(szBuf,"EXE:%d",IAPU_APUExecuting);
-				pgPrintBG(0,3,0xffff,szBuf);	*/		
+				pgPrintBG(0,3,0xffff,szBuf);	*/
 		}
 		//if(strlen(me_debug_str)!=0){
 		//	FileLog(me_debug_str);me_debug_str[0]=0;
@@ -3993,7 +3990,7 @@ void MyCounter_drawCount()
 	//	return;
 	if(!os9x_showfps)
 		return;
-	
+
 	if (g_ulStart != 0xFFFFFFFF) {
 		clock_t dwTime = sceKernelLibcClock();
 		if (20000000 < dwTime - g_ulStart) {
@@ -4007,10 +4004,10 @@ void MyCounter_drawCount()
 	sprintf(szBuf,"%d",g_nCount);
 	pgPrintBG(0,0,0xffff,szBuf);
 return;
-	//pgPrintBG(0,1,0xffff,debug_str);	
+	//pgPrintBG(0,1,0xffff,debug_str);
 	//sprintf(szBuf,"%d",debug_count);
-	//pgPrintBG(0,2,0xffff,szBuf);	
-	////pgPrintBG(0,2,0xffff,debug_str);	
+	//pgPrintBG(0,2,0xffff,szBuf);
+	////pgPrintBG(0,2,0xffff,debug_str);
 	//pgPrintBG(0,3,0xffff,me_debug_str);
 
 
@@ -4046,21 +4043,21 @@ return;
 	//pgPrintBG(0,19,0xffff,szBuf);
 	//sprintf(szBuf,"TRANS:%d,%d",debug_counts[TRANCE_COUNT],debug_counts[NO_TRANCE_COUNT]);
 	//pgPrintBG(0,20,0xffff,szBuf);
-	
+
 	//sprintf(szBuf,"STRC:%d,%d",Settings.SRTC,Memory.HiROM);
 	//pgPrintBG(0,18,0xffff,szBuf);
-	  
+
 	//
 	//
 	for(int i=0;i<100;i++)debug_counts[i]=0;
-	//	
+	//
 	//sprintf(szBuf,"%d",APURegistersUncached.PC);
-	//pgPrintBG(0,4,0xffff,szBuf);	
+	//pgPrintBG(0,4,0xffff,szBuf);
 	//sprintf(szBuf,"M%d",apu_glob_cycles_Main>>5);
-	//pgPrintBG(0,5,0xffff,szBuf);	
+	//pgPrintBG(0,5,0xffff,szBuf);
 	//sprintf(szBuf,"A%d",apu_event1_cpt1>>5);
-	//pgPrintBG(0,6,0xffff,szBuf);	
-	
+	//pgPrintBG(0,6,0xffff,szBuf);
+
 }
 
 time_t GetCurrentTime()
