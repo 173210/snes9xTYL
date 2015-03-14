@@ -1,0 +1,6 @@
+./zlib/infutil.c:
+./zlib/infutil.h
+./zlib/zutil.h
+./zlib/infblock.h
+./zlib/inftrees.h
+./zlib/infcodes.h

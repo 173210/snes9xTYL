@@ -1,0 +1,5 @@
+./snes9x.cpp:
+./display.h
+./cheats.h
+./snes9x.h
+./memmap.h

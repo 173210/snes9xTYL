@@ -1,0 +1,4 @@
+./clip.cpp:
+./snes9x.h
+./memmap.h
+./ppu.h

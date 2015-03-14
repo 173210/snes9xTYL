@@ -1,0 +1,16 @@
+./globals.cpp:
+./missing.h
+./cpuexec.h
+./debug.h
+./apu.h
+./dma.h
+./fxemu.h
+./gfx.h
+./soundux.h
+./cheats.h
+./sa1.h
+./snes9x.h
+./netplay.h
+./memmap.h
+./ppu.h
+./dsp1.h

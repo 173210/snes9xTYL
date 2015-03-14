@@ -1,0 +1,6 @@
+./sdd1.cpp:
+./sdd1.h
+./display.h
+./snes9x.h
+./memmap.h
+./ppu.h

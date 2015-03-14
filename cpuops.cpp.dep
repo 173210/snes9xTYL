@@ -1,0 +1,12 @@
+./cpuops.cpp:
+./apu.h
+./sa1.h
+./cpuexec.h
+./cpuaddr.h
+./cpuops.h
+./cpumacro.h
+./apu.h
+./snes9x.h
+./memmap.h
+./debug.h
+./missing.h

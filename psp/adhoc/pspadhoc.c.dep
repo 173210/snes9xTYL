@@ -1,0 +1,5 @@
+./psp/adhoc/pspadhoc.c:
+./psp/adhoc/loadutil.h
+./psp/adhoc/selectorMenu.h
+./psp/psp.h
+./psp/adhoc/adhoc.h

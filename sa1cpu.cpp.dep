@@ -1,0 +1,7 @@
+./sa1cpu.cpp:
+./sa1.h
+./cpuops.cpp
+./snes9x.h
+./memmap.h
+./ppu.h
+./cpuexec.h

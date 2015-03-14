@@ -1,0 +1,14 @@
+./snapshot.cpp:
+./srtc.h
+./sdd1.h
+./snapshot.h
+./snaporig.h
+./memmap.h
+./snes9x.h
+./65c816.h
+./ppu.h
+./cpuexec.h
+./display.h
+./apu.h
+./soundux.h
+./sa1.h

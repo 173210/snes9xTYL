@@ -1,0 +1,11 @@
+./dma.cpp:
+./missing.h
+./dma.h
+./apu.h
+./gfx.h
+./sa1.h
+./sdd1emu.h
+./snes9x.h
+./memmap.h
+./ppu.h
+./cpuexec.h

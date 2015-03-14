@@ -1,0 +1,10 @@
+./gfx.cpp:
+./cpuexec.h
+./display.h
+./gfx.h
+./apu.h
+./cheats.h
+./tile.h
+./snes9x.h
+./memmap.h
+./ppu.h

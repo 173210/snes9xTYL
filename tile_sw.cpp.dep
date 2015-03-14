@@ -1,0 +1,8 @@
+./tile_sw.cpp:
+./display.h
+./gfx.h
+./apu.h
+./snes9x.h
+./memmap.h
+./ppu.h
+./cpuexec.h

@@ -1,0 +1,8 @@
+./soundux.cpp:
+./psp/psp.h
+./snes9x.h
+./soundux.h
+./apu.h
+./memmap.h
+./cpuexec.h
+./psp/psp.h

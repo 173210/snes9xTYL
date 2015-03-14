@@ -1,0 +1,7 @@
+./tile_psp.cpp:
+./gfx.h
+./tile_psp.h
+./snes9x.h
+./memmap.h
+./ppu.h
+./display.h

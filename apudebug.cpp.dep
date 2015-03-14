@@ -1,0 +1,6 @@
+./apudebug.cpp:
+./cpuexec.h
+./snes9x.h
+./spc700.h
+./apu.h
+./soundux.h

@@ -1,0 +1,6 @@
+./c4emu.cpp:
+./ppu.h
+./c4.h
+./snes9x.h
+./sar.h
+./memmap.h

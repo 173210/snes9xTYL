@@ -1,0 +1,4 @@
+./zlib/inftrees.c:
+./zlib/zutil.h
+./zlib/inftrees.h
+./zlib/inffixed.h

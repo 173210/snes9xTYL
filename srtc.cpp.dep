@@ -1,0 +1,4 @@
+./srtc.cpp:
+./snes9x.h
+./srtc.h
+./memmap.h

@@ -1,0 +1,5 @@
+./psp/psp_net.cpp:
+./psp/psp.h
+./memmap.h
+./psp/adhoc/pspadhoc.h
+./psp/adhoc/adhoc.h

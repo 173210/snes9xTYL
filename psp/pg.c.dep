@@ -1,0 +1,6 @@
+./psp/pg.c:
+./psp/imageio.h
+./psp/psp.h
+./psp/pg.h
+./psp/font.c
+./psp/fontNaga10.c

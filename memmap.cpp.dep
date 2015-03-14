@@ -1,0 +1,16 @@
+./memmap.cpp:
+./memmap.h
+./cpuexec.h
+./ppu.h
+./display.h
+./cheats.h
+./apu.h
+./sa1.h
+./srtc.h
+./sdd1.h
+./soundux.h
+./unzip.h
+./zlib/unzip.h
+./fxemu.h
+./getset.h
+./snes9x.h

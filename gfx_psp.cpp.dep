@@ -1,0 +1,10 @@
+./gfx_psp.cpp:
+./display.h
+./gfx.h
+./apu.h
+./cheats.h
+./tile_psp.h
+./snes9x.h
+./memmap.h
+./ppu.h
+./cpuexec.h

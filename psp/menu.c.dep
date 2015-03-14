@@ -1,0 +1,11 @@
+./psp/menu.c:
+./snes9x.h
+./cheats.h
+./unzip.h
+./zlib/unzip.h
+./psp/openspc++/os9xZ_openspc.h
+./psp/img_jpeg.h
+./psp/help_data.c
+./psp/menu_fx.h
+./psp/psp.h
+./psp/blitter.h

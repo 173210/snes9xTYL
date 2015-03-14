@@ -1,0 +1,16 @@
+./ppu.cpp:
+./missing.h
+./apu.h
+./dma.h
+./gfx.h
+./display.h
+./sa1.h
+./netplay.h
+./sdd1.h
+./srtc.h
+./fxemu.h
+./snes9x.h
+./fxinst.h
+./memmap.h
+./ppu.h
+./cpuexec.h

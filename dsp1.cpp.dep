@@ -1,0 +1,7 @@
+./dsp1.cpp:
+./dsp1emu.c
+./dsp2emu.c
+./snes9x.h
+./dsp1.h
+./missing.h
+./memmap.h

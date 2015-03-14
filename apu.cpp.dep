@@ -1,0 +1,7 @@
+./apu.cpp:
+./soundux.h
+./cpuexec.h
+./psp/psp.h
+./snes9x.h
+./spc700.h
+./apu.h

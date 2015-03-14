@@ -1,0 +1,7 @@
+./psp/psp_utils.c:
+./psp/utf8_sjis.c
+./snesadvance.c
+./unzip.h
+./zlib/unzip.h
+./psp/snd_beep1.c
+./psp/snd_beep2.c

@@ -1,0 +1,1 @@
+echo "#define __TIMESTAMP__ " \"`date`\" > timestamp.h

@@ -1,0 +1,9 @@
+./spc700.cpp:
+./cpuexec.h
+./apu.h
+./apumem.h
+./apumem.h
+./snes9x.h
+./spc700.h
+./memmap.h
+./display.h

@@ -1,0 +1,12 @@
+./debug.cpp:
+./cheats.h
+./ppu.h
+./cpuexec.h
+./debug.h
+./missing.h
+./display.h
+./apu.h
+./sa1.h
+./snes9x.h
+./memmap.h
+./cpuops.h

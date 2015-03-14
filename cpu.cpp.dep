@@ -1,0 +1,14 @@
+./cpu.cpp:
+./cpuexec.h
+./debug.h
+./apu.h
+./dma.h
+./sa1.h
+./cheats.h
+./srtc.h
+./sdd1.h
+./fxemu.h
+./snes9x.h
+./memmap.h
+./ppu.h
+./dsp1.h
