@@ -45,19 +45,19 @@ static const char *help_data_ml[HELP_LANG_TOTAL][HELP_TOTAL_ENTRIES] = {
 	},
 	[HELP_JA] = {
 	//japanese
-		[HELP_SHOWPASS] = "いくつ画面を描画するのに必要とされる描画関数を呼び出しているかを表\示します。\n低ければ、早くなります。これはハック(詳細は以下)の影響を確認するのに使えます。\n",
-		[HELP_APPLYHACKS] = "データベースに存在する場合SNESAdvanceスピードハックを使用します。\nROM読み込み時のみに使われます。",
-		[HELP_IGNORE_FIXCOL] = "固定した色彩変化を無視します。\nそのような変更は画面の変化が進行するきっかけにはなりません。\nCGが変化する可能\性があります。(グレデーションなど)",
-		[HELP_IGNORE_WINCLIP] = "画面を切り取る変化を無視します。\nそのような変更は画面の変化が進行するきっかけにはなりません。\nCGが変化する可能\性があります。(missing areaなど)",
-		[HELP_IGNORE_ADDSUB] = "追加/サブモードの変化を無視します。\nそのような変更は画面の変化が進行するきっかけにはなりません。\nCGが変化する可能\性があります。(ピクセルが透過の代わりにくすむなど)",
-		[HELP_IGNORE_PALWRITE] = "パレットが書く変化を無視します。\nそのような変更は画面の変化が進行するきっかけにはなりません。\nCGが変化する可能\性があります。(誤った色になるなど)",
-		[HELP_OBJ] = "オブジェクトのオン/オフです。\nオブジェクト描画を無効化(オフ)にするために使います。",
-		[HELP_BG0] = "背景0のオン/オフです。\n背景0の描画を無効化(オフ)にするために使います。",
-		[HELP_BG1] = "背景1のオン/オフです。\n背景1の描画を無効化(オフ)にするために使います。",
-		[HELP_BG2] = "背景2のオン/オフです。\n背景2の描画を無効化(オフ)にするために使います。",
-		[HELP_BG3] = "背景3のオン/オフです。\n背景3の描画を無効化(オフ)にするために使います。",
-		[HELP_EASY] = "透過をさせません。\n透過描画を強制的になくすために使います。\nCGが変化する可能\性があります。(ピクセルが透過の代わりにくすむなど)",
-		[HELP_FASTSPRITE] = "高速スプライト\n内臓スプライトの優先操作を無効にするために使います。\nCGが変化する可能\性があります。"
+		[HELP_SHOWPASS] = "������ʂ�`�悷��̂ɕK�v�Ƃ����`��֐����Ăяo���Ă��邩��\\�����܂��B\n�Ⴏ��΁A�����Ȃ�܂��B����̓n�b�N(�ڍׂ͈ȉ�)�̉e�����m�F����̂Ɏg���܂��B\n",
+		[HELP_APPLYHACKS] = "�f�[�^�x�[�X�ɑ��݂���ꍇSNESAdvance�X�s�[�h�n�b�N���g�p���܂��B\nROM�ǂݍ��ݎ��݂̂Ɏg���܂��B",
+		[HELP_IGNORE_FIXCOL] = "�Œ肵���F�ʕω��𖳎����܂��B\n���̂悤�ȕύX�͉�ʂ̕ω����i�s���邫�������ɂ͂Ȃ�܂���B\nCG���ω�����\\��������܂��B(�O���f�[�V�����Ȃ�)",
+		[HELP_IGNORE_WINCLIP] = "��ʂ�؂���ω��𖳎����܂��B\n���̂悤�ȕύX�͉�ʂ̕ω����i�s���邫�������ɂ͂Ȃ�܂���B\nCG���ω�����\\��������܂��B(missing area�Ȃ�)",
+		[HELP_IGNORE_ADDSUB] = "�ǉ�/�T�u���[�h�̕ω��𖳎����܂��B\n���̂悤�ȕύX�͉�ʂ̕ω����i�s���邫�������ɂ͂Ȃ�܂���B\nCG���ω�����\\��������܂��B(�s�N�Z�������߂̑���ɂ����ނȂ�)",
+		[HELP_IGNORE_PALWRITE] = "�p���b�g�������ω��𖳎����܂��B\n���̂悤�ȕύX�͉�ʂ̕ω����i�s���邫�������ɂ͂Ȃ�܂���B\nCG���ω�����\\��������܂��B(������F�ɂȂ�Ȃ�)",
+		[HELP_OBJ] = "�I�u�W�F�N�g�̃I��/�I�t�ł��B\n�I�u�W�F�N�g�`��𖳌���(�I�t)�ɂ��邽�߂Ɏg���܂��B",
+		[HELP_BG0] = "�w�i0�̃I��/�I�t�ł��B\n�w�i0�̕`��𖳌���(�I�t)�ɂ��邽�߂Ɏg���܂��B",
+		[HELP_BG1] = "�w�i1�̃I��/�I�t�ł��B\n�w�i1�̕`��𖳌���(�I�t)�ɂ��邽�߂Ɏg���܂��B",
+		[HELP_BG2] = "�w�i2�̃I��/�I�t�ł��B\n�w�i2�̕`��𖳌���(�I�t)�ɂ��邽�߂Ɏg���܂��B",
+		[HELP_BG3] = "�w�i3�̃I��/�I�t�ł��B\n�w�i3�̕`��𖳌���(�I�t)�ɂ��邽�߂Ɏg���܂��B",
+		[HELP_EASY] = "���߂������܂���B\n���ߕ`��������I�ɂȂ������߂Ɏg���܂��B\nCG���ω�����\\��������܂��B(�s�N�Z�������߂̑���ɂ����ނȂ�)",
+		[HELP_FASTSPRITE] = "�����X�v���C�g\n�����X�v���C�g�̗D�摀��𖳌��ɂ��邽�߂Ɏg���܂��B\nCG���ω�����\\��������܂��B"
 	},
 	[HELP_CH] = {
 	//english
