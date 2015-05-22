@@ -30,8 +30,8 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[INFO_DELETING] = "Deleting...",
 		[INFO_EXITING] = "Exiting, please wait...",
 		//filer
-		[FILER_STATUS_CANEXIT1] = "%s RUN " SJIS_SQUARE " RUN default settings  " SJIS_STAR "  %s TO GAME  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse",
-		[FILER_STATUS_NOEXIT1] = "%s RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",
+		[FILER_STATUS_CANEXIT1] = "%s RUN " SJIS_SQUARE " RUN default settings " SJIS_STAR " %s TO GAME "  SJIS_STAR " " SJIS_TRIANGLE " %s "  SJIS_STAR " PAD BROWSE",
+		[FILER_STATUS_NOEXIT1] = "%s RUN " SJIS_SQUARE " RUN default settings  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",
 		[FILER_STATUS_CANEXIT2] = "%s RUN %s BACK TO GAME " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",
 		[FILER_STATUS_NOEXIT2] = "%s RUN " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT ", to browse list",
 
@@ -418,7 +418,7 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[INFO_DELETING] = "削除しています...",
 		[INFO_EXITING] = "終了しています。しばらくお待ちください...",
 		//filer
-		[FILER_STATUS_CANEXIT1] = "%s 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  %s ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " 移動",
+		[FILER_STATUS_CANEXIT1] = "%s 実行 " SJIS_SQUARE " 標準設定で実行  " SJIS_STAR "  %s ゲームに戻る  "  SJIS_STAR "  " SJIS_TRIANGLE " %s  "  SJIS_STAR "  十\字 移動",
 		[FILER_STATUS_NOEXIT1] = "%s 実行 " SJIS_SQUARE " 標準設定で実行  "  SJIS_STAR "  " SJIS_TRIANGLE " %s          " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",
 		[FILER_STATUS_CANEXIT2] = "%s 実行 %s ゲームに戻る " SJIS_TRIANGLE " %s  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",
 		[FILER_STATUS_NOEXIT2] = "%s 実行 " SJIS_TRIANGLE " %s                  " SJIS_UP "," SJIS_DOWN "," SJIS_LEFT "," SJIS_RIGHT " リストを移動",
