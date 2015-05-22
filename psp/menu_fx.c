@@ -120,7 +120,7 @@ void evalSH(float theta, float phi, const float* m, ScePspFVector3* p) {
 			"lv.q			C010, %[m]\n"   //m0,1,2,3 in C010			
 			"lv.s			S001, %[phi]\n"   //phi in S001
 			"lv.s			S002, %[theta]\n"   //theta in S002
-			"lv.q			C020, 16 + %[m]\n"   //m4,5,6,7 in C020
+			"lv.q			C020, %[m2]\n"   //m4,5,6,7 in C020
 			"vscl.p 	C010,C010, S001\n" //S010=m[0]*phi, S011=m[1]*phi
 			"vscl.p 	C012,C012, S002\n" //S012=m[2]*theta, S013=m[3]*theta
 			"vsin.s 	S010,S010\n"	//S010 = sin(m[0]*phi)
@@ -128,7 +128,7 @@ void evalSH(float theta, float phi, const float* m, ScePspFVector3* p) {
 			"vsin.s 	S012,S012\n"	//S012 = sin(m[2]*theta)
 			"vcos.s 	S013,S013\n"	//S013 = cos(m[3]*theta)			
 			"sv.q			C010, %[mres]\n"			
-		: [mres] "+m"(mres) : [m] "m"(*m) , [theta] "m"(theta) , [phi] "m"(phi));
+		: [mres] "+m"(mres) : [m] "m"(*m), [m2] "m"(*(float *)((uintptr_t)m + 16)), [theta] "m"(theta) , [phi] "m"(phi));
 				
 	r += vfpupow(mres[0],(float)m[4]);
 	r += vfpupow(mres[1],(float)m[5]);

@@ -122,6 +122,12 @@
 
 /* Define the module info section */
 //PSP_MODULE_INFO("snes9xTYL", 0x1000, 0, 4);
+__asm__ (
+	".global __lib_ent_top;"
+	".global __lib_ent_bottom;"
+	".global __lib_stub_top;"
+	".global __lib_stub_bottom;");
+
 PSP_MODULE_INFO(snes9xTYL, 0, 0, 4);
 /* Define the main thread's attribute value (optional) */
 //PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VFPU);

@@ -9,7 +9,7 @@ endif
 INCDIR = psp psp/me psp/openspc++ psp/adhoc zlib danzeff
 
 CFLAGS = -O2 -G0 -Wall -pipe \
-	-fsingle-precision-constant \
+	-flto -fsingle-precision-constant \
 	-DFW3X -DEMUNAME_VERSION="\"$(EMUNAME_VERSION)\""
 
 
