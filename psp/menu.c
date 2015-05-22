@@ -3249,7 +3249,7 @@ int menu_credits(char *mode) {
 
 		mh_printLimit(menu_panel_pos+5,123,479,272,"Greetings to (no order) : ",GREETINGS0_COL);
 		mh_printLimit(menu_panel_pos+5,135,479,272,"snes9x authors",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,145,479,272,"bifuteki (first snes9x port on PSP)",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,145,479,272,"bifuteki (first snes9x port)",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,155,479,272,"zelurker",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,165,479,272,"tinnus",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,175,479,272,"thunderz",GREETINGS_COL);
@@ -3258,7 +3258,7 @@ int menu_credits(char *mode) {
 		mh_printLimit(menu_panel_pos+5,205,479,272,"radius",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,215,479,272,"Chris Swindle",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,225,479,272,"Danzel",GREETINGS_COL);
-		mh_printLimit(menu_panel_pos+5,235,479,272,"ps2dev community, psp homebrew coders",GREETINGS_COL);
+		mh_printLimit(menu_panel_pos+5,235,479,272,"ps2dev and psp community",GREETINGS_COL);
 		mh_printLimit(menu_panel_pos+5,245,479,272,"donators & supporters ^=^",GREETINGS_COL);
 
 
@@ -3649,10 +3649,10 @@ void menu_drawFrame(int selected) {
 	//for (i=-1;i<=MENU_XMB_ICONS_NB;i++) {
 		sel=(i+menu_current_xmb_index+MENU_XMB_ICONS_NB)%MENU_XMB_ICONS_NB;
 		if ((sel>=0)&&(sel<MENU_XMB_ICONS_NB)) {
-			x=(i+1)*64+15+menu_scrolling;
-			if ((x<480-64)&&(x>12)) {
+			x = (i + 1) * 64 + menu_scrolling;
+			if (x < 480-64) {
 				if (i==0) {
-					if (selected) x-=64;
+					if (selected) x-= 32;
 
 					//mh_print_light(x+5,50,menu_xmb_icons[sel].label,31|(31<<5)|(31<<10),menu_current_smoothing);
 					if (icons[sel]) {
@@ -3697,8 +3697,7 @@ void menu_drawFrame(int selected) {
 	//draw menu entries
 //	y=-12;
 	y=0;
-	if (selected) x=30+menu_scrolling;
-	else x=80+menu_scrolling;
+	x = (selected ? 30 : 50) + menu_scrolling;
 /*	j=menu_current_xmb_index_entry[menu_current_xmb_index];
 
 	col=abs(round(27*cos(menu_cnt2*3.14159/64)));
@@ -3719,9 +3718,9 @@ void menu_drawFrame(int selected) {
 					menu_xmb_entries[i].menu_func(str_tmp);
 					if (str_tmp[0]) {//a value has to be shown
 						mh_print_light(x, 100 + y + 4, s9xTYL_msg[menu_xmb_entries[i].label_id], 31 | (31 << 5)| (31 << 10), menu_current_smoothing);
-						mh_print(x+156,100+y+4,str_tmp,31|(31<<5)|(31<<10));
-						pgDrawFrame(x,100+y+4+12,x+156+mh_length(str_tmp),100+y+4+12,(28|(28<<5)|(28<<10)));
-						pgDrawFrame(x+1,100+y+4+13,x+157+mh_length(str_tmp),100+y+4+13,(12|(12<<5)|(12<<10)));
+						mh_print(x + 180,100+y+4,str_tmp,31|(31<<5)|(31<<10));
+						pgDrawFrame(x,100+y+4+12,x+180+mh_length(str_tmp),100+y+4+12,(28|(28<<5)|(28<<10)));
+						pgDrawFrame(x+1,100+y+4+13,x+181+mh_length(str_tmp),100+y+4+13,(12|(12<<5)|(12<<10)));
 					} else {
 						mh_print_light(x, 100 + y + 4, s9xTYL_msg[menu_xmb_entries[i].label_id], 31 | (31 << 5) | (24 << 10), menu_current_smoothing);
 					}
@@ -3740,7 +3739,7 @@ void menu_drawFrame(int selected) {
 					menu_xmb_entries[i].menu_func(str_tmp);
 					if (str_tmp[0]) {//a value has to be shown
 						mh_print(x, 100 + y, s9xTYL_msg[menu_xmb_entries[i].label_id], 20 | (20 << 5) | (20 << 10));
-						mh_print(x+156,100+y,str_tmp,20|(20<<5)|(20<<10));
+						mh_print(x + 180,100+y,str_tmp,20|(20<<5)|(20<<10));
 					} else {
 						mh_print(x, 100 + y, s9xTYL_msg[menu_xmb_entries[i].label_id], 20 | (20 << 5) | (12 << 10));
 					}

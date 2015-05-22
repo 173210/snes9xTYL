@@ -336,12 +336,12 @@ void filer_buildbg(int detailed) {
 	pgFillBoxHalfer(0,272-12,479,271);	
 	
 	if (detailed) {			
-		pgFillBoxHalfer(300,180,479,272-15);
-		mh_print(310, 190, s9xTYL_msg[FILER_HELP_WINDOW1], INFOBAR_COL2);
-		mh_print(310, 200, s9xTYL_msg[FILER_HELP_WINDOW2], INFOBAR_COL2);
-		mh_print(310, 215, s9xTYL_msg[FILER_HELP_WINDOW3], INFOBAR_COL3);
-		mh_print(310, 230, s9xTYL_msg[FILER_HELP_WINDOW4], INFOBAR_COL4);
-		mh_print(310, 245, s9xTYL_msg[FILER_HELP_WINDOW5], INFOBAR_COL4);
+		pgFillBoxHalfer(260,170,479,272-15);
+		mh_print(270, 180, s9xTYL_msg[FILER_HELP_WINDOW1], INFOBAR_COL2);
+		mh_print(270, 195, s9xTYL_msg[FILER_HELP_WINDOW2], INFOBAR_COL2);
+		mh_print(270, 210, s9xTYL_msg[FILER_HELP_WINDOW3], INFOBAR_COL3);
+		mh_print(270, 225, s9xTYL_msg[FILER_HELP_WINDOW4], INFOBAR_COL4);
+		mh_print(270, 240, s9xTYL_msg[FILER_HELP_WINDOW5], INFOBAR_COL4);
 	}
 		
 	dst=filer_bg;
