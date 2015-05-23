@@ -6,7 +6,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 void MyCounter_Init(void);
-void MyCounter_drawCount();
 
 #ifdef __cplusplus
 }

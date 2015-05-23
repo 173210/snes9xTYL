@@ -19,7 +19,7 @@ int snd_beep1_current;
 
 
 
-void check_settings(){
+static void check_settings(){
 	if (os9x_apu_ratio<16) os9x_apu_ratio=192; //default value
 	if (os9x_apu_ratio>512) os9x_apu_ratio=192; //default value
 	os9x_hack=os9x_hack&(PPU_IGNORE_FIXEDCOLCHANGES|PPU_IGNORE_WINDOW|PPU_IGNORE_ADDSUB|PPU_IGNORE_PALWRITE|GFX_FASTMODE7|HIRES_FIX);
@@ -167,7 +167,7 @@ void load_background(){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void load_icons(){	
+static void load_icons(){	
 	int i;
 	for (i=0;i<8;i++) icons[i]=NULL;
 	
@@ -260,7 +260,7 @@ int save_rom_settings(int game_crc32,const char *name){
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
-int load_rom_settings(int game_crc32){
+static int load_rom_settings(int game_crc32){
 	FILE *f;
 	char tmp_str[256],rom_name[64];	
 	int l;
@@ -349,7 +349,8 @@ else {fclose(f);check_settings();return -3;}
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 //crc = 0 for default
-int save_buffer_settings(char *buffer){
+#ifdef USE_ADHOC
+static int save_buffer_settings(char *buffer){
 	int buffer_ofs=0;
 	int l;	
 	
@@ -391,7 +392,7 @@ int save_buffer_settings(char *buffer){
 		
 	return 0;
 }
-
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -472,7 +473,7 @@ int load_buffer_settings(char *buffer){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int save_settings(void){
+static int save_settings(void){
 	FILE *f;
 	char tmp_str[256];
 	int l;
@@ -500,7 +501,7 @@ int save_settings(void){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int load_settings(void){
+static int load_settings(void){
 	FILE *f;
 	char tmp_str[256];
 	int l;
@@ -559,7 +560,7 @@ else {fclose(f);return -3;}
 ////////////////////////////////////////////////////////////////////////////////////////
 #include "savedata_res.h"
 
-void checkdirs() { 
+static void checkdirs() { 
 	int i;
 	const char *src;
 	char *dst;
@@ -683,7 +684,7 @@ void checkdirs() {
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 #include "utf8_sjis.c"
-void getsysparam(){
+static void getsysparam(){
 	char sVal[256];
 	int iVal;
 
@@ -780,7 +781,7 @@ int os9x_remove(const char *ext) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-char *os9x_shortfilename(char *filename){
+static char *os9x_shortfilename(char *filename){
 	static char fname [256];
 	char drive [_MAX_DRIVE + 1];
 	char dir [_MAX_DIR + 1];
@@ -791,7 +792,7 @@ char *os9x_shortfilename(char *filename){
 	return fname;
 }
 
-char *os9x_filename_ext(char *filename){
+static char *os9x_filename_ext(char *filename){
 	char fname [256];
 	char drive [_MAX_DRIVE + 1];
 	char dir [_MAX_DIR + 1];
@@ -807,7 +808,7 @@ char *os9x_filename_ext(char *filename){
 ////////////////////////////////////////////////////////////////////////////////////////
 //#include "snesadvance.c"
 
-int os9x_findhacks(int game_crc32){
+static int os9x_findhacks(int game_crc32){
 	unsigned int i=0,j;
 	int _crc32;
 	char c;
@@ -899,7 +900,7 @@ void os9x_beep2() {
 	}
 }
 
-const uint32 crc32Table[256] = {
+static const uint32 crc32Table[256] = {
   0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
   0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
   0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
@@ -953,7 +954,7 @@ uint32 caCRC32(uint8 *array, uint32 size, register uint32 crc32) {
   return ~crc32;
 }
 
-void net_send_state() {
+static void net_send_state() {
 #ifdef USE_ADHOC
 	char *filename;
 	uint8 c;
@@ -983,7 +984,7 @@ void net_send_state() {
 #endif
 }
 
-void net_flush_net(int to_send) {
+static void net_flush_net(int to_send) {
 #ifdef USE_ADHOC
 	unsigned int length;
 	pkt_send[0]=to_send;
@@ -995,7 +996,8 @@ void net_flush_net(int to_send) {
 #endif
 }
 
-int net_waitpause_state(int show_menu){
+#ifdef USE_ADHOC
+static int net_waitpause_state(int show_menu){
 	before_pause();
 	if (show_menu) {
 		if (!os9x_lowbat) {
@@ -1060,8 +1062,9 @@ int net_waitpause_state(int show_menu){
 	after_pause();
 	return 0;
 }
+#endif
 
-void net_send_settings() {
+static void net_send_settings() {
 #ifdef USE_ADHOC
 	unsigned int length;
 	FILE *f;
@@ -1095,8 +1098,8 @@ void net_send_settings() {
 	remove(filename);
 #endif
 }
-void net_receive_settings() {
 #ifdef USE_ADHOC
+static void net_receive_settings() {
 	unsigned int file_size,length;
 	unsigned int crc32,rlen;
 	int ret;
@@ -1132,13 +1135,13 @@ void net_receive_settings() {
 		adhocSendRecvAck(&c,1);
 	}
 	remove(filename);
-#endif
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void check_battery() {
+static void check_battery() {
 	if (scePowerIsBatteryExist()) {
 		int oldvalue=os9x_lowbat;
 		os9x_lowbat=scePowerIsLowBattery();
@@ -1156,8 +1159,9 @@ void os9x_savecheats() {
 	S9xSaveCheatFile( (char*)S9xGetSaveFilename( ".cht" ) );
 }
 
+#ifndef FW3X
 //helper function to make things easier
-int LoadStartModule(char *path) {
+static int LoadStartModule(char *path) {
 	u32 loadResult;
 	u32 startResult;
 	int status;
@@ -1168,8 +1172,7 @@ int LoadStartModule(char *path) {
 	return 0;
 }
 
-#ifndef FW3X
-void loadUSBdrivers(void) {
+static void loadUSBdrivers(void) {
 	//start necessary drivers
 	LoadStartModule("flash0:/kd/semawm.prx");
 	LoadStartModule("flash0:/kd/usbstor.prx");

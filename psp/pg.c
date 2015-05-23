@@ -70,7 +70,7 @@ char pgc_mag[2];
 //}
 
 
-void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long bgcolor,unsigned char ch,char drawfg,char drawbg,char mag)
+static void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long bgcolor,unsigned char ch,char drawfg,char drawbg,char mag)
 {
 	char *vptr0;		//pointer to vram
 	char *vptr;		//pointer to vram
@@ -131,7 +131,7 @@ void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long
 	}		
 }
 
-void pgPutChar_shadow(unsigned long x,unsigned long y,unsigned char ch,char drawfg,char drawbg,char mag)
+static void pgPutChar_shadow(unsigned long x,unsigned long y,unsigned char ch,char drawfg,char drawbg,char mag)
 {
 	char *vptr0;		//pointer to vram
 	char *vptr;		//pointer to vram
@@ -199,21 +199,6 @@ void pgPutChar_shadow(unsigned long x,unsigned long y,unsigned char ch,char draw
 
 
 
-
-void pgwait(int usec){
-	struct timeval tv,now;
-	sceKernelLibcGettimeofday( &tv, 0 );
-	sceKernelLibcGettimeofday( &now, 0 );
-	tv.tv_usec+=usec;
-	if ( tv.tv_usec >= 1000000 ){
-	  	tv.tv_sec += tv.tv_usec / 1000000;
-      tv.tv_usec %= 1000000;
-	  }	
-	while ( timercmp( &now, &tv, < ) ){
-		sceKernelLibcGettimeofday( &now, 0 );
-	}
-}
-
 void pgWaitVn(unsigned long count)
 {
 	for (; count>0; --count) {
@@ -266,20 +251,6 @@ void pgPrintCenter(unsigned long y,unsigned long color,const char *str){
 		if (x>=CMAX_X) {
 			x=0;
 			y++;
-		}
-	}
-}
-
-void pgPrintCenterY(unsigned long y,unsigned long color,const char *str){
-	unsigned long x=(480-strlen(str)*8)>>4;
-	while (*str!=0 && x<CMAX_X /*&& (y/8)<CMAX_Y*/) {
-		pgPutChar_shadow(x*8+1,y+1,*str,1,0,1);
-		pgPutChar(x*8,y,color,0,*str,1,0,1);
-		str++;
-		x++;
-		if (x>=CMAX_X) {
-			x=0;
-			y+=8;
 		}
 	}
 }
@@ -352,20 +323,6 @@ void pgPrintAllBG(unsigned long x,unsigned long y,unsigned long color,const char
 	}
 }
 
-void pgPrint2(unsigned long x,unsigned long y,unsigned long color,const char *str)
-{
-	while (*str!=0 && x<CMAX2_X && y<CMAX2_Y) {
-		pgPutChar_shadow(x*16+1,y*16+1,*str,1,0,2);
-		pgPutChar(x*16,y*16,color,0,*str,1,0,2);
-		str++;
-		x++;
-		if (x>=CMAX2_X) {
-			x=0;
-			y++;
-		}
-	}
-}
-
 
 void pgPrint4(unsigned long x,unsigned long y,unsigned long color,unsigned long color2,const char *str)
 {		
@@ -432,7 +389,9 @@ void pgPrint4(unsigned long x,unsigned long y,unsigned long color,unsigned long 
 //	}
 //}
 
-void Draw_Char_Hankaku(int x,int y,unsigned char c,int col,unsigned short *vbuff,int pitch,int init_with_bg) {
+static void Draw_Char_Hankaku(int x, int y, unsigned char c, int col,
+	unsigned short *vbuff, int pitch, int init_with_bg)
+{
 	unsigned short *vr;
 	unsigned char  *fnt;
 	unsigned char  pt;
@@ -499,7 +458,9 @@ void Draw_Char_Hankaku(int x,int y,unsigned char c,int col,unsigned short *vbuff
 
 
 
-void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,int pitch,int init_with_bg) {
+static void Draw_Char_Hankaku_shadow(int x, int y, unsigned char c,
+	unsigned short *vbuff, int pitch, int init_with_bg)
+{
 	unsigned short *vr;
 	unsigned char  *fnt;
 	unsigned char  pt;
@@ -642,7 +603,9 @@ void Draw_Char_Hankaku_shadow(int x,int y,unsigned char c,unsigned short *vbuff,
 //}
 
 
-void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsigned short *vbuff,int pitch,int init_with_bg) {
+static void Draw_Char_Zenkaku(int x, int y, unsigned char u, unsigned char d,
+	int col, unsigned short *vbuff, int pitch, int init_with_bg)
+{
 	// ELISA100.FNTに存在しない文字
 	unsigned short font404[] = {
 		0xA2AF, 11,
@@ -746,7 +709,10 @@ void Draw_Char_Zenkaku(int x,int y,unsigned char u,unsigned char d,int col,unsig
 	}
 }
 
-void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsigned short *vbuff,int pitch,int init_with_bg) {
+static void Draw_Char_Zenkaku_shadow(int x, int y,
+	unsigned char u, unsigned char d,
+	unsigned short *vbuff, int pitch, int init_with_bg)
+{
 	// ELISA100.FNTに存在しない文字
 	unsigned short font404[] = {
 		0xA2AF, 11,
@@ -848,6 +814,34 @@ void Draw_Char_Zenkaku_shadow(int x,int y,unsigned char u,unsigned char d,unsign
 	}
 }
 
+// by kwn
+static int mh_print_buff(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch) {
+	unsigned char ch = 0,bef = 0;
+	
+	while(*str != 0) {
+		ch = *str++;		 
+		if (bef!=0) {
+			if ((x+12<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
+				if (pg_shadow) Draw_Char_Zenkaku_shadow(x+1,y+1,bef,ch,vbuff,pitch,pg_init_with_bg);
+				Draw_Char_Zenkaku(x,y,bef,ch,col,vbuff,pitch,pg_init_with_bg);
+			}
+			x+=12;
+			bef=0;
+		} else {
+			if (((ch>=0x80) && (ch<0xa0)) || (ch>=0xe0)) {
+				bef = ch;
+			} else {
+				if ((x+6<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
+					if (pg_shadow) Draw_Char_Hankaku_shadow(x+1,y+1,ch,vbuff,pitch,pg_init_with_bg);
+					Draw_Char_Hankaku(x,y,ch,col,vbuff,pitch,pg_init_with_bg);
+				}
+				x+=6;
+			}
+		}
+	}
+	return x;
+}
+
 void mh_print_light(int x,int y,const char *str,int col,int smoothing) {
 	unsigned short *scr=(unsigned short *)pgGetVramAddr(x-6,y-6);
 	unsigned short buffer[480*24],buffer2[480*24];
@@ -911,72 +905,12 @@ void mh_print_light(int x,int y,const char *str,int col,int smoothing) {
 	
 }
 
-// by kwn
 void mh_print(int x,int y,const char *str,int col) {
 	mh_print_buff(x,y,480,272,str,col,NULL,0);
 }
 
-void mh_printVert(int x,int y,const char *str,int col) {
-	mh_print_buffVert(x,y,480,272,str,col,NULL,0);
-}
-
 void mh_printLimit(int x,int y,int Mx,int My,const char *str,int col) {
 	mh_print_buff(x,y,Mx,My,str,col,NULL,0);
-}
-
-
-int mh_print_buff(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch) {
-	unsigned char ch = 0,bef = 0;
-	
-	while(*str != 0) {
-		ch = *str++;		 
-		if (bef!=0) {
-			if ((x+12<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
-				if (pg_shadow) Draw_Char_Zenkaku_shadow(x+1,y+1,bef,ch,vbuff,pitch,pg_init_with_bg);
-				Draw_Char_Zenkaku(x,y,bef,ch,col,vbuff,pitch,pg_init_with_bg);
-			}
-			x+=12;
-			bef=0;
-		} else {
-			if (((ch>=0x80) && (ch<0xa0)) || (ch>=0xe0)) {
-				bef = ch;
-			} else {
-				if ((x+6<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
-					if (pg_shadow) Draw_Char_Hankaku_shadow(x+1,y+1,ch,vbuff,pitch,pg_init_with_bg);
-					Draw_Char_Hankaku(x,y,ch,col,vbuff,pitch,pg_init_with_bg);
-				}
-				x+=6;
-			}
-		}
-	}
-	return x;
-}
-
-int mh_print_buffVert(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch) {
-	unsigned char ch = 0,bef = 0;
-	
-	while(*str != 0) {
-		ch = *str++;		 
-		if (bef!=0) {
-			if ((x+12<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
-				if (pg_shadow) Draw_Char_Zenkaku_shadow(x+1,y+1,bef,ch,vbuff,pitch,pg_init_with_bg);
-				Draw_Char_Zenkaku(x,y,bef,ch,col,vbuff,pitch,pg_init_with_bg);
-			}
-			y+=11;
-			bef=0;
-		} else {
-			if (((ch>=0x80) && (ch<0xa0)) || (ch>=0xe0)) {
-				bef = ch;
-			} else {
-				if ((x+6<=Mx)&&(y+12<=My)&&(x>=0)&&(y>=0)) {
-					if (pg_shadow) Draw_Char_Hankaku_shadow(x+1,y+1,ch,vbuff,pitch,pg_init_with_bg);
-					Draw_Char_Hankaku(x,y,ch,col,vbuff,pitch,pg_init_with_bg);
-				}
-				y+=11;
-			}
-		}
-	}
-	return x;
 }
 
 
@@ -1115,231 +1049,6 @@ void pgFillAllvram(unsigned long color)
 	}
 }
 
-void pgBitBlt(unsigned long x,unsigned long y,unsigned long w,unsigned long h,unsigned long mag,unsigned short *d)
-{
-	char *vptr0;		//pointer to vram
-	char *vptr;		//pointer to vram
-	unsigned long xx,yy,mx,my;
-	unsigned short *dd;
-
-	vptr0=pgGetVramAddr(x,y);
-	for (yy=0; yy<h; yy++) {
-		for (my=0; my<mag; my++) {
-			vptr=vptr0;
-			dd=d;
-			for (xx=0; xx<w; xx++) {
-				for (mx=0; mx<mag; mx++) {
-					*(unsigned short *)vptr=*dd;
-					vptr+=PIXELSIZE*2;
-				}
-				dd++;
-			}
-			vptr0+=LINESIZE*2;
-		}
-		d+=w;
-	}
-
-}
-
-void pgBitBltSt(unsigned long x,unsigned long y,unsigned long h,unsigned long *d)
-{
-	unsigned long *v0;		//pointer to vram
-	unsigned long xx,yy;
-	unsigned long dx,d0,d1;
-
-	v0=(unsigned long *)pgGetVramAddr(x,y);
-	for (yy=0; yy<h; yy++) {
-		if(yy%9){
-			for (xx=80; xx>0; --xx) {
-				dx=*(d++);
-				d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-				d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-				v0[LINESIZE/2]=d0;
-				v0[LINESIZE/2+1]=d1;
-				*(v0++)=d0;
-				*(v0++)=d1;
-			}
-			v0+=(LINESIZE-160);
-		}else{
-			for (xx=80; xx>0; --xx) {
-				dx=*(d++);
-				d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-				d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-				*(v0++)=d0;
-				*(v0++)=d1;
-			}
-			v0+=(LINESIZE/2-160);
-		}
-		d+=8;
-	}
-}
-
-//?傚???x1 - LCK
-void pgBitBltN1(unsigned long x,unsigned long y,unsigned long *d)
-{
-	unsigned long *v0;		//pointer to vram
-	unsigned long yy;
-
-	v0=(unsigned long *)pgGetVramAddr(x,y);
-	for (yy=0; yy<144; yy++) {
-#ifdef WIN32
-		memcpy(v0,d,80);
-#else
-		__memcpy4a(v0,d,80);
-#endif
-		v0+=(LINESIZE/2-80);
-		d+=8;
-	}
-}
-
-//??傑?曄??側?x1.5 -LCK
-void pgBitBltN15(unsigned long x,unsigned long y,unsigned long *d)
-{
-	unsigned short *vptr0;		//pointer to vram
-	unsigned short *vptr;		//pointer to vram
-	unsigned long xx,yy;
-	
-	vptr0=(unsigned short *)pgGetVramAddr(x,y);
-	for (yy=0; yy<72; yy++) {
-		unsigned long *d0=d+(yy*2)*88;
-		vptr=vptr0;
-		for (xx=0; xx<80; xx++) {
-			unsigned long dd1,dd2,dd3,dd4;
-			unsigned long dw;
-			dw=d0[0];
-			dd1=((vptr[0]           =((dw)     & 0x739c))) ;
-			dd2=((vptr[2]           =((dw>>16) & 0x739c))) ;
-			dw=d0[88];
-			dd3=((vptr[0+LINESIZE*2]=((dw)     & 0x739c))) ;
-			dd4=((vptr[2+LINESIZE*2]=((dw>>16) & 0x739c))) ;
-
-			vptr++;
-			*vptr=(dd1+dd2) >> 1;
-			vptr+=(LINESIZE-1);
-			*vptr=(dd1+dd3) >> 1;
-			vptr++;
-			*vptr=(dd1+dd2+dd3+dd4) >> 2;
-			vptr++;
-			*vptr=(dd2+dd4) >> 1;
-			vptr+=(LINESIZE-1);
-			*vptr=(dd3+dd4) >> 1;
-			vptr+=(2-LINESIZE*2);
-			d0+=1;
-		}
-		vptr0+=LINESIZE*3;
-	}
-}
-
-//???偐?側?x2 - LCK
-void pgBitBltN2(unsigned long x,unsigned long y,unsigned long h,unsigned long *d)
-{
-	unsigned long *v0;		//pointer to vram
-	unsigned long xx,yy;
-	unsigned long dx,d0,d1;
-
-	v0=(unsigned long *)pgGetVramAddr(x,y);
-	for (yy=h; yy>0; --yy) {
-		for (xx=80; xx>0; --xx) {
-			dx=*(d++);
-			d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-			d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-			v0[LINESIZE/2]=d0;
-			v0[LINESIZE/2+1]=d1;
-			*(v0++)=d0;
-			*(v0++)=d1;
-		}
-		v0+=(LINESIZE-160);
-		d+=8;
-	}
-}
-
-//by z-rwt
-void pgBitBltStScan(unsigned long x,unsigned long y,unsigned long h,unsigned long *d)
-{
-	unsigned long *v0;		//pointer to vram
-	unsigned long xx,yy;
-	unsigned long dx,d0,d1;
-
-	v0=(unsigned long *)pgGetVramAddr(x,y);
-	for (yy=h; yy>0; --yy) {
-		for (xx=80; xx>0; --xx) {
-			dx=*(d++);
-			d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-			d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-			*(v0++)=d0;
-			*(v0++)=d1;
-		}
-		v0+=(LINESIZE-160);
-		d+=8;
-	}
-}
-
-void pgBitBltSt2wotop(unsigned long x,unsigned long y,unsigned long h,unsigned long *d)
-{
-	unsigned long *v0;		//pointer to vram
-	unsigned long xx,yy;
-	unsigned long dx,d0,d1;
-
-	v0=(unsigned long *)pgGetVramAddr(x,y);
-	for (yy=0; yy<16; yy++){
-		for (xx=80; xx>0; --xx) {
-			dx=*(d++);
-			d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-			d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-			*(v0++)=d0;
-			*(v0++)=d1;
-		}
-		v0+=(LINESIZE/2-160);
-		d+=8;
-	}
-	for (; yy<h; yy++) {
-		for (xx=80; xx>0; --xx) {
-			dx=*(d++);
-			d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-			d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-			v0[LINESIZE/2]=d0;
-			v0[LINESIZE/2+1]=d1;
-			*(v0++)=d0;
-			*(v0++)=d1;
-		}
-		v0+=(LINESIZE-160);
-		d+=8;
-	}
-}
-
-void pgBitBltSt2wobot(unsigned long x,unsigned long y,unsigned long h,unsigned long *d)
-{
-	unsigned long *v0;		//pointer to vram
-	unsigned long xx,yy;
-	unsigned long dx,d0,d1;
-
-	v0=(unsigned long *)pgGetVramAddr(x,y);
-	for (yy=0; yy<h-16; yy++){
-		for (xx=80; xx>0; --xx) {
-			dx=*(d++);
-			d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-			d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-			v0[LINESIZE/2]=d0;
-			v0[LINESIZE/2+1]=d1;
-			*(v0++)=d0;
-			*(v0++)=d1;
-		}
-		v0+=(LINESIZE-160);
-		d+=8;
-	}
-	for (; yy<h; yy++) {
-		for (xx=80; xx>0; --xx) {
-			dx=*(d++);
-			d0=( (dx&0x0000ffff)|((dx&0x0000ffff)<<16) );
-			d1=( (dx&0xffff0000)|((dx&0xffff0000)>>16) );
-			*(v0++)=d0;
-			*(v0++)=d1;
-		}
-		v0+=(LINESIZE/2-160);
-		d+=8;
-	}
-}
-
 void pgScreenFrame(long mode,long frame)
 {	
 	pg_screenmode=mode;
@@ -1433,305 +1142,7 @@ void pgwaitPress(void){
 
 /******************************************************************************/
 
-
-void pgcLocate(unsigned long x, unsigned long y)
-{
-	if (x>=CMAX_X) x=0;
-	if (y>=CMAX_Y) y=0;
-	pgc_csr_x[pg_drawframe?1:0]=x;
-	pgc_csr_y[pg_drawframe?1:0]=y;
-}
-
-
-void pgcColor(unsigned long fg, unsigned long bg)
-{
-	pgc_fgcolor[pg_drawframe?1:0]=fg;
-	pgc_bgcolor[pg_drawframe?1:0]=bg;
-}
-
-
-void pgcDraw(char drawfg, char drawbg)
-{
-	pgc_fgdraw[pg_drawframe?1:0]=drawfg;
-	pgc_bgdraw[pg_drawframe?1:0]=drawbg;
-}
-
-
-void pgcSetmag(char mag)
-{
-	pgc_mag[pg_drawframe?1:0]=mag;
-}
-
-void pgcCls()
-{
-	pgFillvram(pgc_bgcolor[pg_drawframe]);
-	pgcLocate(0,0);
-}
-
-void pgcPutchar_nocontrol(char ch)
-{
-	pgPutChar(pgc_csr_x[pg_drawframe]*8, pgc_csr_y[pg_drawframe]*8, pgc_fgcolor[pg_drawframe], pgc_bgcolor[pg_drawframe], ch, pgc_fgdraw[pg_drawframe], pgc_bgdraw[pg_drawframe], pgc_mag[pg_drawframe]);
-	pgc_csr_x[pg_drawframe]+=pgc_mag[pg_drawframe];
-	if (pgc_csr_x[pg_drawframe]>CMAX_X-pgc_mag[pg_drawframe]) {
-		pgc_csr_x[pg_drawframe]=0;
-		pgc_csr_y[pg_drawframe]+=pgc_mag[pg_drawframe];
-		if (pgc_csr_y[pg_drawframe]>CMAX_Y-pgc_mag[pg_drawframe]) {
-			pgc_csr_y[pg_drawframe]=CMAX_Y-pgc_mag[pg_drawframe];
-//			pgMoverect(0,pgc_mag[pg_drawframe]*8,SCREEN_WIDTH,SCREEN_HEIGHT-pgc_mag[pg_drawframe]*8,0,0);
-		}
-	}
-}
-
-void pgcPutchar(char ch)
-{
-	if (ch==0x0d) {
-		pgc_csr_x[pg_drawframe]=0;
-		return;
-	}
-	if (ch==0x0a) {
-		if ((++pgc_csr_y[pg_drawframe])>=CMAX_Y) {
-			pgc_csr_y[pg_drawframe]=CMAX_Y-1;
-//			pgMoverect(0,8,SCREEN_WIDTH,SCREEN_HEIGHT-8,0,0);
-		}
-		return;
-	}
-	pgcPutchar_nocontrol(ch);
-}
-
-void pgcPuthex2(unsigned long s)
-{
-	char ch;
-	ch=((s>>4)&0x0f);
-	pgcPutchar((ch<10)?(ch+0x30):(ch+0x40-9));
-	ch=(s&0x0f);
-	pgcPutchar((ch<10)?(ch+0x30):(ch+0x40-9));
-}
-
-
-void pgcPuthex8(unsigned long s)
-{
-	pgcPuthex2(s>>24);
-	pgcPuthex2(s>>16);
-	pgcPuthex2(s>>8);
-	pgcPuthex2(s);
-}
-
-
-//Parallel blend
-static inline unsigned long PBlend(unsigned long c0, unsigned long c1)
-{
-	return (c0 & c1) + (((c0 ^ c1) & 0x7bde7bde) >> 1);
-}
-
-//Full
-void pgBitBltFull(unsigned long *d, int Height,int px,int py)
-{
-	unsigned long *vptr0;
-	unsigned long *vptr;
-	unsigned long *dl;
-	int x, y, dy, ddy;
-	
-	if (Height==239) {
-		ddy = 14225;
-	} else {
-		Height = 224;
-		ddy = 21874;
-	}
-	
-	vptr0 = (unsigned long *)pgGetVramAddr(px, py);
-	dy = 0;
-	
-	for (y = 0; y < Height; y++) {
-		vptr = vptr0;
-		dl = (unsigned long *)d;
-		dl += 2;
-		for (x = 8; x < 248; x+=2) {
-			cpy2x(vptr, *dl++);
-			vptr+=2;
-		}
-		vptr0 += (LINESIZE/2);
-		d += 128;//256;
-		vptr = vptr0;
-		dl = (unsigned long *)d;
-		dl += 2;
-		dy += ddy;
-		if (dy >= 100000) {
-			dy-=100000;
-			for (x = 8; x < 248; x+=2) {
-				cpy2x(vptr, PBlend(*(dl-128/*256*/), *dl+1));
-				vptr+=2;
-			}
-			vptr0 += (LINESIZE/2);
-		}
-	}
-}
-
-void pgBitBltFit(unsigned short *d, int Height,int px,int py)
-{
-	unsigned short *vptr0;
-	unsigned short *vptr;
-	unsigned short *dl;
-	unsigned short rgb, rgb2;
-	int x, y, dx, dy, ddy;
-	
-	if (Height==239) {
-		ddy = 14225;
-		pgFillBox( 84, 0, 93, 271, 0 );
-		pgFillBox( 386, 0, 395, 271, 0 );
-		vptr0 = (unsigned short *)pgGetVramAddr(94+px, py);
-	} else {
-		Height = 224;
-		ddy = 21874;
-		vptr0 = (unsigned short *)pgGetVramAddr(84+px, py);
-	}
-	
-	dy = 0;
-	
-	for (y = 0; y < Height; y++) {
-		vptr = vptr0;
-		dx = 0;
-		dl = (unsigned short *)d;
-		for (x = 0; x < 256; x++) {
-			*vptr = *dl++;
-			vptr++;
-			dx += ddy;
-			if (dx >= 100000) {
-				dx-=100000;
-				*vptr = (*(dl-1) & *dl) + (((*(dl-1) ^ *dl) & 0x7bde ) >> 1);
-				vptr++;
-			}
-		}
-		vptr0 += LINESIZE;
-		d += 256;//512;
-		vptr = vptr0;
-		dx = 0;
-		dl = (unsigned short *)d;
-		dy += ddy;
-		if (dy >= 100000) {
-			dy-=100000;
-			for (x = 0; x < 256; x++) {
-				*vptr = (*(dl-256/*512*/) & *dl) + (((*(dl-256/*512*/) ^ *dl) & 0x7bde ) >> 1);
-				dl++;
-				vptr++;
-				dx += ddy;
-				if (dx >= 100000) {
-					dx-=100000;
-					rgb = (*(dl-1) & *dl) + (((*(dl-1) ^ *dl) & 0x7bde ) >> 1);
-					rgb2 = (*(dl-257/*513*/) & *(dl-256/*512*/)) + (((*(dl-257/*513*/) ^ *(dl-256/*512*/)) & 0x7bde ) >> 1);
-					*vptr = (rgb & rgb2) + (((rgb ^ rgb2) & 0x7bde ) >> 1);
-					vptr++;
-				}
-			}
-			vptr0 += LINESIZE;
-		}
-	}
-}
-
-void pgBitBltFullFit(unsigned short *d, int Height,int px,int py)
-{
-	unsigned short *vptr0;
-	unsigned short *vptr;
-	unsigned short *dl;
-	unsigned short rgb, rgb2;
-	int x, y, dx, dy, ddy;
-	
-	if (Height==239) {
-		ddy = 14225;
-	} else {
-		Height = 224;
-		ddy = 21874;
-	}
-	
-	vptr0 = (unsigned short *)pgGetVramAddr(px, py);
-	dy = 0;
-	
-	for (y = 0; y < Height; y++) {
-		vptr = vptr0;
-		dx = 0;
-		dl = (unsigned short *)d;
-		for (x = 0; x < 256; x++) {
-			*vptr = *dl++;
-			vptr++;
-			dx += 875;
-			if (dx >= 1000) {
-				dx-=1000;
-				*vptr = (*(dl-1) & *dl) + (((*(dl-1) ^ *dl) & 0x7bde ) >> 1);
-				vptr++;
-			}
-		}
-		vptr0 += LINESIZE;
-		d += 256;//512;
-		vptr = vptr0;
-		dx = 0;
-		dl = (unsigned short *)d;
-		dy += ddy;
-		if (dy >= 100000) {
-			dy-=100000;
-			for (x = 0; x < 256; x++) {
-				*vptr = (*(dl-256/*512*/) & *dl) + (((*(dl-256/*512*/) ^ *dl) & 0x7bde ) >> 1);
-				dl++;
-				vptr++;
-				dx += 875;
-				if (dx >= 1000) {
-					dx-=1000;
-					rgb = (*(dl-1) & *dl) + (((*(dl-1) ^ *dl) & 0x7bde ) >> 1);
-					rgb2 = (*(dl-257/*513*/) & *(dl-256/*512*/)) + (((*(dl-257/*513*/) ^ *(dl-256/*512*/)) & 0x7bde ) >> 1);
-					*vptr = (rgb & rgb2) + (((rgb ^ rgb2) & 0x7bde ) >> 1);
-					vptr++;
-				}
-			}
-			vptr0 += LINESIZE;
-		}
-	}
-}
-
-
-/******************************************************************************/
-
-
-
-
-
-//////////////////////////
-void pgPrintHex(int x,int y,short col,unsigned int hex)
-{
-    char string[9],o;
-    int i,a;
-    memset(string,0,sizeof(string));
-
-    for(i=0;i<8;i++) {
-        a = (hex & 0xf0000000)>>28;
-        switch(a) {
-          case 0x0a: o='A'; break;
-          case 0x0b: o='B'; break;
-          case 0x0c: o='C'; break;
-          case 0x0d: o='D'; break;
-          case 0x0e: o='E'; break;
-          case 0x0f: o='F'; break;
-          default:   o='0'+a; break;
-        }
-        hex<<=4;
-        string[i]=o;
-    }
-    pgPrint(x,y,col,string);
-}
-
 void pgPrintDec(int x,int y,short col,unsigned int dec)
-{
-    char string[12];
-    int i,a;
-    
-    for(i=0;i<11;i++) {
-        a = dec % 10;
-    	dec/=10;
-        string[10-i]=0x30+a;
-//        if(dec=0 && a==0) break;
-    }
-    string[i]=0;
-    pgPrint(x,y,col,string);
-}
-
-void pgPrintDecTrim(int x,int y,short col,unsigned int dec)
 {
     char string[12];
     int i,a;
@@ -1748,149 +1159,6 @@ void pgPrintDecTrim(int x,int y,short col,unsigned int dec)
     pgPrint(x,y,col,string+a);
 }
 
-
-void pgPrintDecTrimSel(int x,int y,short col,unsigned int dec)
-{
-    char string[12];
-    int i,a;
-
-    for(i=0;i<11;i++) {
-        a = dec % 10;
-    	dec/=10;
-        string[10-i]=0x30+a;
-//        if(dec=0 && a==0) break;
-    }
-    string[i]=0;
-    a=0;
-    while ((string[a]=='0')&&(a<i-1)) a++;
-    pgPrintSel(x,y,col,string+a);
-}
-
-
-
-void image_put(int x0,int y0,IMAGE* img,int fade,int add)
-{
-	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
-	unsigned short *src = img->pixels;
-	unsigned short *src16 = img->pixels;
-	unsigned short pal[256];
-	s32 r,g,b,fadeR,fadeG,fadeB,aR,aG,aB;
-	int i;
-	fadeB=(fade>>0)&0xFF;
-	fadeG=(fade>>8)&0xFF;
-	fadeR=(fade>>16)&0xFF;
-	aB=(add>>0)&0xFF;
-	aG=(add>>8)&0xFF;
-	aR=(add>>16)&0xFF;
-	
-	if (img->bit==8) {	
-		for(i=0;i<img->n_palette;i++){
-	  	r=(s32)(img->palette[i].r)-fadeR+aR;if (r<0) r=0;if (r>255) r=255;
-	  	g=(s32)(img->palette[i].g)-fadeG+aG;if (g<0) g=0;if (g>255) g=255;
-	  	b=(s32)(img->palette[i].b)-fadeB+aB;if (b<0) b=0;if (b>255) b=255;
-			pal[i] = RGB(r,g,b);
-		}	
-		int x,y;
-		for(y=0;y<img->height;y++) {
-			for(x=0;x<img->width;x++) {
-				dst[x] = pal[*src++];
-			}
-			dst += 512;
-		}
-	}
-	if (img->bit==24){		
-		int x,y;
-		for(y=0;y<img->height;y++) {
-			for(x=0;x<img->width;x++) {												
-				r=*src++;g=*src++;b=*src++;
-				r+=aR-fadeR;g+=aG-fadeG;b+=aB-fadeB;
-				if (r<0) r=0;if (r>255) r=255;
-				if (g<0) g=0;if (g>255) g=255;
-				if (b<0) b=0;if (b>255) b=255;
-				dst[x] = ((b>>3)<<10)|((g>>3)<<5)|(r>>3);
-			}
-			dst += 512;
-		}
-	}
-	if (img->bit==15){
-		int x,y;
-		for(y=0;y<img->height;y++) {
-			for(x=0;x<img->width;x++) {												
-				r=*src16++;
-				b=(r>>10)<<3;g=((r>>5)&31)<<3;r=(r&31)<<3;
-				r+=aR-fadeR;g+=aG-fadeG;b+=aB-fadeB;
-				if (r<0) r=0;if (r>255) r=255;
-				if (g<0) g=0;if (g>255) g=255;
-				if (b<0) b=0;if (b>255) b=255;
-				dst[x] = ((b>>3)<<10)|((g>>3)<<5)|(r>>3);
-			}
-			dst += 512;
-		}
-	}
-}
-
-void image_put_clip(int x0,int y0,IMAGE* img,int fade,int add,int xsrc,int ysrc,int w,int h,int transp_col)
-{
-	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
-	unsigned char* src = img->pixels;
-	unsigned short* src16 = img->pixels;
-	s32 r,g,b,fadeR,fadeG,fadeB,aR,aG,aB;
-	int pix;
-	fadeB=(fade>>0)&0xFF;
-	fadeG=(fade>>8)&0xFF;
-	fadeR=(fade>>16)&0xFF;
-	aB=(add>>0)&0xFF;
-	aG=(add>>8)&0xFF;
-	aR=(add>>16)&0xFF;
-
-	if (img->bit==8) {
-		int x,y;
-		src+=xsrc+(ysrc)*img->width;
-		for(y=0;y<h;y++) {
-			for(x=0;x<w;x++) {
-				pix=*src++;
-				if (pix!=transp_col) dst[x] = pix;
-			}
-			dst += 512;
-			src+=(img->width-x);
-		}
-	}
-	if (img->bit==24){
-		int x,y;
-		src+=(xsrc+(ysrc)*img->width)*3;
-		for(y=0;y<h;y++) {
-			for(x=0;x<w;x++) {
-				r=*src++;g=*src++;b=*src++;
-				if ( ((r<<16)|(g<<8)|b)!=transp_col ) {
-					r+=aR-fadeR;g+=aG-fadeG;b+=aB-fadeB;
-					if (r<0) r=0;if (r>255) r=255;
-					if (g<0) g=0;if (g>255) g=255;
-					if (b<0) b=0;if (b>255) b=255;
-					dst[x] = ((b>>3)<<10)|((g>>3)<<5)|(r>>3);
-				}
-			}
-			dst += 512;
-			src+=(img->width-x)*3;
-		}
-	}
-	if (img->bit==15){
-		int x,y;
-		src16+=(xsrc+(ysrc)*img->width);
-		for(y=0;y<h;y++) {
-			for(x=0;x<w;x++) {												
-				r=*src16++;
-				b=(r>>10)<<3;g=((r>>5)&31)<<3;r=(r&31)<<3;
-				r+=aR-fadeR;g+=aG-fadeG;b+=aB-fadeB;
-				if (r<0) r=0;if (r>255) r=255;
-				if (g<0) g=0;if (g>255) g=255;
-				if (b<0) b=0;if (b>255) b=255;
-				dst[x] = ((b>>3)<<10)|((g>>3)<<5)|(r>>3);
-			}
-			dst += 512;
-			src16+=(img->width-x);
-		}
-	}
-}
 
 void image_put_mul(int x0,int y0,IMAGE* img,int mul,int add)
 {
@@ -1965,7 +1233,7 @@ void image_put_mul(int x0,int y0,IMAGE* img,int mul,int add)
 	}
 }
 
-void image_put_transp_light(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int smoothing)
+void image_put_light(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int smoothing)
 {
 	unsigned short buffer[64*64],buffer2[64*64],buffer3[64*64];
 	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
@@ -2062,9 +1330,7 @@ void image_put_transp_light(int x0,int y0,IMAGE* img,int fade,int add,int transp
 	
 	}		
 }
-
-
-void image_put_transp(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int sz)
+void image_put(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int sz)
 {	
 	unsigned short *dst = (unsigned short *)pgGetVramAddr(x0,y0);
 	unsigned char* src = img->pixels;

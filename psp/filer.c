@@ -78,7 +78,7 @@ extern void show_bg(u16 *bg);
 
 ////////////////////////////////////////////////////////////////////////
 // クイックソート
-void SJISCopy(struct SceIoDirent *a, char *file)
+static void SJISCopy(struct SceIoDirent *a, char *file)
 {
 	char ca;
 	int i;
@@ -97,7 +97,7 @@ void SJISCopy(struct SceIoDirent *a, char *file)
 	}
 }
 //#include <curl\stdcheaders.h>
-int cmpFile(SceIoDirent *a, SceIoDirent *b) {
+static int cmpFile(SceIoDirent *a, SceIoDirent *b) {
 	unsigned char file1[0x108];
 	unsigned char file2[0x108];
 	unsigned char ca, cb;
@@ -119,7 +119,7 @@ int cmpFile(SceIoDirent *a, SceIoDirent *b) {
 	else					return 1;
 }
 
-void sort(SceIoDirent *a, int left, int right) {
+static void sort(SceIoDirent *a, int left, int right) {
 	SceIoDirent tmp, pivot;
 	int i, p;
 	
@@ -157,7 +157,7 @@ const struct {
 	{NULL, EXT_UNKNOWN}
 };
 
-int getExtId(const char *szFilePath) {
+static int getExtId(const char *szFilePath) {
 	char *pszExt;
 	int i;
 	if((pszExt = strrchr(szFilePath, '.'))) {
@@ -171,25 +171,7 @@ int getExtId(const char *szFilePath) {
 	return EXT_UNKNOWN;
 }
 
-
-char *find_file(char *pattern,char *path){
-	int fd,found;	
-	fd = sceIoDopen(path);
-	if (fd<0) {
-		msgBoxLines(s9xTYL_msg[ERR_READ_MEMSTICK], 60);
-		return NULL;
-	}
-	found=0;	
-	while(1){
-		if(sceIoDread(fd, &file)<=0) break;
-		if (strcasestr(file.d_name,pattern)) {found=1;break;}		
-	}
-	sceIoDclose(fd);
-	if (found) return file.d_name;
-	return NULL;
-}
-
-void getDir(const char *path) {
+static void getDir(const char *path) {
 	int fd = 0;
 	int b = 0;
 //	char *p;
@@ -241,7 +223,7 @@ void getDir(const char *path) {
 	}
 }
 
-void getDirJpeg() {
+static void getDirJpeg() {
 	int fd;
 	nfiles_jpeg = 0;
 
@@ -267,7 +249,7 @@ void getDirJpeg() {
 }
 
 
-void getDirNoExt(const char *path) {
+static void getDirNoExt(const char *path) {
 	int fd = 0;
 	int b = 0;
 //	char *p;
@@ -319,7 +301,7 @@ void getDirNoExt(const char *path) {
 	}
 }
 
-void filer_buildbg(int detailed) {
+static void filer_buildbg(int detailed) {
 	u16 *dst,*src;
 	int i;
 	if (detailed) {
@@ -433,7 +415,7 @@ int getFilePath(char *out,int can_exit) {
       filer_next.tv_usec -= 1000000;
 	  }
 		counter++;
-		current_smoothing=3+round(sin(counter*3.14159/30)*3);
+		current_smoothing = 3 + roundf(sinf(counter * 3.14159 / 30) * 3);
 		new_pad=0;
     if (!pad_cnt) {
     	new_pad=get_pad();
@@ -726,7 +708,7 @@ int getNoExtFilePath(char *out,int can_exit) {
   filer_next.tv_usec+=33*1000;
 
 	for(;;){
-		current_smoothing=3+round(sin(cnt*3.14159/30)*3);
+		current_smoothing = 3 + roundf(sinf(cnt * 3.14159 / 30) * 3);
 		cnt++;
 
 		if (g_bSleep) {

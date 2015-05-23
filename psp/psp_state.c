@@ -59,20 +59,6 @@ int os9x_S9Xsave(const char *ext)
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int os9x_ZSsave(const char *ext)
-{
-	const char *save_filename;
-
-	os9x_externstate_mode=1;
-	save_filename=S9xGetSaveFilename (ext);	
-	//msgBoxLines((char*)save_filename,10);	
-	S9xFreezeGame(save_filename);
-	return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////////////
 int os9x_load(const char *ext) {
 	FILE *savefile;
 	const char *save_filename;
@@ -110,26 +96,6 @@ int os9x_loadfname(const char *fname) {
   if (savefile) {
   	fclose(savefile);
 		S9xUnfreezeGame(fname);
-//		S9xInitUpdate();
-		S9xReschedule ();
-		return 1;
-	}
-	return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////////////
-int os9x_loadzsnes(char *ext) {
-	FILE *savefile;
-	const char *save_filename;
-	
-	os9x_externstate_mode=1;
-	save_filename=S9xGetSaveFilename (ext);
-	savefile=fopen(save_filename,"rb");
-  if (savefile) {
- 		fclose(savefile);
-		S9xUnfreezeGame(save_filename);
 //		S9xInitUpdate();
 		S9xReschedule ();
 		return 1;

@@ -7,7 +7,6 @@ extern "C" {
 #include "pspadhoc.h"
 
 extern int g_Server;
-int save_buffer_settings(uint8 *buffer);
 int load_buffer_settings(uint8 *buffer);
 
 uint32 caCRC32(uint8 *array, uint32 size, register uint32 crc32 = 0xFFFFFFFF);
@@ -19,9 +18,9 @@ extern char shortrom_filename[64];
 extern int os9x_netplay,os9x_conId; //netplay : 1 is client, 2 is server
 extern int os9x_padindex,os9x_netpadindex;
 
-__attribute__((aligned(64))) uint8 net_pkt_recv[NET_PKT_LEN],net_pkt_send[NET_PKT_LEN];
-__attribute__((aligned(64))) uint8 net_buffer[0x2000];
-char str_id[256];
+static __attribute__((aligned(64))) uint8 net_pkt_recv[NET_PKT_LEN],net_pkt_send[NET_PKT_LEN];
+static __attribute__((aligned(64))) uint8 net_buffer[0x2000];
+static char str_id[256];
 
 int psp_initadhocgame(void){
 	int retval;

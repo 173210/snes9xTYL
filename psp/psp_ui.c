@@ -108,7 +108,7 @@ int msgBoxLines(const char *msg,int delay_vblank) {
 	return ret;
 }
 
-int msgBoxLinesRaw(const char *msg,int rev_line) {
+static int msgBoxLinesRaw(const char *msg,int rev_line) {
 	unsigned int len,width;
 	unsigned char c;
 	char str[256];
@@ -227,7 +227,7 @@ void msgBoxLinesRawPosLimit(int x,int y,int w,int h,const char *msg) {
 }
 
 
-void changeCodeVal(u32 idx,int dir,const char *fmt,char *code) {
+static void changeCodeVal(u32 idx,int dir,const char *fmt,char *code) {
 	if ((!fmt)||(!code)) return;
 	if (strlen(fmt)!=strlen(code)) return;
 	if (idx>=strlen(fmt)) return;

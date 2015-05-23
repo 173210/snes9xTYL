@@ -175,9 +175,6 @@ void debug_log( const char* message );
 void psp_showProgressBar(int,int);
 
 void StopSoundThread();
-void InitSoundThread();
-void FileLog(char* msg);
-
 time_t GetCurrentTime();
 
 typedef struct {

@@ -8,8 +8,6 @@ extern "C" {
 
 int showmenu(void);
 int root_menu(void);
-int load_settings(void);
-int save_settings(void);
 
 #ifdef __cplusplus
 }

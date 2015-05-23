@@ -8,8 +8,3 @@ void *malloc_64(int size)
 
 	return(memalign(64, size));	
 	}
-
-void free_64(void *p)
-	{
-	free(p);
-	}

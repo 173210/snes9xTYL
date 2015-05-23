@@ -21,7 +21,7 @@ struct Vertex3D
 
 float __attribute__((aligned(64))) parametersSH[8] = {0,2,2,2,2,2,2,2};
 
-float hue2rgb(float m1, float m2, float h)
+static float hue2rgb(float m1, float m2, float h)
 {
 	h += h < 0.0f ? 1.0f : h > 1.0f ? -1.0f : 0.0f;
 
@@ -37,7 +37,7 @@ float hue2rgb(float m1, float m2, float h)
 	return m1;
 }
 
-unsigned short hsl2rgb(float h, float s, float l)
+static unsigned short hsl2rgb(float h, float s, float l)
 {
 	float m1,m2;
 	int r,g,b;
@@ -52,124 +52,173 @@ unsigned short hsl2rgb(float h, float s, float l)
 	return (0x1 << 15) | (b << 10) | (g << 5) | r;
 }
 
-
-float vfpucos(float angle)
+float sinf(float x)
 {
 	float res;
-	__asm__ (		
-		"lv.s			s000, %[a]\n"				
-		"vcst.s			s001, VFPU_2_PI\n"		
-		"vmul.s			s000, s000, s001\n"		
-		"vcos.s			s000, s000\n"			
-		"sv.s			s000, %[r]\n"				
-		: [r]"=m"(res ): [a]"m"(angle)
-	);
-	return (res);
+
+	__asm__ (
+		"mtv	%1, S000\n"
+		"vcst.s	S001, VFPU_2_PI\n"
+		"vmul.s	S000, S000, S001\n"
+		"vsin.s	S000, S000\n"
+		"mfv	%0, S000\n"
+		: "=r"(res) : "r"(x));
+
+	return res;
 }
-float vfpusin(float angle)
+
+float cosf(float x)
 {
 	float res;
-	__asm__ (		
-		"lv.s			s000, %[a]\n"				
-		"vcst.s			s001, VFPU_2_PI\n"		
-		"vmul.s			s000, s000, s001\n"		
-		"vsin.s			s000, s000\n"			
-		"sv.s			s000, %[r]\n"				
-		: [r]"=m"(res ): [a]"m"(angle)
-	);
-	return (res);
+
+	__asm__ (
+		"mtv	%1, S000\n"
+		"vcst.s	S001, VFPU_2_PI\n"
+		"vmul.s	S000, S000, S001\n"
+		"vcos.s	S000, S000\n"
+		"mfv	%0, S000\n"
+		: "=r"(res) : "r"(x));
+
+	return res;
 }
-float vfpumulsin(float mul,float angle,float range)
+
+float tanf(float x)
 {
-	float res;	
-	__asm__ (		
-		"lv.s			s000, %[a]\n"
-		"lv.s			s001, %[mul]\n"
-		"lv.s			s002, %[range]\n"
-		"vsub.s			s000, s000, s002\n"
-		"vdiv.s			s000, s000, s002\n"
-		"vsin.s			s003, s000\n"
-		"vmul.s			s000, s000, s001\n"
-		"sv.s			s000, %[r]\n"
-		: [r]"=m"(res ): [mul]"m"(mul),[a]"m"(angle),[range]"m"(range)
-	);
-	return (res);
-}
-
-float vfpupow(float x, float y) {
 	float res;
-  if (x==0) return 0;
-  if (x<0) x=-x;
-	__asm__ volatile (	
-		"lv.s			s000,%[x]\n"				// s000 = x
-		"lv.s			s001,%[y]\n"				// s001 = y
-		"vlog2.s	s000, s000\n"			
-		"vmul.s		s000, s000, s001\n"		
-		"vexp2.s	s000, s000\n"			// s000 = 2^(y*ln2(x)) = 2^(ln2(x^y))=x^y
-		"sv.s			s000,%[r]\n"				// d    = s000
-		: [r]"=m"(res) : [x]"m"(x), [y]"m"(y)
-	);
-	return (res);
+
+	__asm__ (
+		"mtv	%1, S000\n"
+		"vcst.s	S001, VFPU_2_PI\n"
+		"vmul.s	S000, S000, S001\n"
+		"vrot.p	C002, S000, [s, c]\n"
+		"vdiv.s	S000, S002, S003\n"
+		"mfv	%0, S000\n"
+	: "=r"(res) : "r"(x));
+
+	return res;
 }
 
+float atanf(float x)
+{
+	float res;
 
-float __attribute__((aligned(64))) mres[4];
-void evalSH(float theta, float phi, const float* m, ScePspFVector3* p) {
-	float r=0;			
-	__asm__ volatile (			
-			"lv.q			C010, %[m]\n"   //m0,1,2,3 in C010			
-			"lv.s			S001, %[phi]\n"   //phi in S001
-			"lv.s			S002, %[theta]\n"   //theta in S002
-			"lv.q			C020, %[m2]\n"   //m4,5,6,7 in C020
-			"vscl.p 	C010,C010, S001\n" //S010=m[0]*phi, S011=m[1]*phi
-			"vscl.p 	C012,C012, S002\n" //S012=m[2]*theta, S013=m[3]*theta
-			"vsin.s 	S010,S010\n"	//S010 = sin(m[0]*phi)
-			"vcos.s 	S011,S011\n"	//S011 = cos(m[1]*phi)
-			"vsin.s 	S012,S012\n"	//S012 = sin(m[2]*theta)
-			"vcos.s 	S013,S013\n"	//S013 = cos(m[3]*theta)			
-			"sv.q			C010, %[mres]\n"			
-		: [mres] "+m"(mres) : [m] "m"(*m), [m2] "m"(*(float *)((uintptr_t)m + 16)), [theta] "m"(theta) , [phi] "m"(phi));
-				
-	r += vfpupow(mres[0],(float)m[4]);
-	r += vfpupow(mres[1],(float)m[5]);
-	r += vfpupow(mres[2],(float)m[6]);
-	r += vfpupow(mres[3],(float)m[7]);
-	
 	__asm__ volatile (
-			"lv.s			S000, %[phi]\n"   //phi in S001
-			"lv.s			S001, %[theta]\n"   //theta in S002
-			"lv.s			S002, %[r]\n"   //theta in S002			
-			"vcos.s		S010,S001\n" //S010=cos(theta)
-			"vcos.s		S011,S000\n" //S011=cos(phi)						
-			"vsin.s		S012,S001\n" //S012=sin(theta)
-			"vsin.s		S013,S000\n" //S013=sin(phi)
-			"vmul.s		S010,S013,S010\n"			
-			"vmul.s		S012,S012,S013\n"
-			"vscl.q		C010,C010,S002\n"
-			"usv.s			S010, 0 + %[p]\n"
-			"usv.s			S011, 4 + %[p]\n"
-			"usv.s			S012, 8 + %[p]\n"
-		: [p] "+m"(*p) : [r] "m"(r) , [theta] "m"(theta) , [phi] "m"(phi));
-	
-	
-	/*r += powf(sinf(m[0]*phi),(float)m[4]);
-	r += powf(cosf(m[1]*phi),(float)m[5]);
-	r += powf(sinf(m[2]*theta),(float)m[6]);
-	r += powf(cosf(m[3]*theta),(float)m[7]);
-			
-	p->x = r2 * sinf(phi) * cosf(theta);
-	p->y = r2 * cosf(phi);
-	p->z = r2 * sinf(phi) * sinf(theta);*/
+		"mtv	%1, S000\n"
+		"vmul.s	S001, S000, S000\n"
+		"vadd.s	S001, S001, S001[1]\n"
+		"vrsq.s	S001, S001\n"
+		"vmul.s	S000, S000, S001\n"
+		"vasin.s	S000, S000\n"
+		"vcst.s	S001, VFPU_PI_2\n"
+		"vmul.s	S000, S000, S001\n"
+		"mfv	%0, S000\n"
+	: "=r"(res) : "r"(x));
+
+	return (res);
 }
 
-struct Vertex3D __attribute__((aligned(64))) vertices3D_[GRID_WIDTH * GRID_HEIGHT];
-unsigned short __attribute__((aligned(64))) indices_[GRID_WIDTH * GRID_HEIGHT * 6];
+float roundf(float x)
+{
+	return __builtin_allegrex_round_w_s(x);
+}
 
-struct Vertex3D *vertices3D;
-unsigned short *indices;
+float sqrtf(float x)
+{
+	return __builtin_allegrex_sqrt_s(x);
+}
+
+float powf(float x, float y)
+{
+	float res;
+
+	__asm__ (
+		"mtv	%1, S000\n"
+		"mtv	%2, S001\n"
+		"vlog2.s	S000, S000\n"
+		"vmul.s	S000, S000, S001\n"
+		"vexp2.s	S000, S000\n"
+		"mfv	%0, S000\n"
+		: "=r"(res) : "r"(x), "r"(y));
+
+	return res;
+}
+
+double floor(double x)
+{
+	return __builtin_allegrex_floor_w_s(x);
+}
+
+double pow(double x, double y)
+{
+	return powf(x, y);
+}
+
+static void evalSH(const float *m, struct Vertex3D *vtx)
+{
+	const float du = 4.0f / (GRID_WIDTH-1);//(GU_PI*2) / (GRID_WIDTH-1);
+	const float dv = 2.0f / (GRID_WIDTH-1);//GU_PI / (GRID_WIDTH-1);
+	int i, j;
+
+	__asm__ volatile (
+		"lv.q	C000, 0(%0)\n"	//m0,1,2,3 in C000
+		"lv.q	C010, 16(%0)\n"	//m4,5,6,7 in C010
+		"mtv	%1, S020\n"
+		"mtv	%2, S021\n"
+		"vzero.s	S022\n"	//theta in S022
+		:: "r"(m), "r"(du), "r"(dv));
+
+	for (i = 0; i < GRID_WIDTH; i++) {
+		__asm__ volatile (
+			"vadd.s	S022, S022, S020\n"
+			"vzero.s	S023\n");	//phi in S023
+
+		for (j = 0; j < GRID_HEIGHT; ++j) {
+			__asm__ volatile (
+				"vscl.p	C030, C010, S023\n"	//S030=m[0]*phi, S031=m[1]*phi
+				"vscl.p	C032, C012, S022\n"	//S032=m[2]*theta, S033=m[3]*theta
+
+				"vsin.s	S030, S030\n"	//S030 = sin(m[0]*phi)
+				"vcos.s	S031, S031\n"	//S031 = cos(m[1]*phi)
+				"vsin.s	S032, S032\n"	//S032 = sin(m[2]*theta)
+				"vcos.s	S033, S033\n"	//S033 = cos(m[3]*theta)
+
+				"vabs.q	C030, C030\n"
+				"vlog2.q	C030, C030\n"
+				"vmul.q	C030, C030, C010\n"
+				"vexp2.q	C030, C030\n"
+				"vadd.p	C032, C030, C032\n"
+				"vadd.s	S100, S032, S033\n" // S100 = r
+
+				"vcos.p	C030, C022\n"
+				"vsin.p	C032, C022\n"
+
+				"vmul.s	S030, S030, S013\n"
+				"vmul.s	S032, S032, S013\n"
+
+				"vscl.t	C030, C030, S100\n"
+
+				"mfv	$a0, S030\n"
+				"sw	$a0, 0 + %[p]\n"
+				"mfv	$a0, S031\n"
+				"sw	$a0, 4 + %[p]\n"
+				"mfv	$a0, S032\n"
+				"sw	$a0, 8 + %[p]\n"
+
+				"vadd.s	S023, S023, S021\n"
+				: [p] "+m"(vtx->position) :: "a0");
+				vtx++;
+		}
+	}
+}
+
+static struct Vertex3D __attribute__((aligned(64))) vertices3D_[GRID_WIDTH * GRID_HEIGHT];
+static unsigned short __attribute__((aligned(64))) indices_[GRID_WIDTH * GRID_HEIGHT * 6];
+
+static struct Vertex3D *vertices3D;
+static unsigned short *indices;
 
 
-void indicesSH()
+static void indicesSH()
 {
 	unsigned short i,j;
 
@@ -194,7 +243,7 @@ void indicesSH()
 	//sceKernelDcacheWritebackAll();
 }
 
-void setupSH()
+static void setupSH()
 {
 	struct Vertex3D* vtx = vertices3D;
 	struct Vertex3D* currvtx = vtx;
@@ -214,7 +263,7 @@ void setupSH()
 
 }
 
-void vfpu_gumCrossProductNormalize(ScePspFVector3* r, const ScePspFVector3* a, const ScePspFVector3* b) {
+static void vfpu_gumCrossProductNormalize(ScePspFVector3* r, const ScePspFVector3* a, const ScePspFVector3* b) {
 	__asm__ volatile (
 		"lv.s		S010, 0+%[a]\n"
 		"lv.s		S011, 4+%[a]\n"
@@ -248,36 +297,15 @@ void vfpu_gumCrossProductNormalize(ScePspFVector3* r, const ScePspFVector3* a, c
 	}
 }*/
 
-float __attribute__((aligned(64))) u;
-float __attribute__((aligned(64))) v;
-void renderSH(const float* m)
+static void renderSH(const float* m)
 {
 	struct Vertex3D* vtx = vertices3D;
-	struct Vertex3D* currvtx = vtx;
-
-	float du = 4.0f / (GRID_WIDTH-1);//(GU_PI*2) / (GRID_WIDTH-1);
-	float dv = 2.0f / (GRID_HEIGHT-1);//GU_PI / (GRID_HEIGHT-1);	
 	
 
 	unsigned int i,j;
 
 	// position
-
-  u=0;
-	for (i = 0; i < GRID_WIDTH; ++i)
-	{
-		//u = fmod(i * du,GU_PI*2);
-		u += du;
-
-		v=0;
-		for (j = 0; j < GRID_HEIGHT; ++j)
-		{
-			v += dv;//(j * dv);
-
-			evalSH(u,v,m,&(currvtx->position));
-			currvtx++;
-		}
-	}
+	evalSH(m, vtx);
 
 	// normal
 
@@ -309,7 +337,7 @@ void renderSH(const float* m)
 			GRID_HEIGHT,GRID_WIDTH,3,3,indices,vertices3D);
 }
 
-struct LightSettings
+static struct LightSettings
 {
 	ScePspFVector3 position;
 	unsigned int diffuse;

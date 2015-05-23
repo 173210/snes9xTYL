@@ -7,8 +7,6 @@ extern "C" {
 
 extern char LastPath[], FilerMsg[];
 
-int getExtId(const char *szFilePath);
-
 int searchFile(const char *path, const char *name);
 int getFilePath(char *out,int can_exit);
 int getNoExtFilePath(char *out,int can_exit);

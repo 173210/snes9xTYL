@@ -11,7 +11,6 @@
 #if 0
 
 char *strcpy( char *dest, const char *src );
-char *strcasechr(const char *s, int c);
 int sprintf( char *buffer, const char *format, ... ){
 	strcpy( buffer, format );
 	return 0;
@@ -741,57 +740,6 @@ void StopAnalyze(){
 #else
 #include <ctype.h>
 #endif
-
-char *strcasechr(const char *s, int c){
-	int		size;
-	int		i;
-
-	size = strlen( s );
-	for ( i = 0; i < size; i++ ){
-		if ( tolower((int)s[i]) == tolower(c) ){
-			return (char*)&s[i];
-		}
-	}
-	return 0;
-}
-
-#ifdef __STRICT_ANSI__
-char *strcasestr (char *s1, char*s2){
-  register char *p = s1;
-  register int len = strlen (s2);
-
-  for (; (p = strcasechr (p, *s2)) != 0; p++)
-    {
-      if (strncasecmp (p, s2, len) == 0)
-	{
-	  return (p);
-	}
-    }
-  return (0);
-}
-#endif
-static char curdir[PATH_MAX];
-static char fullpath[PATH_MAX];
-static int  curdir_length;
-
-char* convert_path(char *path){
-	if (strchr(path,':')) return path; //full path
-	memcpy(fullpath, curdir,curdir_length);
-	strcpy(fullpath + curdir_length,path);
-	return fullpath;
-}
-
-
-int chdir(const char *path){
-  if (strchr(path,':')) {
-     strcpy(curdir,path);
-  } else {
-     return -1; //FIXME
-  }
-  curdir_length = strlen(curdir);
-  curdir[curdir_length++]='/';
-  return 0;
-}
 
 #define SLASH_STR "/"
 #define SLASH_CHAR '/'

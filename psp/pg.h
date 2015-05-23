@@ -28,14 +28,11 @@ extern u32 new_pad, now_pad;
 #define CMAX4_X 15
 #define CMAX4_Y 8
 
-void pgwait(int usec);
-
 void ErrorMsg(const char *msg);
 void pgwaitPress();
 int get_pad(void);
 int get_pad2(int *lx,int *ly);
 void pgPrintCenter(unsigned long y,unsigned long color,const char *str);
-void pgPrintCenterY(unsigned long y,unsigned long color,const char *str);
 
 void pgInit();
 void pgWaitV();
@@ -49,23 +46,12 @@ void pgPrintSel(unsigned long x,unsigned long y,unsigned long color,char *str);
 void pgPrintBG(unsigned long x,unsigned long y,unsigned long color,const char *str);
 void pgPrintBGRev(unsigned long x,unsigned long y,unsigned long color,const char *str);
 void pgPrintAllBG(unsigned long x,unsigned long y,unsigned long color,const char *str);
-void pgPrint2(unsigned long x,unsigned long y,unsigned long color,const char *str);
 void pgPrint4(unsigned long x,unsigned long y,unsigned long color,unsigned long color2,const char *str);
 void pgFillvram(unsigned long color);
 void pgFillAllvram(unsigned long color);
 
 void pgCopyScreen(void);
 
-void pgBitBlt(unsigned long x,unsigned long y,unsigned long w,unsigned long h,unsigned long mag,unsigned short *d);
-void pgBitBltN1(unsigned long x,unsigned long y,unsigned long *d);
-void pgBitBltN15(unsigned long x,unsigned long y,unsigned long *d);
-void pgBitBltN2(unsigned long x,unsigned long y,unsigned long h,unsigned long *d);
-void pgBitBltSt(unsigned long x,unsigned long y,unsigned long h,unsigned long *d);
-void pgBitBltStScan(unsigned long x,unsigned long y,unsigned long h,unsigned long *d);
-void pgBitBltSt2wotop(unsigned long x,unsigned long y,unsigned long h,unsigned long *d);
-void pgBitBltSt2wobot(unsigned long x,unsigned long y,unsigned long h,unsigned long *d);
-
-void pgPutChar(unsigned long x,unsigned long y,unsigned long color,unsigned long bgcolor,unsigned char ch,char drawfg,char drawbg,char mag);
 void pgDrawFrame(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2, unsigned long color);
 void pgFillBox(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2, unsigned long color);
 
@@ -76,15 +62,10 @@ void pgMain(unsigned long args, void *argp);
 
 void readpad(void);
 
-void pgcPuthex2(unsigned long s);
-void pgcPuthex8(unsigned long s);
-
 void mh_print(int x,int y,const char *str,int col);
-void mh_printVert(int x,int y,const char *str,int col);
 void mh_printLimit(int x,int y,int Mx,int My,const char *str,int col);
 
 void mh_print_light(int x,int y,const char *str,int col,int smoothing);
-int mh_print_buff(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch);
 int mh_print_buffVert(int x,int y,int Mx,int My,const char *str,int col,unsigned short *vbuff,int pitch);
 void mh_printSel(int x,int y,const char *str,int col);
 void mh_printSel_light(int x,int y,const char *str,int col,int smoothing);
@@ -94,11 +75,9 @@ int mh_trimlength(const char *str);
 
 void pgFillBoxHalfer(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2 );
 
-void image_put_transp(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int sz);
-void image_put_transp_light(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int smooth);
-void image_put(int x0,int y0,IMAGE* img,int fade,int add);
+void image_put(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int sz);
+void image_put_light(int x0,int y0,IMAGE* img,int fade,int add,int transp_col,int smooth);
 void image_put_mul(int x0,int y0,IMAGE* img,int mul,int add);
-void image_put_clip(int x0,int y0,IMAGE* img,int fade,int add,int xsrc,int ysrc,int w,int h,int transp_col);
 
 extern u32 now_tick;
 
@@ -187,11 +166,6 @@ static inline void __memcpy4a(unsigned long *d, unsigned long *s, unsigned long 
 #endif
 
 
-void pgBitBltFull(unsigned long *d, int Height,int px,int py);
-void pgBitBltFit(unsigned short *d, int Height,int px,int py);
-void pgBitBltFullFit(unsigned short *d, int Height,int px,int py);
-
-
 static inline void cpy2x(unsigned long *d, unsigned long cc)
 {
 #ifdef __USE_MIPS32R2__
@@ -221,9 +195,7 @@ static inline void cpy2x(unsigned long *d, unsigned long cc)
 }
 
 
-void pgPrintHex(int x,int y,short col,unsigned int hex);
 void pgPrintDec(int x,int y,short col,unsigned int dec);
-void pgPrintDecTrim(int x,int y,short col,unsigned int dec);
 
 
 void pgMemClr(void* ptr,int size);

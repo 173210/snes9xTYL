@@ -147,21 +147,21 @@ int snap=0;
 uint32 g_ROMCRC32;
 
 void show_bg(u16 *bg);
-void menu_drawFrame(int selected);
-void menu_inputName(char *name);
 void show_batteryinfo(void);
 void show_usbinfo(void);
 
-void menu_alertmsg(const char *msg) {
+static void menu_drawFrame(int selected);
+
+static void menu_alertmsg(const char *msg) {
 	int x,cx,co1,co1b,co2,co2b,co3,co3b;
 	if (!msg) return;
 	pgFillBoxHalfer(13,13,13+5+mh_length(msg)+5,13+5+20+5);
 
-	co1=16+(round(sin((menu_cnt+50*2/3)*3.14159/50)*15));
+	co1 = 16 + (roundf(sinf((menu_cnt + 50 * 2 / 3) * 3.14159 / 50) * 15));
 	co1b=co1>>1;
-	co2=16+(round(sin((menu_cnt+50*4/3)*3.14159/50)*15));
+	co2 = 16 + roundf(sinf((menu_cnt + 50 * 4 / 3) * 3.14159 / 50) * 15);
 	co2b=co2>>1;
-	co3=16+(round(sin(menu_cnt*3.14159/50)*15));
+	co3 = 16 + roundf(sinf(menu_cnt * 3.14159 / 50) * 15);
 	co3b=co3>>1;
 
 
@@ -183,7 +183,7 @@ void menu_alertmsg(const char *msg) {
 	mh_print_light(13+5,13+5,msg,31|(31<<5)|(31<<10),menu_current_smoothing);
 }
 
-int menu_screencalibrate(char *mode){
+static int menu_screencalibrate(char *mode){
 	u16 *snes_image;
 	SceCtrlData paddata,oldpaddata;
 	char st[100];
@@ -303,7 +303,7 @@ int menu_screencalibrate(char *mode){
 	return 0;
 }
 
-int menu_exitemu(char *mode){
+static int menu_exitemu(char *mode){
 	if (mode) {mode[0]=0;return 0;}
 
 	if (!inputBox(s9xTYL_msg[ASK_EXIT])) return 0;
@@ -312,7 +312,7 @@ int menu_exitemu(char *mode){
 	return 1;
 }
 
-int loadstate(){
+static int loadstate(){
   char ext[10];
 
   if (slot_occupied) {
@@ -330,7 +330,7 @@ int loadstate(){
   return 0;
 }
 
-int deletestate(){
+static int deletestate(){
   char ext[10];
 
   if (slot_occupied) {
@@ -348,7 +348,7 @@ int deletestate(){
   return 0;
 }
 
-int savestate(){
+static int savestate(){
 	char ext[10];
 	if (os9x_lowbat)
 		if(!inputBox(s9xTYL_msg[MENU_STATE_WARNING_LOWBAT])) return 0;
@@ -364,7 +364,7 @@ int savestate(){
 	return 1;
 }
 
-int menu_reset(char *mode){
+static int menu_reset(char *mode){
 	if (mode) {mode[0]=0;return 0;}
 	if (!inputBox(s9xTYL_msg[MENU_GAME_CONFIRMRESET])) return 0;
 	if (!os9x_lowbat) os9x_savesram();
@@ -372,20 +372,20 @@ int menu_reset(char *mode){
   return 1;
 }
 
-int menu_browser(char *mode){
+static int menu_browser(char *mode){
 	if (mode) {mode[0]=0;return 0;}
 	os9x_getnewfile=1;
 	return 1;
 }
 
-int menu_snapshot(char *mode) {
+static int menu_snapshot(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 	msgBoxLines(s9xTYL_msg[MENU_MISC_SAVINGJPEG], 10);
 	if (!os9x_lowbat) os9x_savesnap();
 	return 0;
 }
 
-int menu_importstate(char *mode) {
+static int menu_importstate(char *mode) {
 	char statefilename[256];
 	if (mode) {mode[0]=0;return 0;}
 
@@ -398,7 +398,7 @@ int menu_importstate(char *mode) {
 	return 0;
 }
 
-int menu_exportS9Xstate(char *mode) {
+static int menu_exportS9Xstate(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 
 	if (os9x_lowbat) return 1;
@@ -412,7 +412,7 @@ int viewfile_pos=0;
 char viewfile_oldfilename[256];
 char lastpath_save[256];
 char filename[256];
-int menu_viewfile(char *mode) {
+static int menu_viewfile(char *mode) {
 	FILE *f;
 	char *txtdata,*p;
 	int fsize;
@@ -576,7 +576,7 @@ int menu_viewfile(char *mode) {
 	return 0;
 }
 
-int menu_savedefaultsetting(char *mode){
+static int menu_savedefaultsetting(char *mode){
 	if (mode) {mode[0]=0;return 0;}
 
 	msgBoxLines(s9xTYL_msg[MENU_GAME_SAVINGDEFAULTSETTINGS], 30);
@@ -626,7 +626,7 @@ menu_time_t os9xpsp_debugmenu[DEBUGMENU_ITEMS]={
 };
 
 
-int show_debugmenu(char *mode) {
+static int show_debugmenu(char *mode) {
 	//int counter=0;
 	unsigned long color=RGB_WHITE;
 	static const char **help_data;
@@ -787,7 +787,7 @@ int show_debugmenu(char *mode) {
 					if (os9xpsp_debugmenu[top+i].values_list_label[0]) {
 						int ind=os9xpsp_debugmenu[top+i].value_index;
 						pgPrint(x+strlen(os9xpsp_debugmenu[top+i].label), y, ((31)|(29<<5)|(30<<10)), os9xpsp_debugmenu[top+i].values_list_label[ind]);
-					}	else pgPrintDecTrim(x+strlen(os9xpsp_debugmenu[top+i].label), y, ((31)|(29<<5)|(30<<10)), *(os9xpsp_debugmenu[top+i].value_int));
+					}	else pgPrintDec(x+strlen(os9xpsp_debugmenu[top+i].label), y, ((31)|(29<<5)|(30<<10)), *(os9xpsp_debugmenu[top+i].value_int));
 				} else if (os9xpsp_debugmenu[top+i].menu_func) pgPrintSel(x, y, ((28)|(31<<5)|(28<<10)), os9xpsp_debugmenu[top+i].label);
 				else pgPrintSel(x, y, ((24)|(24<<5)|(24<<10)), os9xpsp_debugmenu[top+i].label);
 
@@ -798,7 +798,7 @@ int show_debugmenu(char *mode) {
 					if (os9xpsp_debugmenu[top+i].values_list_label[0]) {
 						int ind=os9xpsp_debugmenu[top+i].value_index;
 						pgPrint(x+strlen(os9xpsp_debugmenu[top+i].label), y, ((31)|(24<<5)|(24<<10)), os9xpsp_debugmenu[top+i].values_list_label[ind]);
-					}	else pgPrintDecTrim(x+strlen(os9xpsp_debugmenu[top+i].label), y, ((31)|(24<<5)|(24<<10)), *(os9xpsp_debugmenu[top+i].value_int));
+					}	else pgPrintDec(x+strlen(os9xpsp_debugmenu[top+i].label), y, ((31)|(24<<5)|(24<<10)), *(os9xpsp_debugmenu[top+i].value_int));
 				} else if (os9xpsp_debugmenu[top+i].menu_func) pgPrint(x, y, ((16)|(24<<5)|(16<<10)), os9xpsp_debugmenu[top+i].label);
 				else pgPrint(x, y, ((20)|(20<<5)|(20<<10)), os9xpsp_debugmenu[top+i].label);
 			}
@@ -853,7 +853,7 @@ menu_time_t os9xpsp_inputsmenu[INPUTSMENU_ITEMS]={
 };
 
 
-int show_inputsmenu(char *mode) {
+static int show_inputsmenu(char *mode) {
 	//int counter=0;
 	unsigned long color=RGB_WHITE;
 	static int sel=0;
@@ -1192,7 +1192,7 @@ int show_inputsmenu(char *mode) {
 					if (os9xpsp_inputsmenu[top+i].values_list_label[0]) {
 						int ind=os9xpsp_inputsmenu[top+i].value_index;
 						pgPrint(x+strlen(os9xpsp_inputsmenu[top+i].label), y, ((31)|(29<<5)|(30<<10)), os9xpsp_inputsmenu[top+i].values_list_label[ind]);
-					}	else pgPrintDecTrim(x+strlen(os9xpsp_inputsmenu[top+i].label), y, ((31)|(29<<5)|(30<<10)), *(os9xpsp_inputsmenu[top+i].value_int));
+					}	else pgPrintDec(x+strlen(os9xpsp_inputsmenu[top+i].label), y, ((31)|(29<<5)|(30<<10)), *(os9xpsp_inputsmenu[top+i].value_int));
 				} else if (os9xpsp_inputsmenu[top+i].menu_func) pgPrintSel(x, y, ((28)|(31<<5)|(28<<10)), os9xpsp_inputsmenu[top+i].label);
 				else pgPrintSel(x, y, ((24)|(24<<5)|(24<<10)), os9xpsp_inputsmenu[top+i].label);
 
@@ -1203,7 +1203,7 @@ int show_inputsmenu(char *mode) {
 					if (os9xpsp_inputsmenu[top+i].values_list_label[0]) {
 						int ind=os9xpsp_inputsmenu[top+i].value_index;
 						pgPrint(x+strlen(os9xpsp_inputsmenu[top+i].label), y, ((31)|(24<<5)|(24<<10)), os9xpsp_inputsmenu[top+i].values_list_label[ind]);
-					}	else pgPrintDecTrim(x+strlen(os9xpsp_inputsmenu[top+i].label), y, ((31)|(24<<5)|(24<<10)), *(os9xpsp_inputsmenu[top+i].value_int));
+					}	else pgPrintDec(x+strlen(os9xpsp_inputsmenu[top+i].label), y, ((31)|(24<<5)|(24<<10)), *(os9xpsp_inputsmenu[top+i].value_int));
 				} else if (os9xpsp_inputsmenu[top+i].menu_func) pgPrint(x, y, ((16)|(24<<5)|(16<<10)), os9xpsp_inputsmenu[top+i].label);
 				else pgPrint(x, y, ((20)|(20<<5)|(20<<10)), os9xpsp_inputsmenu[top+i].label);
 			}
@@ -1343,7 +1343,7 @@ int menu_current_xmb_index_entry[MENU_XMB_ICONS_NB]={
 };
 
 
-void menu_startmusic(){
+static void menu_startmusic(){
 	unzFile zip_file;
 	unz_file_info unzinfo;
 
@@ -1414,7 +1414,7 @@ void menu_startmusic(){
 	}
 }
 
-void menu_stopmusic() {
+static void menu_stopmusic() {
 	if (!menu_music) return;
 	OSPC_StopPlay();
 	free(menu_musicdata);
@@ -1424,7 +1424,7 @@ void menu_stopmusic() {
 #endif
 }
 
-int menu_buildbg() {
+static int menu_buildbg() {
 	u16 *src,*dst;
 	int i;
 
@@ -1453,7 +1453,7 @@ int menu_buildbg() {
 // menu_basic : handle frame drawing,
 //  input reading & counters update
 ///////////////////////////////////////
-void menu_basic(int selected) {
+static void menu_basic(int selected) {
 	static int cpt_lowbat=0;
 	if (!((cpt_lowbat++)&63)) {
 		int oldvalue=os9x_lowbat;
@@ -1463,15 +1463,15 @@ void menu_basic(int selected) {
 		}
 	}
 
-	menu_current_smoothing=3+round(sin(menu_cnt*3.14159/30)*3);
-	menu_current_smoothing_icon=4+round(sin(menu_cnt*3.14159/30)*4);
+	menu_current_smoothing = 3 + roundf(sinf(menu_cnt * 3.14159 / 30) * 3);
+	menu_current_smoothing_icon = 4 + roundf(sinf(menu_cnt * 3.14159 / 30) * 4);
 
 	if (menu_scrolling<0) {
-		menu_scrolling=round(-64*cos(menu_cnt2*3.14159/16));
+		menu_scrolling=roundf(-64 * cosf(menu_cnt2 * 3.14159 / 16));
 		if (menu_scrolling>0) menu_scrolling=0;
 	}
 	if (menu_scrolling>0) {
-		menu_scrolling=round(64*cos(menu_cnt2*3.14159/16));
+		menu_scrolling = roundf(64 * cosf(menu_cnt2 * 3.14159 / 16));
 		if (menu_scrolling<0) menu_scrolling=0;
 	}
 
@@ -1509,7 +1509,7 @@ void menu_basic(int selected) {
   //right panel
   if (selected==2) { //in
 		if (menu_panel_pos>280) {
-			menu_panel_pos=479-round( (479-280 + 10)*sin(3.14159*menu_cnt2/12)*sin(3.14159*menu_cnt2/12)*sin(3.14159*menu_cnt2/12) );
+			menu_panel_pos = 479 - roundf((479 - 280 + 10) * powf(sinf(3.14159 * menu_cnt2 / 12), 3));
 			if (menu_panel_pos<280) menu_panel_pos=280;
 		}
     pgFillBoxHalfer(menu_panel_pos,14,479,272-15);
@@ -1521,7 +1521,7 @@ void menu_basic(int selected) {
   	//add the 'X to return' message at bottom
 
 		if (menu_panel_pos<479) {
-			menu_panel_pos=479-round( (479-280)*cos(3.14159*menu_cnt2/12)*cos(3.14159*menu_cnt2/12)*cos(3.14159*menu_cnt2/12) );
+			menu_panel_pos = 479 - roundf((479 - 280) * powf(cosf(3.14159 * menu_cnt2 / 12), 3));
 			if (menu_panel_pos>479) menu_panel_pos=479;
 		}
     pgFillBoxHalfer(menu_panel_pos,14,479,272-15);
@@ -1535,13 +1535,15 @@ void menu_basic(int selected) {
   	if (menu_music_panel_mode) {
   		//same for music playback
 	  	if (menu_music_panel_mode==1) { //panel in
-	  		if (menu_music_panel_pos<menu_music_panel_size) menu_music_panel_pos=round( (menu_music_panel_size+10)*sin(3.14159*menu_cnt3/40)*sin(3.14159*menu_cnt3/40)*sin(3.14159*menu_cnt3/40) );
+	  		if (menu_music_panel_pos < menu_music_panel_size)
+				menu_music_panel_pos = roundf((menu_music_panel_size + 10) * powf(sinf(3.14159*menu_cnt3/40), 3));
 	  		if (menu_music_panel_pos>=menu_music_panel_size) {menu_music_panel_mode=2;menu_music_panel_pos=menu_music_panel_size;}
 	  	} else if (menu_music_panel_mode<2+60*2) { //panel shown, small delay to read
 	  		menu_music_panel_mode++;
 	  		if (menu_music_panel_mode>=2+60*2) menu_cnt3=0;
 	  	} else { //panel out
-	  		if (menu_music_panel_pos>0) menu_music_panel_pos=round( (menu_music_panel_size)*cos(3.14159*menu_cnt3/40)*cos(3.14159*menu_cnt3/40)*cos(3.14159*menu_cnt3/40) );
+	  		if (menu_music_panel_pos > 0)
+				menu_music_panel_pos = roundf(menu_music_panel_size * powf(cosf(3.14159 * menu_cnt3 / 40), 3));
 	  		if (menu_music_panel_pos<=0) {menu_music_panel_pos=0;menu_music_panel_mode=0;}
 	  	}
 	    pgFillBoxHalfer(0,271-37,menu_music_panel_pos,271);
@@ -1568,7 +1570,7 @@ void menu_basic(int selected) {
   }
 }
 
-int menu_clockspeed(char *mode) {
+static int menu_clockspeed(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_cpuclock;
@@ -1684,27 +1686,27 @@ int menu_clockspeed(char *mode) {
 	} \
 	return retval; \
 
-int menu_showfps(char *mode){
+static int menu_showfps(char *mode){
 	MENU_ONOFF(os9x_showfps)
 }
 
-int menu_smoothing(char *mode){
+static int menu_smoothing(char *mode){
 	MENU_ONOFF(os9x_smoothing)
 }
 
-int menu_speedlimit(char *mode){
+static int menu_speedlimit(char *mode){
 	MENU_ONOFF(os9x_speedlimit)
 }
 
-int menu_vsync(char *mode){
+static int menu_vsync(char *mode){
 	MENU_ONOFF(os9x_vsync)
 }
 
-int menu_palntsc(char *mode){
+static int menu_palntsc(char *mode){
 	MENU_ONOFF(os9x_forcepal_ntsc)
 }
 
-int menu_videomode(char *mode) {
+static int menu_videomode(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_render;
@@ -1795,7 +1797,7 @@ int menu_videomode(char *mode) {
 	return retval;
 }
 
-int menu_engine(char *mode) {
+static int menu_engine(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_softrendering;
@@ -1880,7 +1882,7 @@ int menu_engine(char *mode) {
 	return retval;
 }
 
-int menu_soundmode(char *mode) {
+static int menu_soundmode(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int oldmode;
@@ -1962,7 +1964,7 @@ int menu_soundmode(char *mode) {
 	return retval;
 }
 
-int menu_soundfreq(char *mode){
+static int menu_soundfreq(char *mode){
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_sndfreq;
@@ -2024,7 +2026,7 @@ int menu_soundfreq(char *mode){
 	return retval;
 }
 
-int menu_gamma(char *mode){
+static int menu_gamma(char *mode){
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_gammavalue;
@@ -2080,7 +2082,7 @@ int menu_gamma(char *mode){
 	return retval;
 }
 
-int menu_fskip(char *mode){
+static int menu_fskip(char *mode){
 	int retval=0;
 	int to_exit=0;
 	int new_value;
@@ -2156,7 +2158,7 @@ int menu_fskip(char *mode){
 	return retval;
 }
 
-int menu_emulinput(char *mode){
+static int menu_emulinput(char *mode){
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_padindex;
@@ -2209,11 +2211,11 @@ int menu_emulinput(char *mode){
 	return retval;
 }
 
-int menu_autosaveUpdSRAM(char *mode){
+static int menu_autosaveUpdSRAM(char *mode){
 	MENU_ONOFF(os9x_autosavesram)
 }
 
-int menu_menumusic(char *mode) {
+static int menu_menumusic(char *mode) {
 	if (mode) {
 		if (!os9x_menumusic) strcpy(mode, s9xTYL_msg[MENU_NO]);
 		else if (os9x_menumusic==1) strcpy(mode, s9xTYL_msg[MENU_MISC_BGMUSIC_RAND]);
@@ -2275,19 +2277,19 @@ int menu_menumusic(char *mode) {
 	return retval;
 }
 
-int menu_menufx(char *mode) {
+static int menu_menufx(char *mode) {
 	MENU_ONOFF(os9x_menufx)
 }
 
-int menu_menupadbeep(char *mode) {
+static int menu_menupadbeep(char *mode) {
 	MENU_ONOFF(os9x_menupadbeep)
 }
 
-int menu_autostart(char *mode) {
+static int menu_autostart(char *mode) {
 	MENU_ONOFF(os9x_autostart)
 }
 
-int menu_osk(char *mode) {
+static int menu_osk(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_osk;
@@ -2348,7 +2350,7 @@ int menu_osk(char *mode) {
 }
 
 
-int menu_autosavetimer(char *mode){
+static int menu_autosavetimer(char *mode){
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_autosavetimer;
@@ -2407,7 +2409,7 @@ int menu_autosavetimer(char *mode){
 }
 
 u16 os9x_savestate_mini_[10][128*120];
-int menu_loadstate(char *mode) {
+static int menu_loadstate(char *mode) {
 	char slot_occupied_[10];
 	char ext[5],slot_fileinfo_[10][32];
 	int col1,col2,i,x,y,retval,px,py;
@@ -2585,7 +2587,7 @@ int menu_loadstate(char *mode) {
 }
 
 
-int menu_savestate(char *mode) {
+static int menu_savestate(char *mode) {
 	char slot_occupied_[10];
 	char ext[5],slot_fileinfo_[10][32];
 	int col1,col2,i,x,y,retval,px,py;
@@ -2762,7 +2764,7 @@ int menu_savestate(char *mode) {
 	return retval;
 }
 
-int menu_deletestate(char *mode) {
+static int menu_deletestate(char *mode) {
 	char slot_occupied_[10];
 	char ext[5],slot_fileinfo_[10][32];
 	int col1,col2,i,x,y,retval,px,py;
@@ -2938,7 +2940,164 @@ int menu_deletestate(char *mode) {
 	return retval;
 }
 
-int menu_addRAWcode(char *mode) {
+static void menu_inputName(char *name) {
+	SceCtrlData paddata;
+	//int oldmenufx;
+	int exit_osk;
+	unsigned char key,name_pos;
+	//oldmenufx=os9x_menufx;
+	//os9x_menufx=1;
+
+//	danzeff_load16(LaunchDir);
+	if (os9x_osk)
+	{
+		if (!danzeff_isinitialized()) {
+			msgBoxLines(s9xTYL_msg[ERR_INIT_OSK], 20);
+		} else {
+			danzeff_moveTo(20,20);
+			exit_osk=0;
+			name_pos=0;
+			while (name[name_pos]) name_pos++;
+			while (!exit_osk) {
+				menu_basic(-1);
+				sceCtrlPeekBufferPositive(&paddata, 1);
+				switch (key=danzeff_readInput(paddata)) {
+					case DANZEFF_START:exit_osk=1;break;
+					case DANZEFF_SELECT:exit_osk=2;break;
+					case 8://backspace
+						if (name_pos>0) {
+							name_pos--;
+						}
+						name[name_pos]=0;
+						break;
+					default:
+						if (key>=32) {
+							name[name_pos]=key;
+							if (name_pos<127) name_pos++;
+								name[name_pos]=0;
+						}
+						break;
+				}
+				mh_printSel_light(200,20,name,0xFFFF,menu_current_smoothing);
+				danzeff_render();
+				pgScreenFlipV2();
+			}
+		}
+	} else {
+		int done = 0,i,j,k;
+		// INIT OSK
+		unsigned short intext[128]  = { 0 }; // text already in the edit box on start
+		unsigned short outtext[128] = { 0 }; // text after input
+		unsigned short desc[128]; // description
+		SceUtilityOskData data[1];
+		SceUtilityOskParams osk;
+
+		unsigned const char *src = (unsigned const char *)s9xTYL_msg[MENU_CHEATS_ENTERNAME];
+		for (i = 0; *src; i++) {
+			if ((0x80 < *src && *src < 0xA0) || (0xDF < *src && *src < 0xF0)) {
+				k = *src++;
+				k += *src++ << 8;
+			}
+			else k = *src++;
+			for (j = 0; j < TOTAL_TBL; j++)
+				if (map[j][0] == k)
+					break;
+			if (j == TOTAL_TBL) {
+				desc[i] = '?';
+				continue;
+			}
+			desc[i] = map[j][1];
+		}
+		desc[i] = 0;
+
+		memset(&data, 0, sizeof(data));
+		data[0].language = os9x_language; // english
+		data[0].lines = 1; // just online
+		data[0].unk_24 = 1; // set to 1
+		data[0].desc = desc;
+		data[0].intext = intext;
+		data[0].outtextlength = 128; // sizeof(outtext) / sizeof(unsigned short)
+		data[0].outtextlimit = 21; // just allow n chars
+		data[0].outtext = outtext;
+
+		memset(intext,0,128*2);
+		for(i = 0; name[i]; i++) {
+			intext[i]=name[i];
+		}
+
+		memset(&osk, 0, sizeof(osk));
+		osk.base.size = sizeof(osk);
+		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &osk.base.language);
+		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_UNKNOWN, &osk.base.buttonSwap);
+		osk.base.graphicsThread = 17;
+		osk.base.accessThread = 19;
+		osk.base.fontThread = 18;
+		osk.base.soundThread = 16;
+		osk.datacount = 1;
+		osk.data = data;
+
+		int rc = sceUtilityOskInitStart(&osk);
+		if(rc) return;
+		while(!done) {
+			menu_basic(-2);
+
+			if (!os9x_menufx) {
+				sceGuStart(GU_DIRECT,list);
+
+				//set draw buffer
+				sceGuDrawBuffer(GU_PSM_5551,(void*)pgGetVramAddr(0,0),512);
+
+				sceGuFinish();
+				sceGuSync(0,0);
+			}
+
+			switch(sceUtilityOskGetStatus()) {
+				case PSP_UTILITY_DIALOG_INIT :
+					j = mh_length(s9xTYL_msg[INIT_OSK]);
+					i=(480-j)/2;
+					pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
+  					pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
+					pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
+					mh_print(i, 130, s9xTYL_msg[INIT_OSK], 31 | (28 << 5) | (24 << 10));
+					break;
+				case PSP_UTILITY_DIALOG_VISIBLE :
+					sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
+					break;
+				case PSP_UTILITY_DIALOG_QUIT :
+					sceUtilityOskShutdownStart();
+					break;
+				case PSP_UTILITY_DIALOG_FINISHED :
+					done = 1;
+					break;
+				case PSP_UTILITY_DIALOG_NONE :
+				default :
+					break;
+			}
+
+			pgScreenFlipV2();
+		}
+
+		if (data[0].result!=PSP_UTILITY_OSK_RESULT_CHANGED) return;
+
+		j=0;
+		for(i = 0; data[0].outtext[i]; i++) {
+			for (k=0;k<TOTAL_TBL;k++) {
+				if (data[0].outtext[i]==map[k][1]) {
+					name[j++]=map[k][0]&0xFF;
+					if (map[k][0] > 0xFF) name[j++]=map[k][0]>>8;
+					break;
+				}
+			}
+			if (k == TOTAL_TBL) name[j++]='?';
+		}
+		name[j]=0;
+	}
+	//os9x_menufx=oldmenufx;
+
+//	danzeff_free();
+}
+
+static int menu_addRAWcode(char *mode) {
 	int retval=0;
 	char my_code[16];
 	uint32 data = 0;
@@ -2967,7 +3126,7 @@ int menu_addRAWcode(char *mode) {
 	return retval;
 }
 
-int menu_addGGcode(char *mode) {
+static int menu_addGGcode(char *mode) {
 	int retval=0;
 	char my_code[16],ggcode[16];
 	uint8 byte;
@@ -3002,7 +3161,7 @@ int menu_addGGcode(char *mode) {
 	return retval;
 }
 
-int menu_addPARcode(char *mode) {
+static int menu_addPARcode(char *mode) {
 	int retval=0;
 	char my_code[16];
 	uint32 address;
@@ -3034,7 +3193,7 @@ int menu_addPARcode(char *mode) {
 	return retval;
 }
 
-int menu_addGFcode(char *mode) {
+static int menu_addGFcode(char *mode) {
 	int retval=0;
 	char my_code[16];
 	uint32 address;
@@ -3069,7 +3228,7 @@ int menu_addGFcode(char *mode) {
 	return retval;
 }
 
-int menu_selcode() {
+static int menu_selcode() {
 	int i, sel = 0, cpt=0;
 	int cheats_cur;
 	int cheats_dispnum;
@@ -3143,7 +3302,7 @@ int menu_selcode() {
 	return -1;
 }
 
-int menu_disablecode(char *mode) {
+static int menu_disablecode(char *mode) {
 	if (mode) {
 		mode[0] = 0;
 		return 0;
@@ -3158,7 +3317,7 @@ int menu_disablecode(char *mode) {
 	return 0;
 }
 
-int menu_enablecode(char *mode) {
+static int menu_enablecode(char *mode) {
 	if (mode) {
 		mode[0] = 0;
 		return 0;
@@ -3173,7 +3332,7 @@ int menu_enablecode(char *mode) {
 	return 0;
 }
 
-int menu_removecode(char *mode) {
+static int menu_removecode(char *mode) {
 	if (mode) {
 		mode[0] = 0;
 		return 0;
@@ -3188,7 +3347,7 @@ int menu_removecode(char *mode) {
 	return 0;
 }
 
-int menu_disableallcodes(char *mode) {
+static int menu_disableallcodes(char *mode) {
 	int i;
 	if (mode) {mode[0]=0;return 0;}
 
@@ -3198,7 +3357,7 @@ int menu_disableallcodes(char *mode) {
 	return 0;
 }
 
-int menu_enableallcodes(char *mode) {
+static int menu_enableallcodes(char *mode) {
 	int i;
 	if (mode) {mode[0]=0;return 0;}
 
@@ -3208,7 +3367,7 @@ int menu_enableallcodes(char *mode) {
 	return 0;
 }
 
-int menu_removeallcodes(char *mode) {
+static int menu_removeallcodes(char *mode) {
 	if (mode) {mode[0]=0;return 0;}
 
 	if (!(Cheat.num_cheats)) return 0;
@@ -3219,7 +3378,7 @@ int menu_removeallcodes(char *mode) {
 	return 0;
 }
 
-int menu_credits(char *mode) {
+static int menu_credits(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int oldmenu_music;
@@ -3286,7 +3445,7 @@ int menu_credits(char *mode) {
 	return retval;
 }
 
-int menu_versioninfos(char *mode) {
+static int menu_versioninfos(char *mode) {
 	int to_exit=0;
 	int retval=0;
 
@@ -3323,7 +3482,7 @@ int menu_versioninfos(char *mode) {
 	return retval;
 }
 
-int menu_fpslimit(char *mode) {
+static int menu_fpslimit(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_fpslimit;
@@ -3390,7 +3549,7 @@ int menu_fpslimit(char *mode) {
 	return retval;
 }
 
-int menu_apuratio(char *mode) {
+static int menu_apuratio(char *mode) {
 	int retval=0;
 	int to_exit=0;
 	int new_value=os9x_apu_ratio;
@@ -3453,7 +3612,7 @@ int menu_apuratio(char *mode) {
 	return retval;
 }
 
-int menu_swapbg(char *mode) {
+static int menu_swapbg(char *mode) {
 	if (mode) {
 		if (bg_img) sprintf(mode,"%d",bg_img_num + 1);
 		else strcpy(mode, s9xTYL_msg[MENU_MUSIC_SWAPBG_NODATA]);
@@ -3616,7 +3775,7 @@ void show_bg(u16 *src){
 	}
 }
 
-void menu_drawFrame(int selected) {
+static void menu_drawFrame(int selected) {
 	int i,sel,x,y,/*j,*/col;
 
 	if (g_bSleep) {
@@ -3662,8 +3821,8 @@ void menu_drawFrame(int selected) {
 							col=zoom_val*1;
 							col=(col<<16)|(col<<8)|col;
 							zoom_val=256-zoom_val*2;
-							image_put_transp(x+8+(48-48*zoom_val/256)/2,14+8+(48-48*zoom_val/256)/2,icons[sel],col,0,icons_col[sel],zoom_val);
-						} else image_put_transp_light(x,14,icons[sel],0,0,icons_col[sel],menu_current_smoothing_icon);
+							image_put(x+8+(48-48*zoom_val/256)/2,14+8+(48-48*zoom_val/256)/2,icons[sel],col,0,icons_col[sel],zoom_val);
+						} else image_put_light(x,14,icons[sel],0,0,icons_col[sel],menu_current_smoothing_icon);
 					}
 
 					mh_print(x + 5, 74, s9xTYL_msg[menu_xmb_icons[sel].label_id], 31 | (31 << 5) | (31 << 10));
@@ -3681,9 +3840,9 @@ void menu_drawFrame(int selected) {
 							col=0x40-zoom_val*1;
 							col=(col<<16)|(col<<8)|col;
 							zoom_val=128+zoom_val*2;
-							image_put_transp(x+8+(48-48*zoom_val/256)/2,14+8+(48-48*zoom_val/256)/2,icons[sel],col,0,icons_col[sel],zoom_val);
+							image_put(x+8+(48-48*zoom_val/256)/2,14+8+(48-48*zoom_val/256)/2,icons[sel],col,0,icons_col[sel],zoom_val);
 						}
-						else image_put_transp(x+8+12,14+8+12,icons[sel],0x404040,0,icons_col[sel],128);
+						else image_put(x+8+12,14+8+12,icons[sel],0x404040,0,icons_col[sel],128);
 					}
 
 					//mh_print(x+5,74,menu_xmb_icons[sel].label,16|(16<<5)|(16<<10));
@@ -3750,163 +3909,6 @@ void menu_drawFrame(int selected) {
 			}
 		}
 	}
-}
-
-void menu_inputName(char *name) {
-	SceCtrlData paddata;
-	//int oldmenufx;
-	int exit_osk;
-	unsigned char key,name_pos;
-	//oldmenufx=os9x_menufx;
-	//os9x_menufx=1;
-
-//	danzeff_load16(LaunchDir);
-	if (os9x_osk)
-	{
-		if (!danzeff_isinitialized()) {
-			msgBoxLines(s9xTYL_msg[ERR_INIT_OSK], 20);
-		} else {
-			danzeff_moveTo(20,20);
-			exit_osk=0;
-			name_pos=0;
-			while (name[name_pos]) name_pos++;
-			while (!exit_osk) {
-				menu_basic(-1);
-				sceCtrlPeekBufferPositive(&paddata, 1);
-				switch (key=danzeff_readInput(paddata)) {
-					case DANZEFF_START:exit_osk=1;break;
-					case DANZEFF_SELECT:exit_osk=2;break;
-					case 8://backspace
-						if (name_pos>0) {
-							name_pos--;
-						}
-						name[name_pos]=0;
-						break;
-					default:
-						if (key>=32) {
-							name[name_pos]=key;
-							if (name_pos<127) name_pos++;
-								name[name_pos]=0;
-						}
-						break;
-				}
-				mh_printSel_light(200,20,name,0xFFFF,menu_current_smoothing);
-				danzeff_render();
-				pgScreenFlipV2();
-			}
-		}
-	} else {
-		int done = 0,i,j,k;
-		// INIT OSK
-		unsigned short intext[128]  = { 0 }; // text already in the edit box on start
-		unsigned short outtext[128] = { 0 }; // text after input
-		unsigned short desc[128]; // description
-		SceUtilityOskData data[1];
-		SceUtilityOskParams osk;
-
-		unsigned const char *src = (unsigned const char *)s9xTYL_msg[MENU_CHEATS_ENTERNAME];
-		for (i = 0; *src; i++) {
-			if ((0x80 < *src && *src < 0xA0) || (0xDF < *src && *src < 0xF0)) {
-				k = *src++;
-				k += *src++ << 8;
-			}
-			else k = *src++;
-			for (j = 0; j < TOTAL_TBL; j++)
-				if (map[j][0] == k)
-					break;
-			if (j == TOTAL_TBL) {
-				desc[i] = '?';
-				continue;
-			}
-			desc[i] = map[j][1];
-		}
-		desc[i] = 0;
-
-		memset(&data, 0, sizeof(data));
-		data[0].language = os9x_language; // english
-		data[0].lines = 1; // just online
-		data[0].unk_24 = 1; // set to 1
-		data[0].desc = desc;
-		data[0].intext = intext;
-		data[0].outtextlength = 128; // sizeof(outtext) / sizeof(unsigned short)
-		data[0].outtextlimit = 21; // just allow n chars
-		data[0].outtext = outtext;
-
-		memset(intext,0,128*2);
-		for(i = 0; name[i]; i++) {
-			intext[i]=name[i];
-		}
-
-		memset(&osk, 0, sizeof(osk));
-		osk.base.size = sizeof(osk);
-		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &osk.base.language);
-		sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_UNKNOWN, &osk.base.buttonSwap);
-		osk.base.graphicsThread = 17;
-		osk.base.accessThread = 19;
-		osk.base.fontThread = 18;
-		osk.base.soundThread = 16;
-		osk.datacount = 1;
-		osk.data = data;
-
-		int rc = sceUtilityOskInitStart(&osk);
-		if(rc) return;
-		while(!done) {
-			menu_basic(-2);
-
-			if (!os9x_menufx) {
-				sceGuStart(GU_DIRECT,list);
-
-				//set draw buffer
-				sceGuDrawBuffer(GU_PSM_5551,(void*)pgGetVramAddr(0,0),512);
-
-				sceGuFinish();
-				sceGuSync(0,0);
-			}
-
-			switch(sceUtilityOskGetStatus()) {
-				case PSP_UTILITY_DIALOG_INIT :
-					j = mh_length(s9xTYL_msg[INIT_OSK]);
-					i=(480-j)/2;
-					pgDrawFrame(i-5-1,125-1,i+j+5+1,145+1,12|(2<<5)|(2<<10));
-  					pgDrawFrame(i-5-2,125-2,i+j+5+2,145+2,28|(10<<5)|(10<<10));
-					pgFillBox(i-5,125,i+j+5,145,(20)|(4<<5)|(4<<10));
-					mh_print(i, 130, s9xTYL_msg[INIT_OSK], 31 | (28 << 5) | (24 << 10));
-					break;
-				case PSP_UTILITY_DIALOG_VISIBLE :
-					sceUtilityOskUpdate(2); // 2 is taken from ps2dev.org recommendation
-					break;
-				case PSP_UTILITY_DIALOG_QUIT :
-					sceUtilityOskShutdownStart();
-					break;
-				case PSP_UTILITY_DIALOG_FINISHED :
-					done = 1;
-					break;
-				case PSP_UTILITY_DIALOG_NONE :
-				default :
-					break;
-			}
-
-			pgScreenFlipV2();
-		}
-
-		if (data[0].result!=PSP_UTILITY_OSK_RESULT_CHANGED) return;
-
-		j=0;
-		for(i = 0; data[0].outtext[i]; i++) {
-			for (k=0;k<TOTAL_TBL;k++) {
-				if (data[0].outtext[i]==map[k][1]) {
-					name[j++]=map[k][0]&0xFF;
-					if (map[k][0] > 0xFF) name[j++]=map[k][0]>>8;
-					break;
-				}
-			}
-			if (k == TOTAL_TBL) name[j++]='?';
-		}
-		name[j]=0;
-	}
-	//os9x_menufx=oldmenufx;
-
-//	danzeff_free();
 }
 
 

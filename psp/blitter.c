@@ -161,7 +161,3 @@ void guDrawBuffer(u16* video_buffer,int src_w,int src_h,int src_pitch,int dst_w,
 //  swap_buf^=1;
 //	pg_drawframe=swap_buf^1;
 }
-
-void blit_shutdown(){
-  sceGuTerm();
-}

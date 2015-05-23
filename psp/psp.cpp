@@ -170,14 +170,6 @@ extern "C" {
 #endif
 
 uint32 caCRC32(uint8 *array, uint32 size, register uint32 crc32 = 0xFFFFFFFF);
-int net_waitpause_state(int show_menu);
-void net_send_state();
-void net_receive_settings();
-void net_send_settings();
-void net_flush_net(int to_send);
-void before_pause();
-void after_pause();
-void set_cpu_clock();
 #ifndef FW3X
 int initUSBdrivers();
 int endUSBdrivers();
@@ -189,9 +181,7 @@ float vfpumulsin(float mul,float angle,float range);
 int inputBoxOK(const char *msg);
 void msgBox(const char *msg,int delay_vblank=10);
 int msgBoxLines(const char *msg,int delay_vblank=10);
-int load_rom_settings(int game_crc32);
 int save_rom_settings(int game_crc32,const char *name);
-void check_battery();
 
 extern int pg_drawframe;
 
@@ -212,17 +202,11 @@ static struct timeval next1_autofs = { 0, 0 };
 
 static struct timeval os9x_autosavetimer_tv = {0,0};
 
-char *os9x_shortfilename(char *filename);
-char *os9x_filename_ext(char *filename);
-
-extern void image_put(int x0,int y0,IMAGE* img,int fade,int add);
-
 int os9x_load(const char *ext);
 int os9x_remove(const char *ext);
 int os9x_loadfname(const char *fname);
 int os9x_save(const char *ext);
 int os9x_S9Xsave(const char *ext);
-int os9x_ZSsave(const char *ext);
 }
 
 
@@ -264,9 +248,6 @@ u16 os9x_savestate_mini[128*120];
 int os9x_notfirstlaunch;
 
 unsigned int __attribute__((aligned(64))) list[262144*4];
-
-void InitSoundThread();
-void StopSoundThread();
 
 int debug_count=0;
 int debug_counts[100];
@@ -389,9 +370,6 @@ static uint8 __attribute__((aligned(64))) 	GFX_SubZBuffer[SNES_WIDTH * SNES_HEIG
 
 #define timercmp(a, b, CMP)	(((a)->tv_sec == (b)->tv_sec) ? ((a)->tv_usec CMP (b)->tv_usec) : ((a)->tv_sec CMP (b)->tv_sec))
 
-
-void S9xCloseSoundDevice();
-
 extern "C"{
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -400,7 +378,7 @@ extern "C"{
 int psp_ExitCheck(){
 	return !g_bLoop;
 }
-void ErrorExit(const char* msg)
+static void ErrorExit(const char *msg)
 {
 	FILE* f;
 	char tmp_str[256];
@@ -413,38 +391,10 @@ void ErrorExit(const char* msg)
 	fclose(f);
     sceKernelExitGame();
 }
-void FileLog(char* msg)
-{
-	FILE* f;
-	char tmp_str[256];
-//	sprintf(tmp_str,"%serorr.txt",LaunchDir);
-	sprintf(tmp_str,"%serorr.txt","ms0:/PSP/GAME380/snes9xTYL/");
-	f = fopen(tmp_str,"ab");
-	if (!f){
-		//("cannot save settings");
-	}
-	fwrite(msg,1,strlen(msg),f);
-	fclose(f);
-
-}
-void FileDump(char* filename,void* data,int len)
-{
-	FILE* f;
-	char tmp_str[256];
-//	sprintf(tmp_str,"%serorr.txt",LaunchDir);
-	sprintf(tmp_str,"%s%s","ms0:/PSP/GAME380/snes9xTYL/",filename);
-	f = fopen(tmp_str,"w");
-	if (!f){
-		//("cannot save settings");
-	}
-	fwrite(data,1,len,f);
-	fclose(f);
-
-}
 ////////////////////////////////////////////////////////////////////////////////////////
 // Read inputs
 ////////////////////////////////////////////////////////////////////////////////////////
-void update_pad(){
+static void update_pad(){
 	SceCtrlData	ctl;
 	int i,j;
 	//sceCtrlReadBufferPositive( &ctl, 1 );
@@ -757,7 +707,7 @@ void update_pad(){
 ////////////////////////////////////////////////////////////////////////////////////////
 // set psp cpu clock
 ////////////////////////////////////////////////////////////////////////////////////////
-void set_cpu_clock(){
+static void set_cpu_clock(){
 #ifndef ME_SOUND
 		switch (os9x_cpuclock){
 			case 266:scePowerSetClockFrequency(266,266,133);break;
@@ -811,25 +761,6 @@ void debug_int( const char* message, int value ){
 ////////////////////////////////////////////////////////////////////////////////////////
 // debug print hex value
 ////////////////////////////////////////////////////////////////////////////////////////
-void debug_hex( int value ){
-	int		shift;
-	int		val;
-	int		i;
-
-	shift = 28;
-	for ( i = 0; i < 8; i++ ){
-		val = (value >> shift) & 0x0f;
-		if ( val < 10 ){
-			String[i] = val + '0';
-		} else {
-			String[i] = val - 10 + 'A';
-		}
-		shift -= 4;
-	}
-	String[i] = 0;
-
-	debug_log( String );
-}
 
 };
 
@@ -876,7 +807,7 @@ bool8 S9xOpenSoundDevice( int mode, bool8 stereo, int buffer_size )
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void S9xCloseSoundDevice()
+static void S9xCloseSoundDevice()
 {
 	if ( (stSoundStatus.sound_fd) >= 0 ){
 		sceAudioChRelease( (stSoundStatus.sound_fd) );
@@ -916,14 +847,9 @@ volatile PROCESS_EVENT __attribute__((aligned(64))) g_stProcessEvent = {0}; // u
 ////////////////////////////////////////////////////////////////////////////////////////
 #ifdef ME_SOUND
 
-int me_Dummy(int v)
+static int me_Dummy(int v)
 {
 	return v;
-}
-void me_sleep(volatile int * p)
-{
-	volatile int dummy=0;
-	if(*p){me_Dummy(*p);dummy=*p+dummy;}
 }
 #ifdef GFX_TILE_ME
 void me_GFX_Execute();
@@ -931,7 +857,7 @@ void me_GFX_Execute();
 #define me_GFX_Execute()
 #endif
 #if 1
-int me_MixSound(me_sound_t *p){
+static int me_MixSound(me_sound_t *p){
 	int i;
 	u32 *src,*dst;
 	memcpy(&APUPack,(void*)UNCACHE_PTR(&APUPack),sizeof(struct SAPUPACK));
@@ -1033,7 +959,7 @@ int me_MixSound(me_sound_t *p){
 	return 1;
 }
 #else
-int me_MixSound(me_sound_t *p){
+static int me_MixSound(me_sound_t *p){
 	int i;
 	u32 *src,*dst;
 	uint8 *apu_ram_save;
@@ -1144,7 +1070,7 @@ void debug_dump(const char* filename);
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void me_StartSound (){
+static void me_StartSound (){
 
 	RESET_APU_COUNTER();
 
@@ -1401,7 +1327,7 @@ return;
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int S9xProcessSound (SceSize ,void *) {
+static int S9xProcessSound (SceSize ,void *) {
 	int i;
 #ifndef ME_SOUND
 	uint8 *apu_ram_save;
@@ -1592,7 +1518,9 @@ void S9xResumeSoundProcess(void)
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" void InitSoundThread(){
+extern "C" {
+
+static void InitSoundThread(){
 //	if (os9x_apuenabled<2) return;
 	if (g_sndthread!=-1) return;
 	//me_startproc((u32)me_function, (u32)me_data); // [jonny]
@@ -1622,7 +1550,7 @@ extern "C" void InitSoundThread(){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" void StopSoundThread(){
+void StopSoundThread(){
 	if ( g_sndthread !=-1 ){
 		Settings.ThreadSound = false;
 		sceKernelWaitThreadEnd( g_sndthread, NULL );
@@ -1632,6 +1560,7 @@ extern "C" void StopSoundThread(){
 	}
 }
 
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1864,7 +1793,7 @@ bool8 S9xInitUpdate() {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void resync_var(){
+static void resync_var(){
 
     if (os9x_fskipvalue==AUTO_FSKIP) {
     	Settings.SkipFrames=AUTO_FRAMERATE;
@@ -1893,7 +1822,7 @@ void resync_var(){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void before_pause(){
+static void before_pause(){
 	//os9x_paused=1;
 	os9x_paused=*os9x_paused_ptr=1;
 //#ifndef ME_SOUND
@@ -1909,7 +1838,7 @@ void before_pause(){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void after_pause(){
+static void after_pause(){
 	pgFillAllvram(0);
 	Settings.Paused = false;
 	//os9x_paused=0;
@@ -1943,7 +1872,7 @@ struct timeval	now;
 int g_cbid;
 #define pg_vramtop ((char *)0x04000000)
 // Ge render callback
-void GeCallback(int id, void *arg)
+static void GeCallback(int id, void *arg)
 {
 	char			buf[128];
 
@@ -2042,7 +1971,7 @@ void GeCallback(int id, void *arg)
 		os9x_vsync ? PSP_DISPLAY_SETBUF_NEXTFRAME: PSP_DISPLAY_SETBUF_IMMEDIATE);
 }
 
-void SetGeCallback(void)
+static void SetGeCallback(void)
 {
 	PspGeCallbackData cb;
 
@@ -2137,6 +2066,115 @@ void S9xInitDisplay(  )
 	GPUPack.GFX.ZBuffer    = (uint8*)GFX_ZBuffer;
 	GPUPack.GFX.SubZBuffer = (uint8*)GFX_SubZBuffer;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////////////
+void S9xExit (){
+	g_bLoop=0;
+#if 0
+	// Cleanup the games resources etc (if required)
+	//debug_log("Exit Callback");
+
+	//Settings.Paused = TRUE;
+
+	//*os9x_paused_ptr=1;
+	//StopSoundThread();
+	//scePowerSetClockFrequency(222,222,111);
+	sceKernelDelayThread(1000000); //a try to fix hang on 2.5
+	if (g_sndthread>=0) sceKernelTerminateThread(g_sndthread);
+	if (g_updatethread>=0) sceKernelTerminateThread(g_updatethread);
+	//if (g_mainthread>=0) sceKernelTerminateThread(g_mainthread);
+
+	if (!os9x_lowbat) {
+		save_settings();
+		if (in_emu==1) {
+			Memory.SaveSRAM( (char*)S9xGetSaveFilename(".SRM") );
+			//S9xSaveCheatFile( (char*)S9xGetSaveFilename( ".cht" ) );
+			save_rom_settings(Memory.ROMCRC32,Memory.ROMName);
+		}
+		//pgWaitVn(60*1);//give some times to save files
+	}
+
+	// S9xCloseSoundDevice();
+	//g_bLoop = false;
+	// Exit game
+
+	sceKernelExitGame();
+#endif
+	return;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////////////
+const char *S9xBasename (const char *f)
+{
+  const char *p;
+  if ((p = strrchr (f, '/')) != NULL || (p = strrchr (f, '\\')) != NULL)
+    return (p + 1);
+  return (f);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////////////
+bool8 S9xOpenSnapshotFile (const char *fname, bool8 read_only, STREAM *file) {
+  if (read_only) {
+      if (!(*file = OPEN_STREAM(fname,"rb"))) return(false);
+	} else {
+    if (!(*file = OPEN_STREAM(fname,"wb"))) return(false);
+	}
+	char *ext;
+	ext=strrchr(fname,'.');
+	if (ext&&(strlen(ext)==4)) {
+		if ((ext[1]=='z')&&(ext[2]=='a')) {
+			if (os9x_externstate_mode) {
+				msgBoxLines(s9xTYL_msg[LOADSAVE_EXPORTS9XSTATE], 0);
+				os9x_externstate_mode=0;
+			}
+		}
+  }
+
+
+  if (os9x_externstate_mode) return true;
+
+  if (read_only) {//reading savestate
+		READ_STREAM(os9x_savestate_mini,128*120*2,*file);
+	} else { //writing savestate
+		int x,y;
+		u16 *snes_image;
+		if (os9x_softrendering<2)	snes_image=(u16*)(0x44000000+512*272*2*2);
+		else snes_image=(u16*)(0x44000000+2*512*272*2+256*240*2+2*256*256*2);
+		for (y=0;y<os9x_snesheight/2;y++)
+			for (x=0;x<128;x++) {
+				int col2a=snes_image[(y*2)*256+(x*2)];
+				int col2b=snes_image[(y*2+1)*256+(x*2)];
+				int col2c=snes_image[(y*2)*256+(x*2+1)];
+				int col2d=snes_image[(y*2+1)*256+(x*2+1)];
+				int col2;
+				col2=((((((col2a>>10)&31)+((col2b>>10)&31)+((col2c>>10)&31)+((col2d>>10)&31))>>2)/**2/3*/)<<10);
+				col2|=((((((col2a>>5)&31)+((col2b>>5)&31)+((col2c>>5)&31)+((col2d>>5)&31))>>2)/**2/3*/)<<5);
+				col2|=((((((col2a>>0)&31)+((col2b>>0)&31)+((col2c>>0)&31)+((col2d>>0)&31))>>2)/**2/3*/)<<0);
+				os9x_savestate_mini[y*128+x]=col2;
+			}
+		WRITE_STREAM(os9x_savestate_mini,128*120*2,*file);
+	}
+  return (true);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////////////
+void S9xCloseSnapshotFile (STREAM file) {
+  CLOSE_STREAM (file);
+}
+
+extern "C" {
+
+#include "psp_state.c"
+
+#include "psp_utils.c"
 
 
 
@@ -2345,116 +2383,7 @@ void S9xProcessEvents( bool8 block ) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void S9xExit (){
-	g_bLoop=0;
-#if 0
-	// Cleanup the games resources etc (if required)
-	//debug_log("Exit Callback");
-
-	//Settings.Paused = TRUE;
-
-	//*os9x_paused_ptr=1;
-	//StopSoundThread();
-	//scePowerSetClockFrequency(222,222,111);
-	sceKernelDelayThread(1000000); //a try to fix hang on 2.5
-	if (g_sndthread>=0) sceKernelTerminateThread(g_sndthread);
-	if (g_updatethread>=0) sceKernelTerminateThread(g_updatethread);
-	//if (g_mainthread>=0) sceKernelTerminateThread(g_mainthread);
-
-	if (!os9x_lowbat) {
-		save_settings();
-		if (in_emu==1) {
-			Memory.SaveSRAM( (char*)S9xGetSaveFilename(".SRM") );
-			//S9xSaveCheatFile( (char*)S9xGetSaveFilename( ".cht" ) );
-			save_rom_settings(Memory.ROMCRC32,Memory.ROMName);
-		}
-		//pgWaitVn(60*1);//give some times to save files
-	}
-
-	// S9xCloseSoundDevice();
-	//g_bLoop = false;
-	// Exit game
-
-	sceKernelExitGame();
-#endif
-	return;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////////////
-const char *S9xBasename (const char *f)
-{
-  const char *p;
-  if ((p = strrchr (f, '/')) != NULL || (p = strrchr (f, '\\')) != NULL)
-    return (p + 1);
-  return (f);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////////////
-bool8 S9xOpenSnapshotFile (const char *fname, bool8 read_only, STREAM *file) {
-  if (read_only) {
-      if (!(*file = OPEN_STREAM(fname,"rb"))) return(false);
-	} else {
-    if (!(*file = OPEN_STREAM(fname,"wb"))) return(false);
-	}
-	char *ext;
-	ext=strrchr(fname,'.');
-	if (ext&&(strlen(ext)==4)) {
-		if ((ext[1]=='z')&&(ext[2]=='a')) {
-			if (os9x_externstate_mode) {
-				msgBoxLines(s9xTYL_msg[LOADSAVE_EXPORTS9XSTATE], 0);
-				os9x_externstate_mode=0;
-			}
-		}
-  }
-
-
-  if (os9x_externstate_mode) return true;
-
-  if (read_only) {//reading savestate
-		READ_STREAM(os9x_savestate_mini,128*120*2,*file);
-	} else { //writing savestate
-		int x,y;
-		u16 *snes_image;
-		if (os9x_softrendering<2)	snes_image=(u16*)(0x44000000+512*272*2*2);
-		else snes_image=(u16*)(0x44000000+2*512*272*2+256*240*2+2*256*256*2);
-		for (y=0;y<os9x_snesheight/2;y++)
-			for (x=0;x<128;x++) {
-				int col2a=snes_image[(y*2)*256+(x*2)];
-				int col2b=snes_image[(y*2+1)*256+(x*2)];
-				int col2c=snes_image[(y*2)*256+(x*2+1)];
-				int col2d=snes_image[(y*2+1)*256+(x*2+1)];
-				int col2;
-				col2=((((((col2a>>10)&31)+((col2b>>10)&31)+((col2c>>10)&31)+((col2d>>10)&31))>>2)/**2/3*/)<<10);
-				col2|=((((((col2a>>5)&31)+((col2b>>5)&31)+((col2c>>5)&31)+((col2d>>5)&31))>>2)/**2/3*/)<<5);
-				col2|=((((((col2a>>0)&31)+((col2b>>0)&31)+((col2c>>0)&31)+((col2d>>0)&31))>>2)/**2/3*/)<<0);
-				os9x_savestate_mini[y*128+x]=col2;
-			}
-		WRITE_STREAM(os9x_savestate_mini,128*120*2,*file);
-	}
-  return (true);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////////////
-void S9xCloseSnapshotFile (STREAM file) {
-  CLOSE_STREAM (file);
-}
-
-extern "C" {
-
-#include "psp_state.c"
-
-#include "psp_utils.c"
-
-////////////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////////////
-void initvar_withdefault() {
+static void initvar_withdefault() {
 	bg_img_num=-1; //bg will be randomized
 
 	os9x_menumusic=0; //no music
@@ -2559,7 +2488,7 @@ void initvar_withdefault() {
 
 
 #ifndef NOKERNEL
-void MyExceptionHandler(PspDebugRegBlock *regs)
+static void MyExceptionHandler(PspDebugRegBlock *regs)
 {
 	// Do normal initial dump, setup screen etc
 	pspDebugScreenInit();
@@ -2585,7 +2514,7 @@ void MyExceptionHandler(PspDebugRegBlock *regs)
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int user_main(SceSize args, void* argp);
+static int user_main(SceSize args, void* argp);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -2717,7 +2646,7 @@ int main(int argc,char **argv) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void low_level_init(){
+static void low_level_init(){
 	// init psp stuff
 	pgFillAllvram(0);
 	sceDisplaySetMode( 0, SCREEN_WIDTH, SCREEN_HEIGHT );
@@ -2776,7 +2705,7 @@ void low_level_init(){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void low_level_deinit(){
+static void low_level_deinit(){
 	blit_shutdown();
 
 	msgBoxLines(s9xTYL_msg[INFO_EXITING], 0);
@@ -2803,7 +2732,7 @@ void low_level_deinit(){
 	sceKernelDelayThread(1000000); //a try to fix hang on 2.5
 }
 
-int scroll_message_input(char *name,int limit) {
+static int scroll_message_input(char *name,int limit) {
 	struct Vertex *vertices,*vertices_ptr;
 	u16 *scr_bg=(u16*)(0x44000000+(512*272*2)*2);
 
@@ -3364,7 +3293,7 @@ int scroll_message(char **msg_lines, int lines, int start_pos, int intro_message
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void show_message() {
+static void show_message() {
 #define BLANK_LINES 18
 		char *decrypted_message,*p;
 		int message_size;
@@ -3428,7 +3357,7 @@ void show_message() {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void welcome_message(){
+static void welcome_message(){
 	char str[256];
 	int res,show_msg=1;
 	SceIoStat stat;
@@ -3453,7 +3382,7 @@ void welcome_message(){
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int os9x_getfile() {
+static int os9x_getfile() {
 #ifdef __DEBUG_SNES_
 	sprintf(rom_filename,__DEBUG__ROM__);
 	strcpy(LastPath,"ms0:/PSP/GAME/snes9xTYL/");
@@ -3479,7 +3408,7 @@ int os9x_getfile() {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int init_snes_rom() {
+static int init_snes_rom() {
 	///////////////////
 	//Settings
 	///////////////////
@@ -3692,7 +3621,7 @@ int init_snes_rom() {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void close_snes_rom(){
+static void close_snes_rom(){
 	os9x_paused=*os9x_paused_ptr=1;
 	StopSoundThread();
 #ifndef ME_SOUND
@@ -3810,7 +3739,7 @@ void me_apu_debug(int flag)
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-void open_snes_rom() {
+static void open_snes_rom() {
 	if (init_snes_rom()) {
 		close_snes_rom();
 		return;
@@ -3823,7 +3752,7 @@ void open_snes_rom() {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-int user_main(SceSize args, void* argp) {
+static int user_main(SceSize args, void* argp) {
 #ifdef GFX_TILE_ME
 	ME_GFX->count=0;
 #endif
@@ -3990,7 +3919,7 @@ void MyCounter_Init(void)
 	debug_count=0;
 	//for(int i=0;i<100;i++)debug_counts[i]=0;
 }
-void MyCounter_drawCount()
+static void MyCounter_drawCount()
 {
 	//if(!os9x_showcounter)
 	//	return;
@@ -4073,5 +4002,3 @@ time_t GetCurrentTime()
 	cur_time += os9x_timezone * 60 + os9x_daylsavings * 3600;
 	return cur_time;
 }
-
-void test(int a,int b){}
