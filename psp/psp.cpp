@@ -499,7 +499,7 @@ static void update_pad(){
 #ifdef USE_ADHOC
 		char str[16];
 
-		os9x_netcrc32[NET_DELAY-1][os9x_netpadindex]=caCRC32((uint8*)&CPUPack.Registers,sizeof(SRegisters))&0xFFFF;
+		os9x_netcrc32[NET_DELAY-1][os9x_netpadindex]=caCRC32((uint8*)&Registers,sizeof(SRegisters))&0xFFFF;
 		os9x_netsnespad[NET_DELAY-1][os9x_netpadindex]=os9x_snespad;
 
 		if(os9x_conId==1) { //server
@@ -2201,9 +2201,9 @@ void S9xProcessEvents( bool8 block ) {
 		}
 		before_pause();
 		if (!os9x_lowbat) {
-			if (CPUPack.CPU.SRAMModified) {
+			if (CPU.SRAMModified) {
 				Memory.SaveSRAM( (char*)S9xGetSaveFilename(".SRM") );
-				CPUPack.CPU.SRAMModified=0;
+				CPU.SRAMModified=0;
 			}
 		}
 		//initUSBdrivers();
@@ -3517,7 +3517,7 @@ static int init_snes_rom() {
 	S9xInitSound( Settings.SoundPlaybackRate, Settings.Stereo, Settings.SoundBufferSize );
 	S9xSetSoundMute( TRUE );
 
-	uint32 saved_flags = CPUPack.CPU.Flags;
+	uint32 saved_flags = CPU.Flags;
 
 	//msgBoxLines("Loading ROM...",0);
 	pgCopyScreen();
@@ -3582,7 +3582,7 @@ static int init_snes_rom() {
 		}
 	}
 
-	CPUPack.CPU.Flags = saved_flags;
+	CPU.Flags = saved_flags;
 
 	S9xInitDisplay();
 	if ( !S9xGraphicsInit() ){

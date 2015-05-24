@@ -188,21 +188,21 @@ static void S9xSetByteFree (uint8, uint32);
 
 static uint8 S9xGetByteFree (uint32 address)
 {
-	uint32	Cycles = CPUPack.CPU.Cycles;
+	uint32	Cycles = CPU.Cycles;
 	uint8	byte;
 
 	byte = S9xGetByte(address);
-	CPUPack.CPU.Cycles = Cycles;
+	CPU.Cycles = Cycles;
 
 	return (byte);
 }
 
 static void S9xSetByteFree (uint8 byte, uint32 address)
 {
-	uint32	Cycles = CPUPack.CPU.Cycles;
+	uint32	Cycles = CPU.Cycles;
 
 	S9xSetByte(byte, address);
-	CPUPack.CPU.Cycles = Cycles;
+	CPU.Cycles = Cycles;
 }
 
 void S9xInitCheatData ()

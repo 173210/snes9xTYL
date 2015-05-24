@@ -89,7 +89,8 @@ struct SCPUPACK __attribute__((aligned(64))) CPUPack;
 
 struct SSettings Settings;
 
-struct SSA1PACK __attribute__((aligned(64))) SA1Pack;
+struct SSA1Registers	SA1Registers;
+struct SSA1			SA1;
 //struct SSA1PACK* Uncache_SA1Pack_p = (SSA1PACK*)UNCACHE_PTR(&SA1Pack);
 
 //uint8 * __attribute__((aligned(64))) Map [MEMMAP_NUM_BLOCKS];

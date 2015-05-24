@@ -252,25 +252,25 @@ static void Op73M0 (void)
 /* AND *************************************************************************************** */
 static void Op29M1 (void)
 {
-    CPUPack.Registers.AL &= *CPUPack.CPU.PC++;
+    Registers.AL &= *CPU.PC++;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
-    SetZN8 (CPUPack.Registers.AL);
+    SetZN8 (Registers.AL);
 }
 
 static void Op29M0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    CPUPack.Registers.A.W &= *(uint16 *) CPUPack.CPU.PC;
+    Registers.A.W &= *(uint16 *) CPU.PC;
 #else
-    CPUPack.Registers.A.W &= *CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8);
+    Registers.A.W &= *CPU.PC + (*(CPU.PC + 1) << 8);
 #endif
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
-    SetZN16 (CPUPack.Registers.A.W);
+    SetZN16 (Registers.A.W);
 }
 
 static void Op25M1 (void)
@@ -505,23 +505,23 @@ static void Op1EM0 (void)
 /* BIT *************************************************************************************** */
 static void Op89M1 (void)
 {
-    CPUPack.ICPU._Zero = CPUPack.Registers.AL & *CPUPack.CPU.PC++;
+    ICPU._Zero = Registers.AL & *CPU.PC++;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
 }
 
 static void Op89M0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    CPUPack.ICPU._Zero = (CPUPack.Registers.A.W & *(uint16 *) CPUPack.CPU.PC) != 0;
+    ICPU._Zero = (Registers.A.W & *(uint16 *) CPU.PC) != 0;
 #else
-    CPUPack.ICPU._Zero = (CPUPack.Registers.A.W & (*CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8))) != 0;
+    ICPU._Zero = (Registers.A.W & (*CPU.PC + (*(CPU.PC + 1) << 8))) != 0;
 #endif	
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 }
 
 static void Op24M1 (void)
@@ -576,27 +576,27 @@ static void Op3CM0 (void)
 /* CMP *************************************************************************************** */
 static void OpC9M1 (void)
 {
-    long s9xInt32 = (int) CPUPack.Registers.AL - (int) *CPUPack.CPU.PC++;
-    CPUPack.ICPU._Carry = s9xInt32 >= 0;
+    long s9xInt32 = (int) Registers.AL - (int) *CPU.PC++;
+    ICPU._Carry = s9xInt32 >= 0;
     SetZN8 ((uint8) s9xInt32);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
 }
 
 static void OpC9M0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS    
-    long s9xInt32 = (long) CPUPack.Registers.A.W - (long) *(uint16 *) CPUPack.CPU.PC;
+    long s9xInt32 = (long) Registers.A.W - (long) *(uint16 *) CPU.PC;
 #else
-    long s9xInt32 = (long) CPUPack.Registers.A.W -
-	    (long) (*CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8));
+    long s9xInt32 = (long) Registers.A.W -
+	    (long) (*CPU.PC + (*(CPU.PC + 1) << 8));
 #endif
-    CPUPack.ICPU._Carry = s9xInt32 >= 0;
+    ICPU._Carry = s9xInt32 >= 0;
     SetZN16 ((uint16) s9xInt32);
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
 }
 
@@ -773,27 +773,27 @@ static void OpD3M0 (void)
 /* CMX *************************************************************************************** */
 static void OpE0X1 (void)
 {
-    long s9xInt32 = (int) CPUPack.Registers.XL - (int) *CPUPack.CPU.PC++;
-    CPUPack.ICPU._Carry = s9xInt32 >= 0;
+    long s9xInt32 = (int) Registers.XL - (int) *CPU.PC++;
+    ICPU._Carry = s9xInt32 >= 0;
     SetZN8 ((uint8) s9xInt32);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
 }
 
 static void OpE0X0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS    
-    long s9xInt32 = (long) CPUPack.Registers.X.W - (long) *(uint16 *) CPUPack.CPU.PC;
+    long s9xInt32 = (long) Registers.X.W - (long) *(uint16 *) CPU.PC;
 #else
-    long s9xInt32 = (long) CPUPack.Registers.X.W -
-	    (long) (*CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8));
+    long s9xInt32 = (long) Registers.X.W -
+	    (long) (*CPU.PC + (*(CPU.PC + 1) << 8));
 #endif
-    CPUPack.ICPU._Carry = s9xInt32 >= 0;
+    ICPU._Carry = s9xInt32 >= 0;
     SetZN16 ((uint16) s9xInt32);
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
 }
 
@@ -826,27 +826,27 @@ static void OpECX0 (void)
 /* CMY *************************************************************************************** */
 static void OpC0X1 (void)
 {
-    long s9xInt32 = (int) CPUPack.Registers.YL - (int) *CPUPack.CPU.PC++;
-    CPUPack.ICPU._Carry = s9xInt32 >= 0;
+    long s9xInt32 = (int) Registers.YL - (int) *CPU.PC++;
+    ICPU._Carry = s9xInt32 >= 0;
     SetZN8 ((uint8) s9xInt32);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
 }
 
 static void OpC0X0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS    
-    long s9xInt32 = (long) CPUPack.Registers.Y.W - (long) *(uint16 *) CPUPack.CPU.PC;
+    long s9xInt32 = (long) Registers.Y.W - (long) *(uint16 *) CPU.PC;
 #else
-    long s9xInt32 = (long) CPUPack.Registers.Y.W -
-	    (long) (*CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8));
+    long s9xInt32 = (long) Registers.Y.W -
+	    (long) (*CPU.PC + (*(CPU.PC + 1) << 8));
 #endif
-    CPUPack.ICPU._Carry = s9xInt32 >= 0;
+    ICPU._Carry = s9xInt32 >= 0;
     SetZN16 ((uint16) s9xInt32);
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
 }
 
@@ -940,25 +940,25 @@ static void OpDEM0 (void)
 /* EOR *************************************************************************************** */
 static void Op49M1 (void)
 {
-    CPUPack.Registers.AL ^= *CPUPack.CPU.PC++;
+    Registers.AL ^= *CPU.PC++;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
-    SetZN8 (CPUPack.Registers.AL);
+    SetZN8 (Registers.AL);
 }
 
 static void Op49M0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    CPUPack.Registers.A.W ^= *(uint16 *) CPUPack.CPU.PC;
+    Registers.A.W ^= *(uint16 *) CPU.PC;
 #else
-    CPUPack.Registers.A.W ^= *CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8);
+    Registers.A.W ^= *CPU.PC + (*(CPU.PC + 1) << 8);
 #endif
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
-    SetZN16 (CPUPack.Registers.A.W);
+    SetZN16 (Registers.A.W);
 }
 
 static void Op45M1 (void)
@@ -1194,26 +1194,26 @@ static void OpFEM0 (void)
 /* LDA *************************************************************************************** */
 static void OpA9M1 (void)
 {
-    CPUPack.Registers.AL = *CPUPack.CPU.PC++;
+    Registers.AL = *CPU.PC++;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
-    SetZN8 (CPUPack.Registers.AL);
+    SetZN8 (Registers.AL);
 }
 
 static void OpA9M0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    CPUPack.Registers.A.W = *(uint16 *) CPUPack.CPU.PC;
+    Registers.A.W = *(uint16 *) CPU.PC;
 #else
-    CPUPack.Registers.A.W = *CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8);
+    Registers.A.W = *CPU.PC + (*(CPU.PC + 1) << 8);
 #endif
 
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
-    SetZN16 (CPUPack.Registers.A.W);
+    SetZN16 (Registers.A.W);
 }
 
 static void OpA5M1 (void)
@@ -1389,25 +1389,25 @@ static void OpB3M0 (void)
 /* LDX *************************************************************************************** */
 static void OpA2X1 (void)
 {
-    CPUPack.Registers.XL = *CPUPack.CPU.PC++;
+    Registers.XL = *CPU.PC++;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
-    SetZN8 (CPUPack.Registers.XL);
+    SetZN8 (Registers.XL);
 }
 
 static void OpA2X0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    CPUPack.Registers.X.W = *(uint16 *) CPUPack.CPU.PC;
+    Registers.X.W = *(uint16 *) CPU.PC;
 #else
-    CPUPack.Registers.X.W = *CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8);
+    Registers.X.W = *CPU.PC + (*(CPU.PC + 1) << 8);
 #endif
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
-    SetZN16 (CPUPack.Registers.X.W);
+    SetZN16 (Registers.X.W);
 }
 
 static void OpA6X1 (void)
@@ -1462,26 +1462,26 @@ static void OpBEX0 (void)
 /* LDY *************************************************************************************** */
 static void OpA0X1 (void)
 {
-    CPUPack.Registers.YL = *CPUPack.CPU.PC++;
+    Registers.YL = *CPU.PC++;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
-    SetZN8 (CPUPack.Registers.YL);
+    SetZN8 (Registers.YL);
 }
 
 static void OpA0X0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    CPUPack.Registers.Y.W = *(uint16 *) CPUPack.CPU.PC;
+    Registers.Y.W = *(uint16 *) CPU.PC;
 #else
-    CPUPack.Registers.Y.W = *CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8);
+    Registers.Y.W = *CPU.PC + (*(CPU.PC + 1) << 8);
 #endif
 
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
-    SetZN16 (CPUPack.Registers.Y.W);
+    SetZN16 (Registers.Y.W);
 }
 
 static void OpA4X1 (void)
@@ -1597,25 +1597,25 @@ static void Op5EM0 (void)
 /* ORA *************************************************************************************** */
 static void Op09M1 (void)
 {
-    CPUPack.Registers.AL |= *CPUPack.CPU.PC++;
+    Registers.AL |= *CPU.PC++;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+    CPU.Cycles += CPU.MemSpeed;
 #endif
-    SetZN8 (CPUPack.Registers.AL);
+    SetZN8 (Registers.AL);
 }
 
 static void Op09M0 (void)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    CPUPack.Registers.A.W |= *(uint16 *) CPUPack.CPU.PC;
+    Registers.A.W |= *(uint16 *) CPU.PC;
 #else
-    CPUPack.Registers.A.W |= *CPUPack.CPU.PC + (*(CPUPack.CPU.PC + 1) << 8);
+    Registers.A.W |= *CPU.PC + (*(CPU.PC + 1) << 8);
 #endif
-    CPUPack.CPU.PC += 2;
+    CPU.PC += 2;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2;
+    CPU.Cycles += CPU.MemSpeedx2;
 #endif
-    SetZN16 (CPUPack.Registers.A.W);
+    SetZN16 (Registers.A.W);
 }
 
 static void Op05M1 (void)
@@ -2133,7 +2133,7 @@ static void Op81M1 (void)
     STA8 (OpAddress);
 #ifdef noVAR_CYCLES
     if (CheckIndex ())
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
@@ -2143,7 +2143,7 @@ static void Op81M0 (void)
     STA16 (OpAddress);
 #ifdef noVAR_CYCLES
     if (CheckIndex ())
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
@@ -2451,29 +2451,29 @@ static void Op0CM0 (void)
 /* Branch Instructions *********************************************************************** */
 #ifndef SA1_OPCODES
 #define BranchCheck0()\
-    if( CPUPack.CPU.BranchSkip)\
+    if( CPU.BranchSkip)\
     {\
-	CPUPack.CPU.BranchSkip = FALSE;\
-	    if( CPUPack.CPU.PC - CPUPack.CPU.PCBase > OpAddress)\
+	CPU.BranchSkip = FALSE;\
+	    if( CPU.PC - CPU.PCBase > OpAddress)\
 	        return;\
     }
 
 #define BranchCheck1()\
-    if( CPUPack.CPU.BranchSkip)\
+    if( CPU.BranchSkip)\
     {\
-	CPUPack.CPU.BranchSkip = FALSE;\
+	CPU.BranchSkip = FALSE;\
 	{\
-	    if( CPUPack.CPU.PC - CPUPack.CPU.PCBase > OpAddress)\
+	    if( CPU.PC - CPU.PCBase > OpAddress)\
 	        return;\
 	}\
     }
 
 #define BranchCheck2()\
-    if( CPUPack.CPU.BranchSkip)\
+    if( CPU.BranchSkip)\
     {\
-	CPUPack.CPU.BranchSkip = FALSE;\
+	CPU.BranchSkip = FALSE;\
 	{\
-	    if( CPUPack.CPU.PC - CPUPack.CPU.PCBase > OpAddress)\
+	    if( CPU.PC - CPU.PCBase > OpAddress)\
 	        return;\
 	}\
     }
@@ -2486,30 +2486,30 @@ static void Op0CM0 (void)
 #ifdef CPU_SHUTDOWN
 #ifndef SA1_OPCODES
 inline void CPUShutdown() {
-  if (Settings.Shutdown && CPUPack.CPU.PC == CPUPack.CPU.WaitAddress) {
+  if (Settings.Shutdown && CPU.PC == CPU.WaitAddress) {
 		// Don't skip cycles with a pending NMI or IRQ - could cause delayed
 		// interrupt. Interrupts are delayed for a few cycles already, but
 		//	 the delay could allow the shutdown code to cycle skip again.
 		// Was causing screen flashing on Top Gear 3000.
 
-		if (CPUPack.CPU.WaitCounter == 0 && !(CPUPack.CPU.Flags & (IRQ_PENDING_FLAG | NMI_FLAG))) {
-		  CPUPack.CPU.WaitAddress = NULL;
+		if (CPU.WaitCounter == 0 && !(CPU.Flags & (IRQ_PENDING_FLAG | NMI_FLAG))) {
+		  CPU.WaitAddress = NULL;
 		  if (Settings.SA1)	S9xSA1ExecuteDuringSleep ();
 		  			  
 		  if ((IAPU_APUExecuting)) {
-		  	if (CPUPack.CPU.Cycles>CPUPack.CPU.NextEvent) {
-		  		cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;
-		  		old_cpu_cycles=CPUPack.CPU.NextEvent;
+		  	if (CPU.Cycles>CPU.NextEvent) {
+		  		cpu_glob_cycles += CPU.Cycles-old_cpu_cycles;
+		  		old_cpu_cycles=CPU.NextEvent;
 		  	}
 		  }
-		 	CPUPack.CPU.Cycles = CPUPack.CPU.NextEvent;
+		 	CPU.Cycles = CPU.NextEvent;
 		 	
 /*		  S9xUpdateAPUTimer();*/
 		  if ((IAPU_APUExecuting)) {
-				CPUPack.ICPU.CPUExecuting = FALSE;
-////				if (CPUPack.CPU.Cycles-old_cpu_cycles<0) msgBoxLines("4",60);
-//				/*else */cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;				
-//				old_cpu_cycles=CPUPack.CPU.Cycles;
+				ICPU.CPUExecuting = FALSE;
+////				if (CPU.Cycles-old_cpu_cycles<0) msgBoxLines("4",60);
+//				/*else */cpu_glob_cycles += CPU.Cycles-old_cpu_cycles;				
+//				old_cpu_cycles=CPU.Cycles;
 //				apu_glob_cycles=cpu_glob_cycles;
 //				
 //				if (cpu_glob_cycles>=0x00700000) {		
@@ -2518,28 +2518,28 @@ inline void CPUShutdown() {
 				UPDATE_APU_COUNTER();
 			/*	do	{
 			   	APU_EXECUTE1();			   	
-				} while ((Uncache_APU_Cycles) < CPUPack.CPU.NextEvent);				*/
+				} while ((Uncache_APU_Cycles) < CPU.NextEvent);				*/
 				
-				CPUPack.ICPU.CPUExecuting = TRUE;
+				ICPU.CPUExecuting = TRUE;
 		  }
 		}	else {
-			if (CPUPack.CPU.WaitCounter >= 2) CPUPack.CPU.WaitCounter = 1;
-			else CPUPack.CPU.WaitCounter--;
+			if (CPU.WaitCounter >= 2) CPU.WaitCounter = 1;
+			else CPU.WaitCounter--;
 		}
 	}
 }
 #else
 inline void CPUShutdown()
 {
-    if (Settings.Shutdown && CPUPack.CPU.PC == CPUPack.CPU.WaitAddress)
+    if (Settings.Shutdown && CPU.PC == CPU.WaitAddress)
     {
-	if (CPUPack.CPU.WaitCounter >= 1)
+	if (CPU.WaitCounter >= 1)
 	{
-	    SA1Pack_SA1.Executing = FALSE;
-	    SA1Pack_SA1.CPUExecuting = FALSE;
+	    SA1.Executing = FALSE;
+	    SA1.CPUExecuting = FALSE;
 	}
 	else
-	    CPUPack.CPU.WaitCounter++;
+	    CPU.WaitCounter++;
     }
 }
 #endif
@@ -2554,12 +2554,12 @@ static void Op90 (void)
     BranchCheck0 ();
     if (!CheckCarry ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2573,12 +2573,12 @@ static void OpB0 (void)
     BranchCheck0 ();
     if (CheckCarry ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2592,12 +2592,12 @@ static void OpF0 (void)
     BranchCheck2 ();
     if (CheckZero ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2611,12 +2611,12 @@ static void Op30 (void)
     BranchCheck1 ();
     if (CheckNegative ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2630,13 +2630,13 @@ static void OpD0 (void)
     BranchCheck1 ();
     if (!CheckZero ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2650,12 +2650,12 @@ static void Op10 (void)
     BranchCheck1 ();
     if (!CheckNegative ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2666,12 +2666,12 @@ static void Op10 (void)
 static void Op80 (void)
 {
     long OpAddress = Relative();
-    CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+    CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-    CPUPack.CPU.Cycles++;
+    CPU.Cycles++;
 #endif
 #endif
     CPUShutdown ();
@@ -2684,12 +2684,12 @@ static void Op50 (void)
     BranchCheck0 ();
     if (!CheckOverflow ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2703,12 +2703,12 @@ static void Op70 (void)
     BranchCheck0 ();
     if (CheckOverflow ())
     {
-	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+	CPU.PC = CPU.PCBase + OpAddress;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles++;
+	CPU.Cycles++;
 #endif
 #endif
 	CPUShutdown ();
@@ -2722,7 +2722,7 @@ static void Op18 (void)
 {
     ClearCarry ();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
@@ -2732,7 +2732,7 @@ static void OpD8 (void)
     ClearDecimal ();
 	S9xFixCyclesDecimal();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
@@ -2741,7 +2741,7 @@ static void Op58 (void)
 {
     ClearIRQ ();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 /*    CHECK_FOR_IRQ(); */
 }
@@ -2751,7 +2751,7 @@ static void OpB8 (void)
 {
     ClearOverflow ();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 /**********************************************************************************************/
@@ -2760,53 +2760,53 @@ static void OpB8 (void)
 static void OpCAX1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.XL--;
-    SetZN8 (CPUPack.Registers.XL);
+    Registers.XL--;
+    SetZN8 (Registers.XL);
 }
 
 static void OpCAX0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.X.W--;
-    SetZN16 (CPUPack.Registers.X.W);
+    Registers.X.W--;
+    SetZN16 (Registers.X.W);
 }
 
 static void Op88X1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.YL--;
-    SetZN8 (CPUPack.Registers.YL);
+    Registers.YL--;
+    SetZN8 (Registers.YL);
 }
 
 static void Op88X0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.Y.W--;
-    SetZN16 (CPUPack.Registers.Y.W);
+    Registers.Y.W--;
+    SetZN16 (Registers.Y.W);
 }
 /**********************************************************************************************/
 
@@ -2814,53 +2814,53 @@ static void Op88X0 (void)
 static void OpE8X1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.XL++;
-    SetZN8 (CPUPack.Registers.XL);
+    Registers.XL++;
+    SetZN8 (Registers.XL);
 }
 
 static void OpE8X0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.X.W++;
-    SetZN16 (CPUPack.Registers.X.W);
+    Registers.X.W++;
+    SetZN16 (Registers.X.W);
 }
 
 static void OpC8X1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.YL++;
-    SetZN8 (CPUPack.Registers.YL);
+    Registers.YL++;
+    SetZN8 (Registers.YL);
 }
 
 static void OpC8X0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef CPU_SHUTDOWN
-    CPUPack.CPU.WaitAddress = NULL;
+    CPU.WaitAddress = NULL;
 #endif
 
-    CPUPack.Registers.Y.W++;
-    SetZN16 (CPUPack.Registers.Y.W);
+    Registers.Y.W++;
+    SetZN16 (Registers.Y.W);
 }
 
 /**********************************************************************************************/
@@ -2869,7 +2869,7 @@ static void OpC8X0 (void)
 static void OpEA (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 
 }
@@ -2877,10 +2877,10 @@ static void OpEA (void)
 
 /* PUSH Instructions ************************************************************************* */
 #define PushW(w) \
-    S9xSetWord (w, CPUPack.Registers.S.W - 1);\
-    CPUPack.Registers.S.W -= 2;
+    S9xSetWord (w, Registers.S.W - 1);\
+    Registers.S.W -= 2;
 #define PushB(b)\
-    S9xSetByte (b, CPUPack.Registers.S.W--);
+    S9xSetByte (b, Registers.S.W--);
 
 static void OpF4 (void)
 {
@@ -2902,145 +2902,145 @@ static void Op62 (void)
 
 static void Op48M1 (void)
 {
-    PushB (CPUPack.Registers.AL);
+    PushB (Registers.AL);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void Op48M0 (void)
 {
-    PushW (CPUPack.Registers.A.W);
+    PushW (Registers.A.W);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void Op8B (void)
 {
-    PushB (CPUPack.Registers.DB);
+    PushB (Registers.DB);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void Op0B (void)
 {
-    PushW (CPUPack.Registers.D.W);
+    PushW (Registers.D.W);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void Op4B (void)
 {
-    PushB (CPUPack.Registers.PB);
+    PushB (Registers.PB);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void Op08 (void)
 {
     S9xPackStatus ();
-    PushB (CPUPack.Registers.PL);
+    PushB (Registers.PL);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void OpDAX1 (void)
 {
-    PushB (CPUPack.Registers.XL);
+    PushB (Registers.XL);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void OpDAX0 (void)
 {
-    PushW (CPUPack.Registers.X.W);
+    PushW (Registers.X.W);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void Op5AX1 (void)
 {
-    PushB (CPUPack.Registers.YL);
+    PushB (Registers.YL);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
 static void Op5AX0 (void)
 {
-    PushW (CPUPack.Registers.Y.W);
+    PushW (Registers.Y.W);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 /**********************************************************************************************/
 
 /* PULL Instructions ************************************************************************* */
 #define PullW(w) \
-	w = S9xGetWord (CPUPack.Registers.S.W + 1); \
-	CPUPack.Registers.S.W += 2;
+	w = S9xGetWord (Registers.S.W + 1); \
+	Registers.S.W += 2;
 
 #define PullB(b)\
-	b = S9xGetByte (++CPUPack.Registers.S.W);
+	b = S9xGetByte (++Registers.S.W);
 
 static void Op68M1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullB (CPUPack.Registers.AL);
-    SetZN8 (CPUPack.Registers.AL);
+    PullB (Registers.AL);
+    SetZN8 (Registers.AL);
 }
 
 static void Op68M0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullW (CPUPack.Registers.A.W);
-    SetZN16 (CPUPack.Registers.A.W);
+    PullW (Registers.A.W);
+    SetZN16 (Registers.A.W);
 }
 
 static void OpAB (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullB (CPUPack.Registers.DB);
-    SetZN8 (CPUPack.Registers.DB);
-    CPUPack.ICPU.ShiftedDB = CPUPack.Registers.DB << 16;
+    PullB (Registers.DB);
+    SetZN8 (Registers.DB);
+    ICPU.ShiftedDB = Registers.DB << 16;
 }
 
 /* PHP */
 static void Op2B (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullW (CPUPack.Registers.D.W);
-    SetZN16 (CPUPack.Registers.D.W);
+    PullW (Registers.D.W);
+    SetZN16 (Registers.D.W);
 }
 
 /* PLP */
 static void Op28 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullB (CPUPack.Registers.PL);
+    PullB (Registers.PL);
     S9xUnpackStatus ();
 
     if (CheckIndex ())
     {
-	CPUPack.Registers.XH = 0;
-	CPUPack.Registers.YH = 0;
+	Registers.XH = 0;
+	Registers.YH = 0;
     }
     S9xFixCycles();
 /*     CHECK_FOR_IRQ();*/
@@ -3049,37 +3049,37 @@ static void Op28 (void)
 static void OpFAX1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullB (CPUPack.Registers.XL);
-    SetZN8 (CPUPack.Registers.XL);
+    PullB (Registers.XL);
+    SetZN8 (Registers.XL);
 }
 
 static void OpFAX0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullW (CPUPack.Registers.X.W);
-    SetZN16 (CPUPack.Registers.X.W);
+    PullW (Registers.X.W);
+    SetZN16 (Registers.X.W);
 }
 
 static void Op7AX1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullB (CPUPack.Registers.YL);
-    SetZN8 (CPUPack.Registers.YL);
+    PullB (Registers.YL);
+    SetZN8 (Registers.YL);
 }
 
 static void Op7AX0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    PullW (CPUPack.Registers.Y.W);
-    SetZN16 (CPUPack.Registers.Y.W);
+    PullW (Registers.Y.W);
+    SetZN16 (Registers.Y.W);
 }
 
 /**********************************************************************************************/
@@ -3091,7 +3091,7 @@ static void Op38 (void)
     SetCarry ();
 	S9xFixCyclesDecimal();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 
@@ -3100,7 +3100,7 @@ static void OpF8 (void)
 {
     SetDecimal ();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 #ifdef DEBUGGER
     missing.decimal_mode = 1;
@@ -3112,7 +3112,7 @@ static void Op78 (void)
 {
     SetIRQ ();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 }
 /**********************************************************************************************/
@@ -3122,177 +3122,177 @@ static void Op78 (void)
 static void OpAAX1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.XL = CPUPack.Registers.AL;
-    SetZN8 (CPUPack.Registers.XL);
+    Registers.XL = Registers.AL;
+    SetZN8 (Registers.XL);
 }
 
 /* TAX16 */
 static void OpAAX0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.X.W = CPUPack.Registers.A.W;
-    SetZN16 (CPUPack.Registers.X.W);
+    Registers.X.W = Registers.A.W;
+    SetZN16 (Registers.X.W);
 }
 
 /* TAY8 */
 static void OpA8X1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.YL = CPUPack.Registers.AL;
-    SetZN8 (CPUPack.Registers.YL);
+    Registers.YL = Registers.AL;
+    SetZN8 (Registers.YL);
 }
 
 /* TAY16 */
 static void OpA8X0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.Y.W = CPUPack.Registers.A.W;
-    SetZN16 (CPUPack.Registers.Y.W);
+    Registers.Y.W = Registers.A.W;
+    SetZN16 (Registers.Y.W);
 }
 
 static void Op5B (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.D.W = CPUPack.Registers.A.W;
-    SetZN16 (CPUPack.Registers.D.W);
+    Registers.D.W = Registers.A.W;
+    SetZN16 (Registers.D.W);
 }
 
 static void Op1B (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.S.W = CPUPack.Registers.A.W;
+    Registers.S.W = Registers.A.W;
     if (CheckEmulation())
-	CPUPack.Registers.SH = 1;
+	Registers.SH = 1;
 }
 
 static void Op7B (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.A.W = CPUPack.Registers.D.W;
-    SetZN16 (CPUPack.Registers.A.W);
+    Registers.A.W = Registers.D.W;
+    SetZN16 (Registers.A.W);
 }
 
 static void Op3B (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.A.W = CPUPack.Registers.S.W;
-    SetZN16 (CPUPack.Registers.A.W);
+    Registers.A.W = Registers.S.W;
+    SetZN16 (Registers.A.W);
 }
 
 static void OpBAX1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.XL = CPUPack.Registers.SL;
-    SetZN8 (CPUPack.Registers.XL);
+    Registers.XL = Registers.SL;
+    SetZN8 (Registers.XL);
 }
 
 static void OpBAX0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.X.W = CPUPack.Registers.S.W;
-    SetZN16 (CPUPack.Registers.X.W);
+    Registers.X.W = Registers.S.W;
+    SetZN16 (Registers.X.W);
 }
 
 static void Op8AM1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.AL = CPUPack.Registers.XL;
-    SetZN8 (CPUPack.Registers.AL);
+    Registers.AL = Registers.XL;
+    SetZN8 (Registers.AL);
 }
 
 static void Op8AM0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.A.W = CPUPack.Registers.X.W;
-    SetZN16 (CPUPack.Registers.A.W);
+    Registers.A.W = Registers.X.W;
+    SetZN16 (Registers.A.W);
 }
 
 static void Op9A (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.S.W = CPUPack.Registers.X.W;
+    Registers.S.W = Registers.X.W;
     if (CheckEmulation())
-	CPUPack.Registers.SH = 1;
+	Registers.SH = 1;
 }
 
 static void Op9BX1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.YL = CPUPack.Registers.XL;
-    SetZN8 (CPUPack.Registers.YL);
+    Registers.YL = Registers.XL;
+    SetZN8 (Registers.YL);
 }
 
 static void Op9BX0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.Y.W = CPUPack.Registers.X.W;
-    SetZN16 (CPUPack.Registers.Y.W);
+    Registers.Y.W = Registers.X.W;
+    SetZN16 (Registers.Y.W);
 }
 
 static void Op98M1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.AL = CPUPack.Registers.YL;
-    SetZN8 (CPUPack.Registers.AL);
+    Registers.AL = Registers.YL;
+    SetZN8 (Registers.AL);
 }
 
 static void Op98M0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.A.W = CPUPack.Registers.Y.W;
-    SetZN16 (CPUPack.Registers.A.W);
+    Registers.A.W = Registers.Y.W;
+    SetZN16 (Registers.A.W);
 }
 
 static void OpBBX1 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.XL = CPUPack.Registers.YL;
-    SetZN8 (CPUPack.Registers.XL);
+    Registers.XL = Registers.YL;
+    SetZN8 (Registers.XL);
 }
 
 static void OpBBX0 (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    CPUPack.Registers.X.W = CPUPack.Registers.Y.W;
-    SetZN16 (CPUPack.Registers.X.W);
+    Registers.X.W = Registers.Y.W;
+    SetZN16 (Registers.X.W);
 }
 
 /**********************************************************************************************/
@@ -3301,26 +3301,26 @@ static void OpBBX0 (void)
 static void OpFB (void)
 {
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
 
-    uint8 A1 = CPUPack.ICPU._Carry;
-    uint8 A2 = CPUPack.Registers.PH;
-    CPUPack.ICPU._Carry = A2 & 1;
-    CPUPack.Registers.PH = A1;
+    uint8 A1 = ICPU._Carry;
+    uint8 A2 = Registers.PH;
+    ICPU._Carry = A2 & 1;
+    Registers.PH = A1;
 
     if (CheckEmulation())
     {
 	SetFlags (MemoryFlag | IndexFlag);
-	CPUPack.Registers.SH = 1;
+	Registers.SH = 1;
 #ifdef DEBUGGER
 	missing.emulate6502 = 1;
 #endif
     }
     if (CheckIndex ())
     {
-	CPUPack.Registers.XH = 0;
-	CPUPack.Registers.YH = 0;
+	Registers.XH = 0;
+	Registers.YH = 0;
     }
     S9xFixCycles();
 }
@@ -3330,49 +3330,49 @@ static void OpFB (void)
 static void Op00 (void)
 {
 #ifdef DEBUGGER
-    if (CPUPack.CPU.Flags & TRACE_FLAG)
+    if (CPU.Flags & TRACE_FLAG)
 	S9xTraceMessage ("*** BRK");
 #endif
 
 #ifndef SA1_OPCODES
-    CPUPack.CPU.BRKTriggered = TRUE;
+    CPU.BRKTriggered = TRUE;
 #endif
 
     if (!CheckEmulation())
     {
-	PushB (CPUPack.Registers.PB);
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase + 1);
+	PushB (Registers.PB);
+	PushW (CPU.PC - CPU.PCBase + 1);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-        CPUPack.CPU.Cycles += TWO_CYCLES;
+        CPU.Cycles += TWO_CYCLES;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 8;
+	CPU.Cycles += 8;
 #endif
 #endif
 	S9xSetPCBase (S9xGetWord (0xFFE6));
     }
     else
     {
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase);
+	PushW (CPU.PC - CPU.PCBase);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 6;
+	CPU.Cycles += 6;
 #endif
 #endif
 	S9xSetPCBase (S9xGetWord (0xFFFE));
@@ -3384,7 +3384,7 @@ static void Op00 (void)
 static void Op82 (void)
 {
     long OpAddress = RelativeLong ();
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + OpAddress);
+    S9xSetPCBase (ICPU.ShiftedPB + OpAddress);
 }
 /**********************************************************************************************/
 
@@ -3392,25 +3392,25 @@ static void Op82 (void)
 void S9xOpcode_IRQ (void)
 {
 #ifdef DEBUGGER
-    if (CPUPack.CPU.Flags & TRACE_FLAG)
+    if (CPU.Flags & TRACE_FLAG)
 	S9xTraceMessage ("*** IRQ");
 #endif
     if (!CheckEmulation())
     {
-	PushB (CPUPack.Registers.PB);
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase);
+	PushB (Registers.PB);
+	PushW (CPU.PC - CPU.PCBase);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-        CPUPack.CPU.Cycles += TWO_CYCLES;
+        CPU.Cycles += TWO_CYCLES;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 8;
+	CPU.Cycles += 8;
 #endif
 #endif
 #ifdef SA1_OPCODES
@@ -3426,19 +3426,19 @@ void S9xOpcode_IRQ (void)
     }
     else
     {
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase);
+	PushW (CPU.PC - CPU.PCBase);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 6;
+	CPU.Cycles += 6;
 #endif
 #endif
 #ifdef SA1_OPCODES
@@ -3460,25 +3460,25 @@ void S9xOpcode_IRQ (void)
 void S9xOpcode_NMI (void)
 {
 #ifdef DEBUGGER
-    if (CPUPack.CPU.Flags & TRACE_FLAG)
+    if (CPU.Flags & TRACE_FLAG)
 	S9xTraceMessage ("*** NMI");
 #endif
     if (!CheckEmulation())
     {
-	PushB (CPUPack.Registers.PB);
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase);
+	PushB (Registers.PB);
+	PushW (CPU.PC - CPU.PCBase);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += TWO_CYCLES;
+	CPU.Cycles += TWO_CYCLES;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 8;
+	CPU.Cycles += 8;
 #endif
 #endif
 #ifdef SA1_OPCODES
@@ -3494,19 +3494,19 @@ void S9xOpcode_NMI (void)
     }
     else
     {
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase);
+	PushW (CPU.PC - CPU.PCBase);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 6;
+	CPU.Cycles += 6;
 #endif
 #endif
 #ifdef SA1_OPCODES
@@ -3527,44 +3527,44 @@ void S9xOpcode_NMI (void)
 static void Op02 (void)
 {
 #ifdef DEBUGGER
-    if (CPUPack.CPU.Flags & TRACE_FLAG)
+    if (CPU.Flags & TRACE_FLAG)
 	S9xTraceMessage ("*** COP");
 #endif	
     if (!CheckEmulation())
     {
-	PushB (CPUPack.Registers.PB);
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase + 1);
+	PushB (Registers.PB);
+	PushW (CPU.PC - CPU.PCBase + 1);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-        CPUPack.CPU.Cycles += TWO_CYCLES;
+        CPU.Cycles += TWO_CYCLES;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 8;
+	CPU.Cycles += 8;
 #endif
 #endif
 	S9xSetPCBase (S9xGetWord (0xFFE4));
     }
     else
     {
-	PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase);
+	PushW (CPU.PC - CPU.PCBase);
 	S9xPackStatus ();
-	PushB (CPUPack.Registers.PL);
+	PushB (Registers.PL);
 	ClearDecimal ();
 	SetIRQ ();
 
-	CPUPack.Registers.PB = 0;
-	CPUPack.ICPU.ShiftedPB = 0;
+	Registers.PB = 0;
+	ICPU.ShiftedPB = 0;
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 6;
+	CPU.Cycles += 6;
 #endif
 #endif
 	S9xSetPCBase (S9xGetWord (0xFFF4));
@@ -3576,10 +3576,10 @@ static void Op02 (void)
 static void OpDC (void)
 {
     long OpAddress = AbsoluteIndirectLong ();
-    CPUPack.Registers.PB = (uint8) (OpAddress >> 16);
-    CPUPack.ICPU.ShiftedPB = OpAddress & 0xff0000;
+    Registers.PB = (uint8) (OpAddress >> 16);
+    ICPU.ShiftedPB = OpAddress & 0xff0000;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
     S9xSetPCBase (OpAddress);
 }
@@ -3587,8 +3587,8 @@ static void OpDC (void)
 static void Op5C (void)
 {
     long OpAddress = AbsoluteLong();
-    CPUPack.Registers.PB = (uint8) (OpAddress >> 16);
-    CPUPack.ICPU.ShiftedPB = OpAddress & 0xff0000;
+    Registers.PB = (uint8) (OpAddress >> 16);
+    ICPU.ShiftedPB = OpAddress & 0xff0000;
     S9xSetPCBase (OpAddress);
 }
 /**********************************************************************************************/
@@ -3597,7 +3597,7 @@ static void Op5C (void)
 static void Op4C (void)
 {
     long OpAddress = Absolute();
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + (OpAddress & 0xffff));
+    S9xSetPCBase (ICPU.ShiftedPB + (OpAddress & 0xffff));
 #if defined(CPU_SHUTDOWN) && defined(SA1_OPCODES)
     CPUShutdown ();
 #endif
@@ -3606,16 +3606,16 @@ static void Op4C (void)
 static void Op6C (void)
 {
     long OpAddress = AbsoluteIndirect ();
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + (OpAddress & 0xffff));
+    S9xSetPCBase (ICPU.ShiftedPB + (OpAddress & 0xffff));
 }
 
 static void Op7C (void)
 {
     long OpAddress = AbsoluteIndexedIndirect ();
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + OpAddress);
+    S9xSetPCBase (ICPU.ShiftedPB + OpAddress);
 }
 /**********************************************************************************************/
 
@@ -3623,22 +3623,22 @@ static void Op7C (void)
 static void Op22 (void)
 {
     long OpAddress = AbsoluteLong();
-    PushB (CPUPack.Registers.PB);
-    PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase - 1);
-    CPUPack.Registers.PB = (uint8) (OpAddress >> 16);
-    CPUPack.ICPU.ShiftedPB = OpAddress & 0xff0000;
+    PushB (Registers.PB);
+    PushW (CPU.PC - CPU.PCBase - 1);
+    Registers.PB = (uint8) (OpAddress >> 16);
+    ICPU.ShiftedPB = OpAddress & 0xff0000;
     S9xSetPCBase (OpAddress);
 }
 
 static void Op6B (void)
 {
-    PullW (CPUPack.Registers.PC);
-    PullB (CPUPack.Registers.PB);
-    CPUPack.ICPU.ShiftedPB = CPUPack.Registers.PB << 16;
+    PullW (Registers.PCw);
+    PullB (Registers.PB);
+    ICPU.ShiftedPB = Registers.PB << 16;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + ((CPUPack.Registers.PC + 1) & 0xffff));
+    S9xSetPCBase (ICPU.ShiftedPB + ((Registers.PCw + 1) & 0xffff));
 }
 /**********************************************************************************************/
 
@@ -3646,30 +3646,30 @@ static void Op6B (void)
 static void Op20 (void)
 {
     long OpAddress = Absolute();
-    PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase - 1);
+    PushW (CPU.PC - CPU.PCBase - 1);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + (OpAddress & 0xffff));
+    S9xSetPCBase (ICPU.ShiftedPB + (OpAddress & 0xffff));
 }
 
 static void OpFC (void)
 {
     long OpAddress = AbsoluteIndexedIndirect ();
-    PushW (CPUPack.CPU.PC - CPUPack.CPU.PCBase - 1);
+    PushW (CPU.PC - CPU.PCBase - 1);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE;
+    CPU.Cycles += ONE_CYCLE;
 #endif
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + OpAddress);
+    S9xSetPCBase (ICPU.ShiftedPB + OpAddress);
 }
 
 static void Op60 (void)
 {
-    PullW (CPUPack.Registers.PC);
+    PullW (Registers.PCw);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += ONE_CYCLE * 3;
+    CPU.Cycles += ONE_CYCLE * 3;
 #endif
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + ((CPUPack.Registers.PC + 1) & 0xffff));
+    S9xSetPCBase (ICPU.ShiftedPB + ((Registers.PCw + 1) & 0xffff));
 }
 
 /**********************************************************************************************/
@@ -3680,21 +3680,21 @@ static void Op54X1 (void)
     uint32 SrcBank;
 
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2 + TWO_CYCLES;
+    CPU.Cycles += CPU.MemSpeedx2 + TWO_CYCLES;
 #endif
     
-    CPUPack.Registers.DB = *CPUPack.CPU.PC++;
-    CPUPack.ICPU.ShiftedDB = CPUPack.Registers.DB << 16;
-    SrcBank = *CPUPack.CPU.PC++;
+    Registers.DB = *CPU.PC++;
+    ICPU.ShiftedDB = Registers.DB << 16;
+    SrcBank = *CPU.PC++;
 
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + CPUPack.Registers.X.W), 
-	     CPUPack.ICPU.ShiftedDB + CPUPack.Registers.Y.W);
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + Registers.X.W), 
+	     ICPU.ShiftedDB + Registers.Y.W);
 
-    CPUPack.Registers.XL++;
-    CPUPack.Registers.YL++;
-    CPUPack.Registers.A.W--;
-    if (CPUPack.Registers.A.W != 0xffff)
-	CPUPack.CPU.PC -= 3;
+    Registers.XL++;
+    Registers.YL++;
+    Registers.A.W--;
+    if (Registers.A.W != 0xffff)
+	CPU.PC -= 3;
 }
 
 static void Op54X0 (void)
@@ -3702,21 +3702,21 @@ static void Op54X0 (void)
     uint32 SrcBank;
 
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2 + TWO_CYCLES;
+    CPU.Cycles += CPU.MemSpeedx2 + TWO_CYCLES;
 #endif
     
-    CPUPack.Registers.DB = *CPUPack.CPU.PC++;
-    CPUPack.ICPU.ShiftedDB = CPUPack.Registers.DB << 16;
-    SrcBank = *CPUPack.CPU.PC++;
+    Registers.DB = *CPU.PC++;
+    ICPU.ShiftedDB = Registers.DB << 16;
+    SrcBank = *CPU.PC++;
 
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + CPUPack.Registers.X.W), 
-	     CPUPack.ICPU.ShiftedDB + CPUPack.Registers.Y.W);
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + Registers.X.W), 
+	     ICPU.ShiftedDB + Registers.Y.W);
 
-    CPUPack.Registers.X.W++;
-    CPUPack.Registers.Y.W++;
-    CPUPack.Registers.A.W--;
-    if (CPUPack.Registers.A.W != 0xffff)
-	CPUPack.CPU.PC -= 3;
+    Registers.X.W++;
+    Registers.Y.W++;
+    Registers.A.W--;
+    if (Registers.A.W != 0xffff)
+	CPU.PC -= 3;
 }
 
 static void Op44X1 (void)
@@ -3724,19 +3724,19 @@ static void Op44X1 (void)
     uint32 SrcBank;
 
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2 + TWO_CYCLES;
+    CPU.Cycles += CPU.MemSpeedx2 + TWO_CYCLES;
 #endif    
-    CPUPack.Registers.DB = *CPUPack.CPU.PC++;
-    CPUPack.ICPU.ShiftedDB = CPUPack.Registers.DB << 16;
-    SrcBank = *CPUPack.CPU.PC++;
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + CPUPack.Registers.X.W), 
-	     CPUPack.ICPU.ShiftedDB + CPUPack.Registers.Y.W);
+    Registers.DB = *CPU.PC++;
+    ICPU.ShiftedDB = Registers.DB << 16;
+    SrcBank = *CPU.PC++;
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + Registers.X.W), 
+	     ICPU.ShiftedDB + Registers.Y.W);
 
-    CPUPack.Registers.XL--;
-    CPUPack.Registers.YL--;
-    CPUPack.Registers.A.W--;
-    if (CPUPack.Registers.A.W != 0xffff)
-	CPUPack.CPU.PC -= 3;
+    Registers.XL--;
+    Registers.YL--;
+    Registers.A.W--;
+    if (Registers.A.W != 0xffff)
+	CPU.PC -= 3;
 }
 
 static void Op44X0 (void)
@@ -3744,19 +3744,19 @@ static void Op44X0 (void)
     uint32 SrcBank;
 
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeedx2 + TWO_CYCLES;
+    CPU.Cycles += CPU.MemSpeedx2 + TWO_CYCLES;
 #endif    
-    CPUPack.Registers.DB = *CPUPack.CPU.PC++;
-    CPUPack.ICPU.ShiftedDB = CPUPack.Registers.DB << 16;
-    SrcBank = *CPUPack.CPU.PC++;
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + CPUPack.Registers.X.W), 
-	     CPUPack.ICPU.ShiftedDB + CPUPack.Registers.Y.W);
+    Registers.DB = *CPU.PC++;
+    ICPU.ShiftedDB = Registers.DB << 16;
+    SrcBank = *CPU.PC++;
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + Registers.X.W), 
+	     ICPU.ShiftedDB + Registers.Y.W);
 
-    CPUPack.Registers.X.W--;
-    CPUPack.Registers.Y.W--;
-    CPUPack.Registers.A.W--;
-    if (CPUPack.Registers.A.W != 0xffff)
-	CPUPack.CPU.PC -= 3;
+    Registers.X.W--;
+    Registers.Y.W--;
+    Registers.A.W--;
+    if (Registers.A.W != 0xffff)
+	CPU.PC -= 3;
 }
 
 /**********************************************************************************************/
@@ -3764,15 +3764,15 @@ static void Op44X0 (void)
 /* REP/SEP *********************************************************************************** */
 static void OpC2 (void)
 {
-    uint8 Work8 = ~*CPUPack.CPU.PC++;
-    CPUPack.Registers.PL &= Work8;
-    CPUPack.ICPU._Carry &= Work8;
-    CPUPack.ICPU._Overflow &= (Work8 >> 6);
-    CPUPack.ICPU._Negative &= Work8;
-    CPUPack.ICPU._Zero |= ~Work8 & Zero;
+    uint8 Work8 = ~*CPU.PC++;
+    Registers.PL &= Work8;
+    ICPU._Carry &= Work8;
+    ICPU._Overflow &= (Work8 >> 6);
+    ICPU._Negative &= Work8;
+    ICPU._Zero |= ~Work8 & Zero;
 
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed + ONE_CYCLE;
+    CPU.Cycles += CPU.MemSpeed + ONE_CYCLE;
 #endif
     if (CheckEmulation())
     {
@@ -3783,8 +3783,8 @@ static void OpC2 (void)
     }
     if (CheckIndex ())
     {
-	CPUPack.Registers.XH = 0;
-	CPUPack.Registers.YH = 0;
+	Registers.XH = 0;
+	Registers.YH = 0;
     }
     S9xFixCycles();
 /*    CHECK_FOR_IRQ(); */
@@ -3792,15 +3792,15 @@ static void OpC2 (void)
 
 static void OpE2 (void)
 {
-    uint8 Work8 = *CPUPack.CPU.PC++;
-    CPUPack.Registers.PL |= Work8;
-    CPUPack.ICPU._Carry |= Work8 & 1;
-    CPUPack.ICPU._Overflow |= (Work8 >> 6) & 1;
-    CPUPack.ICPU._Negative |= Work8;
+    uint8 Work8 = *CPU.PC++;
+    Registers.PL |= Work8;
+    ICPU._Carry |= Work8 & 1;
+    ICPU._Overflow |= (Work8 >> 6) & 1;
+    ICPU._Negative |= Work8;
     if (Work8 & Zero)
-	CPUPack.ICPU._Zero = 0;
+	ICPU._Zero = 0;
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed + ONE_CYCLE;
+    CPU.Cycles += CPU.MemSpeed + ONE_CYCLE;
 #endif
     if (CheckEmulation())
     {
@@ -3811,8 +3811,8 @@ static void OpE2 (void)
     }
     if (CheckIndex ())
     {
-	CPUPack.Registers.XH = 0;
-	CPUPack.Registers.YH = 0;
+	Registers.XH = 0;
+	Registers.YH = 0;
     }
     S9xFixCycles();
 }
@@ -3821,13 +3821,13 @@ static void OpE2 (void)
 /* XBA *************************************************************************************** */
 static void OpEB (void)
 {
-    uint8 Work8 = CPUPack.Registers.AL;
-    CPUPack.Registers.AL = CPUPack.Registers.AH;
-    CPUPack.Registers.AH = Work8;
+    uint8 Work8 = Registers.AL;
+    Registers.AL = Registers.AH;
+    Registers.AH = Work8;
 
-    SetZN8 (CPUPack.Registers.AL);
+    SetZN8 (Registers.AL);
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
 }
 /**********************************************************************************************/
@@ -3835,13 +3835,13 @@ static void OpEB (void)
 /* RTI *************************************************************************************** */
 static void Op40 (void)
 {
-    PullB (CPUPack.Registers.PL);
+    PullB (Registers.PL);
     S9xUnpackStatus ();
-    PullW (CPUPack.Registers.PC);
+    PullW (Registers.PCw);
     if (!CheckEmulation())
     {
-	PullB (CPUPack.Registers.PB);
-	CPUPack.ICPU.ShiftedPB = CPUPack.Registers.PB << 16;
+	PullB (Registers.PB);
+	ICPU.ShiftedPB = Registers.PB << 16;
     }
     else
     {
@@ -3850,15 +3850,15 @@ static void Op40 (void)
 	missing.emulate6502 = 1;
 #endif
     }
-    S9xSetPCBase (CPUPack.ICPU.ShiftedPB + CPUPack.Registers.PC);
+    S9xSetPCBase (ICPU.ShiftedPB + Registers.PCw);
     
     if (CheckIndex ())
     {
-	CPUPack.Registers.XH = 0;
-	CPUPack.Registers.YH = 0;
+	Registers.XH = 0;
+	Registers.YH = 0;
     }
 #ifdef VAR_CYCLES
-    CPUPack.CPU.Cycles += TWO_CYCLES;
+    CPU.Cycles += TWO_CYCLES;
 #endif
     S9xFixCycles();
 /*    CHECK_FOR_IRQ(); */
@@ -3870,38 +3870,38 @@ static void Op40 (void)
 // WAI
 static void OpCB (void)
 {
-    if (CPUPack.CPU.IRQActive)
+    if (CPU.IRQActive)
     {
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += TWO_CYCLES;
+	CPU.Cycles += TWO_CYCLES;
 #else
 #ifndef SA1_OPCODES
-	CPUPack.CPU.Cycles += 2;
+	CPU.Cycles += 2;
 #endif
 #endif
     }
     else
     {
-	CPUPack.CPU.WaitingForInterrupt = TRUE;
-	CPUPack.CPU.PC--;
+	CPU.WaitingForInterrupt = TRUE;
+	CPU.PC--;
 #ifdef CPU_SHUTDOWN
 #ifndef SA1_OPCODES
 	if (Settings.Shutdown)
 	{
 				
 		if ((IAPU_APUExecuting)) {
-		  	if (CPUPack.CPU.Cycles>CPUPack.CPU.NextEvent) {
-		  		cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;
-		  		old_cpu_cycles=CPUPack.CPU.NextEvent;
+		  	if (CPU.Cycles>CPU.NextEvent) {
+		  		cpu_glob_cycles += CPU.Cycles-old_cpu_cycles;
+		  		old_cpu_cycles=CPU.NextEvent;
 		  	}
 		  }
-	  CPUPack.CPU.Cycles = CPUPack.CPU.NextEvent;
+	  CPU.Cycles = CPU.NextEvent;
 	   
 	  if ((IAPU_APUExecuting)) {
-			CPUPack.ICPU.CPUExecuting = FALSE;
-////			if (CPUPack.CPU.Cycles-old_cpu_cycles<0) msgBoxLines("5",60);
-//			/*else */cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;
-//			old_cpu_cycles=CPUPack.CPU.Cycles;
+			ICPU.CPUExecuting = FALSE;
+////			if (CPU.Cycles-old_cpu_cycles<0) msgBoxLines("5",60);
+//			/*else */cpu_glob_cycles += CPU.Cycles-old_cpu_cycles;
+//			old_cpu_cycles=CPU.Cycles;
 //			apu_glob_cycles=cpu_glob_cycles;
 //			
 //			if (cpu_glob_cycles>=0x00700000) {		
@@ -3911,16 +3911,16 @@ static void OpCB (void)
 			UPDATE_APU_COUNTER();
 			/*do {
 		  	  APU_EXECUTE1 ();		   
-			} while ((Uncache_APU_Cycles) < CPUPack.CPU.NextEvent);		*/
+			} while ((Uncache_APU_Cycles) < CPU.NextEvent);		*/
 		
-			CPUPack.ICPU.CPUExecuting = TRUE;
+			ICPU.CPUExecuting = TRUE;
 	   }
 	}
 #else
 	if (Settings.Shutdown)
 	{
-	    SA1Pack_SA1.CPUExecuting = FALSE;
-	    SA1Pack_SA1.Executing = FALSE;
+	    SA1.CPUExecuting = FALSE;
+	    SA1.Executing = FALSE;
 	}
 #endif
 #endif
@@ -3930,8 +3930,8 @@ static void OpCB (void)
 // STP
 static void OpDB (void)
 {
-    CPUPack.CPU.PC--;
-    CPUPack.CPU.Flags |= DEBUG_MODE_FLAG;
+    CPU.PC--;
+    CPU.Flags |= DEBUG_MODE_FLAG;
 }
 
 // Reserved S9xOpcode
@@ -3939,25 +3939,25 @@ static void Op42 (void) {
 #ifndef SA1_OPCODES	
 	uint8 b;
 		
-	CPUPack.CPU.WaitAddress = NULL;
+	CPU.WaitAddress = NULL;
 	if (Settings.SA1)	S9xSA1ExecuteDuringSleep ();
 		
 		if ((IAPU_APUExecuting)) {
-		  	if (CPUPack.CPU.Cycles>CPUPack.CPU.NextEvent) {
-		  		cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;
-		  		old_cpu_cycles=CPUPack.CPU.NextEvent;
+		  	if (CPU.Cycles>CPU.NextEvent) {
+		  		cpu_glob_cycles += CPU.Cycles-old_cpu_cycles;
+		  		old_cpu_cycles=CPU.NextEvent;
 		  	}
 		  }
 	
-		CPUPack.CPU.Cycles = CPUPack.CPU.NextEvent;
+		CPU.Cycles = CPU.NextEvent;
 			
 /*	S9xUpdateAPUTimer();*/
 
 	if ((IAPU_APUExecuting)) {
-		CPUPack.ICPU.CPUExecuting = FALSE;
-////		if (CPUPack.CPU.Cycles-old_cpu_cycles<0) msgBoxLines("3",60);
-//		/*else */cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;
-//		old_cpu_cycles=CPUPack.CPU.Cycles;
+		ICPU.CPUExecuting = FALSE;
+////		if (CPU.Cycles-old_cpu_cycles<0) msgBoxLines("3",60);
+//		/*else */cpu_glob_cycles += CPU.Cycles-old_cpu_cycles;
+//		old_cpu_cycles=CPU.Cycles;
 //		apu_glob_cycles=cpu_glob_cycles;
 //		
 //		if (cpu_glob_cycles>=0x00700000) {		
@@ -3967,31 +3967,31 @@ static void Op42 (void) {
 		UPDATE_APU_COUNTER();
 		/*do	{
 		  	APU_EXECUTE1();		  	
-		} while ((Uncache_APU_Cycles) < CPUPack.CPU.NextEvent);		*/
+		} while ((Uncache_APU_Cycles) < CPU.NextEvent);		*/
 		
-		CPUPack.ICPU.CPUExecuting = TRUE;
+		ICPU.CPUExecuting = TRUE;
 	}
 	
 	//debug_log("toto");
-	b=*CPUPack.CPU.PC++;
+	b=*CPU.PC++;
 	
 	//relative
 	signed char s9xInt8=0xF0|(b&0xF);
 	#ifdef VAR_CYCLES
-  CPUPack.CPU.Cycles += CPUPack.CPU.MemSpeed;
+  CPU.Cycles += CPU.MemSpeed;
 	#endif    
-  long OpAddress = ((int) (CPUPack.CPU.PC - CPUPack.CPU.PCBase) + s9xInt8) & 0xffff;
+  long OpAddress = ((int) (CPU.PC - CPU.PCBase) + s9xInt8) & 0xffff;
 		
 	switch (b&0xF0) {		
     case 0x10: //BPL
     	BranchCheck1 ();
     	if (!CheckNegative ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();
@@ -4000,12 +4000,12 @@ static void Op42 (void) {
     case 0x30: //BMI
     	BranchCheck1 ();
     	if (CheckNegative ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();
@@ -4014,12 +4014,12 @@ static void Op42 (void) {
     case 0x50: //BVC
     	BranchCheck0 ();
     	if (!CheckOverflow ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();
@@ -4028,12 +4028,12 @@ static void Op42 (void) {
     case 0x70: //BVS
       BranchCheck0 ();
     	if (CheckOverflow ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();
@@ -4041,12 +4041,12 @@ static void Op42 (void) {
     	return;
     case 0x80: //BRA			
     	//op80
-    	CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+    	CPU.PC = CPU.PCBase + OpAddress;
 			#ifdef VAR_CYCLES
-    		CPUPack.CPU.Cycles += ONE_CYCLE;
+    		CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-    		CPUPack.CPU.Cycles++;
+    		CPU.Cycles++;
 				#endif
 			#endif
     	CPUShutdown ();
@@ -4054,12 +4054,12 @@ static void Op42 (void) {
     case 0x90: //BCC
       BranchCheck0 ();
 	    if (!CheckCarry ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();
@@ -4068,12 +4068,12 @@ static void Op42 (void) {
     case 0xB0: //BCS
       BranchCheck0 ();
 		  if (CheckCarry ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();
@@ -4082,12 +4082,12 @@ static void Op42 (void) {
     case 0xD0: //BNE
       BranchCheck1 ();
     	if (!CheckZero ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();
@@ -4096,12 +4096,12 @@ static void Op42 (void) {
     case 0xF0: //BEQ
     	BranchCheck2 ();
     	if (CheckZero ()) {
-				CPUPack.CPU.PC = CPUPack.CPU.PCBase + OpAddress;
+				CPU.PC = CPU.PCBase + OpAddress;
 				#ifdef VAR_CYCLES
-				CPUPack.CPU.Cycles += ONE_CYCLE;
+				CPU.Cycles += ONE_CYCLE;
 				#else
 				#ifndef SA1_OPCODES
-				CPUPack.CPU.Cycles++;
+				CPU.Cycles++;
 				#endif
 				#endif
 				CPUShutdown ();

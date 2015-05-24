@@ -90,10 +90,10 @@ void S9xDoDMA (uint8 Channel)
 {
     uint8 Work;
 	
-    if (Channel > 7 || CPUPack.CPU.InDMA)
+    if (Channel > 7 || CPU.InDMA)
 		return;
 	
-    CPUPack.CPU.InDMA = TRUE;
+    CPU.InDMA = TRUE;
     bool8 in_sa1_dma = FALSE;
     uint8 *in_sdd1_dma = NULL;
 	uint8 *spc7110_dma=NULL;
@@ -113,7 +113,7 @@ void S9xDoDMA (uint8 Channel)
 		//does an invalid DMA actually take time?
 		// I'd say yes, since 'invalid' is probably just the WRAM chip
 		// not being able to read and write itself at the same time
-		CPUPack.CPU.Cycles+=(d->TransferBytes+1)*SLOW_ONE_CYCLE;
+		CPU.Cycles+=(d->TransferBytes+1)*SLOW_ONE_CYCLE;
 //		S9xUpdateAPUTimer();
 		goto update_address;
 	}
@@ -300,7 +300,7 @@ void S9xDoDMA (uint8 Channel)
 		inc=1;
 		d->AAddress-=count;
 	}*/
-    if (d->BAddress == 0x18 && SA1Pack_SA1.in_char_dma && (d->ABank & 0xf0) == 0x40)
+    if (d->BAddress == 0x18 && SA1.in_char_dma && (d->ABank & 0xf0) == 0x40)
     {
 		// Perform packed bitmap to PPU character format conversion on the
 		// data before transmitting it to V-RAM via-DMA.
@@ -425,7 +425,7 @@ void S9xDoDMA (uint8 Channel)
 			d->BAddress, d->TransferBytes,
 			d->AAddressFixed ? "fixed" :
 		(d->AAddressDecrement ? "dec" : "inc"),
-			CPUPack.CPU.V_Counter);
+			CPU.V_Counter);
 		if (d->BAddress == 0x18 || d->BAddress == 0x19 || d->BAddress == 0x39 || d->BAddress == 0x3a)
 			sprintf (String, "%s VRAM: %04X (%d,%d) %s", String,
 				PPUPack.PPU.VMA.Address,
@@ -459,7 +459,7 @@ void S9xDoDMA (uint8 Channel)
 		 */
 
 		//reflects extra cycle used by DMA
-		CPUPack.CPU.Cycles += SLOW_ONE_CYCLE * (count+1);
+		CPU.Cycles += SLOW_ONE_CYCLE * (count+1);
 //		S9xUpdateAPUTimer();
 
 		uint8 *base = GetBasePointer ((d->ABank << 16) + d->AAddress);
@@ -877,9 +877,9 @@ void S9xDoDMA (uint8 Channel)
 
     (IAPU_APUExecuting) = Settings.APUEnabled;    
     if (Settings.APUEnabled) {
-   // 	if (CPUPack.CPU.Cycles-old_cpu_cycles<0) msgBoxLines("2",60);
-			//else cpu_glob_cycles += CPUPack.CPU.Cycles-old_cpu_cycles;
-			//old_cpu_cycles=CPUPack.CPU.Cycles;
+   // 	if (CPU.Cycles-old_cpu_cycles<0) msgBoxLines("2",60);
+			//else cpu_glob_cycles += CPU.Cycles-old_cpu_cycles;
+			//old_cpu_cycles=CPU.Cycles;
 			//apu_glob_cycles=cpu_glob_cycles;
 			//
 			//if (cpu_glob_cycles>=0x00700000) {
@@ -889,7 +889,7 @@ void S9xDoDMA (uint8 Channel)
     }
     //APU_EXECUTE ();
 #endif
-    while (CPUPack.CPU.Cycles > CPUPack.CPU.NextEvent) S9xDoHBlankProcessing ();
+    while (CPU.Cycles > CPU.NextEvent) S9xDoHBlankProcessing ();
 //	S9xUpdateAPUTimer();
 
 	if(Settings.SPC7110&&spc7110_dma)
@@ -917,7 +917,7 @@ update_address:
     DMA[Channel].IndirectAddress = 0;
     d->TransferBytes = 0;
     
-    CPUPack.CPU.InDMA = FALSE;
+    CPU.InDMA = FALSE;
 
 
 }
@@ -929,7 +929,7 @@ void S9xStartHDMA () {
 	
 	//per anomie timing post
 	if(IPPU.HDMA!=0) {
-		CPUPack.CPU.Cycles+=ONE_CYCLE*3;
+		CPU.Cycles+=ONE_CYCLE*3;
 //		S9xUpdateAPUTimer();
 	}
     
@@ -937,13 +937,13 @@ void S9xStartHDMA () {
 
 	for (uint8 i = 0; i < 8; i++) {
 		if (IPPU.HDMA & (1 << i)) {
-			CPUPack.CPU.Cycles+=SLOW_ONE_CYCLE ;
+			CPU.Cycles+=SLOW_ONE_CYCLE ;
 //			S9xUpdateAPUTimer();
 			DMA [i].LineCount = 0;
 			DMA [i].FirstLine = TRUE;
 			DMA [i].Address = DMA [i].AAddress;
 			if(DMA[i].HDMAIndirectAddressing) {
-				CPUPack.CPU.Cycles+=(SLOW_ONE_CYCLE <<2);
+				CPU.Cycles+=(SLOW_ONE_CYCLE <<2);
 //				S9xUpdateAPUTimer();
 			}
 		}
@@ -964,15 +964,15 @@ uint8 S9xDoHDMA (uint8 byte) {
 	struct SDMA *p = &DMA [0];    
 	int d = 0;
 
-	CPUPack.CPU.InDMA = TRUE;
-	CPUPack.CPU.Cycles+=ONE_CYCLE*3;
+	CPU.InDMA = TRUE;
+	CPU.Cycles+=ONE_CYCLE*3;
 //	S9xUpdateAPUTimer();
   for (uint8 mask = 1; mask; mask <<= 1, p++, d++) {
 		if (byte & mask) {
 			if (!p->LineCount) {
 				//remember, InDMA is set.
 				//Get/Set incur no charges!
-				CPUPack.CPU.Cycles+=SLOW_ONE_CYCLE;
+				CPU.Cycles+=SLOW_ONE_CYCLE;
 //				S9xUpdateAPUTimer();
 				uint8 line = S9xGetByte ((p->ABank << 16) + p->Address);
 				if (line == 0x80) {
@@ -1004,7 +1004,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 				if (p->HDMAIndirectAddressing) {
 					p->IndirectBank = ROM_GLOBAL [0x4307 + (d << 4)];
 					//again, no cycle charges while InDMA is set!
-					CPUPack.CPU.Cycles+=SLOW_ONE_CYCLE<<2;
+					CPU.Cycles+=SLOW_ONE_CYCLE<<2;
 //					S9xUpdateAPUTimer();
 					p->IndirectAddress = S9xGetWord ((p->ABank << 16) + p->Address);
 					p->Address += 2;
@@ -1017,7 +1017,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 				HDMARawPointers [d] = (p->IndirectBank << 16) + p->IndirectAddress;
 #endif
 			} else {
-				CPUPack.CPU.Cycles += SLOW_ONE_CYCLE;
+				CPU.Cycles += SLOW_ONE_CYCLE;
 //				S9xUpdateAPUTimer();
 			}
 			if (!HDMAMemPointers [d]) {
@@ -1053,7 +1053,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 			}
 			switch (p->TransferMode) {
 				case 0:
-					CPUPack.CPU.Cycles += SLOW_ONE_CYCLE;
+					CPU.Cycles += SLOW_ONE_CYCLE;
 //					S9xUpdateAPUTimer();
 #ifdef SETA010_HDMA_FROM_CART
 					S9xSetPPU (S9xGetByte (HDMARawPointers [d]++), 0x2100 + p->BAddress);
@@ -1063,7 +1063,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 #endif
 					break;
 				case 5:
-					CPUPack.CPU.Cycles += 2*SLOW_ONE_CYCLE;
+					CPU.Cycles += 2*SLOW_ONE_CYCLE;
 //					S9xUpdateAPUTimer();
 #ifdef SETA010_HDMA_FROM_CART
 					S9xSetPPU (S9xGetByte (HDMARawPointers [d]), 0x2100 + p->BAddress);
@@ -1076,7 +1076,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 					HDMAMemPointers [d] += 2;
 					/* fall through */
 				case 1:
-					CPUPack.CPU.Cycles += 2*SLOW_ONE_CYCLE;
+					CPU.Cycles += 2*SLOW_ONE_CYCLE;
 //					S9xUpdateAPUTimer();
 #ifdef SETA010_HDMA_FROM_CART
 					S9xSetPPU (S9xGetByte (HDMARawPointers [d]), 0x2100 + p->BAddress);
@@ -1090,7 +1090,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 					break;
 				case 2:
 				case 6:
-					CPUPack.CPU.Cycles += 2*SLOW_ONE_CYCLE;
+					CPU.Cycles += 2*SLOW_ONE_CYCLE;
 //					S9xUpdateAPUTimer();
 #ifdef SETA010_HDMA_FROM_CART
 					S9xSetPPU (S9xGetByte (HDMARawPointers [d]), 0x2100 + p->BAddress);
@@ -1104,7 +1104,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 					break;
 				case 3:
 				case 7:
-					CPUPack.CPU.Cycles += 4*SLOW_ONE_CYCLE;
+					CPU.Cycles += 4*SLOW_ONE_CYCLE;
 //					S9xUpdateAPUTimer();
 #ifdef SETA010_HDMA_FROM_CART
 					S9xSetPPU (S9xGetByte (HDMARawPointers [d]), 0x2100 + p->BAddress);
@@ -1121,7 +1121,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 					HDMAMemPointers [d] += 4;
 					break;
 				case 4:
-					CPUPack.CPU.Cycles += 4*SLOW_ONE_CYCLE;
+					CPU.Cycles += 4*SLOW_ONE_CYCLE;
 //					S9xUpdateAPUTimer();
 #ifdef SETA010_HDMA_FROM_CART
 					S9xSetPPU (S9xGetByte (HDMARawPointers [d]), 0x2100 + p->BAddress);
@@ -1147,7 +1147,7 @@ uint8 S9xDoHDMA (uint8 byte) {
 			p->LineCount--;
 		}
 	}
-	CPUPack.CPU.InDMA=FALSE;
+	CPU.InDMA=FALSE;
 	return (byte);
 }
 

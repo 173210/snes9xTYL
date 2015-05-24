@@ -315,16 +315,4 @@ typedef union
     uint16 W;
 } OrigPair;
 
-struct SOrigRegisters{
-    uint8       PB;
-    uint8       DB;
-    OrigPair   P;
-    OrigPair   A;
-    OrigPair   D;
-    OrigPair   S;
-    OrigPair   X;
-    OrigPair   Y;
-    uint16       PC;
-};
-
 #endif

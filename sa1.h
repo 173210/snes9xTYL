@@ -43,6 +43,7 @@
 
 #include "memmap.h"
 
+/*
 struct SSA1Registers {
     uint8   PB;
     uint8   DB;
@@ -56,6 +57,18 @@ struct SSA1Registers {
 
     pair    Y;
     uint16  PC;
+};
+*/
+struct SSA1Registers
+{
+	uint8	DB;
+	pair	P;
+	pair	A;
+	pair	D;
+	pair	S;
+	pair	X;
+	pair	Y;
+	PC_t	PC;
 };
 
 struct SSA1 {
@@ -97,34 +110,24 @@ struct SSA1 {
     uint8   *WriteMap [MEMMAP_NUM_BLOCKS];
 };
 
-#define SA1CheckZero() (SA1Pack_SA1._Zero == 0)
-#define SA1CheckCarry() (SA1Pack_SA1._Carry)
-#define SA1CheckIRQ() (SA1Pack_SA1Registers.PL & IRQ)
-#define SA1CheckDecimal() (SA1Pack_SA1Registers.PL & Decimal)
-#define SA1CheckIndex() (SA1Pack_SA1Registers.PL & IndexFlag)
-#define SA1CheckMemory() (SA1Pack_SA1Registers.PL & MemoryFlag)
-#define SA1CheckOverflow() (SA1Pack_SA1._Overflow)
-#define SA1CheckNegative() (SA1Pack_SA1._Negative & 0x80)
-#define SA1CheckEmulation() (SA1Pack_SA1Registers.P.W & Emulation)
+#define SA1CheckZero() (SA1._Zero == 0)
+#define SA1CheckCarry() (SA1._Carry)
+#define SA1CheckIRQ() (SA1Registers.PL & IRQ)
+#define SA1CheckDecimal() (SA1Registers.PL & Decimal)
+#define SA1CheckIndex() (SA1Registers.PL & IndexFlag)
+#define SA1CheckMemory() (SA1Registers.PL & MemoryFlag)
+#define SA1CheckOverflow() (SA1._Overflow)
+#define SA1CheckNegative() (SA1._Negative & 0x80)
+#define SA1CheckEmulation() (SA1Registers.P.W & Emulation)
 
-#define SA1ClearFlags(f) (SA1Pack_SA1Registers.P.W &= ~(f))
-#define SA1SetFlags(f)   (SA1Pack_SA1Registers.P.W |=  (f))
-#define SA1CheckFlag(f)  (SA1Pack_SA1Registers.PL & (f))
+#define SA1ClearFlags(f) (SA1Registers.P.W &= ~(f))
+#define SA1SetFlags(f)   (SA1Registers.P.W |=  (f))
+#define SA1CheckFlag(f)  (SA1Registers.PL & (f))
 
-struct SSA1PACK {
-	struct SSA1Registers SA1Registers;	// 16bytes
-	struct SSA1 SA1;					// 32858bytes
-};
 
 START_EXTERN_C
-extern struct SSA1PACK SA1Pack;
-
-#define SA1Pack_SA1 SA1Pack.SA1
-#define SA1Pack_SA1Registers SA1Pack.SA1Registers
-
-//extern struct SSA1PACK* Uncache_SA1Pack_p;
-//#define SA1Pack_SA1 (*Uncache_SA1Pack_p).SA1
-//#define SA1Pack_SA1Registers (*Uncache_SA1Pack_p).SA1Registers
+extern struct SSA1Registers	SA1Registers;
+extern struct SSA1			SA1;
 
 uint8 S9xSA1GetByte (uint32);
 uint16 S9xSA1GetWord (uint32);
@@ -152,37 +155,37 @@ void S9xSA1ExecuteDuringSleep ();
 
 STATIC inline void S9xSA1UnpackStatus()
 {
-    SA1Pack_SA1._Zero = (SA1Pack_SA1Registers.PL & Zero) == 0;
-    SA1Pack_SA1._Negative = (SA1Pack_SA1Registers.PL & Negative);
-    SA1Pack_SA1._Carry = (SA1Pack_SA1Registers.PL & Carry);
-    SA1Pack_SA1._Overflow = (SA1Pack_SA1Registers.PL & Overflow) >> 6;
+    SA1._Zero = (SA1Registers.PL & Zero) == 0;
+    SA1._Negative = (SA1Registers.PL & Negative);
+    SA1._Carry = (SA1Registers.PL & Carry);
+    SA1._Overflow = (SA1Registers.PL & Overflow) >> 6;
 }
 
 STATIC inline void S9xSA1PackStatus()
 {
-    SA1Pack_SA1Registers.PL &= ~(Zero | Negative | Carry | Overflow);
-    SA1Pack_SA1Registers.PL |= SA1Pack_SA1._Carry | ((SA1Pack_SA1._Zero == 0) << 1) |
-		       (SA1Pack_SA1._Negative & 0x80) | (SA1Pack_SA1._Overflow << 6);
+    SA1Registers.PL &= ~(Zero | Negative | Carry | Overflow);
+    SA1Registers.PL |= SA1._Carry | ((SA1._Zero == 0) << 1) |
+		       (SA1._Negative & 0x80) | (SA1._Overflow << 6);
 }
 
 STATIC inline void S9xSA1FixCycles ()
 {
     if (SA1CheckEmulation ())
-	SA1Pack_SA1.S9xOpcodes = S9xSA1OpcodesM1X1;
+	SA1.S9xOpcodes = S9xSA1OpcodesM1X1;
     else
     if (SA1CheckMemory ())
     {
 	if (SA1CheckIndex ())
-	    SA1Pack_SA1.S9xOpcodes = S9xSA1OpcodesM1X1;
+	    SA1.S9xOpcodes = S9xSA1OpcodesM1X1;
 	else
-	    SA1Pack_SA1.S9xOpcodes = S9xSA1OpcodesM1X0;
+	    SA1.S9xOpcodes = S9xSA1OpcodesM1X0;
     }
     else
     {
 	if (SA1CheckIndex ())
-	    SA1Pack_SA1.S9xOpcodes = S9xSA1OpcodesM0X1;
+	    SA1.S9xOpcodes = S9xSA1OpcodesM0X1;
 	else
-	    SA1Pack_SA1.S9xOpcodes = S9xSA1OpcodesM0X0;
+	    SA1.S9xOpcodes = S9xSA1OpcodesM0X0;
     }
 }
 #endif

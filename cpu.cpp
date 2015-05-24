@@ -72,58 +72,58 @@ void S9xResetSuperFX ()
 
 void S9xResetCPU ()
 {		
-    CPUPack.Registers.PB = 0;
-    CPUPack.Registers.PC = S9xGetWord (0xFFFC);
-    CPUPack.Registers.D.W = 0;
-    CPUPack.Registers.DB = 0;
-    CPUPack.Registers.SH = 1;
-    CPUPack.Registers.SL = 0xFF;
-    CPUPack.Registers.XH = 0;
-    CPUPack.Registers.YH = 0;
-    CPUPack.Registers.P.W = 0;
+    Registers.PB = 0;
+    Registers.PCw = S9xGetWord (0xFFFC);
+    Registers.D.W = 0;
+    Registers.DB = 0;
+    Registers.SH = 1;
+    Registers.SL = 0xFF;
+    Registers.XH = 0;
+    Registers.YH = 0;
+    Registers.P.W = 0;
 
-    CPUPack.ICPU.ShiftedPB = 0;
-    CPUPack.ICPU.ShiftedDB = 0;
+    ICPU.ShiftedPB = 0;
+    ICPU.ShiftedDB = 0;
     SetFlags (MemoryFlag | IndexFlag | IRQ | Emulation);
     ClearFlags (Decimal);
 
-    CPUPack.CPU.Flags = CPUPack.CPU.Flags & (DEBUG_MODE_FLAG | TRACE_FLAG);
-    CPUPack.CPU.BranchSkip = FALSE;
-    CPUPack.CPU.NMIActive = FALSE;
-    CPUPack.CPU.IRQActive = FALSE;
-    CPUPack.CPU.WaitingForInterrupt = FALSE;
-    CPUPack.CPU.InDMA = FALSE;
-    CPUPack.CPU.WhichEvent = HBLANK_START_EVENT;
+    CPU.Flags = CPU.Flags & (DEBUG_MODE_FLAG | TRACE_FLAG);
+    CPU.BranchSkip = FALSE;
+    CPU.NMIActive = FALSE;
+    CPU.IRQActive = FALSE;
+    CPU.WaitingForInterrupt = FALSE;
+    CPU.InDMA = FALSE;
+    CPU.WhichEvent = HBLANK_START_EVENT;
     S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HBLANK_START_EVENT;
     
-    CPUPack.CPU.PC = NULL;
-    CPUPack.CPU.PCBase = NULL;
-    CPUPack.CPU.PCAtOpcodeStart = NULL;
-    CPUPack.CPU.WaitAddress = NULL;
-    CPUPack.CPU.WaitCounter = 0;
-    CPUPack.CPU.Cycles = 0;
+    CPU.PC = NULL;
+    CPU.PCBase = NULL;
+    CPU.PCAtOpcodeStart = NULL;
+    CPU.WaitAddress = NULL;
+    CPU.WaitCounter = 0;
+    CPU.Cycles = 0;
     old_cpu_cycles=0;
     cpu_glob_cycles=0;
     
-    CPUPack.CPU.NextEvent = Settings.HBlankStart;
-    CPUPack.CPU.V_Counter = 0;
-    CPUPack.CPU.MemSpeed = SLOW_ONE_CYCLE;
-    CPUPack.CPU.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
-    CPUPack.CPU.FastROMSpeed = SLOW_ONE_CYCLE;
-    CPUPack.CPU.AutoSaveTimer = 0;
-    CPUPack.CPU.SRAMModified = FALSE;
-    // CPUPack.CPU.NMITriggerPoint = 4; // Set when ROM image loaded
-    CPUPack.CPU.BRKTriggered = FALSE;
-    //CPUPack.CPU.TriedInterleavedMode2 = FALSE; // Reset when ROM image loaded
-    CPUPack.CPU.NMICycleCount = 0;
-    CPUPack.CPU.IRQCycleCount = 0;
-    S9xSetPCBase (CPUPack.Registers.PC);
+    CPU.NextEvent = Settings.HBlankStart;
+    CPU.V_Counter = 0;
+    CPU.MemSpeed = SLOW_ONE_CYCLE;
+    CPU.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
+    CPU.FastROMSpeed = SLOW_ONE_CYCLE;
+    CPU.AutoSaveTimer = 0;
+    CPU.SRAMModified = FALSE;
+    // CPU.NMITriggerPoint = 4; // Set when ROM image loaded
+    CPU.BRKTriggered = FALSE;
+    //CPU.TriedInterleavedMode2 = FALSE; // Reset when ROM image loaded
+    CPU.NMICycleCount = 0;
+    CPU.IRQCycleCount = 0;
+    S9xSetPCBase (Registers.PBPC);
 
 #ifndef VAR_CYCLES
-    CPUPack.ICPU.Speed = S9xE1M1X1;
+    ICPU.Speed = S9xE1M1X1;
 #endif
-    CPUPack.ICPU.S9xOpcodes = S9xOpcodesM1X1;
-    CPUPack.ICPU.CPUExecuting = TRUE;
+    ICPU.S9xOpcodes = S9xOpcodesM1X1;
+    ICPU.CPUExecuting = TRUE;
 
     S9xUnpackStatus();
 }
@@ -178,13 +178,13 @@ void S9xReset (void)
     Settings.Paused = FALSE;
     
         //Init CPU Map & co
-    CPUPack.CPU.Memory_Map=(uint8*)Map;
-    CPUPack.CPU.Memory_WriteMap=(uint8*)Memory.WriteMap;
-    CPUPack.CPU.Memory_MemorySpeed=(uint8*)Memory.MemorySpeed;
-    CPUPack.CPU.Memory_BlockIsRAM=(uint8*)Memory.BlockIsRAM;
-//    CPUPack.CPU.Memory_SRAM=SRAM;
-    CPUPack.CPU.Memory_BWRAM=BWRAM;
-    CPUPack.CPU.Memory_SRAMMask=Memory.SRAMMask;
+    CPU.Memory_Map=(uint8*)Map;
+    CPU.Memory_WriteMap=(uint8*)Memory.WriteMap;
+    CPU.Memory_MemorySpeed=(uint8*)Memory.MemorySpeed;
+    CPU.Memory_BlockIsRAM=(uint8*)Memory.BlockIsRAM;
+//    CPU.Memory_SRAM=SRAM;
+    CPU.Memory_BWRAM=BWRAM;
+    CPU.Memory_SRAMMask=Memory.SRAMMask;
 	
 /*    __asm 
     {

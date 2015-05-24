@@ -410,7 +410,7 @@ void CMemory::FreeSDD1Data ()
 void CMemory::DeInterleavedRom(bool8 Tales)
 {
 	int i;
-	CPUPack.CPU.TriedInterleavedMode2 = TRUE;		  				
+	CPU.TriedInterleavedMode2 = TRUE;		  				
 	int nblocks = CalculatedSize >> 16;						
 	int blocks [256];
 
@@ -895,7 +895,7 @@ bool8 CMemory::LoadROM (const char *filename)
     SNESGameFixes.SRAMInitialValue = 0x60;
 
     memset (bytes0x2000, 0, 0x2000);
-    CPUPack.CPU.TriedInterleavedMode2 = FALSE;
+    CPU.TriedInterleavedMode2 = FALSE;
 
     CalculatedSize = 0;
 
@@ -1965,7 +1965,7 @@ void CMemory::FixROMSpeed ()
     for (c = 0x800; c < 0x1000; c++)
     {
 	if (BlockIsROM [c])
-	    MemorySpeed [c] = (uint8) CPUPack.CPU.FastROMSpeed;
+	    MemorySpeed [c] = (uint8) CPU.FastROMSpeed;
     }
 }
 
@@ -2509,22 +2509,22 @@ void CMemory::SA1ROMMap ()
     }
     WriteProtectROM ();
 
-    // Now copy the map and correct it for the SA1 CPUPack.CPU.
-    memmove ((void *) SA1Pack_SA1.WriteMap, (void *) WriteMap, sizeof (WriteMap));
-    memmove ((void *) SA1Pack_SA1.Map, (void *) Map, MEMMAP_NUM_BLOCKS*4);
+    // Now copy the map and correct it for the SA1 CPU.
+    memmove ((void *) SA1.WriteMap, (void *) WriteMap, sizeof (WriteMap));
+    memmove ((void *) SA1.Map, (void *) Map, MEMMAP_NUM_BLOCKS*4);
 
     // Banks 00->3f and 80->bf
     for (c = 0; c < 0x400; c += 16)
     {
-	SA1Pack_SA1.Map [c + 0] = SA1Pack_SA1.Map [c + 0x800] = &ROM_GLOBAL [0x3000];
-	SA1Pack_SA1.Map [c + 1] = SA1Pack_SA1.Map [c + 0x801] = (uint8 *) MAP_NONE;
-	SA1Pack_SA1.WriteMap [c + 0] = SA1Pack_SA1.WriteMap [c + 0x800] = &ROM_GLOBAL [0x3000];
-	SA1Pack_SA1.WriteMap [c + 1] = SA1Pack_SA1.WriteMap [c + 0x801] = (uint8 *) MAP_NONE;
+	SA1.Map [c + 0] = SA1.Map [c + 0x800] = &ROM_GLOBAL [0x3000];
+	SA1.Map [c + 1] = SA1.Map [c + 0x801] = (uint8 *) MAP_NONE;
+	SA1.WriteMap [c + 0] = SA1.WriteMap [c + 0x800] = &ROM_GLOBAL [0x3000];
+	SA1.WriteMap [c + 1] = SA1.WriteMap [c + 0x801] = (uint8 *) MAP_NONE;
     }
 
     // Banks 60->6f
     for (c = 0; c < 0x100; c++)
-	SA1Pack_SA1.Map [c + 0x600] = SA1Pack_SA1.WriteMap [c + 0x600] = (uint8 *) MAP_BWRAM_BITMAP;
+	SA1.Map [c + 0x600] = SA1.WriteMap [c + 0x600] = (uint8 *) MAP_BWRAM_BITMAP;
     
     BWRAM = SRAM;
 }
@@ -3048,9 +3048,9 @@ void CMemory::ApplyROMFixes ()
 
     Settings.StrikeGunnerOffsetHack = strcmp (ROMName, "STRIKE GUNNER") == 0 ? 7 : 0;
 
-    CPUPack.CPU.NMITriggerPoint = 4;
+    CPU.NMITriggerPoint = 4;
     if (strcmp (ROMName, "CACOMA KNIGHT") == 0)
-	CPUPack.CPU.NMITriggerPoint = 25;
+	CPU.NMITriggerPoint = 25;
 
     // These games complain if the multi-player adaptor is 'connected'
     if (strcmp (ROMName, "TETRIS&Dr.MARIO") == 0 || 
@@ -3203,7 +3203,7 @@ void CMemory::ApplyROMFixes ()
     if (strcmp (ROMName, "WILD TRAX") == 0 || 
 	strcmp (ROMName, "YOSSY'S ISLAND") == 0 || 
 	strcasecmp (ROMName, "YOSHI'S ISLAND") == 0)
-	CPUPack.CPU.TriedInterleavedMode2 = TRUE;
+	CPU.TriedInterleavedMode2 = TRUE;
 
     // Start Trek: Deep Sleep 9
     if (strncmp (ROMId, "A9D", 3) == 0 && Settings.CyclesPercentage == 100)
@@ -3227,151 +3227,151 @@ void CMemory::ApplyROMFixes ()
     Settings.DaffyDuck = strcmp (ROMName, "DAFFY DUCK: MARV MISS") == 0;
     Settings.HBlankStart = (256 * Settings.H_Max) / SNES_HCOUNTER_MAX;
 
-    SA1Pack_SA1.WaitAddress = NULL;
-    SA1Pack_SA1.WaitByteAddress1 = NULL;
-    SA1Pack_SA1.WaitByteAddress2 = NULL;
+    SA1.WaitAddress = NULL;
+    SA1.WaitByteAddress1 = NULL;
+    SA1.WaitByteAddress2 = NULL;
 
     /* Bass Fishing */
     if (strcmp (ROMId, "ZBPJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0093f1 >> MEMMAP_SHIFT] + 0x93f1;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x304a;
+	SA1.WaitAddress = SA1.Map [0x0093f1 >> MEMMAP_SHIFT] + 0x93f1;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x304a;
     }
     /* DAISENRYAKU EXPERTWW2 */
     if (strcmp (ROMId, "AEVJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0ed18d >> MEMMAP_SHIFT] + 0xd18d;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
+	SA1.WaitAddress = SA1.Map [0x0ed18d >> MEMMAP_SHIFT] + 0xd18d;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
     }
     /* debjk2 */
     if (strcmp (ROMId, "A2DJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x008b62 >> MEMMAP_SHIFT] + 0x8b62;
+	SA1.WaitAddress = SA1.Map [0x008b62 >> MEMMAP_SHIFT] + 0x8b62;
     }
     /* Dragon Ballz HD */
     if (strcmp (ROMId, "AZIJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x008083 >> MEMMAP_SHIFT] + 0x8083;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3020;
+	SA1.WaitAddress = SA1.Map [0x008083 >> MEMMAP_SHIFT] + 0x8083;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3020;
     }
     /* SFC SDGUNDAMGNEXT */
     if (strcmp (ROMId, "ZX3J") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0087f2 >> MEMMAP_SHIFT] + 0x87f2;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x30c4;
+	SA1.WaitAddress = SA1.Map [0x0087f2 >> MEMMAP_SHIFT] + 0x87f2;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x30c4;
     }
     /* ShougiNoHanamichi */
     if (strcmp (ROMId, "AARJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc1f85a >> MEMMAP_SHIFT] + 0xf85a;
-	SA1Pack_SA1.WaitByteAddress1 = SRAM + 0x0c64;
-	SA1Pack_SA1.WaitByteAddress2 = SRAM + 0x0c66;
+	SA1.WaitAddress = SA1.Map [0xc1f85a >> MEMMAP_SHIFT] + 0xf85a;
+	SA1.WaitByteAddress1 = SRAM + 0x0c64;
+	SA1.WaitByteAddress2 = SRAM + 0x0c66;
     }
     /* KATO HIFUMI9DAN SYOGI */
     if (strcmp (ROMId, "A23J") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc25037 >> MEMMAP_SHIFT] + 0x5037;
-	SA1Pack_SA1.WaitByteAddress1 = SRAM + 0x0c06;
-	SA1Pack_SA1.WaitByteAddress2 = SRAM + 0x0c08;
+	SA1.WaitAddress = SA1.Map [0xc25037 >> MEMMAP_SHIFT] + 0x5037;
+	SA1.WaitByteAddress1 = SRAM + 0x0c06;
+	SA1.WaitByteAddress2 = SRAM + 0x0c08;
     }
     /* idaten */
     if (strcmp (ROMId, "AIIJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc100be >> MEMMAP_SHIFT] + 0x00be;
-	SA1Pack_SA1.WaitByteAddress1 = SRAM + 0x1002;
-	SA1Pack_SA1.WaitByteAddress2 = SRAM + 0x1004;
+	SA1.WaitAddress = SA1.Map [0xc100be >> MEMMAP_SHIFT] + 0x00be;
+	SA1.WaitByteAddress1 = SRAM + 0x1002;
+	SA1.WaitByteAddress2 = SRAM + 0x1004;
     }
     /* igotais */
     if (strcmp (ROMId, "AITJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0080b7 >> MEMMAP_SHIFT] + 0x80b7;
+	SA1.WaitAddress = SA1.Map [0x0080b7 >> MEMMAP_SHIFT] + 0x80b7;
     }
     /* J96 DREAM STADIUM */
     if (strcmp (ROMId, "AJ6J") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc0f74a >> MEMMAP_SHIFT] + 0xf74a;
+	SA1.WaitAddress = SA1.Map [0xc0f74a >> MEMMAP_SHIFT] + 0xf74a;
     }
     /* JumpinDerby */
     if (strcmp (ROMId, "AJUJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00d926 >> MEMMAP_SHIFT] + 0xd926;
+	SA1.WaitAddress = SA1.Map [0x00d926 >> MEMMAP_SHIFT] + 0xd926;
     }
     /* JKAKINOKI SHOUGI */
     if (strcmp (ROMId, "AKAJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00f070 >> MEMMAP_SHIFT] + 0xf070;
+	SA1.WaitAddress = SA1.Map [0x00f070 >> MEMMAP_SHIFT] + 0xf070;
     }
     /* HOSHI NO KIRBY 3 & KIRBY'S DREAM LAND 3 JAP & US */
     if (strcmp (ROMId, "AFJJ") == 0 || strcmp (ROMId, "AFJE") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0082d4 >> MEMMAP_SHIFT] + 0x82d4;
-	SA1Pack_SA1.WaitByteAddress1 = SRAM + 0x72a4;
+	SA1.WaitAddress = SA1.Map [0x0082d4 >> MEMMAP_SHIFT] + 0x82d4;
+	SA1.WaitByteAddress1 = SRAM + 0x72a4;
     }
     /* KIRBY SUPER DELUXE JAP */
     if (strcmp (ROMId, "AKFJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x008c93 >> MEMMAP_SHIFT] + 0x8c93;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x300a;
-	SA1Pack_SA1.WaitByteAddress2 = ROM_GLOBAL + 0x300e;
+	SA1.WaitAddress = SA1.Map [0x008c93 >> MEMMAP_SHIFT] + 0x8c93;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x300a;
+	SA1.WaitByteAddress2 = ROM_GLOBAL + 0x300e;
     }
     /* KIRBY SUPER DELUXE US */
     if (strcmp (ROMId, "AKFE") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x008cb8 >> MEMMAP_SHIFT] + 0x8cb8;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x300a;
-	SA1Pack_SA1.WaitByteAddress2 = ROM_GLOBAL + 0x300e;
+	SA1.WaitAddress = SA1.Map [0x008cb8 >> MEMMAP_SHIFT] + 0x8cb8;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x300a;
+	SA1.WaitByteAddress2 = ROM_GLOBAL + 0x300e;
     }
     /* SUPER MARIO RPG JAP & US */
     if (strcmp (ROMId, "ARWJ") == 0 || strcmp (ROMId, "ARWE") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc0816f >> MEMMAP_SHIFT] + 0x816f;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
+	SA1.WaitAddress = SA1.Map [0xc0816f >> MEMMAP_SHIFT] + 0x816f;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
     }
     /* marvelous.zip */
     if (strcmp (ROMId, "AVRJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0085f2 >> MEMMAP_SHIFT] + 0x85f2;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3024;
+	SA1.WaitAddress = SA1.Map [0x0085f2 >> MEMMAP_SHIFT] + 0x85f2;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3024;
     }
     /* AUGUSTA3 MASTERS NEW */
     if (strcmp (ROMId, "AO3J") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00dddb >> MEMMAP_SHIFT] + 0xdddb;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x37b4;
+	SA1.WaitAddress = SA1.Map [0x00dddb >> MEMMAP_SHIFT] + 0xdddb;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x37b4;
     }
     /* OSHABERI PARODIUS */
     if (strcmp (ROMId, "AJOJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x8084e5 >> MEMMAP_SHIFT] + 0x84e5;
+	SA1.WaitAddress = SA1.Map [0x8084e5 >> MEMMAP_SHIFT] + 0x84e5;
     }
     /* PANIC BOMBER WORLD */
     if (strcmp (ROMId, "APBJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00857a >> MEMMAP_SHIFT] + 0x857a;
+	SA1.WaitAddress = SA1.Map [0x00857a >> MEMMAP_SHIFT] + 0x857a;
     }
     /* PEBBLE BEACH NEW */
     if (strcmp (ROMId, "AONJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00df33 >> MEMMAP_SHIFT] + 0xdf33;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x37b4;
+	SA1.WaitAddress = SA1.Map [0x00df33 >> MEMMAP_SHIFT] + 0xdf33;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x37b4;
     }
     /* PGA EUROPEAN TOUR */
     if (strcmp (ROMId, "AEPE") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x003700 >> MEMMAP_SHIFT] + 0x3700;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3102;
+	SA1.WaitAddress = SA1.Map [0x003700 >> MEMMAP_SHIFT] + 0x3700;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3102;
     }
     /* PGA TOUR 96 */
     if (strcmp (ROMId, "A3GE") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x003700 >> MEMMAP_SHIFT] + 0x3700;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3102;
+	SA1.WaitAddress = SA1.Map [0x003700 >> MEMMAP_SHIFT] + 0x3700;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3102;
     }
     /* POWER RANGERS 4 */
     if (strcmp (ROMId, "A4RE") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x009899 >> MEMMAP_SHIFT] + 0x9899;
-	SA1Pack_SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
+	SA1.WaitAddress = SA1.Map [0x009899 >> MEMMAP_SHIFT] + 0x9899;
+	SA1.WaitByteAddress1 = ROM_GLOBAL + 0x3000;
     }
     /* PACHISURO PALUSUPE */
     if (strcmp (ROMId, "AGFJ") == 0)
@@ -3381,32 +3381,32 @@ void CMemory::ApplyROMFixes ()
     /* SD F1 GRAND PRIX */
     if (strcmp (ROMId, "AGFJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x0181bc >> MEMMAP_SHIFT] + 0x81bc;
+	SA1.WaitAddress = SA1.Map [0x0181bc >> MEMMAP_SHIFT] + 0x81bc;
     }
     /* SHOUGI MARJONG */
     if (strcmp (ROMId, "ASYJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00f2cc >> MEMMAP_SHIFT] + 0xf2cc;
-	SA1Pack_SA1.WaitByteAddress1 = SRAM + 0x7ffe;
-	SA1Pack_SA1.WaitByteAddress2 = SRAM + 0x7ffc;
+	SA1.WaitAddress = SA1.Map [0x00f2cc >> MEMMAP_SHIFT] + 0xf2cc;
+	SA1.WaitByteAddress1 = SRAM + 0x7ffe;
+	SA1.WaitByteAddress2 = SRAM + 0x7ffc;
     }
     /* shogisai2 */
     if (strcmp (ROMId, "AX2J") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0x00d675 >> MEMMAP_SHIFT] + 0xd675;
+	SA1.WaitAddress = SA1.Map [0x00d675 >> MEMMAP_SHIFT] + 0xd675;
     }
 
     /* SHINING SCORPION */
     if (strcmp (ROMId, "A4WJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc048be >> MEMMAP_SHIFT] + 0x48be;
+	SA1.WaitAddress = SA1.Map [0xc048be >> MEMMAP_SHIFT] + 0x48be;
     }
     /* SHIN SHOUGI CLUB */
     if (strcmp (ROMId, "AHJJ") == 0)
     {
-	SA1Pack_SA1.WaitAddress = SA1Pack_SA1.Map [0xc1002a >> MEMMAP_SHIFT] + 0x002a;
-	SA1Pack_SA1.WaitByteAddress1 = SRAM + 0x0806;
-	SA1Pack_SA1.WaitByteAddress2 = SRAM + 0x0808;
+	SA1.WaitAddress = SA1.Map [0xc1002a >> MEMMAP_SHIFT] + 0x002a;
+	SA1.WaitByteAddress1 = SRAM + 0x0806;
+	SA1.WaitByteAddress2 = SRAM + 0x0808;
     }
 
     // Additional game fixes by sanmaiwashi ...
@@ -3711,14 +3711,14 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,uint32 &r
 #include "dsp1.h"
 uint8 MapGetBytePPU(uint32 Address)
 {
-	if (!CPUPack.CPU.InDMA)
-	    CPUPack.CPU.Cycles += ONE_CYCLE;
+	if (!CPU.InDMA)
+	    CPU.Cycles += ONE_CYCLE;
 	return (S9xGetPPU (Address & 0xFFFF));
 }
 uint16 MapGetWordPPU(uint32 Address)
 {
-	if (!CPUPack.CPU.InDMA)
-	    CPUPack.CPU.Cycles += TWO_CYCLES;
+	if (!CPU.InDMA)
+	    CPU.Cycles += TWO_CYCLES;
 	return (S9xGetPPU (Address & 0xffff) |
 		(S9xGetPPU ((Address + 1) & 0xffff) << 8));
 }
@@ -3798,8 +3798,8 @@ uint16 MapGetWordNONE(uint32 Address)
 }
 void  MapSetBytePPU (uint8 Byte, uint32 Address)
 {
-	if (!CPUPack.CPU.InDMA)
-	    CPUPack.CPU.Cycles += ONE_CYCLE;
+	if (!CPU.InDMA)
+	    CPU.Cycles += ONE_CYCLE;
 	S9xSetPPU (Byte, Address & 0xffff);
 }
 void  MapSetWordPPU (uint16 Word, uint32 Address)
@@ -3826,7 +3826,7 @@ void  MapSetByteLOROM_SRAM (uint8 Byte, uint32 Address)
     if (Memory.SRAMMask)
     {
         *(SRAM + ((((Address&0xFF0000)>>1)|(Address&0x7FFF))& Memory.SRAMMask))=Byte;
-        CPUPack.CPU.SRAMModified = TRUE;
+        CPU.SRAMModified = TRUE;
     }
 }
 void  MapSetWordLOROM_SRAM (uint16 Word, uint32 Address)
@@ -3841,7 +3841,7 @@ void  MapSetWordLOROM_SRAM (uint16 Word, uint32 Address)
             *(SRAM + (((((Address+1)&0xFF0000)>>1)|((Address+1)&0x7FFF))& Memory.SRAMMask)) = Word >> 8;
         }
 
-        CPUPack.CPU.SRAMModified = TRUE;
+        CPU.SRAMModified = TRUE;
     }
 }
 void  MapSetByteHIROM_SRAM (uint8 Byte, uint32 Address)
@@ -3850,7 +3850,7 @@ void  MapSetByteHIROM_SRAM (uint8 Byte, uint32 Address)
     {
         *(SRAM + (((Address & 0x7fff) - 0x6000 +
                           ((Address & 0xf0000) >> 3)) & Memory.SRAMMask)) = Byte;
-        CPUPack.CPU.SRAMModified = TRUE;
+        CPU.SRAMModified = TRUE;
     }
 }
 void  MapSetWordHIROM_SRAM (uint16 Word, uint32 Address)
@@ -3871,30 +3871,30 @@ void  MapSetWordHIROM_SRAM (uint16 Word, uint32 Address)
               ((((Address + 1) & 0x7fff) - 0x6000 +
                 (((Address + 1) & 0xf0000) >> 3) & Memory.SRAMMask))) = (uint8) (Word >> 8);
         }
-	    CPUPack.CPU.SRAMModified = TRUE;
+	    CPU.SRAMModified = TRUE;
 	}
 }
 void  MapSetByteBWRAM (uint8 Byte, uint32 Address)
 {
 	*(BWRAM + ((Address & 0x7fff) - 0x6000)) = Byte;
-	CPUPack.CPU.SRAMModified = TRUE;	
+	CPU.SRAMModified = TRUE;	
 }
 void  MapSetWordBWRAM (uint16 Word, uint32 Address)
 {
 	*(BWRAM + ((Address & 0x7fff) - 0x6000)) = (uint8) Word;
 	*(BWRAM + (((Address + 1) & 0x7fff) - 0x6000)) = (uint8) (Word >> 8);
-	CPUPack.CPU.SRAMModified = TRUE;
+	CPU.SRAMModified = TRUE;
 }
 void  MapSetByteSA1RAM (uint8 Byte, uint32 Address)
 {
 	*(SRAM + (Address & 0xffff)) = Byte;
-	SA1Pack_SA1.Executing = !SA1Pack_SA1.Waiting;
+	SA1.Executing = !SA1.Waiting;
 }
 void  MapSetWordSA1RAM (uint16 Word, uint32 Address)
 {
 	*(SRAM + (Address & 0xffff)) = (uint8) Word;
 	*(SRAM + ((Address + 1) & 0xffff)) = (uint8) (Word >> 8);
-	SA1Pack_SA1.Executing = !SA1Pack_SA1.Waiting;
+	SA1.Executing = !SA1.Waiting;
 }
 void  MapSetWordC4 (uint16 Word, uint32 Address)
 {

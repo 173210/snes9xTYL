@@ -85,50 +85,50 @@ void S9xUpdateHTimer ()
 	    PPUPack.PPU.HTimerPosition--;
 	}
 
-	if (!PPUPack.PPU.VTimerEnabled || CPUPack.CPU.V_Counter == PPUPack.PPU.IRQVBeamPos)
+	if (!PPUPack.PPU.VTimerEnabled || CPU.V_Counter == PPUPack.PPU.IRQVBeamPos)
 	{
-	    if (PPUPack.PPU.HTimerPosition < CPUPack.CPU.Cycles)
+	    if (PPUPack.PPU.HTimerPosition < CPU.Cycles)
 	    {
 		// Missed the IRQ on this line already
-		if (CPUPack.CPU.WhichEvent == HBLANK_END_EVENT ||
-		    CPUPack.CPU.WhichEvent == HTIMER_AFTER_EVENT)
+		if (CPU.WhichEvent == HBLANK_END_EVENT ||
+		    CPU.WhichEvent == HTIMER_AFTER_EVENT)
 		{
-		    CPUPack.CPU.WhichEvent = HBLANK_END_EVENT;
+		    CPU.WhichEvent = HBLANK_END_EVENT;
 		    S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HBLANK_END_EVENT;
-		    CPUPack.CPU.NextEvent = Settings.H_Max;
+		    CPU.NextEvent = Settings.H_Max;
 		}
 		else
 		{
-		    CPUPack.CPU.WhichEvent = HBLANK_START_EVENT;
+		    CPU.WhichEvent = HBLANK_START_EVENT;
 		    S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HBLANK_START_EVENT;
-		    CPUPack.CPU.NextEvent = Settings.HBlankStart;
+		    CPU.NextEvent = Settings.HBlankStart;
 		}
 	    }
 	    else
 	    {
-		if (CPUPack.CPU.WhichEvent == HTIMER_BEFORE_EVENT ||
-		    CPUPack.CPU.WhichEvent == HBLANK_START_EVENT)
+		if (CPU.WhichEvent == HTIMER_BEFORE_EVENT ||
+		    CPU.WhichEvent == HBLANK_START_EVENT)
 		{
 		    if (PPUPack.PPU.HTimerPosition > Settings.HBlankStart)
 		    {
 			// HTimer was to trigger before h-blank start,
 			// now triggers after start of h-blank
-			CPUPack.CPU.NextEvent = Settings.HBlankStart;
-			CPUPack.CPU.WhichEvent = HBLANK_START_EVENT;
+			CPU.NextEvent = Settings.HBlankStart;
+			CPU.WhichEvent = HBLANK_START_EVENT;
 			S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HBLANK_START_EVENT;
 		    }
 		    else
 		    {
-			CPUPack.CPU.NextEvent = PPUPack.PPU.HTimerPosition;
-			CPUPack.CPU.WhichEvent = HTIMER_BEFORE_EVENT;
+			CPU.NextEvent = PPUPack.PPU.HTimerPosition;
+			CPU.WhichEvent = HTIMER_BEFORE_EVENT;
 			S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HTIMER_BEFORE_EVENT;
 		    }
 		}
 		else
 		{
-		    CPUPack.CPU.WhichEvent = HTIMER_AFTER_EVENT;
+		    CPU.WhichEvent = HTIMER_AFTER_EVENT;
 		    S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HTIMER_AFTER_EVENT;
-		    CPUPack.CPU.NextEvent = PPUPack.PPU.HTimerPosition;
+		    CPU.NextEvent = PPUPack.PPU.HTimerPosition;
 		}
 	    }
 	}
@@ -952,7 +952,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 #ifdef SPCTOOL
 	_SPCInPB (Address & 3, Byte);
 #else	
-//	CPUPack.CPU.Flags |= DEBUG_MODE_FLAG;
+//	CPU.Flags |= DEBUG_MODE_FLAG;
 	ROM_GLOBAL [Address] = Byte;
 	
 	APU_EXECUTE2 ();
@@ -1238,12 +1238,12 @@ uint8 S9xGetPPU (uint16 Address)
 #endif
 #if 0
 #ifdef CPU_SHUTDOWN
-	    CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
+	    CPU.WaitAddress = CPU.PCAtOpcodeStart;
 #endif
 #endif
 	    PPUPack.PPU.HVBeamCounterLatched = 1;
-	    PPUPack.PPU.VBeamPosLatched = (uint16) CPUPack.CPU.V_Counter;
-	    PPUPack.PPU.HBeamPosLatched = (uint16) ((CPUPack.CPU.Cycles * SNES_HCOUNTER_MAX) / Settings.H_Max);
+	    PPUPack.PPU.VBeamPosLatched = (uint16) CPU.V_Counter;
+	    PPUPack.PPU.HBeamPosLatched = (uint16) ((CPU.Cycles * SNES_HCOUNTER_MAX) / Settings.H_Max);
 	    
 	    // Causes screen flicker for Yoshi's Island if uncommented
 	    //CLEAR_IRQ_SOURCE (PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE);
@@ -1389,7 +1389,7 @@ uint8 S9xGetPPU (uint16 Address)
 #ifdef SPCTOOL
 	    return ((uint8) _SPCOutP [Address & 3]);
 #else
-    //	CPUPack.CPU.Flags |= DEBUG_MODE_FLAG;
+    //	CPU.Flags |= DEBUG_MODE_FLAG;
 #ifdef SPC700_SHUTDOWN	
 	    (IAPU_APUExecuting) = Settings.APUEnabled;
 	    (IAPU.WaitCounter)++;
@@ -1397,7 +1397,7 @@ uint8 S9xGetPPU (uint16 Address)
 	    if (Settings.APUEnabled)
 	    {
 #ifdef CPU_SHUTDOWN
-//		CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
+//		CPU.WaitAddress = CPU.PCAtOpcodeStart;
 #endif	
 		APU_EXECUTE2 ();
 		
@@ -1410,13 +1410,13 @@ uint8 S9xGetPPU (uint16 Address)
 					switch (APUI00b) {
 						case 0:					
 							APUI00b++;APUI01b=0;
-							return CPUPack.Registers.AL;
+							return Registers.AL;
 						case 1:				
 							APUI00b++;APUI01b=1;
-							return CPUPack.Registers.XL;
+							return Registers.XL;
 						case 2:
 							APUI00b++;APUI01b=2;
-							return CPUPack.Registers.YL;
+							return Registers.YL;
 						case 3:
 							APUI00b++;
 							return 0x00;
@@ -1451,22 +1451,22 @@ uint8 S9xGetPPU (uint16 Address)
 					switch (APUI01b) {
 						case 0:					
 							APUI01b++;
-							return CPUPack.Registers.AH;
+							return Registers.AH;
 						case 1:				
 							APUI01b++;
-							return CPUPack.Registers.XH;
+							return Registers.XH;
 						case 2:
 							APUI01b++;
-							return CPUPack.Registers.YH;						
+							return Registers.YH;						
 						case 3:
 							APUI01b++;
-							return CPUPack.Registers.AL;
+							return Registers.AL;
 						case 4:
 							APUI01b++;
-							return CPUPack.Registers.XL;
+							return Registers.XL;
 						case 5:
 							APUI01b++;
-							return CPUPack.Registers.YL;
+							return Registers.YL;
 						case 6:							
 							APUI01b++;
 							return 0xBB;
@@ -1489,13 +1489,13 @@ uint8 S9xGetPPU (uint16 Address)
 					switch (APUI02b) {
 						case 0:					
 							APUI02b++;APUI03b=0;
-							return CPUPack.Registers.AL;
+							return Registers.AL;
 						case 1:				
 							APUI02b++;APUI03b=1;
-							return CPUPack.Registers.XL;
+							return Registers.XL;
 						case 2:
 							APUI02b++;APUI03b=2;
-							return CPUPack.Registers.YL;
+							return Registers.YL;
 						case 3:
 							APUI02b++;
 							return 0x00;
@@ -1516,22 +1516,22 @@ uint8 S9xGetPPU (uint16 Address)
 					switch (APUI03b) {
 						case 0:					
 							APUI03b++;
-							return CPUPack.Registers.AH;
+							return Registers.AH;
 						case 1:
 							APUI03b++;
-							return CPUPack.Registers.XH;
+							return Registers.XH;
 						case 2:
 							APUI03b++;
-							return CPUPack.Registers.YH;
+							return Registers.YH;
 						case 3:
 							APUI03b++;
-							return CPUPack.Registers.AL;
+							return Registers.AL;
 						case 4:
 							APUI03b++;
-							return CPUPack.Registers.XL;
+							return Registers.XL;
 						case 5:
 							APUI03b++;
-							return CPUPack.Registers.YL;
+							return Registers.YL;
 						case 6:
 							APUI03b++;
 							return 0xBB;
@@ -1550,7 +1550,7 @@ uint8 S9xGetPPU (uint16 Address)
 					}
 			}
 		}
-		CPUPack.CPU.BranchSkip = TRUE;
+		CPU.BranchSkip = TRUE;
 	    if ((Address & 3) < 2)
 	    {
 		int r = yo_rand ();
@@ -1674,7 +1674,7 @@ uint8 S9xGetPPU (uint16 Address)
 
 #ifdef CPU_SHUTDOWN
 	if (Address == 0x3030)
-	    CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
+	    CPU.WaitAddress = CPU.PCAtOpcodeStart;
 #endif	
 	if (Address == 0x3031)
 	    CLEAR_IRQ_SOURCE (GSU_IRQ_SOURCE);
@@ -1686,7 +1686,7 @@ uint8 S9xGetPPU (uint16 Address)
 #ifdef CPU_SHUTDOWN
 	if (Address == 0x3030)
 	{
-	    CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
+	    CPU.WaitAddress = CPU.PCAtOpcodeStart;
 	}
 	else
 #endif
@@ -1714,7 +1714,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
     if (Address < 0x4200)
     {
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #endif
 	switch (Address)
 	{
@@ -1760,7 +1760,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 		if (PPUPack.PPU.HTimerEnabled)
 		    S9xUpdateHTimer ();
 		else
-		if (PPUPack.PPU.IRQVBeamPos == CPUPack.CPU.V_Counter)
+		if (PPUPack.PPU.IRQVBeamPos == CPU.V_Counter)
 		    S9xSetIRQ (PPU_V_BEAM_IRQ_SOURCE);
 	    }
 	}
@@ -1795,18 +1795,18 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 
 	if ((byte & 0x80) && 
 	    !(ROM_GLOBAL [0x4200] & 0x80) &&
-	    CPUPack.CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE &&
-	    CPUPack.CPU.V_Counter <= PPUPack.PPU.ScreenHeight + 
+	    CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE &&
+	    CPU.V_Counter <= PPUPack.PPU.ScreenHeight + 
 		    (SNESGameFixes.alienVSpredetorFix ? 25 : 15) &&   //jyam 15->25 alien vs predetor
 // Panic Bomberman clears the NMI pending flag @ scanline 230 before enabling
 // NMIs again. The NMI routine crashes the CPU if it is called without the NMI
 // pending flag being set...
 	    (ROM_GLOBAL [0x4210] & 0x80) &&
-	    !CPUPack.CPU.NMIActive)
+	    !CPU.NMIActive)
 	{
-	    CPUPack.CPU.Flags |= NMI_FLAG;
-	    CPUPack.CPU.NMIActive = TRUE;
-	    CPUPack.CPU.NMICycleCount = CPUPack.CPU.NMITriggerPoint;
+	    CPU.Flags |= NMI_FLAG;
+	    CPU.NMIActive = TRUE;
+	    CPU.NMICycleCount = CPU.NMITriggerPoint;
 	}
 	break;
     case 0x4201:
@@ -1872,7 +1872,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 		S9xUpdateHTimer ();
 	    else
 	    {
-		if (PPUPack.PPU.IRQVBeamPos == CPUPack.CPU.V_Counter)
+		if (PPUPack.PPU.IRQVBeamPos == CPU.V_Counter)
 		    S9xSetIRQ (PPU_V_BEAM_IRQ_SOURCE);
 	    }
 	}
@@ -1890,7 +1890,7 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 		S9xUpdateHTimer ();
 	    else
 	    {
-		if (PPUPack.PPU.IRQVBeamPos == CPUPack.CPU.V_Counter)
+		if (PPUPack.PPU.IRQVBeamPos == CPU.V_Counter)
 		    S9xSetIRQ (PPU_V_BEAM_IRQ_SOURCE);
 	    }
 	}
@@ -1935,13 +1935,13 @@ void S9xSetCPU (uint8 byte, uint16 Address)
 	{
 	    if (byte & 1)
 	    {
-		CPUPack.CPU.FastROMSpeed = ONE_CYCLE;
+		CPU.FastROMSpeed = ONE_CYCLE;
 #ifdef DEBUGGER
 		missing.fast_rom = 1;
 #endif
 	    }
 	    else
-		CPUPack.CPU.FastROMSpeed = SLOW_ONE_CYCLE;
+		CPU.FastROMSpeed = SLOW_ONE_CYCLE;
 
 	    Memory.FixROMSpeed ();
 	}
@@ -2177,7 +2177,7 @@ if (g_debuginfo)
     if (Address < 0x4200)
     {
 #ifdef VAR_CYCLES
-	CPUPack.CPU.Cycles += ONE_CYCLE;
+	CPU.Cycles += ONE_CYCLE;
 #endif
 	switch (Address)
 	{
@@ -2315,7 +2315,7 @@ if (g_debuginfo)
 	if (SNESGameFixes.Old_Read0x4200)
 	{
 #ifdef CPU_SHUTDOWN
-           CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
+           CPU.WaitAddress = CPU.PCAtOpcodeStart;
 #endif
 #ifdef __debug_io_gb__
 if (g_debuginfo)
@@ -2408,7 +2408,7 @@ if (g_debuginfo)
 	return (ROM_GLOBAL[Address]);
     case 0x4210:
 #ifdef CPU_SHUTDOWN
-	CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
+	CPU.WaitAddress = CPU.PCAtOpcodeStart;
 #endif	
 	byte = ROM_GLOBAL[0x4210];
 	ROM_GLOBAL[0x4210] = 0;
@@ -2419,9 +2419,9 @@ if (g_debuginfo)
 	
 	return (byte);
     case 0x4211:
-	byte = (CPUPack.CPU.IRQActive & (PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE)) ? 0x80 : 0;
+	byte = (CPU.IRQActive & (PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE)) ? 0x80 : 0;
 	// Super Robot Wars Ex ROM bug requires this.
-	byte |= CPUPack.CPU.Cycles >= Settings.HBlankStart ? 0x40 : 0;
+	byte |= CPU.Cycles >= Settings.HBlankStart ? 0x40 : 0;
 	CLEAR_IRQ_SOURCE (PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE);
 #ifdef __debug_io_gb__
 if (g_debuginfo)
@@ -2432,7 +2432,7 @@ if (g_debuginfo)
     case 0x4212:
 	// V-blank, h-blank and joypads being read flags (read-only)
 #ifdef CPU_SHUTDOWN
-	CPUPack.CPU.WaitAddress = CPUPack.CPU.PCAtOpcodeStart;
+	CPU.WaitAddress = CPU.PCAtOpcodeStart;
 #endif
 #ifdef __debug_io_gb__
 if (g_debuginfo)
@@ -3236,13 +3236,13 @@ void S9xSuperFXExec ()
 //	FxEmulate (2000000);
     }
 #if 0
-    if (!(CPUPack.CPU.Flags & TRACE_FLAG))
+    if (!(CPU.Flags & TRACE_FLAG))
     {
 	static int z = 1;
 	if (z == 0)
 	{
 	    extern FILE *trace;
-	    CPUPack.CPU.Flags |= TRACE_FLAG;
+	    CPU.Flags |= TRACE_FLAG;
 	    trace = fopen ("trace.log", "wb");
 	}
 	else

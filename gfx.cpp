@@ -724,28 +724,28 @@ void S9xEndScreenRefresh ()
 
     S9xApplyCheats ();
 #ifdef DEBUGGER
-    if (CPUPack.CPU.Flags & FRAME_ADVANCE_FLAG)
+    if (CPU.Flags & FRAME_ADVANCE_FLAG)
     {
-	if (CPUPack.ICPU.FrameAdvanceCount)
+	if (ICPU.FrameAdvanceCount)
 	{
-	    CPUPack.ICPU.FrameAdvanceCount--;
+	    ICPU.FrameAdvanceCount--;
 	    IPPU.RenderThisFrame = TRUE;
 	    IPPU.FrameSkip = 0;
 	}
 	else
 	{
-	    CPUPack.CPU.Flags &= ~FRAME_ADVANCE_FLAG;
-	    CPUPack.CPU.Flags |= DEBUG_MODE_FLAG;
+	    CPU.Flags &= ~FRAME_ADVANCE_FLAG;
+	    CPU.Flags |= DEBUG_MODE_FLAG;
 	}
     }
 #endif
-    if (CPUPack.CPU.SRAMModified) {
-			if (!CPUPack.CPU.AutoSaveTimer) {
-	    	if (!(CPUPack.CPU.AutoSaveTimer = Settings.AutoSaveDelay * Memory.ROMFramesPerSecond)) CPUPack.CPU.SRAMModified = FALSE;
+    if (CPU.SRAMModified) {
+			if (!CPU.AutoSaveTimer) {
+	    	if (!(CPU.AutoSaveTimer = Settings.AutoSaveDelay * Memory.ROMFramesPerSecond)) CPU.SRAMModified = FALSE;
 			} else {
-	    	if (!--CPUPack.CPU.AutoSaveTimer) {
+	    	if (!--CPU.AutoSaveTimer) {
 					S9xAutoSaveSRAM ();
-					CPUPack.CPU.SRAMModified = FALSE;
+					CPU.SRAMModified = FALSE;
 	    	}
 			}
     }

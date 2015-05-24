@@ -54,7 +54,7 @@ extern int TS_CYC;
 typedef struct
 	{
 		unsigned char ident[37],
-		              PCl,PCh,
+		              PCLow,PCHigh,
 		              A,
 		              X,
 		              Y,
@@ -81,7 +81,7 @@ openspc::Load_SPC (void *buf, size_t size)
 		return 2;
 	}
 	memcpy (SPC_RAM, spc_file->RAM, 65536);
-	pspc->setstate (((int)spc_file->PCh<<8)+spc_file->PCl, spc_file->A,
+	pspc->setstate (((int)spc_file->PCHigh<<8)+spc_file->PCLow, spc_file->A,
 	 spc_file->X, spc_file->Y, spc_file->P, 0x100 + spc_file->SP);
 	memcpy (DSPregs, spc_file->DSP, 128);
 	return 0;

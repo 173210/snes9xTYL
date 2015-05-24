@@ -444,6 +444,9 @@ struct SCPUPACK {
 	int cpu_glob_cycles;
 	int old_cpu_cycles;
 };
+#define Registers CPUPack.Registers
+#define CPU CPUPack.CPU
+#define ICPU CPUPack.ICPU
 #define cpu_glob_cycles CPUPack.cpu_glob_cycles
 #define old_cpu_cycles CPUPack.old_cpu_cycles
 

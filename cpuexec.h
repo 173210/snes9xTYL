@@ -57,7 +57,7 @@ void S9xDoHBlankProcessing_HTIMER_BEFORE_EVENT();
 void S9xDoHBlankProcessing_HTIMER_AFTER_EVENT();
 
 #define DO_HBLANK_CHECK() \
-    if (CPUPack.CPU.Cycles >= CPUPack.CPU.NextEvent) {\
+    if (CPU.Cycles >= CPU.NextEvent) {\
 			S9xDoHBlankProcessing ();\
 		}
 	
@@ -114,24 +114,24 @@ END_EXTERN_C
 
 STATIC inline void S9xUnpackStatus()
 {
-    CPUPack.ICPU._Zero = (CPUPack.Registers.PL & Zero) == 0;
-    CPUPack.ICPU._Negative = (CPUPack.Registers.PL & Negative);
-    CPUPack.ICPU._Carry = (CPUPack.Registers.PL & Carry);
-    CPUPack.ICPU._Overflow = (CPUPack.Registers.PL & Overflow) >> 6;
+    ICPU._Zero = (Registers.PL & Zero) == 0;
+    ICPU._Negative = (Registers.PL & Negative);
+    ICPU._Carry = (Registers.PL & Carry);
+    ICPU._Overflow = (Registers.PL & Overflow) >> 6;
 }
 
 STATIC inline void S9xPackStatus()
 {
-    CPUPack.Registers.PL &= ~(Zero | Negative | Carry | Overflow);
-    CPUPack.Registers.PL |= CPUPack.ICPU._Carry | ((CPUPack.ICPU._Zero == 0) << 1) |
-		    (CPUPack.ICPU._Negative & 0x80) | (CPUPack.ICPU._Overflow << 6);
+    Registers.PL &= ~(Zero | Negative | Carry | Overflow);
+    Registers.PL |= ICPU._Carry | ((ICPU._Zero == 0) << 1) |
+		    (ICPU._Negative & 0x80) | (ICPU._Overflow << 6);
 }
 
 STATIC inline void CLEAR_IRQ_SOURCE (uint32 M)
 {
-    CPUPack.CPU.IRQActive &= ~M;
-    if (!CPUPack.CPU.IRQActive)
-	CPUPack.CPU.Flags &= ~IRQ_PENDING_FLAG;
+    CPU.IRQActive &= ~M;
+    if (!CPU.IRQActive)
+	CPU.Flags &= ~IRQ_PENDING_FLAG;
 }
 	
 STATIC inline void S9xFixCycles ()
@@ -139,9 +139,9 @@ STATIC inline void S9xFixCycles ()
     if (CheckEmulation ())
     {
 #ifndef VAR_CYCLES
-	CPUPack.ICPU.Speed = S9xE1M1X1;
+	ICPU.Speed = S9xE1M1X1;
 #endif
-	CPUPack.ICPU.S9xOpcodes = S9xOpcodesM1X1;
+	ICPU.S9xOpcodes = S9xOpcodesM1X1;
     }
     else
     if (CheckMemory ())
@@ -149,16 +149,16 @@ STATIC inline void S9xFixCycles ()
 	if (CheckIndex ())
 	{
 #ifndef VAR_CYCLES
-	    CPUPack.ICPU.Speed = S9xE0M1X1;
+	    ICPU.Speed = S9xE0M1X1;
 #endif
-	    CPUPack.ICPU.S9xOpcodes = S9xOpcodesM1X1;
+	    ICPU.S9xOpcodes = S9xOpcodesM1X1;
 	}
 	else
 	{
 #ifndef VAR_CYCLES
-	    CPUPack.ICPU.Speed = S9xE0M1X0;
+	    ICPU.Speed = S9xE0M1X0;
 #endif
-	    CPUPack.ICPU.S9xOpcodes = S9xOpcodesM1X0;
+	    ICPU.S9xOpcodes = S9xOpcodesM1X0;
 	}
     }
     else
@@ -166,16 +166,16 @@ STATIC inline void S9xFixCycles ()
 	if (CheckIndex ())
 	{
 #ifndef VAR_CYCLES
-	    CPUPack.ICPU.Speed = S9xE0M0X1;
+	    ICPU.Speed = S9xE0M0X1;
 #endif
-	    CPUPack.ICPU.S9xOpcodes = S9xOpcodesM0X1;
+	    ICPU.S9xOpcodes = S9xOpcodesM0X1;
 	}
 	else
 	{
 #ifndef VAR_CYCLES
-	    CPUPack.ICPU.Speed = S9xE0M0X0;
+	    ICPU.Speed = S9xE0M0X0;
 #endif
-	    CPUPack.ICPU.S9xOpcodes = S9xOpcodesM0X0;
+	    ICPU.S9xOpcodes = S9xOpcodesM0X0;
 	}
     }
 }
@@ -183,7 +183,7 @@ STATIC inline void S9xFixCycles ()
 #define S9xReschedule() { \
 	uint8 which; \
   long max; \
-  if (CPUPack.CPU.WhichEvent == HBLANK_START_EVENT || CPUPack.CPU.WhichEvent == HTIMER_AFTER_EVENT) { \
+  if (CPU.WhichEvent == HBLANK_START_EVENT || CPU.WhichEvent == HTIMER_AFTER_EVENT) { \
 		which = HBLANK_END_EVENT; \
 		max = Settings.H_Max; \
 		S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HBLANK_END_EVENT; \
@@ -193,14 +193,14 @@ STATIC inline void S9xFixCycles ()
 		S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HBLANK_START_EVENT; \
   } \
  \
-  if (PPUPack.PPU.HTimerEnabled && (long) PPUPack.PPU.HTimerPosition < max &&	(long) PPUPack.PPU.HTimerPosition > CPUPack.CPU.NextEvent && \
-		(!PPUPack.PPU.VTimerEnabled || (PPUPack.PPU.VTimerEnabled && CPUPack.CPU.V_Counter == PPUPack.PPU.IRQVBeamPos))) { \
+  if (PPUPack.PPU.HTimerEnabled && (long) PPUPack.PPU.HTimerPosition < max &&	(long) PPUPack.PPU.HTimerPosition > CPU.NextEvent && \
+		(!PPUPack.PPU.VTimerEnabled || (PPUPack.PPU.VTimerEnabled && CPU.V_Counter == PPUPack.PPU.IRQVBeamPos))) { \
 		which = (long) PPUPack.PPU.HTimerPosition < Settings.HBlankStart ? HTIMER_BEFORE_EVENT : HTIMER_AFTER_EVENT; \
 		S9x_Current_HBlank_Event=(long) PPUPack.PPU.HTimerPosition < Settings.HBlankStart ?S9xDoHBlankProcessing_HTIMER_BEFORE_EVENT:S9xDoHBlankProcessing_HTIMER_AFTER_EVENT; \
 		max = PPUPack.PPU.HTimerPosition; \
   } \
-  CPUPack.CPU.NextEvent = max; \
-  CPUPack.CPU.WhichEvent = which; \
+  CPU.NextEvent = max; \
+  CPU.WhichEvent = which; \
 }
 
 #endif

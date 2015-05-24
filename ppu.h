@@ -360,12 +360,12 @@ void ComputeClipWindowsFix ();
 STATIC inline uint8 REGISTER_4212()
 {
     GetBank = 0;
-    if (CPUPack.CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE &&
-	CPUPack.CPU.V_Counter < PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE + 3)
+    if (CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE &&
+	CPU.V_Counter < PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE + 3)
 	GetBank = 1;
 
-    GetBank |= CPUPack.CPU.Cycles >= Settings.HBlankStart ? 0x40 : 0;
-    if (CPUPack.CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE)
+    GetBank |= CPU.Cycles >= Settings.HBlankStart ? 0x40 : 0;
+    if (CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE)
 	GetBank |= 0x80; /* XXX: 0x80 or 0xc0 ? */
 
     return (GetBank);
@@ -478,7 +478,7 @@ STATIC inline void REGISTER_2118 (uint8 Byte)
     if (!PPUPack.PPU.VMA.High)
     {
 #ifdef DEBUGGER
-	if (Settings.TraceVRAM && !CPUPack.CPU.InDMA)
+	if (Settings.TraceVRAM && !CPU.InDMA)
 	{
 	    printf ("VRAM write byte: $%04X (%d,%d)\n", PPUPack.PPU.VMA.Address,
 		    ROM_GLOBAL[0x2115] & 3,
@@ -554,7 +554,7 @@ STATIC inline void REGISTER_2119 (uint8 Byte)
     if (PPUPack.PPU.VMA.High)
     {
 #ifdef DEBUGGER
-	if (Settings.TraceVRAM && !CPUPack.CPU.InDMA)
+	if (Settings.TraceVRAM && !CPU.InDMA)
 	{
 	    printf ("VRAM write word: $%04X (%d,%d)\n", PPUPack.PPU.VMA.Address,
 		    ROM_GLOBAL[0x2115] & 3,
