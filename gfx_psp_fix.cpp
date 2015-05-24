@@ -114,7 +114,7 @@ ClipDataFix* pCurrentClipFix;
 
 #define ON_MAIN(N) \
 (GPUPack.GFX.r212c & (1 << (N)) && \
- !(PPU.BG_Forced & (1 << (N))))
+ !(PPUPack.PPU.BG_Forced & (1 << (N))))
 
 #define SUB_OR_ADD(N) \
 (GPUPack.GFX.r2131 & (1 << (N)))
@@ -123,7 +123,7 @@ ClipDataFix* pCurrentClipFix;
 ((GPUPack.GFX.r2130 & 0x30) != 0x30 && \
  (GPUPack.GFX.r2130 & 2) && \
  (GPUPack.GFX.r212d & (1 << N)) && \
- !(PPU.BG_Forced & (1 << (N))))
+ !(PPUPack.PPU.BG_Forced & (1 << (N))))
 
 #define ANYTHING_ON_SUB \
 ((GPUPack.GFX.r2130 & 0x30) != 0x30 && \
@@ -241,14 +241,14 @@ void pspDrawFASTOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode)
     
   GPUPack.BG.BitShift = 4;  
   GPUPack.BG.TileShift = 5;
-  GPUPack.BG.TileAddress = PPU.OBJNameBase;
+  GPUPack.BG.TileAddress = PPUPack.PPU.OBJNameBase;
   GPUPack.BG.StartPalette = 128;
   GPUPack.BG.PaletteShift = 4;
   GPUPack.BG.PaletteMask = 7;  
   current_bitshift=TILE_4BIT;
   GPUPack.BG.Buffer = tile_texture[TILE_4BIT];//IPPU.TileCache8 [TILE_4BIT];
   GPUPack.BG.Buffered = IPPU.TileCached [TILE_4BIT];
-  GPUPack.BG.NameSelect = PPU.OBJNameSelect;
+  GPUPack.BG.NameSelect = PPUPack.PPU.OBJNameSelect;
   GPUPack.BG.DirectColourMode = false;
 
 /********************************************************/
@@ -289,23 +289,23 @@ void pspDrawFASTOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode)
 
 			//drawing sub/added sprites => palette has to be 4-7
 			if (OnMain){
-				if ((drawmode==1) && (PPU.OBJ [S].Palette < 4) ) continue;
+				if ((drawmode==1) && (PPUPack.PPU.OBJ [S].Palette < 4) ) continue;
 				//drawing not sub/added sprites => palette has to be 4-7 or no add/sub in effect for OBJ
-				if ((drawmode==2) && (PPU.OBJ [S].Palette >= 4) && SUB_OR_ADD(4)) continue;
+				if ((drawmode==2) && (PPUPack.PPU.OBJ [S].Palette >= 4) && SUB_OR_ADD(4)) continue;
 			}
 			
-			BaseTile = PPU.OBJ[S].Name | (PPU.OBJ[S].Palette << 10);
+			BaseTile = PPUPack.PPU.OBJ[S].Name | (PPUPack.PPU.OBJ[S].Palette << 10);
 
-			if (PPU.OBJ[S].HFlip)	{
+			if (PPUPack.PPU.OBJ[S].HFlip)	{
 	    	BaseTile += ((Size >> 3) - 1) | H_FLIP;
 		    TileInc = -1;
 			}
-			if (PPU.OBJ[S].VFlip)  BaseTile |= V_FLIP;
+			if (PPUPack.PPU.OBJ[S].VFlip)  BaseTile |= V_FLIP;
 
 			int clipcount = GPUPack.GFX.pCurrentClip->Count [4];
 			if (!clipcount) clipcount = 1;
 			
-			GPUPack.GFX.Z2 = ((PPU.OBJ[S].Priority + 1) * 4 + D);
+			GPUPack.GFX.Z2 = ((PPUPack.PPU.OBJ[S].Priority + 1) * 4 + D);
 			short realZ2=(short)(GPUPack.GFX.Z2);//+I-1;
 	
 			for (int clip = 0; clip < clipcount; clip++){
@@ -319,7 +319,7 @@ void pspDrawFASTOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode)
 					Right = GPUPack.GFX.pCurrentClip->Right [clip][4];
 	    	}
 
-		    if (Right <= Left || PPU.OBJ[S].HPos + Size <= Left || PPU.OBJ[S].HPos >= Right) continue;
+		    if (Right <= Left || PPUPack.PPU.OBJ[S].HPos + Size <= Left || PPUPack.PPU.OBJ[S].HPos >= Right) continue;
 		    
 	
 
@@ -342,15 +342,15 @@ void pspDrawFASTOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode)
 
 							TileLine = StartLine;// << 3;
 							Ys = (VPos + Y + StartLine);
-				    	if (!PPU.OBJ[S].VFlip) Tile = BaseTile + (Y << 1);
+				    	if (!PPUPack.PPU.OBJ[S].VFlip) Tile = BaseTile + (Y << 1);
 				    	else Tile = BaseTile + ((Size - Y - 8) << 1);
 
 				    	int Middle = Size >> 3;
-				    	if (PPU.OBJ[S].HPos < Left) {
-								Tile += ((Left - PPU.OBJ[S].HPos) >> 3) * TileInc;
-								Middle -= (Left - PPU.OBJ[S].HPos) >> 3;
+				    	if (PPUPack.PPU.OBJ[S].HPos < Left) {
+								Tile += ((Left - PPUPack.PPU.OBJ[S].HPos) >> 3) * TileInc;
+								Middle -= (Left - PPUPack.PPU.OBJ[S].HPos) >> 3;
 								Xs = Left ;
-								if ((Offset = (Left - PPU.OBJ[S].HPos) & 7)) {
+								if ((Offset = (Left - PPUPack.PPU.OBJ[S].HPos) & 7)) {
 						    	Xs -= Offset ;
 						    	int W = 8 - Offset;
 						    	int Width = Right - Left;
@@ -363,11 +363,11 @@ void pspDrawFASTOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode)
 						    	Middle--;
 						    	Xs += 8 ;
 								}	
-		    			}	else Xs = PPU.OBJ[S].HPos ;
+		    			}	else Xs = PPUPack.PPU.OBJ[S].HPos ;
 
-				    	if (PPU.OBJ[S].HPos + Size >= Right) {
-								Middle -= ((PPU.OBJ[S].HPos + Size + 7) - Right) >> 3;
-								Offset = (Right - (PPU.OBJ[S].HPos + Size)) & 7;
+				    	if (PPUPack.PPU.OBJ[S].HPos + Size >= Right) {
+								Middle -= ((PPUPack.PPU.OBJ[S].HPos + Size + 7) - Right) >> 3;
+								Offset = (Right - (PPUPack.PPU.OBJ[S].HPos + Size)) & 7;
 				    	}else Offset = 0;
 
 				    	for (int X = 0; X < Middle; X++, Xs += 8 , Tile += TileInc){
@@ -401,13 +401,13 @@ void pspDrawOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode) {
   GPUPack.BG.BitShift = 4;
   current_bitshift=TILE_4BIT;
   GPUPack.BG.TileShift = 5;
-  GPUPack.BG.TileAddress = PPU.OBJNameBase;
+  GPUPack.BG.TileAddress = PPUPack.PPU.OBJNameBase;
   GPUPack.BG.StartPalette = 128;
   GPUPack.BG.PaletteShift = 4;
   GPUPack.BG.PaletteMask = 7;
   GPUPack.BG.Buffer = tile_texture[TILE_4BIT];//IPPU.TileCache8 [TILE_4BIT];
   GPUPack.BG.Buffered = IPPU.TileCached [TILE_4BIT];
-  GPUPack.BG.NameSelect = PPU.OBJNameSelect;
+  GPUPack.BG.NameSelect = PPUPack.PPU.OBJNameSelect;
   GPUPack.BG.DirectColourMode = false;
         
 /********************************************************/	
@@ -453,25 +453,25 @@ void pspDrawOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode) {
 			speZ=0;
 			if (OnMain)
 			{
-				if ((drawmode==1) && (PPU.OBJ [S].Palette < 4) ) speZ=1;
+				if ((drawmode==1) && (PPUPack.PPU.OBJ [S].Palette < 4) ) speZ=1;
 				//drawing not sub/added sprites => palette has to be 4-7 or no add/sub in effect for OBJ
-				else if ((drawmode==2) && (PPU.OBJ [S].Palette >= 4) && SUB_OR_ADD(4)) speZ=1;									
+				else if ((drawmode==2) && (PPUPack.PPU.OBJ [S].Palette >= 4) && SUB_OR_ADD(4)) speZ=1;									
 			} 
 			
 			
-			BaseTile = PPU.OBJ[S].Name | (PPU.OBJ[S].Palette << 10);
+			BaseTile = PPUPack.PPU.OBJ[S].Name | (PPUPack.PPU.OBJ[S].Palette << 10);
 
-			if (PPU.OBJ[S].HFlip)
+			if (PPUPack.PPU.OBJ[S].HFlip)
 			{
     			BaseTile += ((Size >> 3) - 1) | H_FLIP;
 				TileInc = -1;
 			}
-			if (PPU.OBJ[S].VFlip)  BaseTile |= V_FLIP;
+			if (PPUPack.PPU.OBJ[S].VFlip)  BaseTile |= V_FLIP;
 		
 			int clipcount = pCurrentClipFix->Count [4][g];
 			if (!clipcount) clipcount = 1;
 		
-			GPUPack.GFX.Z2 = ((PPU.OBJ[S].Priority + 1) * 4 + D);
+			GPUPack.GFX.Z2 = ((PPUPack.PPU.OBJ[S].Priority + 1) * 4 + D);
 			short realZ2;
 			if (!speZ) realZ2=(short)(GPUPack.GFX.Z2);//+I-1;
 			else realZ2=0;
@@ -491,7 +491,7 @@ void pspDrawOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode) {
 					Right = pCurrentClipFix->Right [clip][4][g];
     			}
 
-				if (Right <= Left || PPU.OBJ[S].HPos + Size <= Left || PPU.OBJ[S].HPos >= Right) continue;
+				if (Right <= Left || PPUPack.PPU.OBJ[S].HPos + Size <= Left || PPUPack.PPU.OBJ[S].HPos >= Right) continue;
 	    
 				for (int Y = 0; Y < Size; Y += 8) 
 				{
@@ -516,16 +516,16 @@ void pspDrawOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode) {
 
 						TileLine = StartLine;// << 3;
 						Ys = (VPos + Y + StartLine);
-						if (!PPU.OBJ[S].VFlip) Tile = BaseTile + (Y << 1);
+						if (!PPUPack.PPU.OBJ[S].VFlip) Tile = BaseTile + (Y << 1);
 						else Tile = BaseTile + ((Size - Y - 8) << 1);
 
 						int Middle = Size >> 3;
-						if (PPU.OBJ[S].HPos < Left)
+						if (PPUPack.PPU.OBJ[S].HPos < Left)
 						{
-							Tile += ((Left - PPU.OBJ[S].HPos) >> 3) * TileInc;
-							Middle -= (Left - PPU.OBJ[S].HPos) >> 3;
+							Tile += ((Left - PPUPack.PPU.OBJ[S].HPos) >> 3) * TileInc;
+							Middle -= (Left - PPUPack.PPU.OBJ[S].HPos) >> 3;
 							Xs = Left ;
-							if ((Offset = (Left - PPU.OBJ[S].HPos) & 7)) 
+							if ((Offset = (Left - PPUPack.PPU.OBJ[S].HPos) & 7)) 
 							{
 				   				Xs -= Offset ;
 				   				int W = 8 - Offset;
@@ -540,12 +540,12 @@ void pspDrawOBJSFix (bool8 OnMain, uint8 D, uint8 drawmode) {
 				   				Xs += 8 ;
 							}	
 	    				}
-						else Xs = PPU.OBJ[S].HPos ;
+						else Xs = PPUPack.PPU.OBJ[S].HPos ;
 
-						if (PPU.OBJ[S].HPos + Size >= Right) 
+						if (PPUPack.PPU.OBJ[S].HPos + Size >= Right) 
 						{
-							Middle -= ((PPU.OBJ[S].HPos + Size + 7) - Right) >> 3;
-							Offset = (Right - (PPU.OBJ[S].HPos + Size)) & 7;
+							Middle -= ((PPUPack.PPU.OBJ[S].HPos + Size + 7) - Right) >> 3;
+							Offset = (Right - (PPUPack.PPU.OBJ[S].HPos + Size)) & 7;
 						}
 						else Offset = 0;
 
@@ -620,20 +620,20 @@ void pspDrawBackgroundMosaicFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
   if (BGMode == 0) GPUPack.BG.StartPalette = bg << 5;
   else GPUPack.BG.StartPalette = 0;
     
-  SC0 = (uint16 *) &VRAM[PPU.BG[bg].SCBase << 1];
+  SC0 = (uint16 *) &VRAM[PPUPack.PPU.BG[bg].SCBase << 1];
 
-  if (PPU.BG[bg].SCSize & 1) SC1 = SC0 + 1024;
+  if (PPUPack.PPU.BG[bg].SCSize & 1) SC1 = SC0 + 1024;
   else SC1 = SC0;
 
 	if((SC1-(unsigned short*)VRAM)>0x10000) SC1-=0x10000;
 
-  if (PPU.BG[bg].SCSize & 2) SC2 = SC1 + 1024;
+  if (PPUPack.PPU.BG[bg].SCSize & 2) SC2 = SC1 + 1024;
   else SC2 = SC0;
 
 	if((SC2-(unsigned short*)VRAM)>0x10000) SC2-=0x10000;
 
 
-  if (PPU.BG[bg].SCSize & 1) SC3 = SC2 + 1024;
+  if (PPUPack.PPU.BG[bg].SCSize & 1) SC3 = SC2 + 1024;
   else SC3 = SC2;
 
 	if((SC3-(unsigned short*)VRAM)>0x10000) SC3-=0x10000;
@@ -659,9 +659,9 @@ void pspDrawBackgroundMosaicFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
 		{
 			uint32 VOffset = LineData [Y].BG[bg].VOffset;
 			uint32 HOffset = LineData [Y].BG[bg].HOffset;
-			uint32 MosaicOffset = Y % PPU.Mosaic;
+			uint32 MosaicOffset = Y % PPUPack.PPU.Mosaic;
 
-			for (Lines = 1; Lines < PPU.Mosaic - MosaicOffset; Lines++)
+			for (Lines = 1; Lines < PPUPack.PPU.Mosaic - MosaicOffset; Lines++)
 			if ((VOffset != LineData [Y + Lines].BG[bg].VOffset) || (HOffset != LineData [Y + Lines].BG[bg].HOffset)) break;
 		
 			uint32 MosaicLine = VOffset + Y - MosaicOffset;
@@ -686,7 +686,7 @@ void pspDrawBackgroundMosaicFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
 
 			uint32 ClipCount = pCurrentClipFix->Count [bg][g];
 			uint32 HPos = HOffset;
-			uint32 PixWidth = PPU.Mosaic;
+			uint32 PixWidth = PPUPack.PPU.Mosaic;
 
 			if (!ClipCount) ClipCount = 1;
 
@@ -696,14 +696,14 @@ void pspDrawBackgroundMosaicFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
 				{
 					Left = pCurrentClipFix->Left [clip][bg][g];
 					Right = pCurrentClipFix->Right [clip][bg][g];
-					uint32 r = Left % PPU.Mosaic;
+					uint32 r = Left % PPUPack.PPU.Mosaic;
 					HPos = HOffset + Left;
-					PixWidth = PPU.Mosaic - r;
+					PixWidth = PPUPack.PPU.Mosaic - r;
 				}
 				//uint32 s = Y * GPUPack.GFX.PPL + Left * GPUPack.GFX.PixSize;
 				s32 Xt=Left;
 				s32 Yt=Y;
-				for (uint32 x = Left; x < Right; x += PixWidth, /*s += PixWidth * GPUPack.GFX.PixSize*/Xt+=PixWidth,HPos += PixWidth, PixWidth = PPU.Mosaic) 
+				for (uint32 x = Left; x < Right; x += PixWidth, /*s += PixWidth * GPUPack.GFX.PixSize*/Xt+=PixWidth,HPos += PixWidth, PixWidth = PPUPack.PPU.Mosaic) 
 				{
 					uint32 Quot = (HPos & OffsetMask) >> 3;
 
@@ -825,18 +825,18 @@ void pspDrawBackgroundMode5Fix (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 
 
 
 
-	SC0 = (uint16 *) &VRAM[PPU.BG[bg].SCBase << 1];
-  if ((PPU.BG[bg].SCSize & 1)) SC1 = SC0 + 1024;
+	SC0 = (uint16 *) &VRAM[PPUPack.PPU.BG[bg].SCBase << 1];
+  if ((PPUPack.PPU.BG[bg].SCSize & 1)) SC1 = SC0 + 1024;
   else SC1 = SC0;
 
 	if((SC1-(unsigned short*)VRAM)>0x10000) SC1=(uint16*)&VRAM[(((uint8*)SC1)-VRAM)%0x10000];
 
-	if ((PPU.BG[bg].SCSize & 2)) SC2 = SC1 + 1024;
+	if ((PPUPack.PPU.BG[bg].SCSize & 2)) SC2 = SC1 + 1024;
 	else SC2 = SC0;
 
 	if((SC2-(unsigned short*)VRAM)>0x10000) SC2=(uint16*)&VRAM[(((uint8*)SC2)-VRAM)%0x10000];
 
-	if ((PPU.BG[bg].SCSize & 1)) SC3 = SC2 + 1024;
+	if ((PPUPack.PPU.BG[bg].SCSize & 1)) SC3 = SC2 + 1024;
 	else SC3 = SC2;
 
 	if((SC3-(unsigned short*)VRAM)>0x10000) SC3=(uint16*)&VRAM[(((uint8*)SC3)-VRAM)%0x10000];
@@ -1082,10 +1082,10 @@ void pspDrawBackgroundMode5Fix (uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 
 void pspDrawBackground (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2);
 void pspDrawBackgroundOffsetFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2);
 void pspDrawBackgroundFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
-  GPUPack.BG.TileSize = BGSizes [PPU.BG[bg].BGSize];
+  GPUPack.BG.TileSize = BGSizes [PPUPack.PPU.BG[bg].BGSize];
   GPUPack.BG.BitShift = BitShifts[BGMode][bg];  
   GPUPack.BG.TileShift = TileShifts[BGMode][bg];
-  GPUPack.BG.TileAddress = PPU.BG[bg].NameBase << 1;
+  GPUPack.BG.TileAddress = PPUPack.PPU.BG[bg].NameBase << 1;
   GPUPack.BG.NameSelect = 0;
   current_bitshift=Depths [BGMode][bg];  
   GPUPack.BG.Buffer = tile_texture[current_bitshift];//IPPU.TileCache8 [Depths [BGMode][bg]];
@@ -1106,7 +1106,7 @@ void pspDrawBackgroundFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2) {
 /********************************************************/
 /********************************************************/
 
-  if (PPU.BGMosaic [bg] && PPU.Mosaic > 1){
+  if (PPUPack.PPU.BGMosaic [bg] && PPUPack.PPU.Mosaic > 1){
 #ifdef DEBUG_DRAWBACKGROUND  	
 {char str[32];
 sprintf(str,"BGMode : %d mosaic",BGMode);
@@ -1179,17 +1179,17 @@ pgPrintBG(0,10,0xffff,str);
   if (BGMode == 0) GPUPack.BG.StartPalette = bg << 5;
   else GPUPack.BG.StartPalette = 0;
 	                				
-	SC0 = (uint16 *) &VRAM[PPU.BG[bg].SCBase << 1];
+	SC0 = (uint16 *) &VRAM[PPUPack.PPU.BG[bg].SCBase << 1];
 
-  if (PPU.BG[bg].SCSize & 1) SC1 = SC0 + 1024;
+  if (PPUPack.PPU.BG[bg].SCSize & 1) SC1 = SC0 + 1024;
   else SC1 = SC0;
   
   if(SC1>=(unsigned short*)(VRAM+0x10000))		SC1=(uint16*)&VRAM[((uint8*)SC1-&VRAM[0])%0x10000];
 
-  if (PPU.BG[bg].SCSize & 2) SC2 = SC1 + 1024;
+  if (PPUPack.PPU.BG[bg].SCSize & 2) SC2 = SC1 + 1024;
   else SC2 = SC0;
 
-  if (PPU.BG[bg].SCSize & 1) SC3 = SC2 + 1024;
+  if (PPUPack.PPU.BG[bg].SCSize & 1) SC3 = SC2 + 1024;
 	else SC3 = SC2;
 	
 	if((SC3-(unsigned short*)VRAM)>0x10000)		SC3-=0x10000;
@@ -1479,7 +1479,7 @@ void pspRenderScreenFix (uint8 *Screen, bool8 sub, uint8 D, uint8 drawmode)
 		OB  = ON_SUB (4);
   }
 
-  if (PPU.BGMode <= 1) {
+  if (PPUPack.PPU.BGMode <= 1) {
 		if (OB&&os9x_OBJ) {
 			if (TO_DRAW_OBJ(4)) {
 	    	/*if (os9x_fastsprite) pspDrawFASTOBJSFix (!sub, D,drawmode);
@@ -1492,44 +1492,44 @@ void pspRenderScreenFix (uint8 *Screen, bool8 sub, uint8 D, uint8 drawmode)
 		if (BG0&&os9x_BG0) {	    
 	    if (TO_DRAW(0)) {
 /*			if(IPPU.PaletteLineCount>0)
-				pspDrawBackgroundFixPalette (PPU.BGMode, 0, D + 10, D + 14);
+				pspDrawBackgroundFixPalette (PPUPack.PPU.BGMode, 0, D + 10, D + 14);
 	    	else*/ if(pCurrentClipFix->GroupCount [0]>0)
-				pspDrawBackgroundFix (PPU.BGMode, 0, D + 10, D + 14);
+				pspDrawBackgroundFix (PPUPack.PPU.BGMode, 0, D + 10, D + 14);
 			else
-				pspDrawBackground (PPU.BGMode, 0, D + 10, D + 14);
+				pspDrawBackground (PPUPack.PPU.BGMode, 0, D + 10, D + 14);
 	    }
 		}
 		if (BG1&&os9x_BG1) {			    
 			if (TO_DRAW(1)) {				
 /*			if(IPPU.PaletteLineCount>0)
-				pspDrawBackgroundFixPalette (PPU.BGMode, 1, D + 9, D + 13);
+				pspDrawBackgroundFixPalette (PPUPack.PPU.BGMode, 1, D + 9, D + 13);
 	    	else*/ if(pCurrentClipFix->GroupCount [1]>0)
-				pspDrawBackgroundFix (PPU.BGMode, 1, D + 9, D + 13);
+				pspDrawBackgroundFix (PPUPack.PPU.BGMode, 1, D + 9, D + 13);
 			else
-				pspDrawBackground (PPU.BGMode, 1, D + 9, D + 13);
+				pspDrawBackground (PPUPack.PPU.BGMode, 1, D + 9, D + 13);
 			}
 		}
 		if (BG2&&os9x_BG2) {	    
 	    if (TO_DRAW(2)) {	    	
 /*			if(IPPU.PaletteLineCount>0)
-				pspDrawBackgroundFixPalette (PPU.BGMode, 2, D + 3,  (ROM_GLOBAL [0x2105] & 8) == 0 ? D + 6 : D + 17);
+				pspDrawBackgroundFixPalette (PPUPack.PPU.BGMode, 2, D + 3,  (ROM_GLOBAL [0x2105] & 8) == 0 ? D + 6 : D + 17);
 	    	else*/ if(pCurrentClipFix->GroupCount [2]>0)
-				pspDrawBackgroundFix (PPU.BGMode, 2, D + 3,  (ROM_GLOBAL [0x2105] & 8) == 0 ? D + 6 : D + 17);
+				pspDrawBackgroundFix (PPUPack.PPU.BGMode, 2, D + 3,  (ROM_GLOBAL [0x2105] & 8) == 0 ? D + 6 : D + 17);
 			else
-				pspDrawBackground (PPU.BGMode, 2, D + 3,  (ROM_GLOBAL [0x2105] & 8) == 0 ? D + 6 : D + 17);
+				pspDrawBackground (PPUPack.PPU.BGMode, 2, D + 3,  (ROM_GLOBAL [0x2105] & 8) == 0 ? D + 6 : D + 17);
 	    }
 		}
-		if (BG3 && PPU.BGMode == 0 && os9x_BG3) {	    
+		if (BG3 && PPUPack.PPU.BGMode == 0 && os9x_BG3) {	    
 	    if (TO_DRAW(3)) {	    	
 /*			if(IPPU.PaletteLineCount>0)
-				pspDrawBackgroundFixPalette (PPU.BGMode, 3, D + 2, D + 5);
+				pspDrawBackgroundFixPalette (PPUPack.PPU.BGMode, 3, D + 2, D + 5);
 	    	else*/ if(pCurrentClipFix->GroupCount [3]>0)
-    			pspDrawBackgroundFix (PPU.BGMode, 3, D + 2, D + 5);
+    			pspDrawBackgroundFix (PPUPack.PPU.BGMode, 3, D + 2, D + 5);
 			else
-				pspDrawBackground (PPU.BGMode, 3, D + 2, D + 5);
+				pspDrawBackground (PPUPack.PPU.BGMode, 3, D + 2, D + 5);
 	    }
 		}
-	} else if (PPU.BGMode != 7) {
+	} else if (PPUPack.PPU.BGMode != 7) {
 		if (OB&&os9x_OBJ) {
 			/*if (os9x_fastsprite) pspDrawFASTOBJSFix (!sub, D,drawmode);
 	    	else*/ if(pCurrentClipFix->GroupCount [4]>0)
@@ -1540,17 +1540,17 @@ void pspRenderScreenFix (uint8 *Screen, bool8 sub, uint8 D, uint8 drawmode)
 		if (BG0&&os9x_BG0) {	    
 	    if (TO_DRAW(0)) {	    	
 	    	if(pCurrentClipFix->GroupCount [0]>0)
-				pspDrawBackgroundFix (PPU.BGMode, 0, D + 5, D + 13);
+				pspDrawBackgroundFix (PPUPack.PPU.BGMode, 0, D + 5, D + 13);
 			else
-				pspDrawBackground (PPU.BGMode, 0, D + 5, D + 13);
+				pspDrawBackground (PPUPack.PPU.BGMode, 0, D + 5, D + 13);
 	    }
 		}
-		if (PPU.BGMode != 6 && BG1 &&os9x_BG1) {	    
+		if (PPUPack.PPU.BGMode != 6 && BG1 &&os9x_BG1) {	    
 	    if (TO_DRAW(1)) {	    	
 	    	if(pCurrentClipFix->GroupCount [1]>0)
-				pspDrawBackgroundFix (PPU.BGMode, 1, D + 2, D + 9);
+				pspDrawBackgroundFix (PPUPack.PPU.BGMode, 1, D + 2, D + 9);
 			else
-				pspDrawBackground (PPU.BGMode, 1, D + 2, D + 9);
+				pspDrawBackground (PPUPack.PPU.BGMode, 1, D + 2, D + 9);
 	    }
 		}
 	} else {
@@ -1635,16 +1635,16 @@ void pspS9xUpdateScreenFix (){
   if (IPPU.OBJChanged)
     S9xSetupOBJ ();
 
-  if (PPU.RecomputeClipWindows)
+  if (PPUPack.PPU.RecomputeClipWindows)
     {
       ComputeClipWindows ();
-      PPU.RecomputeClipWindows = FALSE;
+      PPUPack.PPU.RecomputeClipWindows = FALSE;
     }
 */
 	SET_DEBUG_COUNT(30,IPPU.ClipFixMaxCount);
 	GPUPack.GFX.StartY = IPPU.PreviousLine;
-	if ((GPUPack.GFX.EndY = IPPU.CurrentLine - 1) >= PPU.ScreenHeight)
-		GPUPack.GFX.EndY = PPU.ScreenHeight - 1;
+	if ((GPUPack.GFX.EndY = IPPU.CurrentLine - 1) >= PPUPack.PPU.ScreenHeight)
+		GPUPack.GFX.EndY = PPUPack.PPU.ScreenHeight - 1;
 
 	uint32 starty = GPUPack.GFX.StartY;
 	uint32 endy = GPUPack.GFX.EndY;
@@ -1669,10 +1669,10 @@ void pspS9xUpdateScreenFix (){
 			//	memcpy(&debug_ClipDataFix,&IPPU.ClipFix [1],sizeof(ClipDataFix));
 			//}
   		
-  if (!os9x_easy&&!PPU.ForcedBlanking && ADD_OR_SUB_ON_ANYTHING && (GPUPack.GFX.r2130 & 0x30) != 0x30 &&
+  if (!os9x_easy&&!PPUPack.PPU.ForcedBlanking && ADD_OR_SUB_ON_ANYTHING && (GPUPack.GFX.r2130 & 0x30) != 0x30 &&
 	  	(!((GPUPack.GFX.r2130 & 0x30) == 0x10 && IPPU.ClipFix[1].GroupCount[5] == 0) || !((GPUPack.GFX.r2130 & 0x30) == 0x10 && IPPU.Clip[1].Count[5] == 0))){	  		
-	  fixedcol=((int)(IPPU.XB [PPU.FixedColourRed])<<3)|((int)(IPPU.XB [PPU.FixedColourGreen])<<11)|((int)(IPPU.XB [PPU.FixedColourBlue])<<19);	  	
-	  fixedcol16=((int)(IPPU.XB [PPU.FixedColourRed])<<0)|((int)(IPPU.XB [PPU.FixedColourGreen])<<5)|((int)(IPPU.XB [PPU.FixedColourBlue])<<10);	
+	  fixedcol=((int)(IPPU.XB [PPUPack.PPU.FixedColourRed])<<3)|((int)(IPPU.XB [PPUPack.PPU.FixedColourGreen])<<11)|((int)(IPPU.XB [PPUPack.PPU.FixedColourBlue])<<19);	  	
+	  fixedcol16=((int)(IPPU.XB [PPUPack.PPU.FixedColourRed])<<0)|((int)(IPPU.XB [PPUPack.PPU.FixedColourGreen])<<5)|((int)(IPPU.XB [PPUPack.PPU.FixedColourBlue])<<10);	
 		INC_DEBUG_COUNT(TRANCE_COUNT);
 
 info(32,0,"transp");
@@ -2193,7 +2193,7 @@ info(32,2,"nothing on subscreen");
 	  // operation.
 	  
 	  
-	  if (!PPU.ForcedBlanking) {
+	  if (!PPUPack.PPU.ForcedBlanking) {
 	  	
 		rendering_beware_fix16=0;
 		initRenderingFix();
@@ -2391,26 +2391,26 @@ void pspDrawBackgroundOffsetFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2)
 
     GPUPack.BG.StartPalette = 0;
 
-    BPS0 = (uint16 *) &VRAM[PPU.BG[2].SCBase << 1];
+    BPS0 = (uint16 *) &VRAM[PPUPack.PPU.BG[2].SCBase << 1];
 
-    if (PPU.BG[2].SCSize & 1)
+    if (PPUPack.PPU.BG[2].SCSize & 1)
 	BPS1 = BPS0 + 1024;
     else
 	BPS1 = BPS0;
 
-    if (PPU.BG[2].SCSize & 2)
+    if (PPUPack.PPU.BG[2].SCSize & 2)
 	BPS2 = BPS1 + 1024;
     else
 	BPS2 = BPS0;
 
-    if (PPU.BG[2].SCSize & 1)
+    if (PPUPack.PPU.BG[2].SCSize & 1)
 	BPS3 = BPS2 + 1024;
     else
 	BPS3 = BPS2;
 
-    SC0 = (uint16 *) &VRAM[PPU.BG[bg].SCBase << 1];
+    SC0 = (uint16 *) &VRAM[PPUPack.PPU.BG[bg].SCBase << 1];
 
-    if (PPU.BG[bg].SCSize & 1)
+    if (PPUPack.PPU.BG[bg].SCSize & 1)
 	SC1 = SC0 + 1024;
     else
 	SC1 = SC0;
@@ -2419,7 +2419,7 @@ void pspDrawBackgroundOffsetFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2)
 		SC1-=0x10000;
 
 
-    if (PPU.BG[bg].SCSize & 2)
+    if (PPUPack.PPU.BG[bg].SCSize & 2)
 	SC2 = SC1 + 1024;
     else
 	SC2 = SC0;
@@ -2428,7 +2428,7 @@ void pspDrawBackgroundOffsetFix (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2)
 		SC2-=0x10000;
 
 
-    if (PPU.BG[bg].SCSize & 1)
+    if (PPUPack.PPU.BG[bg].SCSize & 1)
 	SC3 = SC2 + 1024;
     else
 	SC3 = SC2;

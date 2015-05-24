@@ -539,7 +539,7 @@ void danzeff_load(char *path)
 	{
 		u32 height, width;
 		
-		sprintf(str_tmp,"%s%s",path,guiStrings[a]);		
+		sprintf(str_tmp,"%s/%s",path,guiStrings[a]);		
 		if (danzeff_get_png_image_size(str_tmp, &width, &height) == 0)
 		{
 			// The png is always converted to PSM_8888 format when read
@@ -600,7 +600,7 @@ void danzeff_load16(char *path)
 	{
 		u32 height, width;
 		
-		sprintf(str_tmp,"%s%s",path,guiStrings[a]);		
+		sprintf(str_tmp,"%s/%s",path,guiStrings[a]);		
 		if (danzeff_get_png_image_size(str_tmp, &width, &height) == 0)
 		{
 			// The png is always converted to PSM_8888 format when read

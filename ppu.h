@@ -342,7 +342,6 @@ struct SPPUPACK{
 	struct InternalPPU IPPU;
 };
 extern struct SPPUPACK PPUPack;
-#define PPU PPUPack.PPU
 #define DMA PPUPack.DMA
 #define IPPU PPUPack.IPPU
 //extern struct SPPU PPU;
@@ -361,12 +360,12 @@ void ComputeClipWindowsFix ();
 STATIC inline uint8 REGISTER_4212()
 {
     GetBank = 0;
-    if (CPUPack.CPU.V_Counter >= PPU.ScreenHeight + FIRST_VISIBLE_LINE &&
-	CPUPack.CPU.V_Counter < PPU.ScreenHeight + FIRST_VISIBLE_LINE + 3)
+    if (CPUPack.CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE &&
+	CPUPack.CPU.V_Counter < PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE + 3)
 	GetBank = 1;
 
     GetBank |= CPUPack.CPU.Cycles >= Settings.HBlankStart ? 0x40 : 0;
-    if (CPUPack.CPU.V_Counter >= PPU.ScreenHeight + FIRST_VISIBLE_LINE)
+    if (CPUPack.CPU.V_Counter >= PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE)
 	GetBank |= 0x80; /* XXX: 0x80 or 0xc0 ? */
 
     return (GetBank);
@@ -381,21 +380,21 @@ STATIC inline void FLUSH_REDRAW ()
 
 STATIC inline void REGISTER_2104 (uint8 byte)
 {
-    if (PPU.OAMAddr >= 0x110)
+    if (PPUPack.PPU.OAMAddr >= 0x110)
 	return;
 	
-    int addr = (PPU.OAMAddr << 1) + (PPU.OAMFlip & 1);
+    int addr = (PPUPack.PPU.OAMAddr << 1) + (PPUPack.PPU.OAMFlip & 1);
     
-    if (byte != PPU.OAMData [addr])
+    if (byte != PPUPack.PPU.OAMData [addr])
     {
     	INFO_FLUSH_REDRAW("2104");
 	FLUSH_REDRAW ();
-	PPU.OAMData [addr] = byte;
+	PPUPack.PPU.OAMData [addr] = byte;
 	IPPU.OBJChanged = TRUE;
 	if (addr & 0x200)
 	{
 	    // X position high bit, and sprite size (x4)
-	    struct SOBJ *pObj = &PPU.OBJ [(addr & 0x1f) * 4];
+	    struct SOBJ *pObj = &PPUPack.PPU.OBJ [(addr & 0x1f) * 4];
 
 	    pObj->HPos = (pObj->HPos & 0xFF) | SignExtend[(byte >> 0) & 1];
 	    pObj++->Size = byte & 2;
@@ -412,19 +411,19 @@ STATIC inline void REGISTER_2104 (uint8 byte)
 	    {
 		if (addr & 2)
 		{
-		    addr = PPU.OAMAddr >> 1;
+		    addr = PPUPack.PPU.OAMAddr >> 1;
 		    // Tile within group, priority, h and v flip.
-		    PPU.OBJ[addr].Name &= 0xFF;
-		    PPU.OBJ[addr].Name |= ((uint16) (byte & 1)) << 8;
-		    PPU.OBJ[addr].Palette = (byte >> 1) & 7;
-		    PPU.OBJ[addr].Priority = (byte >> 4) & 3;
-		    PPU.OBJ[addr].HFlip = (byte >> 6) & 1;
-		    PPU.OBJ[addr].VFlip = (byte >> 7) & 1;
+		    PPUPack.PPU.OBJ[addr].Name &= 0xFF;
+		    PPUPack.PPU.OBJ[addr].Name |= ((uint16) (byte & 1)) << 8;
+		    PPUPack.PPU.OBJ[addr].Palette = (byte >> 1) & 7;
+		    PPUPack.PPU.OBJ[addr].Priority = (byte >> 4) & 3;
+		    PPUPack.PPU.OBJ[addr].HFlip = (byte >> 6) & 1;
+		    PPUPack.PPU.OBJ[addr].VFlip = (byte >> 7) & 1;
 		}
 		else
 		{
 		    // Sprite Y position
-		    PPU.OBJ[PPU.OAMAddr >> 1].VPos = byte;
+		    PPUPack.PPU.OBJ[PPUPack.PPU.OAMAddr >> 1].VPos = byte;
 		}
 	    }
 	    else
@@ -433,21 +432,21 @@ STATIC inline void REGISTER_2104 (uint8 byte)
 		{
 		    // Tile group
 		    
-		    PPU.OBJ[addr = PPU.OAMAddr >> 1].Name &= 0x100;
-		    PPU.OBJ[addr].Name |= byte;
+		    PPUPack.PPU.OBJ[addr = PPUPack.PPU.OAMAddr >> 1].Name &= 0x100;
+		    PPUPack.PPU.OBJ[addr].Name |= byte;
 		}
 		else
 		{
 		    // X position (low)
-		    PPU.OBJ[addr = PPU.OAMAddr >> 1].HPos &= 0xFF00;
-		    PPU.OBJ[addr].HPos |= byte;
+		    PPUPack.PPU.OBJ[addr = PPUPack.PPU.OAMAddr >> 1].HPos &= 0xFF00;
+		    PPUPack.PPU.OBJ[addr].HPos |= byte;
 		}
 	    }
 	}
     }
-    PPU.OAMFlip ^= 1;
-    if (!(PPU.OAMFlip & 1))
-	PPU.OAMAddr++;
+    PPUPack.PPU.OAMFlip ^= 1;
+    if (!(PPUPack.PPU.OAMFlip & 1))
+	PPUPack.PPU.OAMAddr++;
 
     ROM_GLOBAL [0x2104] = byte;
 }
@@ -455,17 +454,17 @@ STATIC inline void REGISTER_2104 (uint8 byte)
 STATIC inline void REGISTER_2118 (uint8 Byte)
 {
     uint32 address;
-    if (PPU.VMA.FullGraphicCount)
+    if (PPUPack.PPU.VMA.FullGraphicCount)
     {
-	uint32 rem = PPU.VMA.Address & PPU.VMA.Mask1;
-	address = (((PPU.VMA.Address & ~PPU.VMA.Mask1) +
-			 (rem >> PPU.VMA.Shift) +
-			 ((rem & (PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) & 0xffff;
+	uint32 rem = PPUPack.PPU.VMA.Address & PPUPack.PPU.VMA.Mask1;
+	address = (((PPUPack.PPU.VMA.Address & ~PPUPack.PPU.VMA.Mask1) +
+			 (rem >> PPUPack.PPU.VMA.Shift) +
+			 ((rem & (PPUPack.PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) & 0xffff;
 	VRAM [address] = Byte;
     }
     else
     {
-	VRAM[address = (PPU.VMA.Address << 1) & 0xFFFF] = Byte;
+	VRAM[address = (PPUPack.PPU.VMA.Address << 1) & 0xFFFF] = Byte;
     }
 
 		if (os9x_softrendering>=2) tile_askforreset(address);
@@ -476,17 +475,17 @@ STATIC inline void REGISTER_2118 (uint8 Byte)
     }
     
 
-    if (!PPU.VMA.High)
+    if (!PPUPack.PPU.VMA.High)
     {
 #ifdef DEBUGGER
 	if (Settings.TraceVRAM && !CPUPack.CPU.InDMA)
 	{
-	    printf ("VRAM write byte: $%04X (%d,%d)\n", PPU.VMA.Address,
+	    printf ("VRAM write byte: $%04X (%d,%d)\n", PPUPack.PPU.VMA.Address,
 		    ROM_GLOBAL[0x2115] & 3,
 		    (ROM_GLOBAL [0x2115] & 0x0c) >> 2);
 	}
 #endif	
-	PPU.VMA.Address += PPU.VMA.Increment;
+	PPUPack.PPU.VMA.Address += PPUPack.PPU.VMA.Increment;
     }
 //    ROM_GLOBAL [0x2118] = Byte;
 }
@@ -494,10 +493,10 @@ STATIC inline void REGISTER_2118 (uint8 Byte)
 STATIC inline void REGISTER_2118_tile (uint8 Byte)
 {
     uint32 address;
-    uint32 rem = PPU.VMA.Address & PPU.VMA.Mask1;
-    address = (((PPU.VMA.Address & ~PPU.VMA.Mask1) +
-		 (rem >> PPU.VMA.Shift) +
-		 ((rem & (PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) & 0xffff;
+    uint32 rem = PPUPack.PPU.VMA.Address & PPUPack.PPU.VMA.Mask1;
+    address = (((PPUPack.PPU.VMA.Address & ~PPUPack.PPU.VMA.Mask1) +
+		 (rem >> PPUPack.PPU.VMA.Shift) +
+		 ((rem & (PPUPack.PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) & 0xffff;
     VRAM [address] = Byte;
 
 		if (os9x_softrendering>=2) tile_askforreset(address);
@@ -507,15 +506,15 @@ STATIC inline void REGISTER_2118_tile (uint8 Byte)
     	IPPU.TileCached [TILE_8BIT][(address >> 6)<<1] = FALSE;
     }
    
-    if (!PPU.VMA.High)
-	PPU.VMA.Address += PPU.VMA.Increment;
+    if (!PPUPack.PPU.VMA.High)
+	PPUPack.PPU.VMA.Address += PPUPack.PPU.VMA.Increment;
 //    ROM_GLOBAL [0x2118] = Byte;
 }
 
 STATIC inline void REGISTER_2118_linear (uint8 Byte)
 {
     uint32 address;
-    VRAM[address = (PPU.VMA.Address << 1) & 0xFFFF] = Byte;
+    VRAM[address = (PPUPack.PPU.VMA.Address << 1) & 0xFFFF] = Byte;
 
 		if (os9x_softrendering>=2) tile_askforreset(address);
 		if (os9x_softrendering!=2) {
@@ -524,25 +523,25 @@ STATIC inline void REGISTER_2118_linear (uint8 Byte)
     	IPPU.TileCached [TILE_8BIT][(address >> 6)<<1] = FALSE;
     }
    
-    if (!PPU.VMA.High)
-	PPU.VMA.Address += PPU.VMA.Increment;
+    if (!PPUPack.PPU.VMA.High)
+	PPUPack.PPU.VMA.Address += PPUPack.PPU.VMA.Increment;
 //    ROM_GLOBAL [0x2118] = Byte;
 }
 
 STATIC inline void REGISTER_2119 (uint8 Byte)
 {
     uint32 address;
-    if (PPU.VMA.FullGraphicCount)
+    if (PPUPack.PPU.VMA.FullGraphicCount)
     {
-	uint32 rem = PPU.VMA.Address & PPU.VMA.Mask1;
-	address = ((((PPU.VMA.Address & ~PPU.VMA.Mask1) +
-		    (rem >> PPU.VMA.Shift) +
-		    ((rem & (PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) + 1) & 0xFFFF;
+	uint32 rem = PPUPack.PPU.VMA.Address & PPUPack.PPU.VMA.Mask1;
+	address = ((((PPUPack.PPU.VMA.Address & ~PPUPack.PPU.VMA.Mask1) +
+		    (rem >> PPUPack.PPU.VMA.Shift) +
+		    ((rem & (PPUPack.PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) + 1) & 0xFFFF;
 	VRAM [address] = Byte;
     }
     else
     {
-	VRAM[address = ((PPU.VMA.Address << 1) + 1) & 0xFFFF] = Byte;
+	VRAM[address = ((PPUPack.PPU.VMA.Address << 1) + 1) & 0xFFFF] = Byte;
     }
 
 		if (os9x_softrendering>=2) tile_askforreset(address);
@@ -552,27 +551,27 @@ STATIC inline void REGISTER_2119 (uint8 Byte)
     	IPPU.TileCached [TILE_8BIT][(address >> 6)<<1] = FALSE;
     }
    
-    if (PPU.VMA.High)
+    if (PPUPack.PPU.VMA.High)
     {
 #ifdef DEBUGGER
 	if (Settings.TraceVRAM && !CPUPack.CPU.InDMA)
 	{
-	    printf ("VRAM write word: $%04X (%d,%d)\n", PPU.VMA.Address,
+	    printf ("VRAM write word: $%04X (%d,%d)\n", PPUPack.PPU.VMA.Address,
 		    ROM_GLOBAL[0x2115] & 3,
 		    (ROM_GLOBAL [0x2115] & 0x0c) >> 2);
 	}
 #endif	
-	PPU.VMA.Address += PPU.VMA.Increment;
+	PPUPack.PPU.VMA.Address += PPUPack.PPU.VMA.Increment;
     }
 //    ROM_GLOBAL [0x2119] = Byte;
 }
 
 STATIC inline void REGISTER_2119_tile (uint8 Byte)
 {
-    uint32 rem = PPU.VMA.Address & PPU.VMA.Mask1;
-    uint32 address = ((((PPU.VMA.Address & ~PPU.VMA.Mask1) +
-		    (rem >> PPU.VMA.Shift) +
-		    ((rem & (PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) + 1) & 0xFFFF;
+    uint32 rem = PPUPack.PPU.VMA.Address & PPUPack.PPU.VMA.Mask1;
+    uint32 address = ((((PPUPack.PPU.VMA.Address & ~PPUPack.PPU.VMA.Mask1) +
+		    (rem >> PPUPack.PPU.VMA.Shift) +
+		    ((rem & (PPUPack.PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) + 1) & 0xFFFF;
     VRAM [address] = Byte;
 
 		if (os9x_softrendering>=2) tile_askforreset(address);
@@ -582,15 +581,15 @@ STATIC inline void REGISTER_2119_tile (uint8 Byte)
     	IPPU.TileCached [TILE_8BIT][(address >> 6)<<1] = FALSE;
     }
  
-    if (PPU.VMA.High)
-	PPU.VMA.Address += PPU.VMA.Increment;
+    if (PPUPack.PPU.VMA.High)
+	PPUPack.PPU.VMA.Address += PPUPack.PPU.VMA.Increment;
 //    ROM_GLOBAL [0x2119] = Byte;
 }
 
 STATIC inline void REGISTER_2119_linear (uint8 Byte)
 {
     uint32 address;
-    VRAM[address = ((PPU.VMA.Address << 1) + 1) & 0xFFFF] = Byte;
+    VRAM[address = ((PPUPack.PPU.VMA.Address << 1) + 1) & 0xFFFF] = Byte;
 
 		if (os9x_softrendering>=2) tile_askforreset(address);
 		if (os9x_softrendering!=2) {
@@ -599,19 +598,19 @@ STATIC inline void REGISTER_2119_linear (uint8 Byte)
     	IPPU.TileCached [TILE_8BIT][(address >> 6)<<1] = FALSE;
     }
     
-    if (PPU.VMA.High)
-	PPU.VMA.Address += PPU.VMA.Increment;
+    if (PPUPack.PPU.VMA.High)
+	PPUPack.PPU.VMA.Address += PPUPack.PPU.VMA.Increment;
 //    ROM_GLOBAL [0x2119] = Byte;
 }
 STATIC inline void FixColorsLog_BeforeUpdate()
 {
-	if(IPPU.CurrentLine >= PPU.ScreenHeight) return;
+	if(IPPU.CurrentLine >= PPUPack.PPU.ScreenHeight) return;
 		
-	if(os9x_softrendering>=2 && !(os9x_hack&OLD_PSP_ACCEL) && (PPU.BGMode!=7))	
+	if(os9x_softrendering>=2 && !(os9x_hack&OLD_PSP_ACCEL) && (PPUPack.PPU.BGMode!=7))	
 	{
 		if(IPPU.FixColorCount==0)
 		{
-			int fixedcol=((int)(IPPU.XB [PPU.FixedColourRed])<<3)|((int)(IPPU.XB [PPU.FixedColourGreen])<<11)|((int)(IPPU.XB [PPU.FixedColourBlue])<<19);
+			int fixedcol=((int)(IPPU.XB [PPUPack.PPU.FixedColourRed])<<3)|((int)(IPPU.XB [PPUPack.PPU.FixedColourGreen])<<11)|((int)(IPPU.XB [PPUPack.PPU.FixedColourBlue])<<19);
 			IPPU.FixColorLog[0]=fixedcol;
 			if(IPPU.PreviousLine>IPPU.CurrentLine)
 				IPPU.FixColorLines[0]=0;
@@ -625,12 +624,12 @@ STATIC inline void FixColorsLog_BeforeUpdate()
 
 STATIC inline void FixColorsLog_Update()
 {
-	if(IPPU.CurrentLine >= PPU.ScreenHeight) return;
+	if(IPPU.CurrentLine >= PPUPack.PPU.ScreenHeight) return;
 	if(IPPU.FixColorCount>=255)return;
-	if(os9x_softrendering>=2 && !(os9x_hack&OLD_PSP_ACCEL) && (PPU.BGMode!=7))	
+	if(os9x_softrendering>=2 && !(os9x_hack&OLD_PSP_ACCEL) && (PPUPack.PPU.BGMode!=7))	
 	{
 		{//fix color
-			int fixedcol=((int)(IPPU.XB [PPU.FixedColourRed])<<3)|((int)(IPPU.XB [PPU.FixedColourGreen])<<11)|((int)(IPPU.XB [PPU.FixedColourBlue])<<19);
+			int fixedcol=((int)(IPPU.XB [PPUPack.PPU.FixedColourRed])<<3)|((int)(IPPU.XB [PPUPack.PPU.FixedColourGreen])<<11)|((int)(IPPU.XB [PPUPack.PPU.FixedColourBlue])<<19);
 			if(IPPU.FixColorLines[IPPU.FixColorCount-1] == IPPU.CurrentLine)
 			{
 				IPPU.FixColorLog[IPPU.FixColorCount-1]=fixedcol;
@@ -651,10 +650,10 @@ STATIC inline void FixColorsLog_Update()
 }
 STATIC inline void ScreenColorsLog_BeforeUpdate()
 {
-	if(IPPU.CurrentLine >= PPU.ScreenHeight) return;
-	if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==4)) && (PPU.BGMode!=7))	
+	if(IPPU.CurrentLine >= PPUPack.PPU.ScreenHeight) return;
+	if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPUPack.PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPUPack.PPU.BGMode==4)) && (PPUPack.PPU.BGMode!=7))	
 	{
-		if(PPU.CGADD==0 && IPPU.MainColorCount==0)
+		if(PPUPack.PPU.CGADD==0 && IPPU.MainColorCount==0)
 		{
 			IPPU.MainColorLog[0]=IPPU.ScreenColors[0];
 			if(IPPU.PreviousLine>IPPU.CurrentLine)
@@ -669,11 +668,11 @@ STATIC inline void ScreenColorsLog_BeforeUpdate()
 
 STATIC inline void ScreenColorsLog_Update()
 {
-	if(IPPU.CurrentLine >= PPU.ScreenHeight) return;
+	if(IPPU.CurrentLine >= PPUPack.PPU.ScreenHeight) return;
 	if(IPPU.MainColorCount>=255)return;
-	if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==4)) && (PPU.BGMode!=7))
+	if(os9x_softrendering>=2 && !((os9x_hack&OLD_PSP_ACCEL)&&(PPUPack.PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) && !((os9x_hack&OLD_PSP_ACCEL)&&(PPUPack.PPU.BGMode==4)) && (PPUPack.PPU.BGMode!=7))
 	{
-		if(PPU.CGADD==0)
+		if(PPUPack.PPU.CGADD==0)
 		{//main screen color
 			if(IPPU.MainColorLines[IPPU.MainColorCount-1] == IPPU.CurrentLine)
 			{
@@ -695,11 +694,11 @@ STATIC inline void ScreenColorsLog_Update()
 STATIC inline void REGISTER_2122(uint8 Byte)
 {
     // CG-RAM (palette) write
-    if (PPU.CGFLIP)
+    if (PPUPack.PPU.CGFLIP)
     {    	
-	if ((Byte & 0x7f) != (PPU.CGDATA[PPU.CGADD] >> 8))
+	if ((Byte & 0x7f) != (PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] >> 8))
 	{
-		if (os9x_softrendering<2 || PPU.CGADD!=0 ||  ((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) || ((os9x_hack&OLD_PSP_ACCEL) && (PPU.BGMode==4)) || (PPU.BGMode==7))
+		if (os9x_softrendering<2 || PPUPack.PPU.CGADD!=0 ||  ((os9x_hack&OLD_PSP_ACCEL)&&(PPUPack.PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) || ((os9x_hack&OLD_PSP_ACCEL) && (PPUPack.PPU.BGMode==4)) || (PPUPack.PPU.BGMode==7))
 		{
 			INC_DEBUG_COUNT(PALETTE_CAHNGE_COUNT);
 			if (os9x_hack&PPU_IGNORE_PALWRITE){}
@@ -714,28 +713,28 @@ STATIC inline void REGISTER_2122(uint8 Byte)
 				FLUSH_REDRAW ();
 		}
 		ScreenColorsLog_BeforeUpdate();
-	    PPU.CGDATA[PPU.CGADD] &= 0x00FF;
-	    PPU.CGDATA[PPU.CGADD] |= (Byte & 0x7f) << 8;
+	    PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] &= 0x00FF;
+	    PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] |= (Byte & 0x7f) << 8;
 	    IPPU.ColorsChanged = TRUE;
 	    //if (Settings.SixteenBit)
 	    {
-		IPPU.Blue [PPU.CGADD] = IPPU.XB [(Byte >> 2) & 0x1f];
-		IPPU.Green [PPU.CGADD] = IPPU.XB [(PPU.CGDATA[PPU.CGADD] >> 5) & 0x1f];
-		IPPU.ScreenColors [PPU.CGADD] = (uint16) BUILD_PIXEL (IPPU.Red [PPU.CGADD],
-							     IPPU.Green [PPU.CGADD],
-							     IPPU.Blue [PPU.CGADD]);
+		IPPU.Blue [PPUPack.PPU.CGADD] = IPPU.XB [(Byte >> 2) & 0x1f];
+		IPPU.Green [PPUPack.PPU.CGADD] = IPPU.XB [(PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] >> 5) & 0x1f];
+		IPPU.ScreenColors [PPUPack.PPU.CGADD] = (uint16) BUILD_PIXEL (IPPU.Red [PPUPack.PPU.CGADD],
+							     IPPU.Green [PPUPack.PPU.CGADD],
+							     IPPU.Blue [PPUPack.PPU.CGADD]);
 		os9x_ColorsChanged=1;							     
 	    }
 		ScreenColorsLog_Update();
 
 	}
-	PPU.CGADD++;
+	PPUPack.PPU.CGADD++;
     }
     else
     {
-	if (Byte != (uint8) (PPU.CGDATA[PPU.CGADD] & 0xff))
+	if (Byte != (uint8) (PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] & 0xff))
 	{
-		if (os9x_softrendering<2 || PPU.CGADD!=0 ||  ((os9x_hack&OLD_PSP_ACCEL)&&(PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) || ((os9x_hack&OLD_PSP_ACCEL) && (PPU.BGMode==4)) || (PPU.BGMode==7))
+		if (os9x_softrendering<2 || PPUPack.PPU.CGADD!=0 ||  ((os9x_hack&OLD_PSP_ACCEL)&&(PPUPack.PPU.BGMode==2)&&(!Settings.WrestlemaniaArcade)) || ((os9x_hack&OLD_PSP_ACCEL) && (PPUPack.PPU.BGMode==4)) || (PPUPack.PPU.BGMode==7))
 		{
 			if (os9x_hack&PPU_IGNORE_PALWRITE){}
 			else if (os9x_hack&PPU_SIMPLE_PALWRITE)
@@ -749,29 +748,29 @@ STATIC inline void REGISTER_2122(uint8 Byte)
 				FLUSH_REDRAW ();
 		}
 		ScreenColorsLog_BeforeUpdate();
-	    PPU.CGDATA[PPU.CGADD] &= 0x7F00;
-	    PPU.CGDATA[PPU.CGADD] |= Byte;
+	    PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] &= 0x7F00;
+	    PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] |= Byte;
 	    IPPU.ColorsChanged = TRUE;
 	    //if (Settings.SixteenBit)
 	    {
-		IPPU.Red [PPU.CGADD] = IPPU.XB [Byte & 0x1f];
-		IPPU.Green [PPU.CGADD] = IPPU.XB [(PPU.CGDATA[PPU.CGADD] >> 5) & 0x1f];
-		IPPU.ScreenColors [PPU.CGADD] = (uint16) BUILD_PIXEL (IPPU.Red [PPU.CGADD],
-							     IPPU.Green [PPU.CGADD],
-							     IPPU.Blue [PPU.CGADD]);
+		IPPU.Red [PPUPack.PPU.CGADD] = IPPU.XB [Byte & 0x1f];
+		IPPU.Green [PPUPack.PPU.CGADD] = IPPU.XB [(PPUPack.PPU.CGDATA[PPUPack.PPU.CGADD] >> 5) & 0x1f];
+		IPPU.ScreenColors [PPUPack.PPU.CGADD] = (uint16) BUILD_PIXEL (IPPU.Red [PPUPack.PPU.CGADD],
+							     IPPU.Green [PPUPack.PPU.CGADD],
+							     IPPU.Blue [PPUPack.PPU.CGADD]);
 		os9x_ColorsChanged=1;							 
 	    }
 		ScreenColorsLog_Update();
 	}
     }
-    PPU.CGFLIP ^= 1;
+    PPUPack.PPU.CGFLIP ^= 1;
 //    ROM_GLOBAL [0x2122] = Byte;
 }
 
 STATIC inline void REGISTER_2180(uint8 Byte)
 {
-    RAM[PPU.WRAM++] = Byte;
-    PPU.WRAM &= 0x1FFFF;
+    RAM[PPUPack.PPU.WRAM++] = Byte;
+    PPUPack.PPU.WRAM &= 0x1FFFF;
     ROM_GLOBAL [0x2180] = Byte;
 }
 #endif

@@ -193,11 +193,11 @@ STATIC inline void S9xFixCycles ()
 		S9x_Current_HBlank_Event=S9xDoHBlankProcessing_HBLANK_START_EVENT; \
   } \
  \
-  if (PPU.HTimerEnabled && (long) PPU.HTimerPosition < max &&	(long) PPU.HTimerPosition > CPUPack.CPU.NextEvent && \
-		(!PPU.VTimerEnabled || (PPU.VTimerEnabled && CPUPack.CPU.V_Counter == PPU.IRQVBeamPos))) { \
-		which = (long) PPU.HTimerPosition < Settings.HBlankStart ? HTIMER_BEFORE_EVENT : HTIMER_AFTER_EVENT; \
-		S9x_Current_HBlank_Event=(long) PPU.HTimerPosition < Settings.HBlankStart ?S9xDoHBlankProcessing_HTIMER_BEFORE_EVENT:S9xDoHBlankProcessing_HTIMER_AFTER_EVENT; \
-		max = PPU.HTimerPosition; \
+  if (PPUPack.PPU.HTimerEnabled && (long) PPUPack.PPU.HTimerPosition < max &&	(long) PPUPack.PPU.HTimerPosition > CPUPack.CPU.NextEvent && \
+		(!PPUPack.PPU.VTimerEnabled || (PPUPack.PPU.VTimerEnabled && CPUPack.CPU.V_Counter == PPUPack.PPU.IRQVBeamPos))) { \
+		which = (long) PPUPack.PPU.HTimerPosition < Settings.HBlankStart ? HTIMER_BEFORE_EVENT : HTIMER_AFTER_EVENT; \
+		S9x_Current_HBlank_Event=(long) PPUPack.PPU.HTimerPosition < Settings.HBlankStart ?S9xDoHBlankProcessing_HTIMER_BEFORE_EVENT:S9xDoHBlankProcessing_HTIMER_AFTER_EVENT; \
+		max = PPUPack.PPU.HTimerPosition; \
   } \
   CPUPack.CPU.NextEvent = max; \
   CPUPack.CPU.WhichEvent = which; \

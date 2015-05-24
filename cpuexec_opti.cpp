@@ -327,7 +327,7 @@ S9xDoHBlankProcessing_HBLANK_START_EVENT ()
   CPUPack.CPU.WaitCounter++;
 #endif
 
-  if (IPPU.HDMA && CPUPack.CPU.V_Counter <= PPU.ScreenHeight) IPPU.HDMA = S9xDoHDMA (IPPU.HDMA);
+  if (IPPU.HDMA && CPUPack.CPU.V_Counter <= PPUPack.PPU.ScreenHeight) IPPU.HDMA = S9xDoHDMA (IPPU.HDMA);
   S9xReschedule ();
   //FINISH_PROFILE_FUNC (S9xDoHBlankProcessing); 
 }
@@ -389,18 +389,18 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
 //  CPUPack.ICPU.Scanline++;
 
   if (++CPUPack.CPU.V_Counter > (Settings.PAL ? SNES_MAX_PAL_VCOUNTER : SNES_MAX_NTSC_VCOUNTER)) {
-  	//PPU.OAMAddr = PPU.SavedOAMAddr;
-    //PPU.OAMFlip = 0;            
+  	//PPUPack.PPU.OAMAddr = PPUPack.PPU.SavedOAMAddr;
+    //PPUPack.PPU.OAMFlip = 0;            
     CPUPack.CPU.V_Counter = 0;
     ROM_GLOBAL[0x213F]^=0x80;
     CPUPack.CPU.NMIActive = FALSE;
     //CPUPack.ICPU.Frame++;
-    PPU.HVBeamCounterLatched = 0;
+    PPUPack.PPU.HVBeamCounterLatched = 0;
     CPUPack.CPU.Flags |= SCAN_KEYS_FLAG;
     S9xStartHDMA ();
   }
 
-  if (PPU.VTimerEnabled && !PPU.HTimerEnabled && CPUPack.CPU.V_Counter == PPU.IRQVBeamPos) S9xSetIRQ (PPU_V_BEAM_IRQ_SOURCE);
+  if (PPUPack.PPU.VTimerEnabled && !PPUPack.PPU.HTimerEnabled && CPUPack.CPU.V_Counter == PPUPack.PPU.IRQVBeamPos) S9xSetIRQ (PPU_V_BEAM_IRQ_SOURCE);
 #if (1)
 //  pEvent->apu_event1[pEvent->apu_event1_cpt2 & 0xFFFF]=(os9x_apu_ratio != 256) ? cpu_glob_cycles * os9x_apu_ratio / 256: cpu_glob_cycles;
 //  pEvent->apu_event1_cpt2++;
@@ -466,7 +466,7 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
       S9xStartScreenRefresh ();
     }
   if (CPUPack.CPU.V_Counter >= FIRST_VISIBLE_LINE &&
-      CPUPack.CPU.V_Counter < PPU.ScreenHeight + FIRST_VISIBLE_LINE)
+      CPUPack.CPU.V_Counter < PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE)
     {
       RenderLine (CPUPack.CPU.V_Counter - FIRST_VISIBLE_LINE);
       S9xReschedule ();                  
@@ -474,29 +474,29 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
   		return;
     }
 
-  if (CPUPack.CPU.V_Counter == PPU.ScreenHeight + FIRST_VISIBLE_LINE)
+  if (CPUPack.CPU.V_Counter == PPUPack.PPU.ScreenHeight + FIRST_VISIBLE_LINE)
     {
       // Start of V-blank
       S9xEndScreenRefresh ();
-      //PPU.FirstSprite = 0;
+      //PPUPack.PPU.FirstSprite = 0;
       IPPU.HDMA = 0;
-      // Bits 7 and 6 of $4212 are computed when read in S9xGetPPU.
+      // Bits 7 and 6 of $4212 are computed when read in S9xGetPPUPack.PPU.
 #ifdef DEBUGGER
 	  missing.dma_this_frame = 0;
 #endif
-	  IPPU.MaxBrightness = PPU.Brightness;
-      PPU.ForcedBlanking = (ROM_GLOBAL[0x2100] >> 7) & 1;
+	  IPPU.MaxBrightness = PPUPack.PPU.Brightness;
+      PPUPack.PPU.ForcedBlanking = (ROM_GLOBAL[0x2100] >> 7) & 1;
       
-      if(!PPU.ForcedBlanking){
-				PPU.OAMAddr = PPU.SavedOAMAddr;			
+      if(!PPUPack.PPU.ForcedBlanking){
+				PPUPack.PPU.OAMAddr = PPUPack.PPU.SavedOAMAddr;			
 				uint8 tmp = 0;
-				if(PPU.OAMPriorityRotation)
-					tmp = (PPU.OAMAddr&0xFE)>>1;
-				if((PPU.OAMFlip&1) || PPU.FirstSprite!=tmp){
-					PPU.FirstSprite=tmp;
+				if(PPUPack.PPU.OAMPriorityRotation)
+					tmp = (PPUPack.PPU.OAMAddr&0xFE)>>1;
+				if((PPUPack.PPU.OAMFlip&1) || PPUPack.PPU.FirstSprite!=tmp){
+					PPUPack.PPU.FirstSprite=tmp;
 					IPPU.OBJChanged=TRUE;
 				}			
-				PPU.OAMFlip = 0;
+				PPUPack.PPU.OAMFlip = 0;
 			}
 
       ROM_GLOBAL[0x4210] = 0x80;
@@ -511,7 +511,7 @@ S9xDoHBlankProcessing_HBLANK_END_EVENT () {
   		return;
     }
 
-  if (CPUPack.CPU.V_Counter == PPU.ScreenHeight + 3)
+  if (CPUPack.CPU.V_Counter == PPUPack.PPU.ScreenHeight + 3)
     S9xUpdateJoypads ();
 
   
@@ -526,7 +526,7 @@ S9xDoHBlankProcessing_HTIMER_BEFORE_EVENT ()
 #ifdef CPU_SHUTDOWN
   CPUPack.CPU.WaitCounter++;
 #endif
-  if (PPU.HTimerEnabled && (!PPU.VTimerEnabled || CPUPack.CPU.V_Counter == PPU.IRQVBeamPos)){
+  if (PPUPack.PPU.HTimerEnabled && (!PPUPack.PPU.VTimerEnabled || CPUPack.CPU.V_Counter == PPUPack.PPU.IRQVBeamPos)){
     S9xSetIRQ (PPU_H_BEAM_IRQ_SOURCE);
   }
   S9xReschedule ();
@@ -540,7 +540,7 @@ S9xDoHBlankProcessing_HTIMER_AFTER_EVENT ()
 #ifdef CPU_SHUTDOWN
   CPUPack.CPU.WaitCounter++;
 #endif
-  if (PPU.HTimerEnabled && (!PPU.VTimerEnabled || CPUPack.CPU.V_Counter == PPU.IRQVBeamPos)) {
+  if (PPUPack.PPU.HTimerEnabled && (!PPUPack.PPU.VTimerEnabled || CPUPack.CPU.V_Counter == PPUPack.PPU.IRQVBeamPos)) {
     S9xSetIRQ (PPU_H_BEAM_IRQ_SOURCE);
   }
   S9xReschedule ();

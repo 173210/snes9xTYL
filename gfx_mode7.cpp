@@ -47,12 +47,12 @@
 	int32 CentreX = ((int32) l->CentreX << M7) >> M7; \
 	int32 CentreY = ((int32) l->CentreY << M7) >> M7; \
 \
-	if (PPU.Mode7VFlip) \
+	if (PPUPack.PPU.Mode7VFlip) \
 	    yy = 261 - (int) Line; \
 	else \
 	    yy = Line; \
 \
-	if (PPU.Mode7Repeat == 0) \
+	if (PPUPack.PPU.Mode7Repeat == 0) \
 	    yy += (VOffset - CentreY) % 1023; \
 	else \
 	    yy += VOffset - CentreY; \
@@ -69,7 +69,7 @@
 		    continue; \
 	    } \
 	    TYPE *p = (TYPE *) Screen + Left; \
-	    if (PPU.Mode7HFlip) { \
+	    if (PPUPack.PPU.Mode7HFlip) { \
 		startx = Right - 1; \
 		endx = Left - 1; \
 		dir = -1; \
@@ -85,7 +85,7 @@
 		cc = l->MatrixC; \
 	    } \
 	    int xx; \
-	    if (PPU.Mode7Repeat == 0) \
+	    if (PPUPack.PPU.Mode7Repeat == 0) \
 		xx = startx + (HOffset - CentreX) % 1023; \
 	    else \
 		xx = startx + HOffset - CentreX; \
@@ -100,7 +100,7 @@
 		register uint32 X;\
 		register uint8* TileData;\
 		register uint32 b;\
-	  if (!PPU.Mode7Repeat) { \
+	  if (!PPUPack.PPU.Mode7Repeat) { \
 			if (cc==0) {\
 				register uint8* AdrY;\
 				register int AdrY2;\
@@ -177,7 +177,7 @@
 				}\
 			}\
 	  } else { \
-	  	if (Settings.Dezaemon && PPU.Mode7Repeat == 2) {\
+	  	if (Settings.Dezaemon && PPUPack.PPU.Mode7Repeat == 2) {\
 			for (int x = startx; x != endx; x += dir, AA += aa, CC += cc, p++) \
 			{ \
 			    int X = (AA >> 8) & 0x7ff; \
@@ -191,7 +191,7 @@
 			    } \
 			    else \
 			    { \
-					if (PPU.Mode7Repeat == 3) \
+					if (PPUPack.PPU.Mode7Repeat == 3) \
 					{ \
 					    X = (x + HOffset) & 7; \
 					    Y = (yy + CentreY) & 7; \
@@ -214,7 +214,7 @@
 			    } \
 			    else \
 			    { \
-					if (PPU.Mode7Repeat == 3) \
+					if (PPUPack.PPU.Mode7Repeat == 3) \
 					{ \
 					    X = (x + HOffset) & 7; \
 					    Y = (yy + CentreY) & 7; \
@@ -265,12 +265,12 @@
 	int32 CentreX = ((int32) l->CentreX << M7) >> M7; \
 	int32 CentreY = ((int32) l->CentreY << M7) >> M7; \
 \
-	if (PPU.Mode7VFlip) \
+	if (PPUPack.PPU.Mode7VFlip) \
 	    yy = 261 - (int) Line; \
 	else \
 	    yy = Line; \
 \
-	if (PPU.Mode7Repeat == 0) \
+	if (PPUPack.PPU.Mode7Repeat == 0) \
 	    yy += (VOffset - CentreY) % 1023; \
 	else \
 	    yy += VOffset - CentreY; \
@@ -287,7 +287,7 @@
 		    continue; \
 	    } \
 	    TYPE *p = (TYPE *) Screen + Left; \
-	    if (PPU.Mode7HFlip) { \
+	    if (PPUPack.PPU.Mode7HFlip) { \
 		startx = Right - 1; \
 		endx = Left - 1; \
 		dir = -1; \
@@ -303,7 +303,7 @@
 		cc = l->MatrixC; \
 	    } \
 	    int xx; \
-	    if (PPU.Mode7Repeat == 0) \
+	    if (PPUPack.PPU.Mode7Repeat == 0) \
 		xx = startx + (HOffset - CentreX) % 1023; \
 	    else \
 		xx = startx + HOffset - CentreX; \
@@ -314,7 +314,7 @@
 			int length = (endx-startx); \
 			if (length<0) { length = -length; }\
 \
-	  if (!PPU.Mode7Repeat) { \
+	  if (!PPUPack.PPU.Mode7Repeat) { \
 			  	register int X = (AA >> 8) & 0x3ff; \
 			  	register int Y = (CC >> 8) & 0x3ff; \
 			  	uint8 *TileData; \
@@ -591,7 +591,7 @@ TestNoClipping:\
 					} /* End Free Rotation */\
 				} /*  End clipped Normal mode */ \
 	  } else { \
-	  	if (Settings.Dezaemon && PPU.Mode7Repeat == 2) {\
+	  	if (Settings.Dezaemon && PPUPack.PPU.Mode7Repeat == 2) {\
 			for (int x = startx; x != endx; x += dir, AA += aa, CC += cc, p++) \
 			{ \
 			    int X = (AA >> 8) & 0x7ff; \
@@ -605,7 +605,7 @@ TestNoClipping:\
 			    } \
 			    else \
 			    { \
-					if (PPU.Mode7Repeat == 3) \
+					if (PPUPack.PPU.Mode7Repeat == 3) \
 					{ \
 					    X = (x + HOffset) & 7; \
 					    Y = (yy + CentreY) & 7; \
@@ -628,7 +628,7 @@ TestNoClipping:\
 			    } \
 			    else \
 			    { \
-					if (PPU.Mode7Repeat == 3) \
+					if (PPUPack.PPU.Mode7Repeat == 3) \
 					{ \
 					    X = (x + HOffset) & 7; \
 					    Y = (yy + CentreY) & 7; \

@@ -43,7 +43,7 @@ static void check_settings(){
 unsigned long get_background_num(){
 	unzFile zip_file;
 	char str[256];
-	sprintf(str,"%sDATA/logo.zip",LaunchDir);
+	sprintf(str,"%s/DATA/logo.zip",LaunchDir);
 
 
 	zip_file = unzOpen(str);
@@ -58,7 +58,7 @@ unsigned long get_background_num(){
 
 void load_background(){	
 	/*FILE *fd;
-	sprintf(str_tmp,"%sDATA/logo.bmp",LaunchDir);
+	sprintf(str_tmp,"%s/DATA/logo.bmp",LaunchDir);
 	fd = fopen(str_tmp,"rb");
 	if (fd==NULL) {		
 		msgBoxLines("can't load bg image\n",60);
@@ -73,7 +73,7 @@ void load_background(){
 	unz_file_info unzinfo;
 	char str[256],*buffer;	
 	int l,height;
-	sprintf(str,"%sDATA/logo.zip",LaunchDir);
+	sprintf(str,"%s/DATA/logo.zip",LaunchDir);
 
 
 	zip_file = 0;
@@ -105,7 +105,7 @@ void load_background(){
 		}
 		unzOpenCurrentFile (zip_file);
 
-		sprintf(str,"%sDATA/logo.jpg",LaunchDir);
+		sprintf(str,"%s/DATA/logo.jpg",LaunchDir);
 		jpegFile=fopen(str,"wb");
 		if (!jpegFile) {
 			unzCloseCurrentFile (zip_file);
@@ -206,8 +206,8 @@ int save_rom_settings(int game_crc32,const char *name){
 	FILE *f;
 	char tmp_str[256];
 	int l;	
-	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
-	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
+	if (game_crc32)	sprintf(tmp_str,"%s/PROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
+	else sprintf(tmp_str,"%s/PROFILES/s9xTYL_default.ini",LaunchDir);
 	f = fopen(tmp_str,"wb");			
 	if (!f){
 		ErrorMsg("cannot save settings");
@@ -264,8 +264,8 @@ static int load_rom_settings(int game_crc32){
 	FILE *f;
 	char tmp_str[256],rom_name[64];	
 	int l;
-	if (game_crc32)	sprintf(tmp_str,"%sPROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
-	else sprintf(tmp_str,"%sPROFILES/s9xTYL_default.ini",LaunchDir);
+	if (game_crc32)	sprintf(tmp_str,"%s/PROFILES/s9xTYL_%08X.ini",LaunchDir,game_crc32);
+	else sprintf(tmp_str,"%s/PROFILES/s9xTYL_default.ini",LaunchDir);
 	f = fopen(tmp_str,"rb");
 	if (!f){
 		//debug_log("cannot load settings");
@@ -477,7 +477,7 @@ static int save_settings(void){
 	FILE *f;
 	char tmp_str[256];
 	int l;
-	sprintf(tmp_str,"%ss9xTYL.ini",LaunchDir);
+	sprintf(tmp_str,"%s/s9xTYL.ini",LaunchDir);
 	f = fopen(tmp_str,"wb");
 	if (!f){
 		ErrorMsg("cannot save settings");
@@ -505,7 +505,7 @@ static int load_settings(void){
 	FILE *f;
 	char tmp_str[256];
 	int l;
-	sprintf(tmp_str,"%ss9xTYL.ini",LaunchDir);
+	sprintf(tmp_str,"%s/s9xTYL.ini",LaunchDir);
 	f = fopen(tmp_str,"rb");
 	if (!f){
 		//debug_log("cannot load settings");
@@ -569,7 +569,7 @@ static void checkdirs() {
 	dst = SaveDir;
 	while(*src) *dst++ = *src++;
 
-	strcpy(dst, "PROFILES");
+	strcpy(dst, "/PROFILES");
 	i = sceIoDopen(SaveDir);
 	if (i < 0) {
 		sceIoMkdir(SaveDir, 0777);
@@ -600,7 +600,7 @@ static void checkdirs() {
 			src = LaunchDir;
 			dst = SaveDir;
 			while (*src) *dst++ = *src++;
-			strcpy(dst, "SAVES");
+			strcpy(dst, "/SAVES");
 			sceIoMkdir(SaveDir, 0777);
 			return;
 		}
@@ -817,7 +817,7 @@ static int os9x_findhacks(int game_crc32){
 	unsigned char *snesadvance;
 	FILE *f;
 
-	sprintf(str,"%sDATA/snesadvance.dat",LaunchDir);
+	sprintf(str,"%s/DATA/snesadvance.dat",LaunchDir);
 	f=fopen(str,"rb");
 	if (!f) return 0;
 	fseek(f,0,SEEK_END);
@@ -1074,7 +1074,7 @@ static void net_send_settings() {
 
 
 
-	sprintf(filename,"%stmp.ini",LaunchDir);
+	sprintf(filename,"%s/tmp.ini",LaunchDir);
 	memset(buffer,0,256);
 	save_buffer_settings(buffer);
 	f = fopen(filename,"wb");
@@ -1108,7 +1108,7 @@ static void net_receive_settings() {
 	char buffer[256];
 	FILE *f;
 
-	sprintf(filename,"%stmp.ini",LaunchDir);
+	sprintf(filename,"%s/tmp.ini",LaunchDir);
 
 	msgBoxLines(s9xTYL_msg[ADHOC_WAITING_OTHER], 10);
 

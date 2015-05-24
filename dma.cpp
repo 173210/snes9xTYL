@@ -428,18 +428,18 @@ void S9xDoDMA (uint8 Channel)
 			CPUPack.CPU.V_Counter);
 		if (d->BAddress == 0x18 || d->BAddress == 0x19 || d->BAddress == 0x39 || d->BAddress == 0x3a)
 			sprintf (String, "%s VRAM: %04X (%d,%d) %s", String,
-				PPU.VMA.Address,
-				PPU.VMA.Increment, PPU.VMA.FullGraphicCount,
-				PPU.VMA.High ? "word" : "byte");
+				PPUPack.PPU.VMA.Address,
+				PPUPack.PPU.VMA.Increment, PPUPack.PPU.VMA.FullGraphicCount,
+				PPUPack.PPU.VMA.High ? "word" : "byte");
 
 		else
 			if (d->BAddress == 0x22 || d->BAddress == 0x3b)
 			
-				sprintf (String, "%s CGRAM: %02X (%x)", String, PPU.CGADD,
-					PPU.CGFLIP);			
+				sprintf (String, "%s CGRAM: %02X (%x)", String, PPUPack.PPU.CGADD,
+					PPUPack.PPU.CGFLIP);			
 			else
 				if (d->BAddress == 0x04 || d->BAddress == 0x38)
-					sprintf (String, "%s OBJADDR: %04X", String, PPU.OAMAddr);
+					sprintf (String, "%s OBJADDR: %04X", String, PPUPack.PPU.OAMAddr);
 				S9xMessage (S9X_TRACE, S9X_DMA_TRACE, String);
     }
 #endif
@@ -507,7 +507,7 @@ void S9xDoDMA (uint8 Channel)
 #ifndef CORRECT_VRAM_READS
 					IPPU.FirstVRAMRead = TRUE;
 #endif
-					if (!PPU.VMA.FullGraphicCount)
+					if (!PPUPack.PPU.VMA.FullGraphicCount)
 					{
 						do
 						{
@@ -532,7 +532,7 @@ void S9xDoDMA (uint8 Channel)
 #ifndef CORRECT_VRAM_READS
 					IPPU.FirstVRAMRead = TRUE;
 #endif
-					if (!PPU.VMA.FullGraphicCount)
+					if (!PPUPack.PPU.VMA.FullGraphicCount)
 					{
 						do
 						{
@@ -591,7 +591,7 @@ void S9xDoDMA (uint8 Channel)
 #ifndef CORRECT_VRAM_READS
 						IPPU.FirstVRAMRead = TRUE;
 #endif
-						if (!PPU.VMA.FullGraphicCount)
+						if (!PPUPack.PPU.VMA.FullGraphicCount)
 						{
 							while (count > 1)
 							{
@@ -1047,8 +1047,8 @@ uint8 S9xDoHDMA (uint8 byte) {
 			}
 			if (p->BAddress == 0x04) {
 				if(SNESGameFixes.Uniracers) {
-					PPU.OAMAddr = 0x10c;
-					PPU.OAMFlip=0;
+					PPUPack.PPU.OAMAddr = 0x10c;
+					PPUPack.PPU.OAMFlip=0;
 				}
 			}
 			switch (p->TransferMode) {

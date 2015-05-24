@@ -273,24 +273,24 @@ extern struct SLineMatrixData LineMatrixData [240];
 #define RenderLine(a) { \
 	if (IPPU.RenderThisFrame) { \
    	struct SLineData *p = &LineData [(a)]; \
-		p->BG[0].VOffset = PPU.BG[0].VOffset + 1; \
-		p->BG[0].HOffset = PPU.BG[0].HOffset; \
-		p->BG[1].VOffset = PPU.BG[1].VOffset + 1; \
-		p->BG[1].HOffset = PPU.BG[1].HOffset; \
-		if (PPU.BGMode == 7) { \
+		p->BG[0].VOffset = PPUPack.PPU.BG[0].VOffset + 1; \
+		p->BG[0].HOffset = PPUPack.PPU.BG[0].HOffset; \
+		p->BG[1].VOffset = PPUPack.PPU.BG[1].VOffset + 1; \
+		p->BG[1].HOffset = PPUPack.PPU.BG[1].HOffset; \
+		if (PPUPack.PPU.BGMode == 7) { \
 	    struct SLineMatrixData *q = &LineMatrixData [(a)]; \
-	    /*q->MatrixA = PPU.MatrixA; q->MatrixB = PPU.MatrixB; q->MatrixC = PPU.MatrixC; q->MatrixD = PPU.MatrixD;*/ \
-	    /*q->CentreX = PPU.CentreX; q->CentreY = PPU.CentreY;*/ \
-	    memcpy(q,&(PPU.MatrixA),6*2); /*6 shorts*/ \
+	    /*q->MatrixA = PPUPack.PPU.MatrixA; q->MatrixB = PPUPack.PPU.MatrixB; q->MatrixC = PPUPack.PPU.MatrixC; q->MatrixD = PPUPack.PPU.MatrixD;*/ \
+	    /*q->CentreX = PPUPack.PPU.CentreX; q->CentreY = PPUPack.PPU.CentreY;*/ \
+	    memcpy(q,&(PPUPack.PPU.MatrixA),6*2); /*6 shorts*/ \
 		} else { \
-	    if (Settings.StarfoxHack && PPU.BG[2].VOffset == 0 && PPU.BG[2].HOffset == 0xe000) { \
+	    if (Settings.StarfoxHack && PPUPack.PPU.BG[2].VOffset == 0 && PPUPack.PPU.BG[2].HOffset == 0xe000) { \
 				p->BG[2].VOffset = 0xe1; \
 				p->BG[2].HOffset = 0; \
 	    } else { \
-				p->BG[2].VOffset = PPU.BG[2].VOffset + 1; \
-				p->BG[2].HOffset = PPU.BG[2].HOffset; \
-				p->BG[3].VOffset = PPU.BG[3].VOffset + 1; \
-				p->BG[3].HOffset = PPU.BG[3].HOffset; \
+				p->BG[2].VOffset = PPUPack.PPU.BG[2].VOffset + 1; \
+				p->BG[2].HOffset = PPUPack.PPU.BG[2].HOffset; \
+				p->BG[3].VOffset = PPUPack.PPU.BG[3].VOffset + 1; \
+				p->BG[3].HOffset = PPUPack.PPU.BG[3].HOffset; \
 	    } \
 		} \
 		IPPU.CurrentLine = (a) + 1; \

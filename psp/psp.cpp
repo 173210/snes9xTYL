@@ -382,7 +382,7 @@ static void ErrorExit(const char *msg)
 {
 	FILE* f;
 	char tmp_str[256];
-	sprintf(tmp_str,"%serorr.txt",LaunchDir);
+	sprintf(tmp_str,"%s/erorr.txt",LaunchDir);
 	f = fopen(tmp_str,"wb");
 	if (!f){
 		//("cannot save settings");
@@ -768,6 +768,11 @@ void debug_int( const char* message, int value ){
 // C++ Language
 //
 
+const char *S9xGetDirectory()
+{
+	return ".";
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // SRAM autosaver
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1148,9 +1153,9 @@ return;
     FILE * f;
 	static int idx=0;
 	if(strlen(filename)==0)
-		sprintf(str,"%sAPUDump%d.txt",LaunchDir,debug_count);
+		sprintf(str,"%s/APUDump%d.txt",LaunchDir,debug_count);
 	else
-		sprintf(str,"%s%s%d.txt",LaunchDir,filename,idx++);
+		sprintf(str,"%s/%s%d.txt",LaunchDir,filename,idx++);
 
     f = fopen (str, "wb");
 #endif
@@ -2540,10 +2545,8 @@ int main(int argc,char **argv) {
 	strncpy(LaunchDir,argv[0],sizeof(LaunchDir)-1);
 	LaunchDir[sizeof(LaunchDir)-1]=0;
 	char *str_ptr=strrchr(LaunchDir,'/');
-	if (str_ptr){
-		str_ptr++;
+	if (str_ptr)
 		*str_ptr=0;
-	}
   /* Clear the existing profile regs */
 	//pspDebugProfilerClear();
 	/* Enable profiling */
@@ -2558,7 +2561,7 @@ int main(int argc,char **argv) {
 	scePowerSetClockFrequency(333,333,166);
 
 
-    sprintf(str,"%s%s",LaunchDir,"mediaengine.prx");
+    sprintf(str,"%s/%s",LaunchDir,"mediaengine.prx");
     if( (mod = pspSdkLoadStartModule(str, PSP_MEMORY_PARTITION_KERNEL)) < 0 )
     {
 		ErrorExit(" Error  loading/mediaengine");
@@ -2585,7 +2588,7 @@ int main(int argc,char **argv) {
 //    scePowerSetClockFrequency(333,333,166);
 //#endif
     // Might want to set frequency here as well
-    sprintf(str,"%s%s",LaunchDir,"homehook.prx");
+    sprintf(str,"%s/%s",LaunchDir,"homehook.prx");
 	  if ( (mod = pspSdkLoadStartModule(str, PSP_MEMORY_PARTITION_KERNEL)) < 0)
 	  {
 		ErrorExit(" Error loading/homehook");
@@ -2594,7 +2597,7 @@ int main(int argc,char **argv) {
 	  }
     initHomeButton(devkit_version);
 #endif
-//    sprintf(str,"%s%s",LaunchDir,"clock.prx");
+//    sprintf(str,"%s/%s",LaunchDir,"clock.prx");
 //	  if ( (mod = pspSdkLoadStartModule(str, PSP_MEMORY_PARTITION_KERNEL)) < 0)
 //	  {
 //		ErrorExit(" Error loading/clock");
@@ -2698,7 +2701,7 @@ static void low_level_init(){
 	SetGeCallback();
 
 	//
-	//sprintf(str_tmp,"%sDATA/msg.ini",LaunchDir);
+	//sprintf(str_tmp,"%s/DATA/msg.ini",LaunchDir);
 	//save_msg_list(str_tmp);
 }
 
@@ -3362,7 +3365,7 @@ static void welcome_message(){
 	int res,show_msg=1;
 	SceIoStat stat;
 
-	sprintf(str,"%s%s",LaunchDir,"s9xTYL.ini");
+	sprintf(str,"%s/%s",LaunchDir,"s9xTYL.ini");
 	res=sceIoGetstat("s9xTYL.ini",&stat);
 	if (res<0) res=sceIoGetstat(str,&stat);
 	if (res>=0) {
@@ -3772,7 +3775,7 @@ static int user_main(SceSize args, void* argp) {
 
 	filer_init(s9xTYL_msg[FILER_TITLE], romPath);
 
-	sprintf(os9x_viewfile_path,"%sFAQS/",LaunchDir);
+	sprintf(os9x_viewfile_path,"%s/FAQS/",LaunchDir);
 
 	//sound stuff for menu
 	for (int i=0;i<6;i++) {

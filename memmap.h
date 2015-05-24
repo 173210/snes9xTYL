@@ -40,7 +40,6 @@
  */
 #ifndef _memmap_h_
 #define _memmap_h_
-#include "bsx.h"
 #include "snes9x.h"
 
 #ifdef FAST_LSB_WORD_ACCESS

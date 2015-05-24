@@ -97,7 +97,6 @@ extern int *MixBuffer;// [SOUND_BUFFER_SIZE];
 extern int *EchoBuffer;*/
 
 //add azz 080517
-extern char LaunchDir[256];
 #include "bsx.h"
 
 extern "C" {
@@ -1873,8 +1872,8 @@ bool8 CMemory::LoadSRAM (char *filename)
 			char	path[_MAX_PATH + 1];
 			int size=lsize;
 
-			strcpy(path, LaunchDir);
-			//strcat(path, SLASH_STR);
+			strcpy(path, S9xGetDirectory(SRAM_DIR));
+			strcat(path, SLASH_STR);
 			strcat(path, "BS-X.srm");
 			
 			file = fopen(path, "rb");

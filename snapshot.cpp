@@ -630,7 +630,7 @@ static void Freeze_Internal (STREAM stream)
     WRITE_STREAM (buffer, strlen (buffer) + 1, stream);
     FreezeStruct (stream, "CPU", &CPUPack.CPU, SnapCPU, COUNT (SnapCPU));
     FreezeStruct (stream, "REG", &CPUPack.Registers, SnapRegisters, COUNT (SnapRegisters));
-    FreezeStruct (stream, "PPU", &PPU, SnapPPU, COUNT (SnapPPU));
+    FreezeStruct (stream, "PPU", &PPUPack.PPU, SnapPPU, COUNT (SnapPPU));
     FreezeStruct (stream, "DMA", DMA, SnapDMA, COUNT (SnapDMA));
 
 // RAM and VRAM
@@ -749,7 +749,7 @@ static int Unfreeze (STREAM stream)
 		return (result);
 	}
 
-    if ((result = UnfreezeStruct (stream, "PPU", &PPU, SnapPPU, COUNT (SnapPPU))) != SUCCESS)
+    if ((result = UnfreezeStruct (stream, "PPU", &PPUPack.PPU, SnapPPU, COUNT (SnapPPU))) != SUCCESS)
 	{
 		return (result);
 	}
@@ -1250,90 +1250,90 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 		READ_STREAM (t, 3019, fs);
 		S9xSetCPU (t [2], 0x4200);
 		ROM_GLOBAL [0x4210] = t [3];
-		PPU.IRQVBeamPos = READ_WORD (&t [4]);
-		PPU.IRQHBeamPos = READ_WORD (&t [2527]);
-		PPU.Brightness = t [6];
-		PPU.ForcedBlanking = t [8] >> 7;
+		PPUPack.PPU.IRQVBeamPos = READ_WORD (&t [4]);
+		PPUPack.PPU.IRQHBeamPos = READ_WORD (&t [2527]);
+		PPUPack.PPU.Brightness = t [6];
+		PPUPack.PPU.ForcedBlanking = t [8] >> 7;
 		
 		int i;
 		for (i = 0; i < 544; i++)
 			S9xSetPPU (t [0464 + i], 0x2104);
 		
-		PPU.OBJNameBase = READ_WORD (&t [9]);
-		PPU.OBJNameSelect = READ_WORD (&t [13]) - PPU.OBJNameBase;
+		PPUPack.PPU.OBJNameBase = READ_WORD (&t [9]);
+		PPUPack.PPU.OBJNameSelect = READ_WORD (&t [13]) - PPUPack.PPU.OBJNameBase;
 		switch (t [18])
 		{
 		case 4:
 			if (t [17] == 1)
-				PPU.OBJSizeSelect = 0;
+				PPUPack.PPU.OBJSizeSelect = 0;
 			else
-				PPU.OBJSizeSelect = 6;
+				PPUPack.PPU.OBJSizeSelect = 6;
 			break;
 		case 16:
 			if (t [17] == 1)
-				PPU.OBJSizeSelect = 1;
+				PPUPack.PPU.OBJSizeSelect = 1;
 			else
-				PPU.OBJSizeSelect = 3;
+				PPUPack.PPU.OBJSizeSelect = 3;
 			break;
 		default:
 		case 64:
 			if (t [17] == 1)
-				PPU.OBJSizeSelect = 2;
+				PPUPack.PPU.OBJSizeSelect = 2;
 			else
 				if (t [17] == 4)
-					PPU.OBJSizeSelect = 4;
+					PPUPack.PPU.OBJSizeSelect = 4;
 				else
-					PPU.OBJSizeSelect = 5;
+					PPUPack.PPU.OBJSizeSelect = 5;
 				break;
 		}
-		PPU.OAMAddr = READ_WORD (&t [25]);
-		PPU.SavedOAMAddr =  READ_WORD (&t [27]);
-		PPU.FirstSprite = t [29];
-		PPU.BGMode = t [30];
-		PPU.BG3Priority = t [31];
-		PPU.BG[0].BGSize = (t [32] >> 0) & 1;
-		PPU.BG[1].BGSize = (t [32] >> 1) & 1;
-		PPU.BG[2].BGSize = (t [32] >> 2) & 1;
-		PPU.BG[3].BGSize = (t [32] >> 3) & 1;
-		PPU.Mosaic = t [33] + 1;
-		PPU.BGMosaic [0] = (t [34] & 1) != 0;
-		PPU.BGMosaic [1] = (t [34] & 2) != 0;
-		PPU.BGMosaic [2] = (t [34] & 4) != 0;
-		PPU.BGMosaic [3] = (t [34] & 8) != 0;
-		PPU.BG [0].SCBase = READ_WORD (&t [35]) >> 1;
-		PPU.BG [1].SCBase = READ_WORD (&t [37]) >> 1;
-		PPU.BG [2].SCBase = READ_WORD (&t [39]) >> 1;
-		PPU.BG [3].SCBase = READ_WORD (&t [41]) >> 1;
-		PPU.BG [0].SCSize = t [67];
-		PPU.BG [1].SCSize = t [68];
-		PPU.BG [2].SCSize = t [69];
-		PPU.BG [3].SCSize = t [70];
-		PPU.BG[0].NameBase = READ_WORD (&t [71]) >> 1;
-		PPU.BG[1].NameBase = READ_WORD (&t [73]) >> 1;
-		PPU.BG[2].NameBase = READ_WORD (&t [75]) >> 1;
-		PPU.BG[3].NameBase = READ_WORD (&t [77]) >> 1;
-		PPU.BG[0].HOffset = READ_WORD (&t [79]);
-		PPU.BG[1].HOffset = READ_WORD (&t [81]);
-		PPU.BG[2].HOffset = READ_WORD (&t [83]);
-		PPU.BG[3].HOffset = READ_WORD (&t [85]);
-		PPU.BG[0].VOffset = READ_WORD (&t [89]);
-		PPU.BG[1].VOffset = READ_WORD (&t [91]);
-		PPU.BG[2].VOffset = READ_WORD (&t [93]);
-		PPU.BG[3].VOffset = READ_WORD (&t [95]);
-		PPU.VMA.Increment = READ_WORD (&t [97]) >> 1;
-		PPU.VMA.High = t [99];
+		PPUPack.PPU.OAMAddr = READ_WORD (&t [25]);
+		PPUPack.PPU.SavedOAMAddr =  READ_WORD (&t [27]);
+		PPUPack.PPU.FirstSprite = t [29];
+		PPUPack.PPU.BGMode = t [30];
+		PPUPack.PPU.BG3Priority = t [31];
+		PPUPack.PPU.BG[0].BGSize = (t [32] >> 0) & 1;
+		PPUPack.PPU.BG[1].BGSize = (t [32] >> 1) & 1;
+		PPUPack.PPU.BG[2].BGSize = (t [32] >> 2) & 1;
+		PPUPack.PPU.BG[3].BGSize = (t [32] >> 3) & 1;
+		PPUPack.PPU.Mosaic = t [33] + 1;
+		PPUPack.PPU.BGMosaic [0] = (t [34] & 1) != 0;
+		PPUPack.PPU.BGMosaic [1] = (t [34] & 2) != 0;
+		PPUPack.PPU.BGMosaic [2] = (t [34] & 4) != 0;
+		PPUPack.PPU.BGMosaic [3] = (t [34] & 8) != 0;
+		PPUPack.PPU.BG [0].SCBase = READ_WORD (&t [35]) >> 1;
+		PPUPack.PPU.BG [1].SCBase = READ_WORD (&t [37]) >> 1;
+		PPUPack.PPU.BG [2].SCBase = READ_WORD (&t [39]) >> 1;
+		PPUPack.PPU.BG [3].SCBase = READ_WORD (&t [41]) >> 1;
+		PPUPack.PPU.BG [0].SCSize = t [67];
+		PPUPack.PPU.BG [1].SCSize = t [68];
+		PPUPack.PPU.BG [2].SCSize = t [69];
+		PPUPack.PPU.BG [3].SCSize = t [70];
+		PPUPack.PPU.BG[0].NameBase = READ_WORD (&t [71]) >> 1;
+		PPUPack.PPU.BG[1].NameBase = READ_WORD (&t [73]) >> 1;
+		PPUPack.PPU.BG[2].NameBase = READ_WORD (&t [75]) >> 1;
+		PPUPack.PPU.BG[3].NameBase = READ_WORD (&t [77]) >> 1;
+		PPUPack.PPU.BG[0].HOffset = READ_WORD (&t [79]);
+		PPUPack.PPU.BG[1].HOffset = READ_WORD (&t [81]);
+		PPUPack.PPU.BG[2].HOffset = READ_WORD (&t [83]);
+		PPUPack.PPU.BG[3].HOffset = READ_WORD (&t [85]);
+		PPUPack.PPU.BG[0].VOffset = READ_WORD (&t [89]);
+		PPUPack.PPU.BG[1].VOffset = READ_WORD (&t [91]);
+		PPUPack.PPU.BG[2].VOffset = READ_WORD (&t [93]);
+		PPUPack.PPU.BG[3].VOffset = READ_WORD (&t [95]);
+		PPUPack.PPU.VMA.Increment = READ_WORD (&t [97]) >> 1;
+		PPUPack.PPU.VMA.High = t [99];
 #ifndef CORRECT_VRAM_READS
                 IPPU.FirstVRAMRead = t [100];
 #endif
 		S9xSetPPU (t [2512], 0x2115);
-		PPU.VMA.Address = READ_DWORD (&t [101]);
+		PPUPack.PPU.VMA.Address = READ_DWORD (&t [101]);
 		for (i = 0; i < 512; i++)
 			S9xSetPPU (t [1488 + i], 0x2122);
 		
-		PPU.CGADD = (uint8) READ_WORD (&t [105]);
+		PPUPack.PPU.CGADD = (uint8) READ_WORD (&t [105]);
 		ROM_GLOBAL [0x212c] = t [108];
 		ROM_GLOBAL [0x212d] = t [109];
-		PPU.ScreenHeight = READ_WORD (&t [111]);
+		PPUPack.PPU.ScreenHeight = READ_WORD (&t [111]);
 		ROM_GLOBAL [0x2133] = t [2526];
 		ROM_GLOBAL [0x4202] = t [113];
 		ROM_GLOBAL [0x4204] = t [114];
@@ -1342,12 +1342,12 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 		ROM_GLOBAL [0x4215] = t [117];
 		ROM_GLOBAL [0x4216] = t [118];
 		ROM_GLOBAL [0x4217] = t [119];
-		PPU.VBeamPosLatched = READ_WORD (&t [122]);
-		PPU.HBeamPosLatched = READ_WORD (&t [120]);
-		PPU.Window1Left = t [127];
-		PPU.Window1Right = t [128];
-		PPU.Window2Left = t [129];
-		PPU.Window2Right = t [130];
+		PPUPack.PPU.VBeamPosLatched = READ_WORD (&t [122]);
+		PPUPack.PPU.HBeamPosLatched = READ_WORD (&t [120]);
+		PPUPack.PPU.Window1Left = t [127];
+		PPUPack.PPU.Window1Right = t [128];
+		PPUPack.PPU.Window2Left = t [129];
+		PPUPack.PPU.Window2Right = t [130];
 		S9xSetPPU (t [131] | (t [132] << 4), 0x2123);
 		S9xSetPPU (t [133] | (t [134] << 4), 0x2124);
 		S9xSetPPU (t [135] | (t [136] << 4), 0x2125);
@@ -1356,18 +1356,18 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 		S9xSetPPU (t [139], 0x212e);
 		S9xSetPPU (t [140], 0x212f);
 		S9xSetPPU (t [141], 0x211a);
-		PPU.MatrixA = READ_WORD (&t [142]);
-		PPU.MatrixB = READ_WORD (&t [144]);
-		PPU.MatrixC = READ_WORD (&t [146]);
-		PPU.MatrixD = READ_WORD (&t [148]);
-		PPU.CentreX = READ_WORD (&t [150]);
-		PPU.CentreY = READ_WORD (&t [152]);
+		PPUPack.PPU.MatrixA = READ_WORD (&t [142]);
+		PPUPack.PPU.MatrixB = READ_WORD (&t [144]);
+		PPUPack.PPU.MatrixC = READ_WORD (&t [146]);
+		PPUPack.PPU.MatrixD = READ_WORD (&t [148]);
+		PPUPack.PPU.CentreX = READ_WORD (&t [150]);
+		PPUPack.PPU.CentreY = READ_WORD (&t [152]);
 		// JoyAPos t[154]
 		// JoyBPos t[155]
 		ROM_GLOBAL [0x2134] = t [156]; // Matrix mult
 		ROM_GLOBAL [0x2135] = t [157]; // Matrix mult
 		ROM_GLOBAL [0x2136] = t [158]; // Matrix mult
-		PPU.WRAM = READ_DWORD (&t [161]);
+		PPUPack.PPU.WRAM = READ_DWORD (&t [161]);
 		
 		for (i = 0; i < 128; i++)
 			S9xSetCPU (t [165 + i], 0x4300 + i);
@@ -1377,9 +1377,9 @@ bool8 S9xUnfreezeZSNES (const char *filename)
 		
 		S9xSetCPU (t [296], 0x420c);
 		// hdmadata t[297] + 8 * 19
-		PPU.FixedColourRed = t [450];
-		PPU.FixedColourGreen = t [451];
-		PPU.FixedColourBlue = t [452];
+		PPUPack.PPU.FixedColourRed = t [450];
+		PPUPack.PPU.FixedColourGreen = t [451];
+		PPUPack.PPU.FixedColourBlue = t [452];
 		S9xSetPPU (t [454], 0x2130);
 		S9xSetPPU (t [455], 0x2131);
 		// vraminctype ...

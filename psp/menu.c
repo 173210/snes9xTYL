@@ -14,7 +14,7 @@
 #define SNAPSHOT_CODE() \
     else if (new_pad & PSP_CTRL_START) {    	\
     	pg_drawframe^=1;    	\
-    	sprintf(str_tmp,"%ssnap%d.jpg",LaunchDir,snap++);\
+    	sprintf(str_tmp,"%s/snap%d.jpg",LaunchDir,snap++);\
     	write_JPEG_file (str_tmp,75,(u16 *)pgGetVramAddr(0,0),480,272,512); \
     	pg_drawframe^=1;    	\
     }
@@ -1348,7 +1348,7 @@ static void menu_startmusic(){
 	unz_file_info unzinfo;
 
 	int l;
-	sprintf(str_tmp,"%sDATA/music.zip",LaunchDir);
+	sprintf(str_tmp,"%s/DATA/music.zip",LaunchDir);
 
 	zip_file = 0;
 	menu_music=0;

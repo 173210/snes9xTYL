@@ -157,25 +157,25 @@ void ComputeClipWindows ()
 		    if (w == 5 ||
 			(ROM_GLOBAL [0x212c + c] & ROM_GLOBAL [0x212e + c] & (1 << w)))
 		    {
-			if (PPU.ClipWindow1Enable [w])
+			if (PPUPack.PPU.ClipWindow1Enable [w])
 			{
-			    if (!PPU.ClipWindow1Inside [w])
+			    if (!PPUPack.PPU.ClipWindow1Inside [w])
 			    {
-				Win1[Window1Enabled].Left = PPU.Window1Left;
-				Win1[Window1Enabled++].Right = PPU.Window1Right + 1;
+				Win1[Window1Enabled].Left = PPUPack.PPU.Window1Left;
+				Win1[Window1Enabled++].Right = PPUPack.PPU.Window1Right + 1;
 			    }
 			    else
 			    {
-				if (PPU.Window1Left <= PPU.Window1Right)
+				if (PPUPack.PPU.Window1Left <= PPUPack.PPU.Window1Right)
 				{
-				    if (PPU.Window1Left > 0)
+				    if (PPUPack.PPU.Window1Left > 0)
 				    {
 					Win1[Window1Enabled].Left = 0;
-					Win1[Window1Enabled++].Right = PPU.Window1Left;
+					Win1[Window1Enabled++].Right = PPUPack.PPU.Window1Left;
 				    }
-				    if (PPU.Window1Right < 255)
+				    if (PPUPack.PPU.Window1Right < 255)
 				    {
-					Win1[Window1Enabled].Left = PPU.Window1Right + 1;
+					Win1[Window1Enabled].Left = PPUPack.PPU.Window1Right + 1;
 					Win1[Window1Enabled++].Right = 256;
 				    }
 				    if (Window1Enabled == 0)
@@ -193,25 +193,25 @@ void ComputeClipWindows ()
 				}
 			    }
 			}
-			if (PPU.ClipWindow2Enable [w])
+			if (PPUPack.PPU.ClipWindow2Enable [w])
 			{
-			    if (!PPU.ClipWindow2Inside [w])
+			    if (!PPUPack.PPU.ClipWindow2Inside [w])
 			    {
-				Win2[Window2Enabled].Left = PPU.Window2Left;
-				Win2[Window2Enabled++].Right = PPU.Window2Right + 1;
+				Win2[Window2Enabled].Left = PPUPack.PPU.Window2Left;
+				Win2[Window2Enabled++].Right = PPUPack.PPU.Window2Right + 1;
 			    }
 			    else
 			    {
-				if (PPU.Window2Left <= PPU.Window2Right)
+				if (PPUPack.PPU.Window2Left <= PPUPack.PPU.Window2Right)
 				{
-				    if (PPU.Window2Left > 0)
+				    if (PPUPack.PPU.Window2Left > 0)
 				    {
 					Win2[Window2Enabled].Left = 0;
-					Win2[Window2Enabled++].Right = PPU.Window2Left;
+					Win2[Window2Enabled++].Right = PPUPack.PPU.Window2Left;
 				    }
-				    if (PPU.Window2Right < 255)
+				    if (PPUPack.PPU.Window2Right < 255)
 				    {
-					Win2[Window2Enabled].Left = PPU.Window2Right + 1;
+					Win2[Window2Enabled].Left = PPUPack.PPU.Window2Right + 1;
 					Win2[Window2Enabled++].Right = 256;
 				    }
 				    if (Window2Enabled == 0)
@@ -239,7 +239,7 @@ void ComputeClipWindows ()
 			
 			struct Band Bands [6];
 			int B = 0;
-			switch (PPU.ClipWindowOverlapLogic [w] ^ 1)
+			switch (PPUPack.PPU.ClipWindowOverlapLogic [w] ^ 1)
 			{
 			case CLIP_OR:
 			    if (Window1Enabled == 1)
@@ -768,11 +768,11 @@ void ComputeClipWindowsFix ()
     struct ClipDataFix *pClipFix = &IPPU.ClipFix [0];
 	
 	uint32 startY;// = IPPU.PreviousClipLine;
-	if ((startY = IPPU.PreviousClipLine) >= PPU.ScreenHeight)
-		startY = PPU.ScreenHeight;
+	if ((startY = IPPU.PreviousClipLine) >= PPUPack.PPU.ScreenHeight)
+		startY = PPUPack.PPU.ScreenHeight;
 	uint32 endY;
-	if ((endY = IPPU.CurrentLine - 1) >= PPU.ScreenHeight)
-		endY = PPU.ScreenHeight - 1;
+	if ((endY = IPPU.CurrentLine - 1) >= PPUPack.PPU.ScreenHeight)
+		endY = PPUPack.PPU.ScreenHeight - 1;
 	if(startY > endY+1)startY=0;
 	if(startY>endY)return;
 
@@ -843,7 +843,7 @@ void ComputeClipWindowsFix ()
 	if(copyed)
 		IPPU.ClipFixMaxCount++;
 	IPPU.PreviousClipLine=IPPU.CurrentLine;//endY;
-	PPU.RecomputeClipWindows = FALSE;
+	PPUPack.PPU.RecomputeClipWindows = FALSE;
 }
 void CreateClipWindowsFix ()
 {
@@ -858,11 +858,11 @@ void CreateClipWindowsFix ()
 
 	
 	int startY;// = IPPU.PreviousClipLine;
-	if ((startY = IPPU.PreviousClipLine) >= PPU.ScreenHeight)
-		startY = PPU.ScreenHeight;
+	if ((startY = IPPU.PreviousClipLine) >= PPUPack.PPU.ScreenHeight)
+		startY = PPUPack.PPU.ScreenHeight;
 	int endY;
-	if ((endY = IPPU.CurrentLine - 1) >= PPU.ScreenHeight)
-		endY = PPU.ScreenHeight - 1;
+	if ((endY = IPPU.CurrentLine - 1) >= PPUPack.PPU.ScreenHeight)
+		endY = PPUPack.PPU.ScreenHeight - 1;
 
 
 	//êVÇΩÇ…çÏê¨
