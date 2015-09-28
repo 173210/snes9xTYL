@@ -139,7 +139,7 @@ PSP_MAIN_THREAD_STACK_SIZE_KB(256); /* smaller stack for kernel thread */
 //12000 ok
 //14000x
 //28000x
-PSP_HEAP_SIZE_KB(4096);
+PSP_HEAP_SIZE_MAX();
 
 #ifdef PROFILE
 profile_t profile_data;
