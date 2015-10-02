@@ -11,7 +11,7 @@ INCDIR = psp psp/me psp/openspc++ psp/adhoc zlib danzeff
 CFLAGS = -O2 -G0 -Wall -pipe \
 	-flto -fsingle-precision-constant \
 	-DFW3X -DEMUNAME_VERSION="\"$(EMUNAME_VERSION)\""
-
+LDFLAGS = -fwhole-program
 
 ifndef ME_ACTIVE
 USE_USER_LIBS = 1
