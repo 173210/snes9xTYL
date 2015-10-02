@@ -97,14 +97,55 @@ short C4WFDist;
 short C4WFScale;
 
 static float tanval;
-static float c4x, c4y, c4z;
-static float c4x2, c4y2, c4z2;
 
 
 
 
 void C4TransfWireFrame ()
 {
+#ifdef __psp__
+    __asm__ volatile ("mtv %0, S000\n" :: "r"((int)C4WFX2Val));
+    __asm__ volatile ("mtv %0, S001\n" :: "r"((int)C4WFY2Val));
+    __asm__ volatile ("mtv %0, S002\n" :: "r"((int)C4WFDist));
+    __asm__ volatile ("mtv %0, S003\n" :: "r"((int)C4WFScale));
+    __asm__ volatile ("vi2f.q C000, C000, 0\n"
+                      "vfim.s S010, -0.03125\n"
+                      "vscl.t C000, C000, S010\n"
+                      "vcos.t C010, C000\n"
+                      "vsin.t C000, C000\n");
+
+    __asm__ volatile ("mtv    %0, S020\n" :: "r"((int)C4WFXVal));
+    __asm__ volatile ("mtv    %0, S021\n" :: "r"((int)C4WFYVal));
+    __asm__ volatile ("mtv    %0, S022\n" :: "r"((int)C4WFZVal - 0x95));
+    __asm__ volatile ("vi2f.t C021, C020, 0\n");
+
+    __asm__ volatile (// Rotate X
+                      "vdot.p S020, C022, R000\n"
+                      "vdet.p S010, C022, R000\n"
+
+                      // Rotate Y
+                      "vdot.p S000, C020, R001\n"
+                      "vdet.p S013, C020, R001\n"
+
+                      // Rotate Z
+                      "vdet.p S001, R000, R002\n"
+                      "vdot.p S000, R000, R002\n"
+
+                      // Scale
+                      "vfim.s S002, 149\n"
+                      "vadd.s S013, S013, S002\n"
+                      "vfim.s S012, 144\n"
+                      "vmul.p C002, R002, R003\n"
+                      "vdiv.s S002, S002, S003\n"
+                      "vscl.p C000, C000, S002\n"
+                      "vf2in.p C000, C000, 0\n");
+
+    __asm__ volatile ("mfv    %0, S001\n" : "=r"(C4WFXVal));
+    __asm__ volatile ("mfv    %0, S000\n" : "=r"(C4WFYVal));
+#else
+    float c4x, c4y, c4z;
+    float c4x2, c4y2, c4z2;
+
     c4x = (float) C4WFXVal;
     c4y = (float) C4WFYVal;
     c4z = (float) C4WFZVal - 0x95;
@@ -127,10 +168,51 @@ void C4TransfWireFrame ()
     // Scale
     C4WFXVal = (short) (c4x*(float)C4WFScale/(0x90*(c4z+0x95))*0x95);
     C4WFYVal = (short) (c4y*(float)C4WFScale/(0x90*(c4z+0x95))*0x95);
+#endif
 }
 
 void C4TransfWireFrame2 ()
 {
+#ifdef __psp__
+    __asm__ volatile ("mtv %0, S000\n" :: "r"((int)C4WFX2Val));
+    __asm__ volatile ("mtv %0, S001\n" :: "r"((int)C4WFY2Val));
+    __asm__ volatile ("mtv %0, S002\n" :: "r"((int)C4WFDist));
+    __asm__ volatile ("mtv %0, S003\n" :: "r"((int)C4WFScale));
+    __asm__ volatile ("vi2f.q C000, C000, 0\n"
+                      "vfim.s S010, -0.03125\n"
+                      "vscl.t C000, C000, S010\n"
+                      "vcos.t C010, C000\n"
+                      "vsin.t C000, C000\n");
+
+    __asm__ volatile ("mtv    %0, S020\n" :: "r"((int)C4WFXVal));
+    __asm__ volatile ("mtv    %0, S021\n" :: "r"((int)C4WFYVal));
+    __asm__ volatile ("mtv    %0, S022\n" :: "r"((int)C4WFZVal));
+    __asm__ volatile ("vi2f.t C021, C020, 0\n");
+
+    __asm__ volatile (// Rotate X
+                      "vdot.p S020, C022, R000\n"
+                      "vdet.p S010, C022, R000\n"
+
+                      // Rotate Y
+                      "vdot.p S000, C020, R001\n"
+                      "vdet.p S013, C020, R001\n"
+
+                      // Rotate Z
+                      "vdet.p S001, R000, R002\n"
+                      "vdot.p S000, R000, R002\n"
+
+                      // Scale
+                      "vfim.s S002, 256\n"
+                      "vdiv.s S002, S003, S002\n"
+                      "vscl.p C000, C000, S002\n"
+                      "vf2in.p C000, C000, 0\n");
+
+    __asm__ volatile ("mfv    %0, S001\n" : "=r"(C4WFXVal));
+    __asm__ volatile ("mfv    %0, S000\n" : "=r"(C4WFYVal));
+#else
+    float c4x, c4y, c4z;
+    float c4x2, c4y2, c4z2;
+
     c4x = (float)C4WFXVal;
     c4y = (float)C4WFYVal;
     c4z = (float)C4WFZVal;
@@ -153,6 +235,7 @@ void C4TransfWireFrame2 ()
     // Scale
     C4WFXVal =(short)(c4x * (float)C4WFScale / 0x100);
     C4WFYVal =(short)(c4y * (float)C4WFScale / 0x100);
+#endif
 }
 
 void C4CalcWireFrame ()
