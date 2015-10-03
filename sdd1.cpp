@@ -95,7 +95,7 @@ void S9xSetSDD1MemoryMap (uint32 bank, uint32 value)
 
     for (c = 0; c < 0x100; c += 16)
     {
-	uint8 *block = &ROM [value + (c << 12)];
+	uint8 *block = &Memory.ROM [value + (c << 12)];
 	int i;
 
 	for (i = c; i < c + 16; i++)

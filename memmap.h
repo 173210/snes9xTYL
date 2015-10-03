@@ -163,12 +163,12 @@ public:
 
 
 //    uint8 *RAM;
-//    uint8 *ROM;
+    uint8 *ROM;
 //    uint8 *VRAM;
 //    uint8 *SRAM;
 //    uint8 *BWRAM;
 //    uint8 *ROM_GLOBAL;
-//    uint8 *C4RAM;
+    uint8 *C4RAM;
     bool8 HiROM;
     bool8 LoROM;
     uint16 SRAMMask;
@@ -222,13 +222,11 @@ extern uint8 ** const Map;
 extern CMemory Memory;
 extern uint8 SRAM[];
 extern uint8 *ROM_GLOBAL;
-extern uint8 *ROM;
 //extern uint8 *RegRAM;
 extern uint8 RAM[];
 extern uint8 VRAM[];
 //extern uint8 *VRAMmode7;
 extern uint8 *BWRAM;
-extern uint8 *C4RAM;
 
 extern uint8 *BSRAM;//add azz 080517
 extern uint8 *BIOSROM; // BS

@@ -452,7 +452,7 @@ void S9xSetSA1MemMap (uint32 which1, uint8 map)
 
     for (c = 0; c < 0x100; c += 16)
     {
-	uint8 *block = &ROM [(map & 7) * 0x100000 + (c << 12)];
+	uint8 *block = &Memory.ROM [(map & 7) * 0x100000 + (c << 12)];
 	int i;
 
 	for (i = c; i < c + 16; i++)
@@ -461,7 +461,7 @@ void S9xSetSA1MemMap (uint32 which1, uint8 map)
     
     for (c = 0; c < 0x200; c += 16)
     {
-	uint8 *block = &ROM [(map & 7) * 0x100000 + (c << 11) - 0x8000];
+	uint8 *block = &Memory.ROM [(map & 7) * 0x100000 + (c << 11) - 0x8000];
 	int i;
 
 	for (i = c + 8; i < c + 16; i++)
@@ -819,7 +819,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	if ((ROM_GLOBAL [0x2230] & 0xb0) == 0xa0)
 	{
 	    // Char conversion 2 DMA enabled
-	    memmove (&ROM [/*CMemory::*/Memory.MAX_ROM_SIZE - 0x10000] + SA1.in_char_dma * 16,
+	    memmove (&Memory.ROM [/*CMemory::*/Memory.MAX_ROM_SIZE - 0x10000] + SA1.in_char_dma * 16,
 		     &ROM_GLOBAL [0x2240], 16);
 	    SA1.in_char_dma = (SA1.in_char_dma + 1) & 7;
 	    if ((SA1.in_char_dma & 3) == 0)
@@ -895,7 +895,7 @@ static void S9xSA1CharConv2 ()
 		(ROM_GLOBAL [0x2231] & 3) == 1 ? 4 : 2;
     int bytes_per_char = 8 * depth;
     uint8 *p = &ROM_GLOBAL [0x3000] + dest + offset * bytes_per_char;
-    uint8 *q = &ROM [/*CMemory::*/Memory.MAX_ROM_SIZE - 0x10000] + offset * 64;
+    uint8 *q = &Memory.ROM [/*CMemory::*/Memory.MAX_ROM_SIZE - 0x10000] + offset * 64;
 
     switch (depth)
     {
@@ -945,7 +945,7 @@ static void S9xSA1DMA ()
 	if (s >= (uint8 *) CMemory::MAP_LAST)
 	    s += (src & 0xffff);
 	else
-	    s = ROM + (src & 0xffff);
+	    s = Memory.ROM + (src & 0xffff);
 	break;
     case 1: // BW-RAM
 	src &= Memory.SRAMMask;

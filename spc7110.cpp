@@ -201,7 +201,7 @@
 #include "display.h"
 
 #define memory_cartrom_size()		Memory.CalculatedSize
-#define memory_cartrom_read(a)		ROM[(a)]
+#define memory_cartrom_read(a)		Memory.ROM[(a)]
 #define memory_cartrtc_read(a)		RTCData.reg[(a)]
 #define memory_cartrtc_write(a, b)	{ RTCData.reg[(a)] = (b); }
 #define cartridge_info_spc7110rtc	Settings.SPC7110RTC
@@ -272,7 +272,7 @@ uint8 * S9xGetBasePointerSPC7110 (uint32 address)
 	
 	i += address & 0x0f0000;
 
-	return (&ROM[i]);
+	return (&Memory.ROM[i]);
 }
 
 uint8 S9xGetSPC7110Byte (uint32 address)
@@ -300,7 +300,7 @@ uint8 S9xGetSPC7110Byte (uint32 address)
 
 	i += address & 0x0fffff;
 
-	return (ROM[i]);
+	return (Memory.ROM[i]);
 }
 
 uint8 S9xGetSPC7110 (uint16 address)

@@ -45,6 +45,7 @@
 #include "dsp1.h"
 #include "cpuexec.h"
 #include "sa1.h"
+#include "c4.h"
 #include "bsx.h"
 #include "spc7110.h"
 
@@ -708,7 +709,7 @@ INLINE uint8 *GetBasePointer (uint32 Address)
     case CMemory::MAP_HIROM_SRAM:
         return (SRAM + (((Address & 0x7fff) - 0x6000 + ((Address & 0xf0000) >> 3)) & Memory.SRAMMask) - (Address&0xffff));
     case CMemory::MAP_C4:
-	return (C4RAM - 0x6000);
+	return (S9xGetBasePointerC4(Address & 0xffff));
     case CMemory::MAP_DEBUG:
 #ifdef DEBUGGER
 	printf ("GBP %06x\n", Address);
@@ -747,7 +748,7 @@ INLINE uint8 *S9xGetMemPointer (uint32 Address)
     case CMemory::MAP_HIROM_SRAM:
         return (SRAM + (((Address & 0x7fff) - 0x6000 + ((Address & 0xf0000) >> 3)) & Memory.SRAMMask));
     case CMemory::MAP_C4:
-	return (C4RAM - 0x6000 + (Address & 0xffff));
+	return (S9xGetMemPointerC4(Address & 0xffff));
     case CMemory::MAP_DEBUG:
 #ifdef DEBUGGER
 	printf ("GMP %06x\n", Address);
@@ -849,7 +850,7 @@ INLINE void S9xSetPCBase (uint32 Address)
 	CPU.MemSpeed = SLOW_ONE_CYCLE;
 	CPU.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
 #endif
-	CPU.PCBase = C4RAM - 0x6000;
+	CPU.PCBase = S9xGetBasePointerC4(Address & 0xffff);
 	CPU.PC = CPU.PCBase + (Address & 0xffff);
 	return;
     case CMemory::MAP_DEBUG:

@@ -103,9 +103,7 @@ SMEMMAPBLOCKS __attribute__((aligned(64))) SetWordMap[MEMMAP_NUM_BLOCKS];
 uint8 ** const Map =(uint8 ** )0x00010000;//0x00010000 0x00014000 need 0x1000*4
 uint8 __attribute__((aligned(64))) SRAM[0x20000+MAX_RTC_INDEX+16];
 uint8 *ROM_GLOBAL;
-uint8 *ROM;
 //uint8 *RegRAM = NULL;
-uint8 *C4RAM = NULL;
 uint8 __attribute__((aligned(64)))RAM[0x20000];
 uint8 __attribute__((aligned(64))) VRAM[0x10000];
 //uint8 *VRAMmode7 = NULL;

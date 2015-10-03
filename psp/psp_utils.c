@@ -862,9 +862,9 @@ static int os9x_findhacks(int game_crc32){
 				
 				if ((val==0x42)||((val&0xFF00)==0x4200)) {
 					if (val&0xFF00) {
-						ROM[adr]=(val>>8)&0xFF;
-						ROM[adr+1]=val&0xFF;
-					} else ROM[adr]=val;
+						Memory.ROM[adr]=(val>>8)&0xFF;
+						Memory.ROM[adr+1]=val&0xFF;
+					} else Memory.ROM[adr]=val;
 				}
 
 				if (snesadvance[i]==0x0D) {free(snesadvance);return 1;}

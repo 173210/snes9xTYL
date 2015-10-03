@@ -1164,12 +1164,12 @@ void S9xDeinterleaveMode2 ()
 		{
 			if (blocks[j]!=blocks[i])
 			{
-			    memmove (tmp, &ROM [(uint32)(blocks [j]) * 0x8000], 0x8000);
+			    memmove (tmp, &Memory.ROM [(uint32)(blocks [j]) * 0x8000], 0x8000);
 			    
 			    
-			    memcpy(ROM+blocks [j] * 0x8000UL,ROM + blocks [i] * 0x8000UL, 0x8000);
+			    memcpy(Memory.ROM+blocks [j] * 0x8000UL,Memory.ROM + blocks [i] * 0x8000UL, 0x8000);
 			    
-		    	memcpy(ROM+blocks [i] * 0x8000UL,tmp, 0x8000);
+		    	memcpy(Memory.ROM+blocks [i] * 0x8000UL,tmp, 0x8000);
 		    	
 		    }
 		    uint8 b = blocks [j];
@@ -2356,9 +2356,9 @@ void CMemory::AlphaROMMap ()
 
 void DetectSuperFxRamSize()
 {
-	if(ROM[0x7FDA]==0x33)
+	if(Memory.ROM[0x7FDA]==0x33)
 	{
-		Memory.SRAMSize=ROM[0x7FBD];
+		Memory.SRAMSize=Memory.ROM[0x7FBD];
 	}
 	else
 	{

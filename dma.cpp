@@ -313,7 +313,7 @@ void S9xDoDMA (uint8 Channel)
 		int char_line_bytes = bytes_per_char * num_chars;
 		uint32 addr = (d->AAddress / char_line_bytes) * char_line_bytes;
 		uint8 *base = GetBasePointer ((d->ABank << 16) + addr) + addr;
-		uint8 *buffer = &ROM [Memory.MAX_ROM_SIZE - 0x10000];
+		uint8 *buffer = &Memory.ROM [Memory.MAX_ROM_SIZE - 0x10000];
 		uint8 *p = buffer;
 		uint32 inc = char_line_bytes - (d->AAddress % char_line_bytes);
 		uint32 char_count = inc / bytes_per_char;
@@ -466,11 +466,11 @@ void S9xDoDMA (uint8 Channel)
 		uint16 p = d->AAddress;
 		
 		if (!base)
-			base = ROM;
+			base = Memory.ROM;
 		
 		if (in_sa1_dma)
 		{
-			base = &ROM [Memory.MAX_ROM_SIZE - 0x10000];
+			base = &Memory.ROM [Memory.MAX_ROM_SIZE - 0x10000];
 			p = 0;
 		}
 		
