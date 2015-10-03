@@ -1244,38 +1244,46 @@ static int show_inputsmenu(char *mode) {
 }
 
 
-void show_batteryinfo(void){
-	static int update_infos=0;
+void show_batteryinfo()
+{
+	static int update_infos = 0;
 	static char bat_info[128];
 
-	if ( !((update_infos>>3)&1) ) {
-		struct tm *tsys;
-	  time_t cur_time;
-	  //get current time
+	struct tm *tsys;
+	time_t cur_time;
+	char lifeTimeStr[16];
+	int lifeTime;
+
+	if (!((update_infos >> 3) & 1)) {
+		//get current time
 		sceKernelLibcTime(&cur_time);
-		cur_time+=os9x_timezone*60+os9x_daylsavings*3600;
-		tsys=localtime(&cur_time);
+		cur_time += os9x_timezone * 60 + os9x_daylsavings * 3600;
+		tsys = localtime(&cur_time);
 		if (scePowerIsBatteryExist()) {
 			//if exists battery, gather infos
-			char bat_time[16];
-	  	int batteryLifeTime = scePowerGetBatteryLifeTime();
-	  	if (batteryLifeTime > 0)
-			sprintf(bat_time, s9xTYL_msg[MENU_TITLE_GENERIC_BAT_TIME], batteryLifeTime / 60, batteryLifeTime - (batteryLifeTime / 60 * 60));
-		  else bat_time[0]=0;
-	   	sprintf(bat_info, s9xTYL_msg[MENU_TITLE_GENERIC_BAT],
-		   		tsys->tm_hour, (tsys->tm_sec&1?':':' '), tsys->tm_min,
-	   			(scePowerIsPowerOnline() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_PLG] : ""),
-	   			(scePowerIsBatteryCharging() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_CHRG] : ""),
-		   		(scePowerIsLowBattery() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_LOW] : ""),
-		   		scePowerGetBatteryLifePercent(),
-		   		bat_time,
-		  		scePowerGetBatteryTemp());
-		} else {
-			sprintf(bat_info,"%02d%c%02d",tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min);
-		}
-  }
-  update_infos++;
-  mh_print(479-strlen(bat_info)*6,0,bat_info,(22<<0)|(31<<5)|(22<<10));
+			lifeTime = scePowerGetBatteryLifeTime();
+			if (lifeTime > 0)
+				sprintf(lifeTimeStr, s9xTYL_msg[MENU_TITLE_GENERIC_BAT_TIME],
+					lifeTime / 60, lifeTime % 60);
+			else
+				lifeTimeStr[0] = 0;
+
+			sprintf(bat_info, s9xTYL_msg[MENU_TITLE_GENERIC_BAT],
+				tsys->tm_hour, (tsys->tm_sec & 1 ? ':' : ' '), tsys->tm_min,
+				(scePowerIsPowerOnline() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_PLG] : ""),
+				(scePowerIsBatteryCharging() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_CHRG] : ""),
+				(scePowerIsLowBattery() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_LOW] : ""),
+				scePowerGetBatteryLifePercent(),
+				lifeTimeStr,
+				scePowerGetBatteryTemp());
+		} else
+			sprintf(bat_info, "%02d%c%02d",
+				tsys->tm_hour, (tsys->tm_sec & 1 ? ':' : ' '), tsys->tm_min);
+	}
+
+	update_infos++;
+	mh_print(479 - strlen(bat_info) * 6, 0, bat_info,
+		(22 << 0) | (31 << 5) | (22 << 10));
 }
 
 void show_usbinfo(void){
