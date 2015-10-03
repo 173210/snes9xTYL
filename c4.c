@@ -195,7 +195,6 @@ void C4TransfWireFrame2 ()
 
                       // Rotate Y
                       "vdot.p S000, C020, R001\n"
-                      "vdet.p S013, C020, R001\n"
 
                       // Rotate Z
                       "vdet.p S001, R000, R002\n"
