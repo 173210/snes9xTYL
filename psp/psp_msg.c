@@ -68,8 +68,9 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[MENU_STATUS_GENERIC_NEEDRESET] = "Changes may require a RESET to take effect",
 		[MENU_STATUS_GENERIC_CHANGEMUSIC] = "SELECT to change music",
 
-		[MENU_TITLE_GENERIC_BAT] = "%02d%c%02d Bat.:%s%s%s%02d%%%s Tmp.%d℃",
+		[MENU_TITLE_GENERIC_BAT] = "Bat.",
 		[MENU_TITLE_GENERIC_BAT_TIME] = "(%02dh%02dm)",
+		[MENU_TITLE_GENERIC_BAT_TEMP] = " Tmp.%d℃",
 		[MENU_TITLE_GENERIC_BAT_PLG] = "Plg.",
 		[MENU_TITLE_GENERIC_BAT_CHRG] = "Chrg.",
 		[MENU_TITLE_GENERIC_BAT_LOW] = "Low!",
@@ -456,8 +457,9 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[MENU_STATUS_GENERIC_NEEDRESET] = "変更を適用するにはリセットが必要かもしれません",
 		[MENU_STATUS_GENERIC_CHANGEMUSIC] = "音楽を変えるにはSELECTボタンを、",
 
-		[MENU_TITLE_GENERIC_BAT] = "%02d%c%02d 電池:%s%s%s残り%02d%%%s 温度.%d℃",
+		[MENU_TITLE_GENERIC_BAT] = "電池",
 		[MENU_TITLE_GENERIC_BAT_TIME] = "(%02d時間%02d分)",
+		[MENU_TITLE_GENERIC_BAT_TEMP] = " 温度.%d℃",
 		[MENU_TITLE_GENERIC_BAT_PLG] = "AC.",
 		[MENU_TITLE_GENERIC_BAT_CHRG] = "充電中.",
 		[MENU_TITLE_GENERIC_BAT_LOW] = "残量低下.",
@@ -845,8 +847,9 @@ const char *s9xTYL_msg_ml[MSG_TOTAL_LANG][MSG_TOTAL_ENTRIES] = {
 		[MENU_STATUS_GENERIC_NEEDRESET] = "重啓遊戲后有效",
 		[MENU_STATUS_GENERIC_CHANGEMUSIC] = "按SELECT鍵切換音樂",
 
-		[MENU_TITLE_GENERIC_BAT] = "%02d%c%02d 電量:%s%s%s%02d%%%s 温度:%d℃",
+		[MENU_TITLE_GENERIC_BAT] = "電量",
 		[MENU_TITLE_GENERIC_BAT_TIME] = "(%02d小時%02d分)",
+		[MENU_TITLE_GENERIC_BAT_TEMP] = " 温度:%d℃",
 		[MENU_TITLE_GENERIC_BAT_PLG] = "電源",
 		[MENU_TITLE_GENERIC_BAT_CHRG] = "充電中",
 		[MENU_TITLE_GENERIC_BAT_LOW] = "電量低",

@@ -1251,8 +1251,8 @@ void show_batteryinfo()
 
 	struct tm *tsys;
 	time_t cur_time;
-	char lifeTimeStr[16];
-	int lifeTime;
+	char lifeTimeStr[16], tempStr[8];
+	int lifeTime, temp;
 
 	if (!((update_infos >> 3) & 1)) {
 		//get current time
@@ -1268,14 +1268,20 @@ void show_batteryinfo()
 			else
 				lifeTimeStr[0] = 0;
 
-			sprintf(bat_info, s9xTYL_msg[MENU_TITLE_GENERIC_BAT],
+			temp = scePowerGetBatteryTemp();
+			if (temp > 0)
+				sprintf(tempStr, s9xTYL_msg[MENU_TITLE_GENERIC_BAT_TEMP], temp);
+			else
+				tempStr[0] = 0;
+
+			sprintf(bat_info, "%02d%c%02d %s:%s%s%s %02d%%%s%s",
 				tsys->tm_hour, (tsys->tm_sec & 1 ? ':' : ' '), tsys->tm_min,
+				s9xTYL_msg[MENU_TITLE_GENERIC_BAT],
 				(scePowerIsPowerOnline() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_PLG] : ""),
 				(scePowerIsBatteryCharging() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_CHRG] : ""),
 				(scePowerIsLowBattery() ? s9xTYL_msg[MENU_TITLE_GENERIC_BAT_LOW] : ""),
 				scePowerGetBatteryLifePercent(),
-				lifeTimeStr,
-				scePowerGetBatteryTemp());
+				lifeTimeStr, tempStr);
 		} else
 			sprintf(bat_info, "%02d%c%02d",
 				tsys->tm_hour, (tsys->tm_sec & 1 ? ':' : ' '), tsys->tm_min);
